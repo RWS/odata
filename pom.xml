@@ -373,39 +373,6 @@
 
     <repositories>
         <repository>
-            <id>releases-nexus</id>
-            <name>Releases</name>
-            <url>http://nexus.global.sdl.corp:8080/nexus/content/repositories/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>external</id>
-            <name>External plus internal</name>
-            <url>http://nexus.global.sdl.corp:8080/nexus/content/groups/external</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>snapshots-nexus</id>
-            <name>Snapshots</name>
-            <url>http://nexus.global.sdl.corp:8080/nexus/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>spring-snapshots</id>
             <name>Spring Snapshots</name>
             <url>http://repo.spring.io/snapshot</url>
