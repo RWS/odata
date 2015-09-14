@@ -19,6 +19,9 @@ http://localhost:8080/odata.svc/$metadata (Gives the OData EDM model)
 
 The standard framework has no entities delivered in the service, so this will be empty then. See the section about DataSources for clarification.
 
+# Building your own Service
+In order to build your own service you need to provide some data models and datasources for the framework to pick up. We have written an extensive demo on how to do this which is available in this Git repository: https://github.com/sdl/odata-example
+
 # DataSources
 
 The OData standard is based around resources that are well defined and modelled in something called the EDM. The SDL OData framework is build around
