@@ -1,0 +1,752 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:data="http://docs.oasis-open.org/odata/ns/data" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata" metadata:context="http://localhost:8080/odata.svc/$metadata#Contextproperties" xml:base="http://localhost:8080/odata.svc">         <id>http://localhost:8080/odata.svc/ContextVocabularies('default')</id>
+        <title></title>
+        <summary></summary>
+        <updated>2014-08-20T12:21:15.314+01:00</updated>
+        <author>
+            <name>SDL OData v4 framework</name>
+        </author>
+        <link rel="edit" title="ODataContextVocabulary" href="ODataDemoEntities('default')"></link>
+        <category scheme="http://docs.oasis-open.org/odata/ns/scheme"
+            term="#ODataDemo.ODataDemoEntity"></category>
+        <content type="application/xml">
+            <metadata:properties>
+                <data:id>default</data:id>
+                <data:properties
+                    metadata:type="#Collection(ODataDemo.ODataDemoProperty)">
+                    <metadata:element>
+                        <data:propertyName>imageFormatSupport</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">SET
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)">
+                                <metadata:element>PNG</metadata:element>
+                                <metadata:element>JPEG</metadata:element>
+                            </data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">SET</data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>model</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue>unknown</data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>scriptSupport</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">SET
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)">
+                                <metadata:element>JavaScript</metadata:element>
+                            </data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">SET</data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>inputModeSupport</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">SET
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)">
+                                <metadata:element>useInputmodeAttribute</metadata:element>
+                            </data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">SET</data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>vendor</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue>unknown</data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>stylesheetSupport</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">SET
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)">
+                                <metadata:element>css10</metadata:element>
+                                <metadata:element>css21</metadata:element>
+                            </data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">SET</data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>markupSupport</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">SET
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)">
+                                <metadata:element>HTML5</metadata:element>
+                            </data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">SET</data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>displayWidth</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:type="Int32">800</data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>variant</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>cookieSupport</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">BOOLEAN
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:type="Boolean">true</data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">BOOLEAN
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>version</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:type="#ODataDemo.ODataVersion">
+                                <data:name></data:name>
+                                <data:majorVersionPart metadata:type="#ODataDemo.ODataVersionPart">
+                                    <data:number metadata:type="Int32">0</data:number>
+                                    <data:modifier metadata:null="true"></data:modifier>
+                                    <data:modifierNumber metadata:type="Int32">0</data:modifierNumber>
+                                    <data:modifierPriority metadata:type="Int32">4</data:modifierPriority>
+                                </data:majorVersionPart>
+                                <data:minorVersionPart metadata:null="true"
+                                    metadata:type="#ODataDemo.ODataVersionPart"></data:minorVersionPart>
+                                <data:incrementalVersionPart metadata:null="true"
+                                    metadata:type="#ODataDemo.ODataVersionPart"></data:incrementalVersionPart>
+                            </data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>displayHeight</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:type="Int32">640</data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>jsVersion</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:type="#ODataDemo.ODataVersion">
+                                <data:name>1.8.5</data:name>
+                                <data:majorVersionPart metadata:type="#ODataDemo.ODataVersionPart">
+                                    <data:number metadata:type="Int32">1</data:number>
+                                    <data:modifier metadata:null="true"></data:modifier>
+                                    <data:modifierNumber metadata:type="Int32">0</data:modifierNumber>
+                                    <data:modifierPriority metadata:type="Int32">4</data:modifierPriority>
+                                </data:majorVersionPart>
+                                <data:minorVersionPart metadata:type="#ODataDemo.ODataVersionPart">
+                                    <data:number metadata:type="Int32">8</data:number>
+                                    <data:modifier metadata:null="true"></data:modifier>
+                                    <data:modifierNumber metadata:type="Int32">0</data:modifierNumber>
+                                    <data:modifierPriority metadata:type="Int32">4</data:modifierPriority>
+                                </data:minorVersionPart>
+                                <data:incrementalVersionPart metadata:type="#ODataDemo.ODataVersionPart">
+                                    <data:number metadata:type="Int32">5</data:number>
+                                    <data:modifier metadata:null="true"></data:modifier>
+                                    <data:modifierNumber metadata:type="Int32">0</data:modifierNumber>
+                                    <data:modifierPriority metadata:type="Int32">4</data:modifierPriority>
+                                </data:incrementalVersionPart>
+                            </data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>inputDevices</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">SET
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">SET</data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>cssVersion</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:type="#ODataDemo.ODataVersion">
+                                <data:name>2.1</data:name>
+                                <data:majorVersionPart metadata:type="#ODataDemo.ODataVersionPart">
+                                    <data:number metadata:type="Int32">2</data:number>
+                                    <data:modifier metadata:null="true"></data:modifier>
+                                    <data:modifierNumber metadata:type="Int32">0</data:modifierNumber>
+                                    <data:modifierPriority metadata:type="Int32">4</data:modifierPriority>
+                                </data:majorVersionPart>
+                                <data:minorVersionPart metadata:type="#ODataDemo.ODataVersionPart">
+                                    <data:number metadata:type="Int32">1</data:number>
+                                    <data:modifier metadata:null="true"></data:modifier>
+                                    <data:modifierNumber metadata:type="Int32">0</data:modifierNumber>
+                                    <data:modifierPriority metadata:type="Int32">4</data:modifierPriority>
+                                </data:minorVersionPart>
+                                <data:incrementalVersionPart metadata:null="true"
+                                    metadata:type="#ODataDemo.ODataVersionPart"></data:incrementalVersionPart>
+                            </data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>displayColorDepth</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:type="Int32">16</data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>preferredHtmlContentType</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue>text/html</data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>model</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue>unknown</data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>tablet</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">BOOLEAN
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:type="Boolean">false</data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">BOOLEAN
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>pixelDensity</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:type="Int32">217</data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>vendor</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue>unknown</data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>inputDevices</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">SET
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">SET</data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>robot</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">BOOLEAN
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:type="Boolean">false</data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">BOOLEAN
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>displayWidth</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:type="Int32">800</data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>variant</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>pixelRatio</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">FLOAT
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:type="Double">1.0</data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">FLOAT
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>version</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:type="#ODataDemo.ODataVersion">
+                                <data:name></data:name>
+                                <data:majorVersionPart metadata:type="#ODataDemo.ODataVersionPart">
+                                    <data:number metadata:type="Int32">0</data:number>
+                                    <data:modifier metadata:null="true"></data:modifier>
+                                    <data:modifierNumber metadata:type="Int32">0</data:modifierNumber>
+                                    <data:modifierPriority metadata:type="Int32">4</data:modifierPriority>
+                                </data:majorVersionPart>
+                                <data:minorVersionPart metadata:null="true"
+                                    metadata:type="#ODataDemo.ODataVersionPart"></data:minorVersionPart>
+                                <data:incrementalVersionPart metadata:null="true"
+                                    metadata:type="#ODataDemo.ODataVersionPart"></data:incrementalVersionPart>
+                            </data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>mobile</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">BOOLEAN
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:type="Boolean">false</data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">BOOLEAN
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>displayHeight</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:type="Int32">640</data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">INTEGER
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>model</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue>unknown</data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>vendor</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>variant</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue></data:stringValue>
+                            <data:versionValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataVersion"></data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">STRING
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                    <metadata:element>
+                        <data:propertyName>version</data:propertyName>
+                        <data:propertyType metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                        </data:propertyType>
+                        <data:defaultValue metadata:type="#ODataDemo.ODataDemoPropertyValue">
+                            <data:booleanValue metadata:null="true" metadata:type="Boolean"></data:booleanValue>
+                            <data:integerValue metadata:null="true" metadata:type="Int32"></data:integerValue>
+                            <data:floatValue metadata:null="true" metadata:type="Double"></data:floatValue>
+                            <data:setValue metadata:type="#Collection(String)"></data:setValue>
+                            <data:stringValue metadata:null="true"></data:stringValue>
+                            <data:versionValue metadata:type="#ODataDemo.ODataVersion">
+                                <data:name></data:name>
+                                <data:majorVersionPart metadata:type="#ODataDemo.ODataVersionPart">
+                                    <data:number metadata:type="Int32">0</data:number>
+                                    <data:modifier metadata:null="true"></data:modifier>
+                                    <data:modifierNumber metadata:type="Int32">0</data:modifierNumber>
+                                    <data:modifierPriority metadata:type="Int32">4</data:modifierPriority>
+                                </data:majorVersionPart>
+                                <data:minorVersionPart metadata:null="true"
+                                    metadata:type="#ODataDemo.ODataVersionPart"></data:minorVersionPart>
+                                <data:incrementalVersionPart metadata:null="true"
+                                    metadata:type="#ODataDemo.ODataVersionPart"></data:incrementalVersionPart>
+                            </data:versionValue>
+                            <data:pathValue metadata:null="true"
+                                metadata:type="#ODataDemo.ODataDemoClassification"></data:pathValue>
+                            <data:type metadata:type="#ODataDemo.ODataDemoPropertyType">VERSION
+                            </data:type>
+                        </data:defaultValue>
+                        <data:requires metadata:type="#Collection(String)"></data:requires>
+                        <data:implies metadata:type="#Collection(String)"></data:implies>
+                    </metadata:element>
+                </data:properties>
+            </metadata:properties>
+        </content>
+    </entry>

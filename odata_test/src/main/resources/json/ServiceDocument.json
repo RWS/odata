@@ -1,0 +1,69 @@
+{
+    "@odata.context": "http://localhost:8080/odata.svc/$metadata",
+    "value": [
+        {
+            "name": "Customers",
+            "kind": "EntitySet",
+            "url": "Customers"
+        },
+        {
+            "name": "AbstractEntityTypeSamples",
+            "kind": "EntitySet",
+            "url": "AbstractEntityTypeSamples"
+        },
+        {
+            "name": "EntityTypeSamples",
+            "kind": "EntitySet",
+            "url": "EntityTypeSamples"
+        },
+        {
+            "name": "Orders",
+            "kind": "EntitySet",
+            "url": "Orders"
+        },
+        {
+            "name": "Products",
+            "kind": "EntitySet",
+            "url": "Products"
+        },
+        {
+            "name": "BankAccounts",
+            "kind": "EntitySet",
+            "url": "BankAccounts"
+        },
+        {
+            "name": "PrimitiveTypesSamples",
+            "kind": "EntitySet",
+            "url": "PrimitiveTypesSamples"
+        },
+        {
+            "name": "CollectionsSamples",
+            "kind": "EntitySet",
+            "url": "CollectionsSamples"
+        },
+        {
+            "name": "IdNamePairSamples",
+            "kind": "EntitySet",
+            "url": "IdNamePairSamples"
+        },
+        {
+            "name": "ExpandedPropertiesSamples",
+            "kind": "EntitySet",
+            "url": "ExpandedPropertiesSamples"
+        },
+        {
+            "name": "ComplexKeySamples",
+            "kind": "EntitySet",
+            "url": "ComplexKeySamples"
+
+        }, {
+            "name" : "ODataDemoEntities",
+            "kind" : "EntitySet",
+            "url" : "ODataDemoEntities"
+        }, {
+            "name" : "SingletonSample",
+            "kind" : "Singleton",
+            "url" : "SingletonSample"
+        }
+    ]
+}

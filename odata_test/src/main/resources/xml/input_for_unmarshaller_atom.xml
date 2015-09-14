@@ -1,0 +1,61 @@
+<entry xml:base="http://localhost:6161/ws/odata.svc/"
+       xmlns="http://www.w3.org/2005/Atom"
+       xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata"
+       xmlns:data="http://docs.oasis-open.org/odata/ns/data"
+       metadata:context="$metadata#Customers/$entity">
+    <id>http://host/service/$metadata#Customers('ALFKI')</id>
+    <title/>
+    <summary/>
+    <updated>2012-03-30T07:11:05Z</updated>
+    <author>
+        <name/>
+    </author>
+    <link rel="edit" title="Customer" href="Customers('ALFKI')"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Orders"
+          type="application/atom+xml;type=feed"
+          title="Orders" href="Customers('ALFKI')/Orders"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Supplier"
+          type="application/atom+xml;type=entry"
+          title="Supplier" href="Customers('ALFKI')/Supplier"/>
+    <category term="#ODataDemo.Customer"
+              scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
+    <content type="application/xml">
+        <metadata:properties>
+            <data:ID metadata:type="Int32">2</data:ID>
+            <data:name>Testing Unmarshall</data:name>
+            <data:ContactName>Maria Anders</data:ContactName>
+            <data:Date>2012-03-30T07:11:05Z</data:Date>
+            <data:ContactTitle>Sales Representative</data:ContactTitle>
+            <data:Phone metadata:type="#Collection(String)">
+                <metadata:element>030-0074321</metadata:element>
+                <metadata:element>030-0074322</metadata:element>
+            </data:Phone>
+            <data:Fax>030-0076545</data:Fax>
+            <data:Address metadata:type="#Collection(com.sdl.odata.test.model.Address)">
+                <metadata:element>
+                    <data:Street>Diagon Alley</data:Street>
+                    <data:houseNumber>Behind Leaky Couldron</data:houseNumber>
+                    <data:postalCode>10127</data:postalCode>
+                    <data:city>London</data:city>
+                    <data:country>UK</data:country>
+                    <link rel="http://docs.oasis-open.org/odata/ns/related/Country"
+                          type="application/atom+xml;type=entry"
+                          title="Country of residence"
+                          href="Customers('ALFKI')/Address/Country"/>
+                </metadata:element>
+                <metadata:element>
+                    <data:Street>Balanstrasse 49</data:Street>
+                    <data:HouseNumber>13</data:HouseNumber>
+                    <data:City>Munich</data:City>
+                    <data:Country>Germany</data:Country>
+                    <data:Region metadata:null="true"/>
+                    <data:PostalCode>81669</data:PostalCode>
+                    <link rel="http://docs.oasis-open.org/odata/ns/related/Country"
+                          type="application/atom+xml;type=entry"
+                          title="Country of residence"
+                          href="Customers('ALFKI')/Address/Country"/>
+                </metadata:element>
+            </data:Address>
+        </metadata:properties>
+    </content>
+</entry>

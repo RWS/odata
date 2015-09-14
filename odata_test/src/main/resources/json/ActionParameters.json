@@ -1,0 +1,19 @@
+{
+  "NumberParameter": 2,
+  "StringParameter": "BLACKFRIDAY",
+  "intNumber": "101",
+  "parametersMap":
+      {
+        "type":"binaryLink",
+        "url" :"testUrl"
+      },
+  "parametersMapList" : 
+    [{
+       "type":"binaryLink",
+       "url" :"testUrl"
+     },
+     {
+       "type":"binaryLink1",
+       "url" :"testUrl1"
+     }]
+}

@@ -1,0 +1,7 @@
+{
+    "@odata.context" : "http://localhost:8080/odata.svc/$metadata#ComplexKeySamples/$entity",
+    "@odata.id":"ComplexKeySamples(id=15,name='ComplexKey',period=duration'P3Y30M30D')",
+    "id" : 15,
+    "name" : "ComplexKey",
+    "period" : "P3Y30M30D"
+}

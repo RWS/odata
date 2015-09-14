@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata"
+       xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#PrimitiveTypesSamples/$entity"
+       xml:base="http://localhost:8080/odata.svc">
+    <id>http://localhost:8080/odata.svc/PrimitiveTypesSamples(20)</id>
+    <title/>
+    <summary/>
+    <updated>2014-05-02T00:00:00Z</updated>
+    <author>
+        <name>SDL OData v4 framework</name>
+    </author>
+    <link rel="edit" title="PrimitiveTypesSample" href="PrimitiveTypesSamples(20)"/>
+    <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#ODataSample.PrimitiveTypesSample"/>
+    <content type="application/xml">
+        <metadata:properties>
+            <data:ID metadata:type="Int64">20</data:ID>
+            <data:Name>John</data:Name>
+            <data:NullProperty metadata:null="true"/>
+            <data:BinaryProperty metadata:null="true" metadata:type="Binary"/>
+            <data:BooleanProperty metadata:type="Boolean">true</data:BooleanProperty>
+            <data:ByteProperty metadata:type="Byte">0</data:ByteProperty>
+            <data:DateProperty metadata:type="Date">2014-05-07</data:DateProperty>
+            <data:DateTimeOffsetProperty metadata:type="DateTimeOffset">2014-05-07T10:00Z</data:DateTimeOffsetProperty>
+            <data:DurationProperty metadata:type="Duration">P0D</data:DurationProperty>
+            <data:TimeOfDayProperty metadata:type="TimeOfDay">12:00</data:TimeOfDayProperty>
+            <data:DecimalValueProperty metadata:type="Decimal">21</data:DecimalValueProperty>
+            <data:DoubleProperty metadata:type="Double">16.7</data:DoubleProperty>
+            <data:SingleProperty metadata:type="Single">12.3</data:SingleProperty>
+            <data:GuidProperty metadata:type="Guid">23492a5b-c4f1-4a50-b7a5-d8ebd6067902</data:GuidProperty>
+            <data:Int16Property metadata:type="Int16">2</data:Int16Property>
+            <data:Int32Property metadata:type="Int32">5</data:Int32Property>
+            <data:SByteProperty metadata:type="SByte">13</data:SByteProperty>
+        </metadata:properties>
+    </content>
+</entry>

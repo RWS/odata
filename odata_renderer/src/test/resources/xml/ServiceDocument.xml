@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service xmlns="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom"
+         xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata" xmlns:base="http://localhost:8080/odata.svc"
+         xmlns:context="http://localhost:8080/odata.svc/$metadata">
+    <workspace>
+        <atom:title>ODataDemoContainer</atom:title>
+        <collection href="Customers">
+            <atom:title>Customers</atom:title>
+        </collection>
+        <collection href="AbstractEntityTypeSamples">
+            <atom:title>AbstractEntityTypeSamples</atom:title>
+        </collection>
+        <collection href="EntityTypeSamples">
+            <atom:title>EntityTypeSamples</atom:title>
+        </collection>
+        <collection href="Orders">
+            <atom:title>Orders</atom:title>
+        </collection>
+        <collection href="Products">
+            <atom:title>Products</atom:title>
+        </collection>
+        <collection href="BankAccounts">
+            <atom:title>BankAccounts</atom:title>
+        </collection>
+        <collection href="PrimitiveTypesSamples">
+            <atom:title>PrimitiveTypesSamples</atom:title>
+        </collection>
+        <collection href="CollectionsSamples">
+            <atom:title>CollectionsSamples</atom:title>
+        </collection>
+        <collection href="IdNamePairSamples">
+            <atom:title>IdNamePairSamples</atom:title>
+        </collection>
+        <collection href="ExpandedPropertiesSamples">
+            <atom:title>ExpandedPropertiesSamples</atom:title>
+        </collection>
+        <collection href="ComplexKeySamples">
+            <atom:title>ComplexKeySamples</atom:title>
+        </collection>
+        <collection href="ODataDemoEntities">
+            <atom:title>ODataDemoEntities</atom:title>
+        </collection>
+        <metadata:singleton href="SingletonSample">
+            <atom:title>SingletonSample</atom:title>
+        </metadata:singleton>
+    </workspace>
+</service>

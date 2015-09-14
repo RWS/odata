@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Properties -->
+    <property name="log.pattern" value="%date %-5level %logger{0} - %message%n"/>
+    <property name="log.level" value="ERROR"/>
+
+    <!-- Appenders -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Loggers -->
+    <logger name="com.sdl" level="${log.level}"/>
+    <logger name="org.springframework" level="${log.level}" />
+
+    <root level="OFF">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata" xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#CollectionsSamples/$entity" xml:base="http://localhost:8080/odata.svc">
+    <id>http://localhost:8080/odata.svc/CollectionsSamples(40)</id>
+    <title/>
+    <summary/>
+    <updated>2014-05-02T00:00:00Z</updated>
+    <author>
+        <name>SDL OData v4 framework</name>
+    </author>
+    <link rel="edit" title="CollectionsSample" href="CollectionsSamples(40)"/>
+    <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#ODataSample.CollectionsSample"/>
+    <content type="application/xml">
+        <metadata:properties>
+            <data:ID metadata:type="Int64">40</data:ID>
+            <data:Name>Mixed collections</data:Name>
+            <data:PrimitivesCollection metadata:type="#Collection(String)">
+                <metadata:element>Text 1</metadata:element>
+                <metadata:element>Text 2</metadata:element>
+            </data:PrimitivesCollection>
+            <data:EnumCollection metadata:type="#Collection(ODataSample.EnumSample)">
+                <metadata:element>VALUE1</metadata:element>
+                <metadata:element>VALUE1</metadata:element>
+                <metadata:element>VALUE2</metadata:element>
+            </data:EnumCollection>
+            <data:IdNamePairCollection metadata:type="#Collection(ODataSample.IdNamePairComplex)">
+                <metadata:element>
+                    <data:ID metadata:type="Int64">100</data:ID>
+                    <data:Name>Name 100</data:Name>
+                </metadata:element>
+                <metadata:element>
+                    <data:ID metadata:type="Int64">120</data:ID>
+                    <data:Name>Name 120</data:Name>
+                </metadata:element>
+            </data:IdNamePairCollection>
+        </metadata:properties>
+    </content>
+</entry>

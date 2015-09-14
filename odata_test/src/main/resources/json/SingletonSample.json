@@ -1,0 +1,5 @@
+{
+    "@odata.context" : "http://localhost:8080/odata.svc/$metadata#SingletonSample/$entity",
+    "@odata.id" : "SingletonSample",
+    "id" : "3dd4fa6e-2899-4429-b818-d34fe8df5dd0"
+}

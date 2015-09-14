@@ -1,0 +1,4 @@
+{
+    "@odata.context" : "http://localhost:8080/odata.svc/$metadata#Customers",
+    "value" : [ ]
+}

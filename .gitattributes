@@ -1,0 +1,8 @@
+# Perform LF normalization
+*.sh     eol=lf
+
+# Windows-specific files get windows endings
+*.bat     eol=crlf
+*.cmd     eol=crlf
+*.ps1     eol=crlf
+

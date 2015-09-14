@@ -1,0 +1,6 @@
+{
+    "@odata.context" : "http://localhost:8080/odata.svc/$metadata#ExpandedPropertiesSamples/$entity",
+    "@odata.id" : "ExpandedPropertiesSamples(5)",
+    "ID" : 5,
+    "Name" : "Expanded Properties Sample"
+}

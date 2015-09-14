@@ -1,0 +1,7 @@
+{
+    "error" : {
+        "code" : "2000",
+        "message" : "Category expected but not found",
+        "target" : "category"
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "@odata.context" : "http://localhost:8080/odata.svc/$metadata#ExpandedPropertiesSamples/$entity",
+    "@odata.id" : "ExpandedPropertiesSamples(5)",
+    "ID" : 5,
+    "Name" : "Expanded Properties Sample",
+    "ExpandedEntry" : {
+        "@odata.type" : "#ODataSample.IdNamePairSample",
+        "ID" : 10,
+        "Name" : "Expanded entry"
+    },
+    "ExpandedFeed" : [ {
+        "@odata.type" : "#ODataSample.IdNamePairSample",
+        "ID" : 10,
+        "Name" : "Expanded feed entry 1"
+    }, {
+        "@odata.type" : "#ODataSample.IdNamePairSample",
+        "ID" : 20,
+        "Name" : "Expanded feed entry 2"
+    } ]
+}

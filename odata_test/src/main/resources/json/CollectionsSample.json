@@ -1,0 +1,17 @@
+{
+    "@odata.context" : "http://localhost:8080/odata.svc/$metadata#CollectionsSamples/$entity",
+    "@odata.id":"CollectionsSamples(40)",
+    "ID" : 40,
+    "Name" : "Mixed collections",
+    "PrimitivesCollection" : [ "Text 1", "Text 2" ],
+    "EnumCollection" : [ "VALUE1", "VALUE1", "VALUE2" ],
+    "IdNamePairCollection" : [{
+        "@odata.type" : "#ODataSample.IdNamePairComplex",
+        "ID" : 100,
+        "Name" : "Name 100"
+    }, {
+        "@odata.type" : "#ODataSample.IdNamePairComplex",
+        "ID" : 120,
+        "Name" : "Name 120"
+    }]
+}

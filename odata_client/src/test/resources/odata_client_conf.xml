@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ODataClient ServiceUri="http://www.example.com/odata.svc"
+             ConnectionTimeout="100000"
+             ServiceProxyHostName="localhost"
+             ServiceProxyPort="8090"
+             CacheEnabled="true"
+             CacheExpirationDuration="100000"
+             CacheUri="sampleUri"/>

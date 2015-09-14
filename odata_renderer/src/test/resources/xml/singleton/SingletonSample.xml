@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata"
+       xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#SingletonSample/$entity"
+       xml:base="http://localhost:8080/odata.svc">
+    <content type="application/xml">
+        <metadata:properties>
+            <data:id metadata:type="Guid">3dd4fa6e-2899-4429-b818-d34fe8df5dd0</data:id>
+        </metadata:properties>
+    </content>
+</entry>

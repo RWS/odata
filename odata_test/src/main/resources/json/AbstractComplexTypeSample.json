@@ -1,0 +1,7 @@
+{
+  "@odata.context": "http://localhost:8080/odata.svc/$metadata#EntityTypeSamples('id.10')/ComplexTypeProperty",
+  "value": {
+    "InheritedProperty": "Inherited 1",
+    "SimpleProperty": "Prop 1"
+  }
+}

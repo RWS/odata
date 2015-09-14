@@ -1,0 +1,52 @@
+/**
+ * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.sdl.odata.test.model;
+
+import com.sdl.odata.api.edm.annotations.EdmEntity;
+import com.sdl.odata.api.edm.annotations.EdmEntitySet;
+import com.sdl.odata.api.edm.annotations.EdmProperty;
+
+/**
+ * The Abstract Entity Type Sample.
+ */
+@EdmEntity(namespace = "ODataDemo", key = { "InheritedId" })
+@EdmEntitySet("AbstractEntityTypeSamples")
+public abstract class AbstractEntityTypeSample {
+
+    @EdmProperty(name = "InheritedId", nullable = true)
+    private String inheritedId;
+
+    @EdmProperty(name = "InheritedProperty", nullable = true)
+    private String inheritedProperty;
+
+    public String getInheritedId() {
+        return inheritedId;
+    }
+
+    public AbstractEntityTypeSample setInheritedId(String newInheritedId) {
+        this.inheritedId = newInheritedId;
+        return this;
+    }
+
+    public String getInheritedProperty() {
+        return inheritedProperty;
+    }
+
+    public AbstractEntityTypeSample setInheritedProperty(String newInheritedProperty) {
+        this.inheritedProperty = newInheritedProperty;
+        return this;
+    }
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata"
+       xmlns:data="http://docs.oasis-open.org/odata/ns/data"
+       metadata:context="http://localhost:8080/odata.svc/$metadata#EntityTypeSamples/$entity"
+       xml:base="http://localhost:8080/odata.svc">
+    <id>http://localhost:8080/odata.svc/EntityTypeSamples('id.10')</id>
+    <title/>
+    <summary/>
+    <updated>2014-05-02T00:00:00Z</updated>
+    <author>
+        <name>SDL OData v4 framework</name>
+    </author>
+    <link rel="edit" title="EntityTypeSample" href="EntityTypeSamples('id.10')"/>
+    <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#ODataDemo.EntityTypeSample"/>
+    <content type="application/xml">
+        <metadata:properties>
+            <data:InheritedId metadata:null="true"/>
+            <data:InheritedProperty>Some inherited value</data:InheritedProperty>
+            <data:Id>id.10</data:Id>
+            <data:ComplexTypeProperty metadata:type="#ODataDemo.ComplexTypeSample">
+                <data:InheritedProperty>Inherited value</data:InheritedProperty>
+                <data:SimpleProperty>Simple value</data:SimpleProperty>
+            </data:ComplexTypeProperty>
+            <data:ComplexTypeProperties metadata:type="#Collection(ODataDemo.ComplexTypeSample)"/>
+        </metadata:properties>
+    </content>
+</entry>

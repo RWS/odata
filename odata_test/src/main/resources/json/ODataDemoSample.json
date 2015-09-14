@@ -1,0 +1,678 @@
+{
+    "@odata.context": "http://localhost:8080/odata.svc/$metadata#ODataDemoEntities/$entity",
+    "@odata.id": "ODataDemoEntities('default')",
+    "id": "default",
+    "properties": [
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "imageFormatSupport",
+            "propertyType": "SET",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": ["PNG", "JPEG"],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "SET"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "model",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "unknown",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "scriptSupport",
+            "propertyType": "SET",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": ["JavaScript"],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "SET"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "inputModeSupport",
+            "propertyType": "SET",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": ["useInputmodeAttribute"],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "SET"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "vendor",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "unknown",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "stylesheetSupport",
+            "propertyType": "SET",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": ["css10", "css21"],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "SET"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "markupSupport",
+            "propertyType": "SET",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": ["HTML5"],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "SET"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "displayWidth",
+            "propertyType": "INTEGER",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": 800,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "INTEGER"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "variant",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "cookieSupport",
+            "propertyType": "BOOLEAN",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": true,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "BOOLEAN"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "version",
+            "propertyType": "VERSION",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": {
+                    "@odata.type": "#ODataContextualDelivery.ODataVersion",
+                    "name": "",
+                    "majorVersionPart": {
+                        "@odata.type": "#ODataContextualDelivery.ODataVersionPart",
+                        "number": 0,
+                        "modifier": null,
+                        "modifierNumber": 0,
+                        "modifierPriority": 4
+                    },
+                    "minorVersionPart": null,
+                    "incrementalVersionPart": null
+                },
+                "pathValue": null,
+                "type": "VERSION"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "displayHeight",
+            "propertyType": "INTEGER",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": 640,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "INTEGER"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "jsVersion",
+            "propertyType": "VERSION",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": {
+                    "@odata.type": "#ODataContextualDelivery.ODataVersion",
+                    "name": "1.8.5",
+                    "majorVersionPart": {
+                        "@odata.type": "#ODataContextualDelivery.ODataVersionPart",
+                        "number": 1,
+                        "modifier": null,
+                        "modifierNumber": 0,
+                        "modifierPriority": 4
+                    },
+                    "minorVersionPart": {
+                        "@odata.type": "#ODataContextualDelivery.ODataVersionPart",
+                        "number": 8,
+                        "modifier": null,
+                        "modifierNumber": 0,
+                        "modifierPriority": 4
+                    },
+                    "incrementalVersionPart": {
+                        "@odata.type": "#ODataContextualDelivery.ODataVersionPart",
+                        "number": 5,
+                        "modifier": null,
+                        "modifierNumber": 0,
+                        "modifierPriority": 4
+                    }
+                },
+                "pathValue": null,
+                "type": "VERSION"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "inputDevices",
+            "propertyType": "SET",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "SET"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "cssVersion",
+            "propertyType": "VERSION",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": {
+                    "@odata.type": "#ODataContextualDelivery.ODataVersion",
+                    "name": "2.1",
+                    "majorVersionPart": {
+                        "@odata.type": "#ODataContextualDelivery.ODataVersionPart",
+                        "number": 2,
+                        "modifier": null,
+                        "modifierNumber": 0,
+                        "modifierPriority": 4
+                    },
+                    "minorVersionPart": {
+                        "@odata.type": "#ODataContextualDelivery.ODataVersionPart",
+                        "number": 1,
+                        "modifier": null,
+                        "modifierNumber": 0,
+                        "modifierPriority": 4
+                    },
+                    "incrementalVersionPart": null
+                },
+                "pathValue": null,
+                "type": "VERSION"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "displayColorDepth",
+            "propertyType": "INTEGER",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": 16,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "INTEGER"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "preferredHtmlContentType",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "text/html",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "model",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "unknown",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "tablet",
+            "propertyType": "BOOLEAN",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": false,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "BOOLEAN"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "pixelDensity",
+            "propertyType": "INTEGER",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": 217,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "INTEGER"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "vendor",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "unknown",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "inputDevices",
+            "propertyType": "SET",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "SET"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "robot",
+            "propertyType": "BOOLEAN",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": false,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "BOOLEAN"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "displayWidth",
+            "propertyType": "INTEGER",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": 800,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "INTEGER"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "variant",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "pixelRatio",
+            "propertyType": "FLOAT",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": 1.0,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "FLOAT"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "version",
+            "propertyType": "VERSION",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": {
+                    "@odata.type": "#ODataContextualDelivery.ODataVersion",
+                    "name": "",
+                    "majorVersionPart": {
+                        "@odata.type": "#ODataContextualDelivery.ODataVersionPart",
+                        "number": 0,
+                        "modifier": null,
+                        "modifierNumber": 0,
+                        "modifierPriority": 4
+                    },
+                    "minorVersionPart": null,
+                    "incrementalVersionPart": null
+                },
+                "pathValue": null,
+                "type": "VERSION"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "mobile",
+            "propertyType": "BOOLEAN",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": false,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "BOOLEAN"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "displayHeight",
+            "propertyType": "INTEGER",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": 640,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": null,
+                "pathValue": null,
+                "type": "INTEGER"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "model",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "unknown",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "vendor",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "variant",
+            "propertyType": "STRING",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": "",
+                "versionValue": null,
+                "pathValue": null,
+                "type": "STRING"
+            },
+            "requires": [],
+            "implies": []
+        },
+        {
+            "@odata.type": "#ODataContextualDelivery.ODataDemoProperty",
+            "propertyName": "version",
+            "propertyType": "VERSION",
+            "defaultValue": {
+                "@odata.type": "#ODataContextualDelivery.ODataDemoPropertyValue",
+                "booleanValue": null,
+                "integerValue": null,
+                "floatValue": null,
+                "setValue": [],
+                "stringValue": null,
+                "versionValue": {
+                    "@odata.type": "#ODataContextualDelivery.ODataVersion",
+                    "name": "",
+                    "majorVersionPart": {
+                        "@odata.type": "#ODataContextualDelivery.ODataVersionPart",
+                        "number": 0,
+                        "modifier": null,
+                        "modifierNumber": 0,
+                        "modifierPriority": 4
+                    },
+                    "minorVersionPart": null,
+                    "incrementalVersionPart": null
+                },
+                "pathValue": null,
+                "type": "VERSION"
+            },
+            "requires": [],
+            "implies": []
+        }
+    ]}

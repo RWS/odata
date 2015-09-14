@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata"
+       xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#Customers/$entity"
+       xml:base="http://localhost:8080/odata.svc">
+    <id>http://localhost:8080/odata.svc/Customers(10)</id>
+    <title/>
+    <summary/>
+    <updated>2014-05-02T00:00:00Z</updated>
+    <author>
+        <name>SDL OData v4 framework</name>
+    </author>
+    <link rel="edit" title="Customer" href="Customers(10)"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=entry" title="Order" href="Orders(0)"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Orders" type="application/xml" title="Order" href="Orders(0)/$ref"/>
+    <category term="#ODataDemo.Customer" scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
+    <content type="application/xml">
+        <metadata:properties>
+            <data:id metadata:type="Int64">10</data:id>
+            <data:name>Harry</data:name>
+            <data:Phone metadata:type="#Collection(String)"/>
+            <data:date metadata:type="DateTimeOffset">2014-05-02T12:00Z</data:date>
+        </metadata:properties>
+    </content>
+</entry>

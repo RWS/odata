@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata:error xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata">
+    <metadata:code>2000</metadata:code>
+    <metadata:message>Category expected but not found</metadata:message>
+    <metadata:target>category</metadata:target>
+</metadata:error>

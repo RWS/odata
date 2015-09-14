@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata:value xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata"
+                xmlns="http://docs.oasis-open.org/odata/ns/data"
+                metadata:context="http://localhost:8080/odata.svc/$metadata#EntityTypeSamples('id.10')/ComplexTypeProperties"
+                metadata:type="#ODataDemo.ComplexTypeSample">
+    <metadata:element>
+        <InheritedProperty>Inherited 1</InheritedProperty>
+        <SimpleProperty>Simple 1</SimpleProperty>
+    </metadata:element>
+    <metadata:element>
+        <InheritedProperty>Inherited 2</InheritedProperty>
+        <SimpleProperty>Simple 2</SimpleProperty>
+    </metadata:element>
+</metadata:value>

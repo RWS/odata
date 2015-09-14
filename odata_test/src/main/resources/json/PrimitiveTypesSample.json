@@ -1,0 +1,21 @@
+{
+    "@odata.context" : "http://localhost:8080/odata.svc/$metadata#PrimitiveTypesSamples/$entity",
+    "@odata.id":"PrimitiveTypesSamples(20)",
+    "ID" : 20,
+    "Name" : "John",
+    "NullProperty" : null,
+    "BinaryProperty" : null,
+    "BooleanProperty" : true,
+    "ByteProperty" : 0,
+    "DateProperty" : "2014-05-07",
+    "DateTimeOffsetProperty" : "2014-05-07T10:00Z",
+    "DurationProperty" : "P0D",
+    "TimeOfDayProperty" : "12:00",
+    "DecimalValueProperty" : 21,
+    "DoubleProperty" : 16.7,
+    "SingleProperty" : 12.3,
+    "GuidProperty" : "23492a5b-c4f1-4a50-b7a5-d8ebd6067902",
+    "Int16Property" : 2,
+    "Int32Property" : 5,
+    "SByteProperty" : 13
+}

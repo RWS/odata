@@ -1,0 +1,7 @@
+{
+    "@odata.context" : "http://localhost:8080/odata.svc/$metadata#Products/$entity",
+    "@odata.id":"Products(15)",
+    "id" : 15,
+    "name" : "Asus Nexus 7",
+    "category" : "ELECTRONICS"
+}

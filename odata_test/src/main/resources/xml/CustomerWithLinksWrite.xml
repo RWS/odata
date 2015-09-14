@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata" xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#Customers/$entity" xml:base="http://localhost:8080/odata.svc">
+    <id>http://localhost:8080/odata.svc/Customers(10)</id>
+    <title/>
+    <summary/>
+    <updated>2014-05-02T00:00:00Z</updated>
+    <author>
+        <name>SDL OData v4 framework</name>
+    </author>
+    <link rel="edit" title="Customer" href="Customers(10)"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="Customers(10)/Orders"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Orders" type="application/xml" title="Orders" href="Customers(10)/Orders/$ref"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/BankAccount" type="application/atom+xml;type=entry" title="BankAccount" href="BankAccounts('iban-111')"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/BankAccount" type="application/xml" title="BankAccount" href="Customers(10)/BankAccount/$ref"/>
+    <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#ODataDemo.Customer"/>
+    <content type="application/xml">
+        <metadata:properties>
+            <data:id metadata:type="Int64">10</data:id>
+            <data:name>Harry</data:name>
+            <data:Phone metadata:type="#Collection(String)"/>
+            <data:address metadata:type="#Collection(ODataDemo.Address)">
+                <metadata:element>
+                    <data:Street>Diagon Alley</data:Street>
+                    <data:houseNumber>Behind Leaky Couldron</data:houseNumber>
+                    <data:postalCode>10127</data:postalCode>
+                    <data:city>London</data:city>
+                    <data:country>UK</data:country>
+                </metadata:element>
+            </data:address>
+            <data:date metadata:type="DateTimeOffset">2014-05-02T12:00Z</data:date>
+        </metadata:properties>
+    </content>
+</entry>

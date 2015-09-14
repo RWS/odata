@@ -1,0 +1,7 @@
+https:
+    enabled: false
+    port: 8084
+    keystore-path: config/keystore
+    key-alias: tomcat
+    keystore-passwd:  changeit
+    truststore-passwd: changeit

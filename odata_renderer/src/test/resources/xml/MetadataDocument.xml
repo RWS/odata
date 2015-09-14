@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?><edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+    <edmx:DataServices>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="ODataDemo">
+            <EntityType Name="Customer">
+                <Key>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="id" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" Nullable="false"/>
+                <Property Name="Phone" Type="Collection(Edm.String)" Nullable="true"/>
+                <Property Name="address" Type="Collection(ODataDemo.Address)" Nullable="false"/>
+                <Property Name="date" Type="Edm.DateTimeOffset" Nullable="false"/>
+                <NavigationProperty Name="Orders" Type="Collection(ODataDemo.Order)" Nullable="false" Partner="customer"/>
+                <NavigationProperty Name="BankAccount" Type="ODataDemo.BankAccount" Nullable="true"/>
+            </EntityType>
+            <EntityType Name="AbstractEntityTypeSample" Abstract="true">
+                <Key>
+                    <PropertyRef Name="InheritedId"/>
+                </Key>
+                <Property Name="InheritedId" Type="Edm.String" Nullable="true"/>
+                <Property Name="InheritedProperty" Type="Edm.String" Nullable="true"/>
+            </EntityType>
+            <EntityType BaseType="ODataDemo.AbstractEntityTypeSample" Name="EntityTypeSample">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="InheritedId" Type="Edm.String" Nullable="true"/>
+                <Property Name="InheritedProperty" Type="Edm.String" Nullable="true"/>
+                <Property Name="Id" Type="Edm.String" Nullable="false"/>
+                <Property Name="ComplexTypeProperty" Type="ODataDemo.ComplexTypeSample" Nullable="true"/>
+                <Property Name="ComplexTypeProperties" Type="Collection(ODataDemo.ComplexTypeSample)" Nullable="true"/>
+            </EntityType>
+            <EntityType Name="Order">
+                <Key>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="id" Type="Edm.Int64" Nullable="false"/>
+                <NavigationProperty Name="customer" Type="ODataDemo.Customer" Nullable="false"/>
+                <NavigationProperty Name="orderLines" Type="Collection(ODataDemo.OrderLine)" Nullable="true"/>
+            </EntityType>
+            <EntityType Name="Product">
+                <Key>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="id" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" Nullable="false"/>
+                <Property Name="category" Type="ODataDemo.Category" Nullable="true"/>
+            </EntityType>
+            <EntityType Name="BankAccount">
+                <Key>
+                    <PropertyRef Name="iban"/>
+                </Key>
+                <Property Name="iban" Type="Edm.String" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="SingletonSample">
+                <Key>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="id" Type="Edm.Guid" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="ODataDemoEntity">
+                <Key>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="id" Type="Edm.String" Nullable="true"/>
+                <Property Name="name" Type="Edm.String" Nullable="true"/>
+                <Property Name="properties" Type="Collection(ODataDemo.ODataDemoProperty)" Nullable="true"/>
+            </EntityType>
+            <ComplexType Name="AbstractComplexTypeSample" Abstract="true">
+                <Property Name="InheritedProperty" Type="Edm.String" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="ComplexTypeSample">
+                <Property Name="InheritedProperty" Type="Edm.String" Nullable="true"/>
+                <Property Name="SimpleProperty" Type="Edm.String" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="Address">
+                <Property Name="Street" Type="Edm.String" Nullable="false"/>
+                <Property Name="houseNumber" Type="Edm.String" Nullable="false"/>
+                <Property Name="postalCode" Type="Edm.String" Nullable="false"/>
+                <Property Name="city" Type="Edm.String" Nullable="false"/>
+                <Property Name="country" Type="Edm.String" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="ODataDemoProperty">
+                <Property Name="propertyName" Type="Edm.String" Nullable="true"/>
+                <Property Name="propertyType" Type="ODataDemo.ODataDemoPropertyType" Nullable="true"/>
+                <Property Name="defaultValue" Type="ODataDemo.ODataDemoPropertyValue" Nullable="true"/>
+                <Property Name="requires" Type="Collection(Edm.String)" Nullable="true"/>
+                <Property Name="implies" Type="Collection(Edm.String)" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="ODataDemoPropertyValue">
+                <Property Name="booleanValue" Type="Edm.Boolean" Nullable="true"/>
+                <Property Name="integerValue" Type="Edm.Int32" Nullable="true"/>
+                <Property Name="floatValue" Type="Edm.Double" Nullable="true"/>
+                <Property Name="setValue" Type="Collection(Edm.String)" Nullable="true"/>
+                <Property Name="stringValue" Type="Edm.String" Nullable="true"/>
+                <Property Name="versionValue" Type="ODataDemo.ODataVersion" Nullable="true"/>
+                <Property Name="pathValue" Type="ODataDemo.ODataDemoClassification" Nullable="true"/>
+                <Property Name="type" Type="ODataDemo.ODataDemoPropertyType" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="ODataVersion">
+                <Property Name="name" Type="Edm.String" Nullable="true"/>
+                <Property Name="majorVersionPart" Type="ODataDemo.ODataVersionPart" Nullable="true"/>
+                <Property Name="minorVersionPart" Type="ODataDemo.ODataVersionPart" Nullable="true"/>
+                <Property Name="incrementalVersionPart" Type="ODataDemo.ODataVersionPart" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="ODataVersionPart">
+                <Property Name="number" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="modifier" Type="Edm.String" Nullable="true"/>
+                <Property Name="modifierNumber" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="modifierPriority" Type="Edm.Int32" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="ODataDemoClassification">
+                <Property Name="classifications" Type="Collection(Edm.String)" Nullable="true"/>
+                <Property Name="key" Type="Edm.String" Nullable="true"/>
+            </ComplexType>
+            <EnumType Name="Category">
+                <Member Name="BOOKS"/>
+                <Member Name="ELECTRONICS"/>
+                <Member Name="HOUSEHOLD"/>
+            </EnumType>
+            <EnumType Name="ODataDemoPropertyType">
+                <Member Name="CLASSIFICATION"/>
+                <Member Name="BOOLEAN"/>
+                <Member Name="INTEGER"/>
+                <Member Name="FLOAT"/>
+                <Member Name="SET"/>
+                <Member Name="STRING"/>
+                <Member Name="VERSION"/>
+            </EnumType>
+            <EntityContainer Name="ODataDemoContainer">
+                <EntitySet Name="Customers" EntityType="ODataDemo.Customer">
+                    <NavigationPropertyBinding Path="Orders" Target="Orders"/>
+                    <NavigationPropertyBinding Path="BankAccount" Target="BankAccounts"/>
+                </EntitySet>
+                <EntitySet Name="AbstractEntityTypeSamples" EntityType="ODataDemo.AbstractEntityTypeSample"/>
+                <EntitySet Name="EntityTypeSamples" EntityType="ODataDemo.EntityTypeSample"/>
+                <EntitySet Name="Orders" EntityType="ODataDemo.Order">
+                    <NavigationPropertyBinding Path="customer" Target="Customers"/>
+                </EntitySet>
+                <EntitySet Name="Products" EntityType="ODataDemo.Product"/>
+                <EntitySet Name="BankAccounts" EntityType="ODataDemo.BankAccount"/>
+                <EntitySet Name="PrimitiveTypesSamples" EntityType="ODataSample.PrimitiveTypesSample"/>
+                <EntitySet Name="CollectionsSamples" EntityType="ODataSample.CollectionsSample"/>
+                <EntitySet Name="IdNamePairSamples" EntityType="ODataSample.IdNamePairSample"/>
+                <EntitySet Name="ExpandedPropertiesSamples" EntityType="ODataSample.ExpandedPropertiesSample">
+                    <NavigationPropertyBinding Path="ExpandedEntry" Target="IdNamePairSamples"/>
+                    <NavigationPropertyBinding Path="ExpandedFeed" Target="IdNamePairSamples"/>
+                    <NavigationPropertyBinding Path="Entry" Target="IdNamePairSamples"/>
+                    <NavigationPropertyBinding Path="Feed" Target="IdNamePairSamples"/>
+                </EntitySet>
+                <EntitySet Name="ComplexKeySamples" EntityType="ODataSample.ComplexKeySample"/>
+                <EntitySet Name="ODataDemoEntities" EntityType="ODataDemo.ODataDemoEntity"/>
+                <Singleton Name="SingletonSample" Type="ODataDemo.SingletonSample"/>
+            </EntityContainer>
+        </Schema>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="ODataSample">
+            <EntityType Name="PrimitiveTypesSample">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="Name" Type="Edm.String" Nullable="false"/>
+                <Property Name="NullProperty" Type="Edm.String" Nullable="true"/>
+                <Property Name="BinaryProperty" Type="Edm.Binary" Nullable="true"/>
+                <Property Name="BooleanProperty" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="ByteProperty" Type="Edm.Byte" Nullable="true"/>
+                <Property Name="DateProperty" Type="Edm.Date" Nullable="true"/>
+                <Property Name="DateTimeOffsetProperty" Type="Edm.DateTimeOffset" Nullable="true"/>
+                <Property Name="DurationProperty" Type="Edm.Duration" Nullable="true"/>
+                <Property Name="TimeOfDayProperty" Type="Edm.TimeOfDay" Nullable="true"/>
+                <Property Name="DecimalValueProperty" Type="Edm.Decimal" Nullable="true"/>
+                <Property Name="DoubleProperty" Type="Edm.Double" Nullable="false"/>
+                <Property Name="SingleProperty" Type="Edm.Single" Nullable="false"/>
+                <Property Name="GuidProperty" Type="Edm.Guid" Nullable="true"/>
+                <Property Name="Int16Property" Type="Edm.Int16" Nullable="false"/>
+                <Property Name="Int32Property" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="SByteProperty" Type="Edm.SByte" Nullable="true"/>
+            </EntityType>
+            <EntityType Name="CollectionsSample">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="Name" Type="Edm.String" Nullable="false"/>
+                <Property Name="PrimitivesCollection" Type="Collection(Edm.String)" Nullable="true"/>
+                <Property Name="EnumCollection" Type="Collection(ODataSample.EnumSample)" Nullable="true"/>
+                <Property Name="IdNamePairCollection" Type="Collection(ODataSample.IdNamePairComplex)" Nullable="true"/>
+            </EntityType>
+            <EntityType Name="IdNamePairSample">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="Name" Type="Edm.String" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="ExpandedPropertiesSample">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="Name" Type="Edm.String" Nullable="false"/>
+                <NavigationProperty Name="ExpandedEntry" Type="ODataSample.IdNamePairSample" Nullable="false"/>
+                <NavigationProperty Name="ExpandedFeed" Type="Collection(ODataSample.IdNamePairSample)" Nullable="false"/>
+                <NavigationProperty Name="Entry" Type="ODataSample.IdNamePairSample" Nullable="false"/>
+                <NavigationProperty Name="Feed" Type="Collection(ODataSample.IdNamePairSample)" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="ComplexKeySample">
+                <Key>
+                    <PropertyRef Name="id"/>
+                    <PropertyRef Name="name"/>
+                    <PropertyRef Name="period"/>
+                </Key>
+                <Property Name="id" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" Nullable="false"/>
+                <Property Name="period" Type="Edm.Duration" Nullable="true"/>
+            </EntityType>
+            <ComplexType Name="IdNamePairComplex">
+                <Property Name="ID" Type="Edm.Int64" Nullable="false"/>
+                <Property Name="Name" Type="Edm.String" Nullable="false"/>
+            </ComplexType>
+            <EnumType Name="EnumSample">
+                <Member Name="VALUE1"/>
+                <Member Name="VALUE2"/>
+            </EnumType>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

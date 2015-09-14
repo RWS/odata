@@ -1,0 +1,12 @@
+{
+    "MyString": "Some text",
+    "MyByteProperty": 127,
+    "MyShortProperty": 1,
+    "MyIntegerProperty": 2,
+    "MyFloatProperty": 3.0,
+    "MyDoubleProperty": 4.0,
+    "MyLongProperty": 5,
+    "MyBooleanProperty": true,
+    "MyUUIDProperty": "23492a5b-c4f1-4a50-b7a5-d8ebd6067902",
+    "DecimalValueProperty": 21
+}
