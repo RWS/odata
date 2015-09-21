@@ -107,7 +107,6 @@
         <junit.version>4.12</junit.version>
         <logback.version>1.1.3</logback.version>
         <mockito.version>1.9.5</mockito.version>
-        <odata.version>${project.version}</odata.version>
         <scala.version>2.10.5</scala.version>
         <scalatest.version>2.1.3</scalatest.version>
         <servlet.api.version>3.0.1</servlet.api.version>
@@ -288,57 +287,57 @@
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_api</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_client_api</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_edm</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_parser</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_processor</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_renderer</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_service</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_common</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_controller</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_test</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_webservice</artifactId>
-                <version>${odata.version}</version>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
