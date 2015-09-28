@@ -40,6 +40,22 @@ In order to build and run the OData framework on your pc the following is requir
 
 If above pre-requisites are met building is as simple as running the following command `mvn clean install`
 
+# Maven Artefacts
+```
+<depedencies>
+   <dependency>
+      <groupId>com.sdl</groupId>
+      <artifactId>odata_service</artifactId>
+      <version>2.0.4</version>
+   </dependency>
+   <dependency>
+      <groupId>com.sdl</groupId>
+      <artifactId>odata_common</artifactId>
+      <version>2.0.4</version>
+   </dependency>
+<dependencies>
+```
+
 ## Components
 
 The SDL OData v4 Framework consists of the following Architecture components, each represented by their own Maven module:
