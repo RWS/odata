@@ -79,19 +79,6 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
-                    <execution>
-                        <id>ant-attach-artifact</id>
-                        <phase>install</phase>
-                        <configuration>
-                            <target>
-                                <zip destfile="${project.build.directory}/${project.artifactId}.zip" basedir="${assembly.build.directory}" />
-                                <attachartifact file="${project.build.directory}/${project.artifactId}.zip" type="zip" />
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
                 </executions>
             </plugin>
             <plugin>
