@@ -35,6 +35,8 @@ import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 public class ODataJsonActionParser extends AbstractActionParser {
     private static final Logger LOG = LoggerFactory.getLogger(ODataJsonActionParser.class);
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     public ODataJsonActionParser(ODataRequestContext newRequestContext) {
         super(newRequestContext);
     }
@@ -45,8 +47,8 @@ public class ODataJsonActionParser extends AbstractActionParser {
         if (isNullOrEmpty(body)) {
             return Collections.emptyMap();
         }
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> parsedMap = mapper.readValue(body, new TypeReference<HashMap<String, Object>>() {
+
+        Map<String, Object> parsedMap = OBJECT_MAPPER.readValue(body, new TypeReference<HashMap<String, Object>>() {
         });
         LOG.debug("The request body is parsed to map: {}", parsedMap);
         return parsedMap;

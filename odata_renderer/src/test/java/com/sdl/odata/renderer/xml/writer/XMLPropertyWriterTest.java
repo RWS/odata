@@ -56,9 +56,11 @@ import static org.junit.Assert.assertTrue;
 public class XMLPropertyWriterTest extends WriterTest {
 
     private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+    private static final String UNICODE_STRING = "Japanese: 日本語 Cyrillic: Кириллица,Кирилиця,Кірыліца,Ћирилица";
     private XMLPropertyWriter propertyWriter;
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_LIST_PATH = "/xml/AbstractComplexTypeListSample.xml";
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_PATH = "/xml/AbstractComplexTypeSample.xml";
+    private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_UTF_PATH = "/xml/AbstractComplexTypeUnicodeSample.xml";
 
     @Before
     public void setUp() throws Exception {
@@ -106,6 +108,18 @@ public class XMLPropertyWriterTest extends WriterTest {
         NodeList nodeList = assertNodeList(xml, 1);
         assertThat(nodeList.item(0).getTextContent(), is("1"));
         assertAttributes(nodeList, 4, "metadata:type", "Int64");
+    }
+
+    @Test
+    public void testGetXMLForNonNullPrimitiveUnicodeProperty() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/Customers(1)/name");
+
+        // business method which needs unit test
+        String xml = propertyWriter.getPropertyAsString(UNICODE_STRING);
+
+        // Checking expected values
+        NodeList nodeList = assertNodeList(xml, 1);
+        assertThat(nodeList.item(0).getTextContent(), is(UNICODE_STRING));
     }
 
     @Test
@@ -173,6 +187,13 @@ public class XMLPropertyWriterTest extends WriterTest {
         prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperties");
         String xml = propertyWriter.getPropertyAsString(createComplexTypeListSample());
         assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_LIST_PATH)), prettyPrintXml(xml));
+    }
+
+    @Test
+    public void testJSONForComplexPropertyWithUnicodeCharacters() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperty");
+        String xml = propertyWriter.getPropertyAsString(createComplexType("Prop 1", UNICODE_STRING));
+        assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_UTF_PATH)), prettyPrintXml(xml));
     }
 
     @Test

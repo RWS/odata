@@ -15,10 +15,12 @@
  */
 package com.sdl.odata.client.api.model;
 
+import java.io.Serializable;
+
 /**
  * An interface containing one method to return an id for an entity.
  */
-public interface ODataIdAwareEntity {
+public interface ODataIdAwareEntity extends Serializable {
 
     String getId();
 }

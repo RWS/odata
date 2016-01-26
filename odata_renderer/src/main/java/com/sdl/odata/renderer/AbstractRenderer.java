@@ -228,14 +228,4 @@ public abstract class AbstractRenderer implements ODataRenderer {
                     String.format("Not possible to create context URL for request %s", requestContext));
         }
     }
-
-    /**
-     * Returns the rendered odata entity (for batch request purposes mainly.
-     * This method is to get overridden in renderer classes.
-     *
-     * @return Rendered data.
-     */
-    public String getRenderedData() {
-        return null;
-    }
 }

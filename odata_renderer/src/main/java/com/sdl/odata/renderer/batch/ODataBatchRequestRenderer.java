@@ -21,6 +21,7 @@ import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataBatchException;
 import com.sdl.odata.api.parser.ODataBatchRendererException;
 import com.sdl.odata.api.processor.ProcessorResult;
+import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -257,12 +258,16 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
     private String getRenderedJSON(ProcessorResult result) throws ODataException {
         LOG.debug("JSON found as the content type. JSON Renderer will be used to render the result data");
         JsonRenderer renderer = new JsonRenderer();
-        renderer.render(result.getRequestContext(), result.getData(), null);
+
+        ODataResponse.Builder builder = new ODataResponse.Builder()
+                .setStatus(result.getStatus());
+        renderer.render(result.getRequestContext(), result.getData(), builder);
 
         try {
             // pretty print
             ObjectMapper objectMapper = new ObjectMapper();
-            Object jsonObject = objectMapper.readValue(renderer.getRenderedData(), Object.class);
+            Object jsonObject = objectMapper.readValue(builder.build().getBodyText(StandardCharsets.UTF_8.name()),
+                    Object.class);
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
         } catch (IOException ex) {
             throw new ODataBatchRendererException("Unable to pretty print following json data");
@@ -273,9 +278,16 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
     private String getRenderedXML(ProcessorResult result) throws ODataException {
         LOG.debug("Content Type not specified. Atom Renderer will be used to render the result data");
         AbstractRenderer atomRenderer = new AtomRenderer();
-        atomRenderer.render(result.getRequestContext(), result.getData(), null);
+        ODataResponse.Builder builder = new ODataResponse.Builder()
+                .setStatus(result.getStatus());
 
-        return atomRenderer.getRenderedData();
+        atomRenderer.render(result.getRequestContext(), result.getData(), builder);
+
+        try {
+            return builder.build().getBodyText(StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            throw new ODataRenderException("Unsupported encoding", e.getMessage());
+        }
     }
 
     private int getNumberOfChangeSetsInResult(List<ProcessorResult> result) {

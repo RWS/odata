@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -171,7 +172,7 @@ public class JsonWriter {
         jsonGenerator.writeEndObject();
         jsonGenerator.close();
 
-        return stream.toString();
+        return stream.toString(StandardCharsets.UTF_8.name());
     }
 
     private void marshallEntities(List<?> entities) throws IOException,

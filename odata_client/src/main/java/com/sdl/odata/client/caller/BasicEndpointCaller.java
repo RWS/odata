@@ -18,6 +18,7 @@ package com.sdl.odata.client.caller;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.client.api.caller.EndpointCaller;
 import com.sdl.odata.client.api.exception.ODataClientException;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +32,11 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 
+import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.client.ODataClientConstants.DefaultValues.CLIENT_CONNECTION_MAX_RETRIES_DEFAULT;
 import static com.sdl.odata.client.ODataClientConstants.DefaultValues.CLIENT_PROXY_PORT_DEFAULT;
 import static com.sdl.odata.client.ODataClientConstants.DefaultValues.CLIENT_TIMEOUT_DEFAULT;
@@ -55,7 +59,6 @@ public class BasicEndpointCaller implements EndpointCaller {
     private int proxyServerPort;
     private String proxyServerHostName;
     private int maxRetries;
-    private String accessToken = "";
 
     public BasicEndpointCaller(Properties properties) {
         LOG.trace("Starting to inject client with properties");
@@ -66,49 +69,56 @@ public class BasicEndpointCaller implements EndpointCaller {
         proxyServerPort = proxyPort == null ? CLIENT_PROXY_PORT_DEFAULT : proxyPort;
         maxRetries = getIntegerProperty(properties,
                 CLIENT_CONNECTION_MAX_RETRIES, CLIENT_CONNECTION_MAX_RETRIES_DEFAULT);
-        LOG.debug("Client is initialized with following parameters: host name: {}, timeout: {}, proxy port : {} ",
-                proxyServerHostName, timeout, proxyServerPort);
+
+        logConfiguration();
     }
 
     @Override
-    public void setAccessToken(String token) {
-        accessToken = token;
+    public String callEndpoint(Map<String, String> requestProperties, URL urlToCall) throws ODataClientException {
+        LOG.debug("Preparing the call endpoint for given url: {}", urlToCall);
+        URLConnection conn = getConnection(requestProperties, urlToCall);
+        return getResponse(conn, urlToCall);
     }
 
-    /**
-     * Performs the call endpoint for the given url.
-     *
-     * @param url url
-     * @return response
-     * @throws ODataClientException
-     */
     @Override
-    public String callEndpoint(URL url) throws ODataClientException {
-        LOG.debug("Preparing the call endpoint for given url: {}", url);
-        URLConnection conn = getConnection(url);
-        return getResponse(conn, url);
+    public InputStream getInputStream(Map<String, String> requestProperties, URL url) throws ODataClientException {
+        try {
+            return getConnection(requestProperties, url).getInputStream();
+        } catch (IOException e) {
+            throw new ODataClientException("Unable to get connection input stream for url: " + url, e);
+        }
     }
 
-    private String sendRequest(URL urlToCall, String postRequestBody, String requestMethod, MediaType contentType,
-                               MediaType acceptType) throws ODataClientException {
+    private String sendRequest(Map<String, String> requestProperties, URL urlToCall, String postRequestBody,
+                               String requestMethod, MediaType contentType, MediaType acceptType)
+            throws ODataClientException {
         String result = null;
         DataOutputStream dataOutputStream = null;
         BufferedReader bufferedReader = null;
         InputStream inputStream = null;
 
+        Map<String, String> properties;
+        // requestProperties may be immutable. It can be null or empty, so copying will take place if necessary.
+        if (requestProperties == null || requestProperties.isEmpty()) {
+            properties = new HashMap<>();
+        } else {
+            properties = new HashMap<>(requestProperties);
+        }
+        properties.put("Accept", acceptType.toString());
+        properties.put("Content-Type", contentType.toString());
+        properties.put("Content-Length", String.valueOf(postRequestBody.length()));
+
+        HttpURLConnection httpConnection = (HttpURLConnection) getConnection(properties, urlToCall);
+
         try {
-            HttpURLConnection httpConnection = (HttpURLConnection) getConnection(urlToCall);
-            // Set request type and add request headers
             httpConnection.setRequestMethod(requestMethod);
-            httpConnection.setRequestProperty("Accept", acceptType.toString());
-            httpConnection.setRequestProperty("Content-Type", contentType.toString());
-            httpConnection.setRequestProperty("Content-Length", String.valueOf(postRequestBody.length()));
-            // Send post request
+
+            // Send request
             httpConnection.setDoOutput(true);
             dataOutputStream = new DataOutputStream(httpConnection.getOutputStream());
             dataOutputStream.writeBytes(postRequestBody);
             dataOutputStream.flush();
-            LOG.debug("POST request ended with {} status code", httpConnection.getResponseCode());
+            LOG.debug("{} request ended with {} status code", requestMethod, httpConnection.getResponseCode());
 
             inputStream = httpConnection.getInputStream();
 
@@ -117,11 +127,19 @@ public class BasicEndpointCaller implements EndpointCaller {
             String inputLine;
 
             while ((inputLine = bufferedReader.readLine()) != null) {
-                response.append(inputLine);
+                response.append(inputLine).append(System.lineSeparator());
             }
             result = response.toString();
         } catch (IOException e) {
-            throw new ODataClientException("Unable to make POST request to OData service", e);
+            String errorMessage = "Unable to make " + requestMethod + " request to OData service";
+            if (httpConnection.getErrorStream() != null) {
+                try (Scanner errorScanner = new Scanner(httpConnection.getErrorStream())) {
+                    if (errorScanner.useDelimiter("\\A").hasNext()) {
+                        errorMessage = errorScanner.next();
+                    }
+                }
+            }
+            throw new ODataClientException(errorMessage, e);
         } finally {
             try {
                 if (inputStream != null) {
@@ -138,25 +156,32 @@ public class BasicEndpointCaller implements EndpointCaller {
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                throw new ODataClientException("Unable to close stream while POST request to OData client", e);
+                throw new ODataClientException("Unable to close stream while " + requestMethod
+                        + " request to OData client", e);
             }
         }
         return result;
     }
 
-
     @Override
-    public String doPostEntity(URL urlToCall, String postRequestBody, MediaType contentType, MediaType acceptType)
+    public String doPostEntity(Map<String, String> requestProperties, URL urlToCall, String postRequestBody,
+                               MediaType contentType, MediaType acceptType)
             throws ODataClientException {
-        return sendRequest(urlToCall, postRequestBody, "POST", contentType, acceptType);
+        return sendRequest(requestProperties, urlToCall, postRequestBody, "POST", contentType, acceptType);
     }
 
     @Override
-    public String doPutEntity(URL urlToCall, String putRequestBody, MediaType type) throws ODataClientException {
-        return sendRequest(urlToCall, putRequestBody, "PUT", type, type);
+    public String doPutEntity(Map<String, String> requestProperties, URL urlToCall, String putRequestBody,
+                              MediaType type) throws ODataClientException {
+        return sendRequest(requestProperties, urlToCall, putRequestBody, "PUT", type, type);
     }
 
-    private URLConnection getConnection(URL url) throws ODataClientException {
+    @Override
+    public void doDeleteEntity(Map<String, String> requestProperties, URL urlToCall) throws ODataClientException {
+        sendRequest(requestProperties, urlToCall, "", "DELETE", ATOM_XML, ATOM_XML);
+    }
+
+    private URLConnection getConnection(Map<String, String> requestProperties, URL url) throws ODataClientException {
         URLConnection urlConnection;
         try {
             if (proxyServerHostName == null) {
@@ -175,9 +200,9 @@ public class BasicEndpointCaller implements EndpointCaller {
             throw processedException(e, url, " when getting connection to");
         }
 
-        // Setting authorization header, if provided.
-        if (accessToken != null && !accessToken.isEmpty()) {
-            urlConnection.setRequestProperty("Authorization", "Bearer " + accessToken);
+        if (requestProperties != null && !requestProperties.isEmpty()) {
+            requestProperties.entrySet().stream()
+                    .forEach(entry -> urlConnection.setRequestProperty(entry.getKey(), entry.getValue()));
         }
         return urlConnection;
     }
@@ -194,7 +219,7 @@ public class BasicEndpointCaller implements EndpointCaller {
             buf = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String line;
             while ((line = buf.readLine()) != null) {
-                response.append(line);
+                response.append(line).append(System.lineSeparator());
             }
         } catch (IOException | RuntimeException e) {
             throw processedException(e, url, " when accessing");
@@ -255,4 +280,15 @@ public class BasicEndpointCaller implements EndpointCaller {
                 e);
     }
 
+    private void logConfiguration() {
+        if (LOG.isDebugEnabled()) {
+            StringBuilder configurationLog = new StringBuilder("Client is initialized with following parameters: ");
+            configurationLog.append("timeout: ").append(timeout).append(", maxRetries: ").append(maxRetries);
+            if (proxyServerHostName != null) {
+                configurationLog.append(", proxyServerHostName: ").append(proxyServerHostName);
+                configurationLog.append(", proxyServerPort: ").append(proxyServerPort);
+            }
+            LOG.debug(configurationLog.toString());
+        }
+    }
 }

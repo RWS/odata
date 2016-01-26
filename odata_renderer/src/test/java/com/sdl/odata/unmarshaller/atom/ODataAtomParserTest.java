@@ -22,7 +22,6 @@ import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -74,8 +73,6 @@ public class ODataAtomParserTest extends UnmarshallerTest {
     }
 
     @Test
-    @Ignore
-    // This test requires that navigation links to collections has been implemented according to spec
     public void testCustomerWithLinksSample() throws Exception {
 
         preparePostRequestContext(CUSTOMER_WITH_LINKS_PATH_WRITE);

@@ -47,6 +47,7 @@ import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.writeElementWithNull
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.writePrimitiveCollection;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.writePrimitiveElement;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * This class responsible for writing property in XML format.
@@ -87,7 +88,7 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
             XMLStreamWriter writer = startElement(outputStream, VALUE, HASH + typeFullyQualifiedName, context, true);
             handleCollectionAndComplexProperties(entity, type, writer);
             endElement(writer);
-            return outputStream.toString();
+            return outputStream.toString(UTF_8.name());
         } catch (XMLStreamException | IOException e) {
             throw new ODataRenderException("Error while rendering complex property value.", e);
         }

@@ -49,7 +49,6 @@ import static com.sdl.odata.api.service.ODataRequestContextUtil.isWriteOperation
 public final class AtomRenderer extends AbstractAtomRenderer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AtomRenderer.class);
-    private String renderedData;
 
     @Override
     public int score(ODataRequestContext requestContext, Object data) {
@@ -81,7 +80,7 @@ public final class AtomRenderer extends AbstractAtomRenderer {
             atomWriter.writeEntry(data, buildContextURL(requestContext, data));
         }
         atomWriter.endDocument();
-        renderedData = atomWriter.getXml();
+        String renderedData = atomWriter.getXml();
 
         if (responseBuilder != null) {
             try {
@@ -96,10 +95,4 @@ public final class AtomRenderer extends AbstractAtomRenderer {
 
         LOG.debug("End rendering entity(es) for request: {}", requestContext);
     }
-
-    @Override
-    public String getRenderedData() {
-        return renderedData;
-    }
-
 }

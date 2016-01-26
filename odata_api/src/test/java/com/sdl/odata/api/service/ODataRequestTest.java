@@ -20,9 +20,11 @@ import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for {@link ODataRequest}.
@@ -91,5 +93,35 @@ public class ODataRequestTest {
         assertThat(mediaType3.getSubType(), is("*"));
         assertThat(mediaType3.getParameters().size(), is(1));
         assertThat(mediaType3.getParameter("q"), is("0.1"));
+    }
+
+    @Test
+    public void testBuilderWithAdditionalData() throws UnsupportedEncodingException {
+        ODataRequest request = new ODataRequest.Builder()
+                .setMethod(ODataRequest.Method.GET)
+                .setUri("http://localhost:8080/test")
+                .addAditionalData(new Person("PersonName"))
+                .build();
+
+        assertThat(request.getMethod(), is(ODataRequest.Method.GET));
+        assertThat(request.getUri(), is("http://localhost:8080/test"));
+        Optional<Person> personData = request.getAdditionalData(Person.class);
+        assertTrue(personData.isPresent());
+        assertThat(personData.get().getName(), is("PersonName"));
+    }
+
+    /**
+     * Sample class to test additional parameters in oDataRequest.
+     */
+    class Person {
+        private final String name;
+
+        Person(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }

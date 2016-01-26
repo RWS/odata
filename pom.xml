@@ -102,7 +102,7 @@
         <apache.commons.codec.version>1.9</apache.commons.codec.version>
         <apache.procrun.version>1.0</apache.procrun.version>
         <guava.version>18.0</guava.version>
-        <jackson.version>2.4.5</jackson.version>
+        <jackson.version>2.6.0</jackson.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.1.3</logback.version>
         <mockito.version>1.9.5</mockito.version>
@@ -382,6 +382,16 @@
         <pluginManagement>
             <plugins>
 
+<plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.2</version>
+                    <configuration>
+                        <includes>
+                            <include>com.sdl:*</include>
+                        </includes>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
@@ -490,6 +500,17 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.9.1</version>
+                </plugin>
+            <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.3</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -680,6 +701,11 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <extensions>true</extensions>
                     </plugin>
                 </plugins>
             </build>

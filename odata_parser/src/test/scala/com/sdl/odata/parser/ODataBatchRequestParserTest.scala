@@ -16,6 +16,7 @@
 package com.sdl.odata.parser
 
 import com.sdl.odata.api.parser.ODataBatchParseException
+import org.junit.Assert.assertEquals
 import org.scalatest.FunSuite
 
 import scala.io.Source
@@ -27,7 +28,7 @@ class ODataBatchRequestParserTest extends FunSuite {
 
   val batchRequestParser = new ODataBatchRequestParser
   val newLine = sys.props("line.separator")
-  
+
   test("Batch request with only individual request") {
     val testBatchRequestBody = "--batch_36522ad7-fc75-4b56-8c71-56071383e77b" + newLine +
       "Content-Type: application/http" + newLine +
@@ -38,7 +39,7 @@ class ODataBatchRequestParserTest extends FunSuite {
       newLine +
       newLine +
       "--batch_36522ad7-fc75-4b56-8c71-56071383e77b--"
-    
+
     implicit val parsedContent = batchRequestParser.parseBatch(testBatchRequestBody)
 
     assert(parsedContent != null)
@@ -46,20 +47,20 @@ class ODataBatchRequestParserTest extends FunSuite {
     assert(parsedContent.requestComponents.size == 1)
 
     assert(parsedContent.requestComponents(0).isInstanceOf[BatchRequestComponent])
-    
+
     val indvRequestComponent = parsedContent.requestComponents(0).asInstanceOf[BatchRequestComponent]
-    
+
     assert(indvRequestComponent.getHeaders() != null)
     assert(indvRequestComponent.getRequestDetails() != null)
     assert(indvRequestComponent.getRequestDetails().contains("RequestType"))
-    
+
     assert(indvRequestComponent.getRequestDetails().get("RequestType").get == "GET")
     assert(indvRequestComponent.getRequestDetails().get("RequestEntity").get == "Customers('ALFKI')")
 
     assert(indvRequestComponent.getHeaders().headers.get("Host").get == "localhost")
-    
+
   }
-  
+
   test("Batch request with individual requests and change sets") {
     val fileContents = Source.fromURL(getClass.getResource("/BatchRequestSample1.txt")).mkString
     implicit val parsedContent = batchRequestParser.parseBatch(fileContents)
@@ -392,5 +393,51 @@ class ODataBatchRequestParserTest extends FunSuite {
 
     assert(indvRequestComponent.getHeaders().headers.get("Host").get == "localhost")
 
+  }
+
+  test("CRQ-1019: Batch request with trailing new line whitespaces and trailing request new lines with whitespaces") {
+    val whiteSpacesBatchSource = "--batch_7aa6777a-f7f2-4a45-89ee-a3b72464f51d\n" +
+      "Content-Type: multipart/mixed; boundary=changeset_05118c88-8f0b-43da-be4d-c326e0133670\n " +
+      "\n" +
+      "--changeset_05118c88-8f0b-43da-be4d-c326e0133670\n" +
+      "Content-Type: application/http\n" +
+      "Content-Transfer-Encoding: binary\n" +
+      "Content-ID: 1\n " +
+      "\n" +
+      "POST http://10.100.100.58:8082/discovery.svc/WebApplications HTTP/1.1\n" +
+      "OData-Version: 4.0\n" +
+      "OData-MaxVersion: 4.0\n" +
+      "Content-Type: application/json;odata.metadata=minimal\n" +
+      "Accept: application/json;odata.metadata=minimal\n" +
+      "Accept-Charset: UTF-8\n" +
+      "User-Agent: Microsoft ADO.NET Data Services\n " +
+      "\n" +
+      "{\"@odata.type\":\"#Tridion.WebDelivery.Platform.WebApplication\",\"id\":\"Website2_RootWebApp\",\"ContextURL\":\"/\",\"BaseURLs@odata.type\":\"#Collection(Tridion.WebDelivery.Platform.BaseURL)\",\"BaseURLs\":[{\"@odata.type\":\"#Tridion.WebDelivery.Platform.BaseURL\",\"Protocol\":\"http\",\"Host\":\"localhost\",\"Port\":\"8080\"}],\"ExtensionProperties@odata.type\":\"#Collection(Tridion.WebDelivery.Platform.WebKeyValuePair)\",\"ExtensionProperties\":[],\"WebCapability@odata.bind\":\"http://10.100.100.58:8082/discovery.svc/WebCapabilities('DefaultWeb')\"}\n \n--changeset_05118c88-8f0b-43da-be4d-c326e0133670--\n--batch_7aa6777a-f7f2-4a45-89ee-a3b72464f51d--\n " +
+      "\n "
+    val noWhiteSpacesBatchSource = "--batch_7aa6777a-f7f2-4a45-89ee-a3b72464f51d\n" +
+      "Content-Type: multipart/mixed; boundary=changeset_05118c88-8f0b-43da-be4d-c326e0133670\n " +
+      "\n" +
+      "--changeset_05118c88-8f0b-43da-be4d-c326e0133670\n" +
+      "Content-Type: application/http\n" +
+      "Content-Transfer-Encoding: binary\n" +
+      "Content-ID: 1\n " +
+      "\n" +
+      "POST http://10.100.100.58:8082/discovery.svc/WebApplications HTTP/1.1\n" +
+      "OData-Version: 4.0\n" +
+      "OData-MaxVersion: 4.0\n" +
+      "Content-Type: application/json;odata.metadata=minimal\n" +
+      "Accept: application/json;odata.metadata=minimal\n" +
+      "Accept-Charset: UTF-8\n" +
+      "User-Agent: Microsoft ADO.NET Data Services\n " +
+      "\n" +
+      "{\"@odata.type\":\"#Tridion.WebDelivery.Platform.WebApplication\",\"id\":\"Website2_RootWebApp\",\"ContextURL\":\"/\",\"BaseURLs@odata.type\":\"#Collection(Tridion.WebDelivery.Platform.BaseURL)\",\"BaseURLs\":[{\"@odata.type\":\"#Tridion.WebDelivery.Platform.BaseURL\",\"Protocol\":\"http\",\"Host\":\"localhost\",\"Port\":\"8080\"}],\"ExtensionProperties@odata.type\":\"#Collection(Tridion.WebDelivery.Platform.WebKeyValuePair)\",\"ExtensionProperties\":[],\"WebCapability@odata.bind\":\"http://10.100.100.58:8082/discovery.svc/WebCapabilities('DefaultWeb')\"}\n \n--changeset_05118c88-8f0b-43da-be4d-c326e0133670--\n--batch_7aa6777a-f7f2-4a45-89ee-a3b72464f51d--\n" +
+      "\n"
+
+    val whiteSpacesResult = batchRequestParser.trimRedundantTrailingSpaces(whiteSpacesBatchSource)
+    val noWhiteSpacesResult = batchRequestParser.trimRedundantTrailingSpaces(noWhiteSpacesBatchSource)
+
+    assert(whiteSpacesResult != null)
+    assert(noWhiteSpacesResult != null)
+    assertEquals(whiteSpacesResult, noWhiteSpacesResult)
   }
 }

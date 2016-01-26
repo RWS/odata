@@ -20,6 +20,8 @@ import java.util.Properties;
 
 import static com.sdl.odata.client.ODataClientConstants.Cache.CLIENT_CACHE_ENABLED;
 import static com.sdl.odata.client.ODataClientConstants.Cache.CLIENT_CACHE_EXPIRATION_DURATION;
+import static com.sdl.odata.client.ODataClientConstants.Security.CLIENT_ID;
+import static com.sdl.odata.client.ODataClientConstants.Security.CLIENT_SECRET;
 import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_CONNECTION_TIMEOUT;
 import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_HOST_NAME;
 import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_PORT;
@@ -46,6 +48,8 @@ public class ClientPropertiesBuilder {
         String clientServiceProxyPort = configValues.get(CLIENT_SERVICE_PROXY_PORT);
         String clientCacheEnabled = configValues.get(CLIENT_CACHE_ENABLED);
         String clientCacheExpirationDuration = configValues.get(CLIENT_CACHE_EXPIRATION_DURATION);
+        String oauthClientId = configValues.get(CLIENT_ID);
+        String oauthClientSecret = configValues.get(CLIENT_SECRET);
 
         if (clientServiceUriValue != null) {
             properties.setProperty(CLIENT_SERVICE_URI, clientServiceUriValue);
@@ -65,6 +69,12 @@ public class ClientPropertiesBuilder {
         }
         if (clientCacheExpirationDuration != null) {
             properties.setProperty(CLIENT_CACHE_EXPIRATION_DURATION, clientCacheExpirationDuration);
+        }
+        if (oauthClientId != null) {
+            properties.setProperty(CLIENT_ID, oauthClientId);
+        }
+        if (oauthClientSecret != null) {
+            properties.setProperty(CLIENT_SECRET, oauthClientSecret);
         }
     }
 
@@ -142,4 +152,27 @@ public class ClientPropertiesBuilder {
         properties.setProperty(CLIENT_CACHE_EXPIRATION_DURATION, cacheExpirationTime.toString());
         return this;
     }
+
+    /**
+     * Specify the oauth client id for security credentials.
+     *
+     * @param clientId client id
+     * @return the properties builder
+     */
+    public ClientPropertiesBuilder withClientId(String clientId) {
+        properties.setProperty(ODataClientConstants.Security.CLIENT_ID, clientId);
+        return this;
+    }
+
+    /**
+     * Specify the oauth client id for security credentials.
+     *
+     * @param clientSecret clientSecret
+     * @return the properties builder
+     */
+    public ClientPropertiesBuilder withClientSecret(String clientSecret) {
+        properties.setProperty(ODataClientConstants.Security.CLIENT_SECRET, clientSecret);
+        return this;
+    }
+
 }
