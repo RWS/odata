@@ -81,14 +81,20 @@ public class ODataQueryProcessorImpl implements ODataQueryProcessor {
         ODataQuery query = new QueryModelBuilder(requestContext.getEntityDataModel()).build(requestContext);
         LOG.trace("Query model: {}", query);
 
-        QueryOperationStrategy strategy = dataSourceFactory.getStrategy(requestContext, query.operation(), targetType
-        );
+        List<?> result;
+
+        QueryOperationStrategy strategy = dataSourceFactory.getStrategy(requestContext, query.operation(), targetType);
         if (strategy == null) {
             throw new ODataNotImplementedException("This query is not supported: " +
                     requestContext.getRequest().getUri());
         }
 
-        List<?> result = strategy.execute();
+        try {
+            result = strategy.execute();
+        } catch (Exception e) {
+            LOG.error("Unexpected Exception when executing query.", e);
+            throw e;
+        }
         if (targetType.isCollection()) {
             return new ProcessorResult(OK, result);
         } else {

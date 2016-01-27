@@ -39,7 +39,6 @@ import java.util.List;
 public final class JsonRenderer extends AbstractJsonRenderer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonRenderer.class);
-    private String json;
 
     @Override
     public int score(ODataRequestContext requestContext, Object data) {
@@ -64,6 +63,7 @@ public final class JsonRenderer extends AbstractJsonRenderer {
         JsonWriter writer = new JsonWriter(requestContext.getUri(), requestContext.getEntityDataModel());
 
         String contextUrl = buildContextURL(requestContext, data);
+        String json;
         if (data instanceof List) {
             json = writer.writeFeed((List<?>) data, contextUrl);
         } else {
@@ -82,10 +82,4 @@ public final class JsonRenderer extends AbstractJsonRenderer {
 
         LOG.debug("End rendering entity(es) for request: {}", requestContext);
     }
-
-    @Override
-    public String getRenderedData() {
-        return json;
-    }
-
 }

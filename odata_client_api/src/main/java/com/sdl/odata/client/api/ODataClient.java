@@ -15,9 +15,13 @@
  */
 package com.sdl.odata.client.api;
 
+import com.sdl.odata.client.api.exception.ODataClientException;
 import com.sdl.odata.client.api.model.ODataIdAwareEntity;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -47,35 +51,42 @@ public interface ODataClient {
     /**
      * Gets the specific entity.
      *
+     *
+     * @param requestProperties request related properties
      * @param query ODataClientQuery
      * @return target entity
      */
-    Object getEntity(ODataClientQuery query);
+    Object getEntity(Map<String, String> requestProperties, ODataClientQuery query);
 
     /**
      * Gets all possible entities of a specific entity.
      * <p>
      * {@code client.getEntities(TargetEntity.class)}
      *
+     *
+     * @param requestProperties request related properties
      * @param query ODataClientQuery
      * @return collection of entities
      */
-    List<?> getEntities(ODataClientQuery query);
+    List<?> getEntities(Map<String, String> requestProperties, ODataClientQuery query);
 
     /**
      * Performs an action execution and retrieves the result back.
+     *
+     * @param requestProperties request related properties
      * @param query ODataClientQuery
      * @return  executed action result
      */
-    Object performAction(ODataActionClientQuery query);
+    Object performAction(Map<String, String> requestProperties, ODataActionClientQuery query);
 
     /**
      * Gets the metadata.
      *
+     * @param requestProperties request related properties
      * @param builder ODataClientQuery builder
      * @return target metadata
      */
-    Object getMetaData(ODataClientQuery builder);
+    Object getMetaData(Map<String, String> requestProperties, ODataClientQuery builder);
 
     /**
      * Get all links for the given entity.
@@ -96,16 +107,34 @@ public interface ODataClient {
     /**
      * Create an entity using POST request to a service.
      *
+     *
+     * @param requestProperties request related properties
      * @param entity    entity to save
      * @return created entity
      */
-    Object createEntity(Object entity);
+    Object createEntity(Map<String, String> requestProperties, Object entity);
 
     /**
      * Update an existing entity using PUT request to a service.
      *
+     * @param requestProperties request related properties
      * @param entity    entity to update
      * @return updated entity
      */
-    Object updateEntity(ODataIdAwareEntity entity);
+    Object updateEntity(Map<String, String> requestProperties, ODataIdAwareEntity entity);
+
+    /**
+     * Delete an existing entity using DELETE request to a service.
+     *
+     * @param entity entity to delete
+     */
+    void deleteEntity(Map<String, String> requestProperties, ODataIdAwareEntity entity);
+
+    /**
+     * Get input stream with applied OData settings (proxy connection, OAuth, timeout settings).
+     * See {@link com.sdl.odata.client.api.caller.EndpointCaller#getInputStream(Map, URL)}.
+     * @param url URL to get input stream
+     * @return input stream for passed URL parameter
+     */
+    InputStream getInputStream(Map<String, String> requestProperties, URL url) throws ODataClientException;
 }

@@ -59,7 +59,7 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
     private static final Logger LOG = getLogger(AtomEntityUnmarshaller.class);
     private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
     private static final Pattern PRIMITIVE_VALUE_RESPONSE_PATTERN = Pattern.compile(
-            "<metadata:value[^>]+>(.*)</metadata:value>");
+            "<metadata:value[^>]+>(.*)</metadata:value>", Pattern.DOTALL);
     /**
      * Types that should be unmarshalled as primitive values.
      */

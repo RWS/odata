@@ -49,8 +49,9 @@ class ODataBatchRequestParser extends RegexParsers {
     case NoSuccess(msg, _) => throw new ODataBatchParseException(msg)
   }
 
+  // Trim redundant trailing spaces and trailing request line separators
   def trimRedundantTrailingSpaces(input: String): String = {
-    input.split(lineSeparator).map(_.trim).mkString(lineSeparator.toString)
+    input.split(lineSeparator).map(_.trim).reverse.dropWhile(_.isEmpty).reverse.mkString(lineSeparator.toString)
   }
 
   def parseBatchRequest: Parser[ODataBatchRequestContent] = parseRequestContent ^^ {
@@ -74,7 +75,7 @@ class ODataBatchRequestParser extends RegexParsers {
     case parsedBatchId => {
       batchId = parsedBatchId.replaceFirst("--","").trim
     }
-    
+
   }
   //application -> Query Request , multipart -> changeSet Request
   def chooseRequest: Parser[ODataRequestComponent] =

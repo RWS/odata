@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_HOST_NAME;
 import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_PORT;
+import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -39,7 +40,7 @@ public class BasicEndpointCallerTest {
     public void basicTest() throws ODataClientException {
         URL urlForFile = this.getClass().getResource(RESPONSE);
         BasicEndpointCaller caller = new BasicEndpointCaller(new Properties());
-        String response = caller.callEndpoint(urlForFile);
+        String response = caller.callEndpoint(emptyMap(), urlForFile);
         Assert.assertEquals(URLTestUtils.loadTextFile(RESPONSE), response);
     }
 
@@ -52,7 +53,7 @@ public class BasicEndpointCallerTest {
         BasicEndpointCaller caller = new BasicEndpointCaller(properties);
 
         try {
-            caller.callEndpoint(ioExceptionOnConnectUrl);
+            caller.callEndpoint(emptyMap(), ioExceptionOnConnectUrl);
         } catch (ODataClientException e) {
             assertEquals("Caught 'IOException:Mock IOException from openConnection' when getting connection" +
                     " to URL 'http://mock.com://service:80' (proxy='localhost' port='9999')", e.getMessage());
@@ -68,7 +69,7 @@ public class BasicEndpointCallerTest {
         properties.setProperty(CLIENT_SERVICE_PROXY_PORT, "");
 
         BasicEndpointCaller caller = new BasicEndpointCaller(properties);
-        String response = caller.callEndpoint(url);
+        String response = caller.callEndpoint(emptyMap(), url);
 
         Assert.assertEquals(URLTestUtils.loadTextFile(RESPONSE), response);
     }
@@ -82,7 +83,7 @@ public class BasicEndpointCallerTest {
         properties.setProperty(CLIENT_SERVICE_PROXY_PORT, "0");
 
         BasicEndpointCaller nativeUrlAccessor = new BasicEndpointCaller(properties);
-        String response = nativeUrlAccessor.callEndpoint(urlForFile);
+        String response = nativeUrlAccessor.callEndpoint(emptyMap(), urlForFile);
 
         Assert.assertEquals(URLTestUtils.loadTextFile(RESPONSE), response);
     }

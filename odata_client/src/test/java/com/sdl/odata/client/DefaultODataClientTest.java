@@ -50,9 +50,11 @@ import static com.sdl.odata.client.util.MarshallingTestUtilities.createODataUri;
 import static com.sdl.odata.test.model.Category.BOOKS;
 import static com.sdl.odata.test.model.Category.ELECTRONICS;
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
+import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -103,8 +105,9 @@ public class DefaultODataClientTest {
         String marshalledProduct = atomMarshall(
                 products, createODataUri("http://mock/odata.svc/Products"));
         ODataClientQuery query = new BasicODataClientQuery.Builder().withEntityType(Product.class).build();
-        when(endpointCaller.callEndpoint(new URL(SERVICE_URL + "/" + query.getQuery()))).thenReturn(marshalledProduct);
-        List<Object> entities = (List<Object>) client.getEntities(query);
+        when(endpointCaller.callEndpoint(emptyMap(), new URL(SERVICE_URL + "/" + query.getQuery())))
+                .thenReturn(marshalledProduct);
+        List<Object> entities = (List<Object>) client.getEntities(emptyMap(), query);
 
         assertNotNull(entities);
         assertEquals(2, entities.size());
@@ -123,8 +126,9 @@ public class DefaultODataClientTest {
         String marshalledProduct = atomMarshall(
                 product, createODataUri("http://mock/odata.svc/Products(11)"));
         ODataClientQuery query = new BasicODataClientQuery.Builder().withEntityType(Product.class).build();
-        when(endpointCaller.callEndpoint(new URL(SERVICE_URL + "/" + query.getQuery()))).thenReturn(marshalledProduct);
-        Object entity = client.getEntity(query);
+        when(endpointCaller.callEndpoint(emptyMap(),
+                new URL(SERVICE_URL + "/" + query.getQuery()))).thenReturn(marshalledProduct);
+        Object entity = client.getEntity(emptyMap(), query);
 
         assertNotNull(entity);
         assertEquals(Product.class, entity.getClass());
@@ -134,13 +138,14 @@ public class DefaultODataClientTest {
     @Test
     public void testCreateEntity() throws ODataClientException {
         Product product = createProduct(31, "Best book ever", BOOKS);
-        when(endpointCaller.doPostEntity(any(URL.class), eq(MARSHALLED_MOCKED_ENTITY_CONTENT), any(MediaType.class),
+        when(endpointCaller.doPostEntity(anyMapOf(String.class, String.class),
+                any(URL.class), eq(MARSHALLED_MOCKED_ENTITY_CONTENT), any(MediaType.class),
                 any(MediaType.class))).thenReturn(MARSHALLED_MOCKED_ENTITY_RETURNED_CONTENT);
         when(componentsProvider.getUnmarshaller()).thenReturn(unmarshaller);
         when(unmarshaller.unmarshallEntity(eq(MARSHALLED_MOCKED_ENTITY_RETURNED_CONTENT),
                 any(ODataClientQuery.class)))
                 .thenReturn(product);
-        Object savedProduct = client.createEntity(product);
+        Object savedProduct = client.createEntity(emptyMap(), product);
 
         assertNotNull(savedProduct);
         assertEquals(product, savedProduct);
@@ -149,12 +154,13 @@ public class DefaultODataClientTest {
     @Test
     public void testUpdateEntity() throws ODataClientException {
         Book existingBook = new Book("35", "Harry Potter", "J. K. Rowling");
-        when(endpointCaller.doPutEntity(any(URL.class), eq(MARSHALLED_MOCKED_ENTITY_CONTENT), any(MediaType.class)))
+        when(endpointCaller.doPutEntity(anyMapOf(String.class, String.class),
+                any(URL.class), eq(MARSHALLED_MOCKED_ENTITY_CONTENT), any(MediaType.class)))
                 .thenReturn(MARSHALLED_MOCKED_ENTITY_RETURNED_CONTENT);
         when(componentsProvider.getUnmarshaller()).thenReturn(unmarshaller);
         when(unmarshaller.unmarshallEntity(eq(MARSHALLED_MOCKED_ENTITY_RETURNED_CONTENT), any(ODataClientQuery.class)))
                 .thenReturn(existingBook);
-        Object updatedProduct = client.updateEntity(existingBook);
+        Object updatedProduct = client.updateEntity(emptyMap(), existingBook);
 
         assertNotNull(updatedProduct);
         assertEquals(existingBook, updatedProduct);
@@ -162,7 +168,8 @@ public class DefaultODataClientTest {
 
     @Test(expected = ODataNotImplementedException.class)
     public void testGetMetaData() {
-        client.getMetaData(new BasicODataClientQuery.Builder().withEntityType(Product.class).build());
+        client.getMetaData(emptyMap(),
+                new BasicODataClientQuery.Builder().withEntityType(Product.class).build());
     }
 
     @Test(expected = ODataNotImplementedException.class)

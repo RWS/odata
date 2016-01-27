@@ -672,7 +672,7 @@ public final class EntityDataModelUtil {
                 return true;
             }
         } catch (ClassNotFoundException e) {
-            LOG.warn("Not possible to find class for type name: " + typeName);
+            LOG.debug("Not possible to find class for type name: {}", typeName);
         }
 
         return false;

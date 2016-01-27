@@ -56,7 +56,10 @@ public class ODataWriteProcessorImpl implements ODataWriteProcessor {
             }
             return methodHandler.handleWrite(entity);
         } catch (ODataDataSourceException e) {
-            LOG.error("Couldn't persist or delete given entity '{}'", entity);
+            LOG.error("Couldn't persist or delete given entity '" + entity + "'", e);
+            throw e;
+        } catch (Exception e) {
+            LOG.error("Unexpected Exception when persisting or deleting an entity.", e);
             throw e;
         }
     }
