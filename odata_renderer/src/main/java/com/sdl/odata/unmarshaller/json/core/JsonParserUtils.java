@@ -22,7 +22,6 @@ import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.util.PrimitiveUtil;
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,7 +89,7 @@ public final class JsonParserUtils {
         if (String.class.isAssignableFrom(wrappedType)) {
             return fieldValue;
         } else if (wrappedType == byte[].class) {
-            return Base64.decodeBase64(fieldValue);
+            return Base64.getDecoder().decode(fieldValue);
         } else if (UUID.class.isAssignableFrom(wrappedType)) {
             return UUID.fromString(fieldValue);
         } else if (hasMethod(wrappedType, "parse", String.class)) {

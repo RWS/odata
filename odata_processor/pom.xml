@@ -46,7 +46,7 @@
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.10</artifactId>
+            <artifactId>scalatest_2.11</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Following odata_test dependency is for DummyQueryProcessor -->

@@ -185,8 +185,8 @@ public class AtomWriterTest extends WriterTest {
         dateTime = ZonedDateTime.of(2014, 5, 2, 0, 0, 0, 0, ZoneId.of("UTC").normalized());
 
         AtomWriter writer
-                = new AtomWriter(dateTime,
-                odataUri, entityDataModel, isWriteOperation, false);
+                = new AtomWriter(dateTime, odataUri, entityDataModel,
+                new ODataV4AtomNSConfigurationProvider(), isWriteOperation, false);
 
         writer.startDocument();
         if (data instanceof List) {

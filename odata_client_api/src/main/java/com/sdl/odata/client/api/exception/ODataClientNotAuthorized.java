@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.client.api.model;
+package com.sdl.odata.client.api.exception;
 
-import java.io.Serializable;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 /**
- * An interface containing one method to return an id for an entity.
+ * Exception to be thrown, if request is not authorized.
  */
-public interface ODataIdAwareEntity extends Serializable {
+public class ODataClientNotAuthorized extends ODataClientHttpError {
+    public ODataClientNotAuthorized(String message, Throwable cause) {
+        super(HTTP_UNAUTHORIZED, message, cause);
+    }
 
-    String getId();
+    public ODataClientNotAuthorized(String message) {
+        super(HTTP_UNAUTHORIZED, message);
+    }
 }
+

@@ -45,13 +45,11 @@ public abstract class AbstractODataClientComponentsProvider implements ODataClie
     private ODataEntityUnmarshaller unmarshaller;
     private ODataEntityMarshaller marshaller;
 
-    public AbstractODataClientComponentsProvider(Iterable<String> edmEntityClasses, Properties properties,
-                                                 String token) {
+    public AbstractODataClientComponentsProvider(Iterable<String> edmEntityClasses, Properties properties) {
         webServiceUri = getServiceUri(properties);
         endpointCaller = new BasicEndpointCaller(properties);
-        endpointCaller.setAccessToken(token);
 
-        initComponetsProvider(edmEntityClasses);
+        initComponentsProvider(edmEntityClasses);
     }
 
     protected void setEntityMarshaller(ODataEntityMarshaller entityMarshaller) {
@@ -82,7 +80,7 @@ public abstract class AbstractODataClientComponentsProvider implements ODataClie
         return webServiceUri;
     }
 
-    protected abstract void initComponetsProvider(Iterable<String> edmEntityClasses);
+    protected abstract void initComponentsProvider(Iterable<String> edmEntityClasses);
 
     protected URL getServiceUri(Properties properties) {
         String uriString = properties.getProperty(CLIENT_SERVICE_URI);

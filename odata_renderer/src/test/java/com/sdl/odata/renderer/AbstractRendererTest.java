@@ -46,6 +46,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import scala.Option;
+import scala.collection.immutable.List$;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -70,7 +71,7 @@ public class AbstractRendererTest {
     private static final ODataUri ODATA_URI = new ODataUri("http://localhost:8080/odata.svc",
             new ResourcePathUri(
                     new EntitySetPath("Customers", Option.<EntityCollectionPath>apply(null)),
-                    scala.collection.immutable.List.<QueryOption>empty()));
+                    List$.MODULE$.<QueryOption>empty()));
 
     private EntityDataModel entityDataModel;
 

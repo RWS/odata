@@ -13,14 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.client.api.model;
-
-import java.io.Serializable;
+package com.sdl.odata.renderer.atom.writer;
 
 /**
- * An interface containing one method to return an id for an entity.
+ * Namespace provider implementations provide atom specific namespaces for rendering odata response.
  */
-public interface ODataIdAwareEntity extends Serializable {
+public interface AtomNSConfigurationProvider {
 
-    String getId();
+    /**
+     * The OData Data NS.
+     *
+     * @return the OData data NS.
+     */
+    String getOdataDataNs();
+
+    /**
+     * The OData Metadata NS.
+     *
+     * @return the OData Metadata NS.
+     */
+    String getOdataMetadataNs();
+
 }

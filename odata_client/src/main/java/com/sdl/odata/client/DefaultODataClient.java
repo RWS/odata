@@ -23,12 +23,15 @@ import com.sdl.odata.client.api.exception.ODataClientException;
 import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.odata.client.api.exception.ODataNotImplementedException;
 import com.sdl.odata.client.api.model.ODataIdAwareEntity;
+import java.io.InputStream;
+import java.util.Map;
 import org.slf4j.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
@@ -61,11 +64,12 @@ public class DefaultODataClient implements ODataClient {
     }
 
     @Override
-    public Object getEntity(ODataClientQuery query) {
+    public Object getEntity(Map<String, String> requestProperties, ODataClientQuery query) {
         LOG.debug("Getting entity for query {}", query);
-        String oDataResponse = getODataResponse(query);
+        String oDataResponse = getODataResponse(requestProperties, query);
         try {
-            return componentsProvider.getUnmarshaller().unmarshallEntity(oDataResponse, query);
+            return oDataResponse.isEmpty() ? null :
+                    componentsProvider.getUnmarshaller().unmarshallEntity(oDataResponse, query);
         } catch (ODataClientException oce) {
             throw new ODataClientRuntimeException(
                     format("Unable unmarshall OData entity service response: \"{0}\"", oDataResponse),
@@ -74,17 +78,17 @@ public class DefaultODataClient implements ODataClient {
     }
 
     @Override
-    public Object performAction(ODataActionClientQuery actionQuery) {
+    public Object performAction(Map<String, String> properties, ODataActionClientQuery actionQuery) {
         try {
-            String oDataResponse = getComponentsProvider()
-                    .getEndpointCaller()
-                    .doPostEntity(buildURL(actionQuery), actionQuery.getActionRequestBody(), JSON, ATOM_XML);
-            if (PRIMITIVE_CLASSES.contains(actionQuery.getEntityType())) {
-                return componentsProvider.getUnmarshaller().unmarshallEntity(oDataResponse, actionQuery);
-            } else {
-                return componentsProvider.getUnmarshaller().unmarshall(oDataResponse,
-                        new BasicODataClientQuery.Builder().withEntityType(actionQuery.getEntityType()).build());
-            }
+            String oDataResponse = getComponentsProvider().getEndpointCaller()
+                    .doPostEntity(properties, buildURL(actionQuery), actionQuery.getActionRequestBody(),
+                                  JSON, ATOM_XML);
+            return oDataResponse.isEmpty() ? null :
+                    (PRIMITIVE_CLASSES.contains(actionQuery.getEntityType()) ?
+                            componentsProvider.getUnmarshaller().unmarshallEntity(oDataResponse, actionQuery) :
+                            componentsProvider.getUnmarshaller().unmarshall(oDataResponse,
+                                    new BasicODataClientQuery.Builder().withEntityType(actionQuery.getEntityType())
+                                            .build()));
         } catch (ODataClientException e) {
             throw new ODataClientRuntimeException("Unable to perform action", e);
         }
@@ -92,6 +96,7 @@ public class DefaultODataClient implements ODataClient {
 
     /**
      * Returns Component Provider.
+     *
      * @return componentProvider
      */
     public ODataClientComponentsProvider getComponentsProvider() {
@@ -99,11 +104,12 @@ public class DefaultODataClient implements ODataClient {
     }
 
     @Override
-    public List<?> getEntities(ODataClientQuery query) {
+    public List<?> getEntities(Map<String, String> requestProperties, ODataClientQuery query) {
         LOG.debug("Getting entities for query {}", query);
-        String oDataResponse = getODataResponse(query);
+        String oDataResponse = getODataResponse(requestProperties, query);
         try {
-            return componentsProvider.getUnmarshaller().unmarshall(oDataResponse, query);
+            return oDataResponse.isEmpty() ? new ArrayList<>() :
+                    componentsProvider.getUnmarshaller().unmarshall(oDataResponse, query);
         } catch (ODataClientException e) {
             throw new ODataClientRuntimeException(
                     format("Unable unmarshall OData entities service response: \"{0}\"", oDataResponse),
@@ -122,7 +128,7 @@ public class DefaultODataClient implements ODataClient {
             }
 
             return new URL(componentsProvider.getWebServiceUrl().toString() + "/" + builtQuery);
-        }  catch (MalformedURLException | UnsupportedEncodingException e) {
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
             throw new IllegalArgumentException(
                     format("MalformedURLException, cannot form a valid URL for endpoint "
                                     + "\"{0}\" and service query \"/{1}\"",
@@ -130,9 +136,9 @@ public class DefaultODataClient implements ODataClient {
         }
     }
 
-    private String getODataResponse(ODataClientQuery query) {
+    private String getODataResponse(Map<String, String> requestProperties, ODataClientQuery query) {
         try {
-            return componentsProvider.getEndpointCaller().callEndpoint(buildURL(query));
+            return componentsProvider.getEndpointCaller().callEndpoint(requestProperties, buildURL(query));
         } catch (ODataClientException e) {
             throw new ODataClientRuntimeException(
                     format("Unable to call OData service for \"{0}\" URL and service query \"/{1}\"",
@@ -141,7 +147,7 @@ public class DefaultODataClient implements ODataClient {
     }
 
     @Override
-    public Object getMetaData(ODataClientQuery builder) {
+    public Object getMetaData(Map<String, String> requestProperties, ODataClientQuery builder) {
         throw new ODataNotImplementedException();
     }
 
@@ -156,7 +162,7 @@ public class DefaultODataClient implements ODataClient {
     }
 
     @Override
-    public Object createEntity(Object entity) {
+    public Object createEntity(Map<String, String> requestProperties, Object entity) {
         BasicODataClientQuery query = buildQueryForEntity(entity);
         String entitySetName = query.getEdmEntityName();
         try {
@@ -164,7 +170,7 @@ public class DefaultODataClient implements ODataClient {
             URL endpointUrl = new URL(getUrlToCall(entitySetName, false, null));
             String marshalledEntity = componentsProvider.getMarshaller().marshallEntity(entity, query);
             String createdEntity = componentsProvider.getEndpointCaller()
-                    .doPostEntity(endpointUrl, marshalledEntity, ATOM_XML, ATOM_XML);
+                    .doPostEntity(requestProperties, endpointUrl, marshalledEntity, ATOM_XML, ATOM_XML);
             return componentsProvider.getUnmarshaller().unmarshallEntity(createdEntity, query);
         } catch (ODataClientException e) {
             throw formFailedRequestException(e, entitySetName);
@@ -174,7 +180,7 @@ public class DefaultODataClient implements ODataClient {
     }
 
     @Override
-    public Object updateEntity(ODataIdAwareEntity entity) {
+    public Object updateEntity(Map<String, String> requestProperties, ODataIdAwareEntity entity) {
         BasicODataClientQuery query = buildQueryForEntity(entity);
         String entitySetName = query.getEdmEntityName();
         try {
@@ -182,13 +188,33 @@ public class DefaultODataClient implements ODataClient {
             URL endpointUrl = new URL(getUrlToCall(entitySetName, true, entity.getId()));
             String marshalledEntity = componentsProvider.getMarshaller().marshallEntity(entity, query);
             String createdEntity = componentsProvider.getEndpointCaller()
-                    .doPutEntity(endpointUrl, marshalledEntity, ATOM_XML);
+                    .doPutEntity(requestProperties, endpointUrl, marshalledEntity, ATOM_XML);
             return componentsProvider.getUnmarshaller().unmarshallEntity(createdEntity, query);
         } catch (ODataClientException e) {
             throw formFailedRequestException(e, entitySetName);
         } catch (MalformedURLException | UnsupportedEncodingException e) {
             throw formFailedUrlFormingException(e, entitySetName);
         }
+    }
+
+    @Override
+    public void deleteEntity(Map<String, String> requestProperties, ODataIdAwareEntity entity) {
+        BasicODataClientQuery query = buildQueryForEntity(entity);
+        String entitySetName = query.getEdmEntityName();
+        try {
+            URL endpointUrl = new URL(getUrlToCall(entitySetName, true, entity.getId()));
+            componentsProvider.getEndpointCaller()
+                    .doDeleteEntity(requestProperties, endpointUrl);
+        } catch (ODataClientException e) {
+            throw formFailedRequestException(e, entitySetName);
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
+            throw formFailedUrlFormingException(e, entitySetName);
+        }
+    }
+
+    @Override
+    public InputStream getInputStream(Map<String, String> requestProperties, URL url) throws ODataClientException {
+        return componentsProvider.getEndpointCaller().getInputStream(requestProperties, url);
     }
 
     private String getUrlToCall(String entitySetName, boolean includeId, String id) throws

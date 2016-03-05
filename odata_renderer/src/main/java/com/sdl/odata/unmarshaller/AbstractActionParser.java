@@ -32,11 +32,11 @@ import scala.Option;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
 
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Abstract Action Parser.
@@ -102,9 +102,9 @@ public abstract class AbstractActionParser {
         Set<Parameter> actionParameters = action.getParameters();
         Map<String, Object> bodyParameters;
         try {
-            bodyParameters = parseRequestBody(requestContext.getRequest().getBodyText("UTF-8"));
+            bodyParameters = parseRequestBody(requestContext.getRequest().getBodyText(UTF_8.name()));
         } catch (IOException e) {
-            throw new ODataUnmarshallingException("Error has occurred during parameter parsing");
+            throw new ODataUnmarshallingException("Error has occurred during parameter parsing", e);
         }
 
         assignParametersToAction(bodyParameters, actionParameters, actionObject);
@@ -153,9 +153,9 @@ public abstract class AbstractActionParser {
         Set<Parameter> actionParameters = action.getParameters();
         Map<String, Object> bodyParameters;
         try {
-            bodyParameters = parseRequestBody(requestContext.getRequest().getBodyText(Charset.forName("UTF-8").name()));
+            bodyParameters = parseRequestBody(requestContext.getRequest().getBodyText(UTF_8.name()));
         } catch (IOException e) {
-            throw new ODataUnmarshallingException("Error during request body parsing");
+            throw new ODataUnmarshallingException("Error during request body parsing", e);
         }
         assignParametersToAction(bodyParameters, actionParameters, actionObject);
 

@@ -35,8 +35,8 @@ import static com.sdl.odata.AtomConstants.ODATA_DATA_NS;
 import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.XML_VERSION;
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
-import static com.sdl.odata.util.edm.EntityDataModelUtil.getAndCheckEntityType;
 import static com.sdl.odata.test.util.TestUtils.readContent;
+import static com.sdl.odata.util.edm.EntityDataModelUtil.getAndCheckEntityType;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
@@ -51,6 +51,7 @@ public class AtomDataWriterTest extends WriterTest {
     private XMLStreamWriter xmlWriter;
     private ByteArrayOutputStream outputStream;
     private Customer customer;
+    private AtomNSConfigurationProvider nsConfigurationProvider;
 
     @Before
     public void setUp() throws Exception {
@@ -59,6 +60,7 @@ public class AtomDataWriterTest extends WriterTest {
         customer = createCustomerSample();
         outputStream = new ByteArrayOutputStream();
         xmlWriter = xmlOutputFactory.createXMLStreamWriter(outputStream, UTF_8.name());
+        nsConfigurationProvider = new ODataV4AtomNSConfigurationProvider();
     }
 
     @After
@@ -87,8 +89,9 @@ public class AtomDataWriterTest extends WriterTest {
 
         startDocument();
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers(1)", entityDataModel);
-        AtomMetadataWriter metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
-        AtomDataWriter dataWriter = new AtomDataWriter(xmlWriter, entityDataModel);
+        AtomMetadataWriter metadataWriter = new AtomMetadataWriter(
+                xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
+        AtomDataWriter dataWriter = new AtomDataWriter(xmlWriter, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeODataMetadata(CUSTOMER_URL);
         dataWriter.writeData(customer, getAndCheckEntityType(entityDataModel, customer.getClass()));
         endDocument();
@@ -103,9 +106,10 @@ public class AtomDataWriterTest extends WriterTest {
 
         startDocument();
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/SingletonSample", entityDataModel);
-        AtomMetadataWriter metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        AtomMetadataWriter metadataWriter = new AtomMetadataWriter(
+                xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         AtomDataWriter dataWriter;
-        dataWriter = new AtomDataWriter(xmlWriter, entityDataModel);
+        dataWriter = new AtomDataWriter(xmlWriter, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeODataMetadata(SINGLETON_SAMPLE_CONTEXT_URL);
         dataWriter.writeData(singletonSample, getAndCheckEntityType(entityDataModel, singletonSample.getClass()));
         endDocument();

@@ -50,6 +50,8 @@ public abstract class AbstractODataController {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractODataController.class);
 
     private static final int BUFFER_SIZE = 1024;
+    private static final int DEFAULT_PORT_NUMBER = 80;
+    private static final int DEFAULT_SSL_PORT_NUMBER = 443;
 
     @Autowired
     private ODataService oDataService;
@@ -92,7 +94,7 @@ public abstract class AbstractODataController {
         builder.setMethod(ODataRequest.Method.valueOf(servletRequest.getMethod()));
 
         // Unfortunately, HttpServletRequest makes it difficult to get the full URI
-        StringBuilder sb = new StringBuilder(servletRequest.getRequestURL());
+        StringBuilder sb = getRequestURL(servletRequest);
         String queryString = servletRequest.getQueryString();
         if (!isNullOrEmpty(queryString)) {
             sb.append('?').append(queryString);
@@ -118,6 +120,35 @@ public abstract class AbstractODataController {
         builder.setBody(out.toByteArray());
 
         return builder.build();
+    }
+
+    /**
+     * In cases when {@link HttpServletRequest} is wrapped, request url will consist values from top wrapper now.
+     * Instead of schema, port and server name from inner {@link org.apache.coyote.Request}.
+     * Default case is when service is behind load balancer and {@link org.apache.catalina.filters.RemoteIpFilter}
+     * is used for X-Forwarded headers.
+     *
+     * @param request wrapped/original request.
+     * @return request URL based on values from wrapping Request.
+     */
+    private StringBuilder getRequestURL(HttpServletRequest request) {
+        String scheme = request.getScheme();
+        int port = request.getServerPort();
+        if (port < 0) {
+            port = DEFAULT_PORT_NUMBER;
+        }
+
+        StringBuilder url = new StringBuilder();
+        url.append(scheme);
+        url.append("://");
+        url.append(request.getServerName());
+        if ((scheme.equals("http") && (port != DEFAULT_PORT_NUMBER))
+                || (scheme.equals("https") && (port != DEFAULT_SSL_PORT_NUMBER))) {
+            url.append(':');
+            url.append(port);
+        }
+        url.append(request.getRequestURI());
+        return url;
     }
 
     /**

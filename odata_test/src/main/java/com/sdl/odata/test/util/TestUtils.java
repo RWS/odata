@@ -286,7 +286,8 @@ public final class TestUtils {
         List<ExpandItem> expandItems = new ArrayList<>();
         for (String expandPathName : expandPathNames) {
             ExpandPathSegment path = new NavigationPropertyExpandPathSegment(expandPathName, none);
-            expandItems.add(new PathExpandItem(none, path, scala.collection.immutable.List.<QueryOption>empty()));
+            expandItems.add(new PathExpandItem(none, path,
+                    scala.collection.immutable.List$.MODULE$.<QueryOption>empty()));
         }
 
         ExpandOption expandOption = new ExpandOption(asScalaList(expandItems));

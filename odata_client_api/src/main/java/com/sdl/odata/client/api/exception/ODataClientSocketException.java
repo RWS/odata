@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.client.api.model;
-
-import java.io.Serializable;
+package com.sdl.odata.client.api.exception;
 
 /**
- * An interface containing one method to return an id for an entity.
+ * ODataClientSocketException.
  */
-public interface ODataIdAwareEntity extends Serializable {
-
-    String getId();
+public class ODataClientSocketException extends ODataClientRuntimeException {
+    public ODataClientSocketException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
+

@@ -16,6 +16,7 @@
 package com.sdl.odata.parser
 
 import com.sdl.odata.api.parser.ODataBatchParseException
+import org.junit.Assert.assertEquals
 import org.scalatest.FunSuite
 
 import scala.io.Source
@@ -27,7 +28,7 @@ class ODataBatchRequestParserTest extends FunSuite {
 
   val batchRequestParser = new ODataBatchRequestParser
   val newLine = sys.props("line.separator")
-  
+
   test("Batch request with only individual request") {
     val testBatchRequestBody = "--batch_36522ad7-fc75-4b56-8c71-56071383e77b" + newLine +
       "Content-Type: application/http" + newLine +
@@ -38,7 +39,7 @@ class ODataBatchRequestParserTest extends FunSuite {
       newLine +
       newLine +
       "--batch_36522ad7-fc75-4b56-8c71-56071383e77b--"
-    
+
     implicit val parsedContent = batchRequestParser.parseBatch(testBatchRequestBody)
 
     assert(parsedContent != null)
@@ -46,20 +47,20 @@ class ODataBatchRequestParserTest extends FunSuite {
     assert(parsedContent.requestComponents.size == 1)
 
     assert(parsedContent.requestComponents(0).isInstanceOf[BatchRequestComponent])
-    
+
     val indvRequestComponent = parsedContent.requestComponents(0).asInstanceOf[BatchRequestComponent]
-    
+
     assert(indvRequestComponent.getHeaders() != null)
     assert(indvRequestComponent.getRequestDetails() != null)
     assert(indvRequestComponent.getRequestDetails().contains("RequestType"))
-    
+
     assert(indvRequestComponent.getRequestDetails().get("RequestType").get == "GET")
     assert(indvRequestComponent.getRequestDetails().get("RequestEntity").get == "Customers('ALFKI')")
 
     assert(indvRequestComponent.getHeaders().headers.get("Host").get == "localhost")
-    
+
   }
-  
+
   test("Batch request with individual requests and change sets") {
     val fileContents = Source.fromURL(getClass.getResource("/BatchRequestSample1.txt")).mkString
     implicit val parsedContent = batchRequestParser.parseBatch(fileContents)
@@ -233,8 +234,8 @@ class ODataBatchRequestParserTest extends FunSuite {
       "Content-Type: application/http" + newLine +
       "Content-Transfer-Encoding:binary" + newLine +
       newLine +
-      "GET http://cdwstest.ams.dev:7071/discovery-service/discovery.svc/Environment  " + newLine +
-      "Host: http://cdwstest.ams.dev:7071/discovery-service/discovery.svc" + newLine +
+      "GET http://127.0.0.1:8082/discovery-service/odata.svc/Environment  " + newLine +
+      "Host: http://127.0.0.1:8082/discovery-service/odata.svc" + newLine +
       newLine +
       newLine +
       "--batch_36522ad7-fc75-4b56-8c71-56071383e77b--"
@@ -255,7 +256,7 @@ class ODataBatchRequestParserTest extends FunSuite {
 
     assert(indvRequestComponent.getRequestDetails().get("RequestType").get == "GET")
     assert(indvRequestComponent.getRequestDetails().get("RequestEntity").get == "Environment")
-    assert(indvRequestComponent.getRequestDetails().get("RequestHost").get =="http://cdwstest.ams.dev:7071")
+    assert(indvRequestComponent.getRequestDetails().get("RequestHost").get =="http://127.0.0.1:8082")
   }
 
   test("Batch request with space after request URL2") {
@@ -264,7 +265,7 @@ class ODataBatchRequestParserTest extends FunSuite {
       "Content-Transfer-Encoding:binary" + newLine +
       newLine +
       "GET Environment HTTP/1.1   " + newLine +
-      "Host: http://cdwstest.ams.dev:7071/discovery-service/discovery.svc" + newLine +
+      "Host: http://localhost:8082/discovery-service/odata.svc" + newLine +
       newLine +
       newLine +
       "--batch_36522ad7-fc75-4b56-8c71-56071383e77b--"
@@ -286,7 +287,7 @@ class ODataBatchRequestParserTest extends FunSuite {
     assert(indvRequestComponent.getRequestDetails().get("RequestType").get == "GET")
     assert(indvRequestComponent.getRequestDetails().get("RequestEntity").get == "Environment")
 
-    assert(indvRequestComponent.getHeaders().headers.get("Host").get == "http://cdwstest.ams.dev:7071/discovery-service/discovery.svc")
+    assert(indvRequestComponent.getHeaders().headers.get("Host").get == "http://localhost:8082/discovery-service/odata.svc")
   }
 
   test("Batch request with space after request multipart/mixed;") {
@@ -295,7 +296,7 @@ class ODataBatchRequestParserTest extends FunSuite {
       "Content-Transfer-Encoding:binary" + newLine +
       newLine +
       "GET Environment HTTP/1.1   " + newLine +
-      "Host: http://cdwstest.ams.dev:7071/discovery-service/discovery.svc" + newLine +
+      "Host: http://localhost:8082/discovery-service/odata.svc" + newLine +
       newLine +
       newLine +
       "--batch_36522ad7-fc75-4b56-8c71-56071383e77b--"
@@ -317,7 +318,7 @@ class ODataBatchRequestParserTest extends FunSuite {
     assert(indvRequestComponent.getRequestDetails().get("RequestType").get == "GET")
     assert(indvRequestComponent.getRequestDetails().get("RequestEntity").get == "Environment")
 
-    assert(indvRequestComponent.getHeaders().headers.get("Host").get == "http://cdwstest.ams.dev:7071/discovery-service/discovery.svc")
+    assert(indvRequestComponent.getHeaders().headers.get("Host").get == "http://localhost:8082/discovery-service/odata.svc")
   }
 
   test("Input whitespace trimming") {
@@ -392,5 +393,51 @@ class ODataBatchRequestParserTest extends FunSuite {
 
     assert(indvRequestComponent.getHeaders().headers.get("Host").get == "localhost")
 
+  }
+
+  test("CRQ-1019: Batch request with trailing new line whitespaces and trailing request new lines with whitespaces") {
+    val whiteSpacesBatchSource = "--batch_7aa6777a-f7f2-4a45-89ee-a3b72464f51d\n" +
+      "Content-Type: multipart/mixed; boundary=changeset_05118c88-8f0b-43da-be4d-c326e0133670\n " +
+      "\n" +
+      "--changeset_05118c88-8f0b-43da-be4d-c326e0133670\n" +
+      "Content-Type: application/http\n" +
+      "Content-Transfer-Encoding: binary\n" +
+      "Content-ID: 1\n " +
+      "\n" +
+      "POST http://localhost:8082/odata.svc/WebApplications HTTP/1.1\n" +
+      "OData-Version: 4.0\n" +
+      "OData-MaxVersion: 4.0\n" +
+      "Content-Type: application/json;odata.metadata=minimal\n" +
+      "Accept: application/json;odata.metadata=minimal\n" +
+      "Accept-Charset: UTF-8\n" +
+      "User-Agent: Microsoft ADO.NET Data Services\n " +
+      "\n" +
+      "{\"@odata.type\":\"#Example.Application.Platform.Entity\",\"id\":\"Website2_RootWebApp\",\"ContextURL\":\"/\",\"BaseURLs@odata.type\":\"#Collection(Example.Application.Platform.Entity)\",\"BaseURLs\":[{\"@odata.type\":\"#Example.Application.Platform.Entity\",\"Protocol\":\"http\",\"Host\":\"localhost\",\"Port\":\"8080\"}],\"ExtensionProperties@odata.type\":\"#Collection(Example.Application.Platform.Entity)\",\"ExtensionProperties\":[],\"WebCapability@odata.bind\":\"http://localhost:8082/odata.svc/WebCapabilities('DefaultWeb')\"}\n \n--changeset_05118c88-8f0b-43da-be4d-c326e0133670--\n--batch_7aa6777a-f7f2-4a45-89ee-a3b72464f51d--\n " +
+      "\n "
+    val noWhiteSpacesBatchSource = "--batch_7aa6777a-f7f2-4a45-89ee-a3b72464f51d\n" +
+      "Content-Type: multipart/mixed; boundary=changeset_05118c88-8f0b-43da-be4d-c326e0133670\n " +
+      "\n" +
+      "--changeset_05118c88-8f0b-43da-be4d-c326e0133670\n" +
+      "Content-Type: application/http\n" +
+      "Content-Transfer-Encoding: binary\n" +
+      "Content-ID: 1\n " +
+      "\n" +
+      "POST http://localhost:8082/odata.svc/WebApplications HTTP/1.1\n" +
+      "OData-Version: 4.0\n" +
+      "OData-MaxVersion: 4.0\n" +
+      "Content-Type: application/json;odata.metadata=minimal\n" +
+      "Accept: application/json;odata.metadata=minimal\n" +
+      "Accept-Charset: UTF-8\n" +
+      "User-Agent: Microsoft ADO.NET Data Services\n " +
+      "\n" +
+      "{\"@odata.type\":\"#Example.Application.Platform.Entity\",\"id\":\"Website2_RootWebApp\",\"ContextURL\":\"/\",\"BaseURLs@odata.type\":\"#Collection(Example.Application.Platform.Entity)\",\"BaseURLs\":[{\"@odata.type\":\"#Example.Application.Platform.Entity\",\"Protocol\":\"http\",\"Host\":\"localhost\",\"Port\":\"8080\"}],\"ExtensionProperties@odata.type\":\"#Collection(Example.Application.Platform.Entity)\",\"ExtensionProperties\":[],\"WebCapability@odata.bind\":\"http://localhost:8082/odata.svc/WebCapabilities('DefaultWeb')\"}\n \n--changeset_05118c88-8f0b-43da-be4d-c326e0133670--\n--batch_7aa6777a-f7f2-4a45-89ee-a3b72464f51d--\n" +
+      "\n"
+
+    val whiteSpacesResult = batchRequestParser.trimRedundantTrailingSpaces(whiteSpacesBatchSource)
+    val noWhiteSpacesResult = batchRequestParser.trimRedundantTrailingSpaces(noWhiteSpacesBatchSource)
+
+    assert(whiteSpacesResult != null)
+    assert(noWhiteSpacesResult != null)
+    assertEquals(whiteSpacesResult, noWhiteSpacesResult)
   }
 }

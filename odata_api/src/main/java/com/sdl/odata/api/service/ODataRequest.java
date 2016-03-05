@@ -21,10 +21,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * OData request.
@@ -37,7 +39,7 @@ public final class ODataRequest extends ODataRequestResponseBase {
     /**
      * Request method.
      */
-    public static enum Method {
+    public enum Method {
         /**
          * GET request.
          */
@@ -68,6 +70,7 @@ public final class ODataRequest extends ODataRequestResponseBase {
         private String uri;
         private final Map<String, String> headersBuilder = new HashMap<>();
         private byte[] body;
+        private Map<Class<?>, Object> additionalData = new HashMap<>();
 
         public Builder setMethod(Method builderMethod) {
             this.method = builderMethod;
@@ -118,6 +121,11 @@ public final class ODataRequest extends ODataRequestResponseBase {
             return this;
         }
 
+        public Builder addAdditionalData(Object data) {
+            additionalData.put(data.getClass(), data);
+            return this;
+        }
+
         public ODataRequest build() {
             return new ODataRequest(this);
         }
@@ -125,9 +133,10 @@ public final class ODataRequest extends ODataRequestResponseBase {
 
     private final Method method;
     private final String uri;
+    private final Map<Class<?>, Object> additionalData;
 
     private ODataRequest(Builder builder) {
-        super(Collections.unmodifiableMap(builder.headersBuilder), builder.body);
+        super(unmodifiableMap(builder.headersBuilder), builder.body);
 
         if (builder.method == null) {
             throw new IllegalArgumentException("Method is required");
@@ -139,6 +148,7 @@ public final class ODataRequest extends ODataRequestResponseBase {
 
         this.method = builder.method;
         this.uri = builder.uri;
+        this.additionalData = unmodifiableMap(builder.additionalData);
     }
 
     public Method getMethod() {
@@ -160,6 +170,21 @@ public final class ODataRequest extends ODataRequestResponseBase {
         return Collections.unmodifiableList(preferList);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getAdditionalData(Class<T> clazz) {
+        if (additionalData.containsKey(clazz)) {
+            return Optional.of((T) additionalData.get(clazz));
+        }
+
+        for (Map.Entry<Class<?>, Object> dataEntry : additionalData.entrySet()) {
+            if (clazz.isAssignableFrom(dataEntry.getKey())) {
+                return Optional.of((T) dataEntry.getValue());
+            }
+        }
+
+        return Optional.empty();
+
+    }
 
     @Override
     public String toString() {

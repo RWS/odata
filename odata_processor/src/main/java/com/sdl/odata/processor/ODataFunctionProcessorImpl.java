@@ -57,8 +57,14 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
     public ProcessorResult doFunction(ODataRequestContext requestContext) throws ODataException {
         LOG.debug("Building and executing a function or function import");
         Operation operation = getFunctionOrFunctionImportOperation(requestContext);
-        Object result = operation.doOperation(requestContext,
-                dataSourceFactory);
+        Object result;
+
+        try {
+            result = operation.doOperation(requestContext, dataSourceFactory);
+        } catch (Exception e) {
+            LOG.error("Unexpected exception when executing a function.", e);
+            throw e;
+        }
 
         return result == null ? new ProcessorResult(ODataResponse.Status.NO_CONTENT) :
                 new ProcessorResult(ODataResponse.Status.OK, result);
@@ -119,7 +125,7 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
                                          Set<Parameter> parameters)
             throws ODataUnmarshallingException {
         if (functionCallParameters.isDefined() && !functionCallParameters.get().isEmpty()) {
-            Map<String, String> parametersMap = JavaConversions.asJavaMap(functionCallParameters.get());
+            Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(functionCallParameters.get());
             for (Parameter parameter : parameters) {
                 ParameterTypeUtil.setParameter(functionOperationObject, parameter.getJavaField(),
                         parametersMap.get(parameter.getName()));

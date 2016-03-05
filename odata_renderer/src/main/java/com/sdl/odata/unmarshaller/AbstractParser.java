@@ -33,6 +33,7 @@ import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
+import scala.collection.immutable.List$;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -167,7 +168,7 @@ public abstract class AbstractParser {
 
         ResourcePath resourcePath = uriParser.parseResourcePath(entityIdResourcePath, entityDataModel);
         ODataUri referencedEntityUri = new ODataUri("", new ResourcePathUri(resourcePath,
-                scala.collection.immutable.List.<QueryOption>empty()));
+                List$.MODULE$.<QueryOption>empty()));
 
         Option<Object> opt = extractEntityWithKeys(referencedEntityUri, entityDataModel);
         if (!opt.isDefined()) {

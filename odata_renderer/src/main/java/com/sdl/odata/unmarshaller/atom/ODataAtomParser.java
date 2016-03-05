@@ -71,6 +71,7 @@ import static com.sdl.odata.AtomConstants.FEED_METADATA_MIN_ITEMS;
 import static com.sdl.odata.AtomConstants.FEED_METADATA_TITLE_IDX;
 import static com.sdl.odata.AtomConstants.FEED_METADATA_UPDATED_IDX;
 import static com.sdl.odata.AtomConstants.HREF;
+import static com.sdl.odata.AtomConstants.ID;
 import static com.sdl.odata.AtomConstants.INLINE;
 import static com.sdl.odata.AtomConstants.NULL;
 import static com.sdl.odata.AtomConstants.ODATA_CONTENT;
@@ -78,6 +79,7 @@ import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.ODATA_NAVIGATION_LINK_REL_NS_PREFIX;
 import static com.sdl.odata.AtomConstants.ODATA_PROPERTIES;
 import static com.sdl.odata.AtomConstants.ODATA_SCHEME_NS;
+import static com.sdl.odata.AtomConstants.REF;
 import static com.sdl.odata.AtomConstants.REL;
 import static com.sdl.odata.AtomConstants.SCHEME;
 import static com.sdl.odata.AtomConstants.TERM;
@@ -485,19 +487,29 @@ public class ODataAtomParser extends AbstractParser {
         // Note: For now 'write operations' containing 'inline' feeds or entries is not supported. See:
         // http://docs.oasis-open.org/odata/odata-atom-format/v4.0/cs02/odata-atom-format-v4.0-cs02.html#_Toc372792739
 
-        // Get the referenced entity, but only with the key fields filled in.
         if (isWriteOperation()) {
-            // TODO-SL: Add support for parsing referenced collections. See:
-            // docs.oasis-open.org/odata/odata-atom-format/v4.0/cs02/odata-atom-format-v4.0-cs02.html#_Toc372792740
-            String hrefAttr = (linkElement.getAttribute(HREF) == null) ? "" : linkElement.getAttribute(HREF);
-            if (hrefAttr.isEmpty()) {
-                throw new ODataUnmarshallingException("The request contains a navigation link for the property '"
-                        + propertyName + "' but the element 'href' is empty.");
+            if (property.isCollection()) {
+                Element feed = getInlineFeed(linkElement);
+                if (feed != null) {
+                    List<Element> elements = getFeedMetadataRefs(feed);
+                    for (Element element : elements) {
+                        String id = element.getAttribute(ID);
+                        Object referencedEntity = getReferencedEntity(id, propertyName);
+                        LOG.debug("Referenced entity: {}", referencedEntity);
+                        saveReferencedEntity(entity, propertyName, property, referencedEntity);
+                    }
+                }
+            } else {
+                // Get the referenced entity, but only with the key fields filled in.
+                String hrefAttr = (linkElement.getAttribute(HREF) == null) ? "" : linkElement.getAttribute(HREF);
+                if (hrefAttr.isEmpty()) {
+                    throw new ODataUnmarshallingException("The request contains a navigation link for the property '"
+                            + propertyName + "' but the element 'href' is empty.");
+                }
+                Object referencedEntity = getReferencedEntity(hrefAttr, propertyName);
+                LOG.debug("Referenced entity: {}", referencedEntity);
+                saveReferencedEntity(entity, propertyName, property, referencedEntity);
             }
-            Object referencedEntity = getReferencedEntity(hrefAttr, propertyName);
-            LOG.debug("Referenced entity: {}", referencedEntity);
-            saveReferencedEntity(entity, propertyName, property, referencedEntity);
-            // TODO-SL: Handle collection references
         } else {
             // Note: In the case of 'read operations' we only process a link when it is 'inline'
             Element inlineEntry = getInlineEntry(linkElement);
@@ -523,6 +535,10 @@ public class ODataAtomParser extends AbstractParser {
         NodeList childNodes = feedElement.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
+            if (isFeedMetadataRef(node)) {
+                //Note: decide how to process metadata:ref - references to entities for read operation
+                return;
+            }
             if (isFeedMetadataElement(node)) {
                 feedMetadataElements.add((Element) node);
             }
@@ -554,12 +570,32 @@ public class ODataAtomParser extends AbstractParser {
         return false;
     }
 
+    private boolean isFeedMetadataRef(Node node) {
+        if (node instanceof Element) {
+            String nodeLocalName = node.getLocalName();
+            return REF.equals(nodeLocalName);
+        }
+        return false;
+    }
+
     private List<Element> getFeedEntries(Element feedElement) {
         List<Element> feedEntries = new ArrayList<>();
         NodeList childNodes = feedElement.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
             if (node instanceof Element && ATOM_ENTRY.equals(node.getLocalName())) {
+                feedEntries.add((Element) node);
+            }
+        }
+        return feedEntries;
+    }
+
+    private List<Element> getFeedMetadataRefs(Element feedElement) {
+        List<Element> feedEntries = new ArrayList<>();
+        NodeList childNodes = feedElement.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node node = childNodes.item(i);
+            if (node instanceof Element && REF.equals(node.getLocalName())) {
                 feedEntries.add((Element) node);
             }
         }

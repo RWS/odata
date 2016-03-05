@@ -53,6 +53,8 @@ public class JsonPropertyWriterTest extends WriterTest {
     private JsonPropertyWriter propertyWriter;
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_LIST_PATH = "/json/AbstractComplexTypeListSample.json";
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_PATH = "/json/AbstractComplexTypeSample.json";
+    private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_UTF_PATH = "/json/AbstractComplexTypeUnicodeSample.json";
+    private static final String UNICODE_STRING = "Japanese: 日本語 Cyrillic: Кириллица,Кирилиця,Кірыліца,Ћирилица";
 
     @Before
     public void setUp() throws Exception {
@@ -95,6 +97,17 @@ public class JsonPropertyWriterTest extends WriterTest {
         // assertions
         Map<String, Object> resultMap = assertResult(result, "$metadata#Customers(1)/id", false, false, 1);
         assertThat(resultMap.get(JsonConstants.VALUE), is("1"));
+    }
+
+    @Test
+    public void testGetXMLForNonNullPrimitiveUnicodeProperty() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/Customers(1)/name");
+
+        // business method which needs unit test
+        String result = propertyWriter.getPropertyAsString(UNICODE_STRING);
+
+        Map<String, Object> resultMap = assertResult(result, "$metadata#Customers(1)/name", false, false, 1);
+        assertThat(resultMap.get(JsonConstants.VALUE), is(UNICODE_STRING));
     }
 
     @Test
@@ -146,6 +159,12 @@ public class JsonPropertyWriterTest extends WriterTest {
         assertEquals(prettyPrintJson(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_PATH)), prettyPrintJson(json));
     }
 
+    @Test
+    public void testJSONForComplexPropertyWithUnicodeCharacters() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperty");
+        String json = propertyWriter.getPropertyAsString(createComplexType("Prop 1", UNICODE_STRING));
+        assertEquals(prettyPrintJson(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_UTF_PATH)), prettyPrintJson(json));
+    }
 
     private void assertAddressList(Map<String, Object> results) {
         Object value = results.get(JsonConstants.VALUE);
