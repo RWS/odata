@@ -56,7 +56,7 @@ public final class URLTestUtils {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                printWriter.print(line);
+                printWriter.print(line + System.lineSeparator());
             }
         }
         return stringWriter.toString();

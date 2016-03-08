@@ -13,14 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.client.api.model;
-
-import java.io.Serializable;
+package com.sdl.odata.client.api.exception;
 
 /**
- * An interface containing one method to return an id for an entity.
+ * Exception to reflect http request related errors.
  */
-public interface ODataIdAwareEntity extends Serializable {
+public class ODataClientHttpError extends ODataClientRuntimeException {
+    private int httpCode = 0;
 
-    String getId();
+    public ODataClientHttpError(int code, String message, Throwable cause) {
+        super(message, cause);
+        httpCode = code;
+    }
+
+    public ODataClientHttpError(int code, String message) {
+        super(message);
+        httpCode = code;
+    }
+
+    public final int getHttpCode() {
+        return httpCode;
+    }
 }
+

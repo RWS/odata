@@ -28,6 +28,7 @@ import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.odata.client.api.marshall.ODataEntityMarshaller;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import com.sdl.odata.parser.ODataParserImpl;
+import com.sdl.odata.renderer.AbstractAtomRenderer;
 import com.sdl.odata.renderer.atom.AtomRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +52,15 @@ public class AtomEntityMarshaller implements ODataEntityMarshaller {
 
     private String url;
     private EntityDataModel entityDataModel;
-    private AtomRenderer atomRenderer;
+    private AbstractAtomRenderer atomRenderer;
 
     public AtomEntityMarshaller(Iterable<Class<?>> edmEntityClasses, String url) {
+        this(edmEntityClasses, url, new AtomRenderer());
+    }
+
+    protected AtomEntityMarshaller(Iterable<Class<?>> edmEntityClasses, String url, AbstractAtomRenderer atomRenderer) {
         this.url = url;
-        atomRenderer = new AtomRenderer();
+        this.atomRenderer = atomRenderer;
         try {
             LOG.debug("Building entity data model...");
             this.entityDataModel = buildEntityDataModel(edmEntityClasses);

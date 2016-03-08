@@ -22,6 +22,7 @@ import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.pluralize;
+import static java.lang.String.format;
 
 /**
  * Abstract implementation of ODataClientQuery.
@@ -34,6 +35,8 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
     public static final int HASH = 31;
 
     private Class<?> entityType;
+    private String entityKey;
+    private boolean isSingletonEntity;
 
     public Class<?> getEntityType() {
         return entityType;
@@ -41,6 +44,10 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
 
     protected void setEntityType(Class<?> entityType) {
         this.entityType = entityType;
+    }
+
+    protected void setEntityKey(String entityKey) {
+        this.entityKey = entityKey;
     }
 
     public String getEdmEntityName() {
@@ -56,7 +63,7 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
                     entitySetName = pluralize(entityType.getSimpleName());
                 }
             }
-            return entitySetName;
+            return appendEntityKeySuffix(entitySetName);
         } else {
             // Check for Singleton entity in the container
             EdmSingleton singleton = entityType.getAnnotation(EdmSingleton.class);
@@ -66,7 +73,7 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
                         "There is no an odata endpoint for provided class. " +
                                 "@EdmEntitySet or @EdmSingleton annotation is not present on this type");
             }
-
+            isSingletonEntity = true;
             String entityName = entityType.getSimpleName();
 
             if (isNullOrEmpty(entityName)) {
@@ -76,7 +83,9 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
         }
     }
 
-    // extracted Guava code
+    private String appendEntityKeySuffix(String entityName) {
+        return entityKey == null ? entityName : format("%s(%s)", entityName, entityKey);
+    }
 
     public static <T> T checkNotNull(T reference, Object errorMessage) {
         if (reference == null) {
@@ -85,4 +94,7 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
         return reference;
     }
 
+    protected boolean isSingletonEntity() {
+        return isSingletonEntity;
+    }
 }

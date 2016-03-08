@@ -29,6 +29,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,15 +40,15 @@ import static com.sdl.odata.AtomConstants.ATOM_ENTRY;
 import static com.sdl.odata.AtomConstants.ATOM_FEED;
 import static com.sdl.odata.AtomConstants.ATOM_LINK;
 import static com.sdl.odata.AtomConstants.HREF;
+import static com.sdl.odata.AtomConstants.ID;
 import static com.sdl.odata.AtomConstants.INLINE;
 import static com.sdl.odata.AtomConstants.METADATA;
 import static com.sdl.odata.AtomConstants.ODATA_ASSOCIATION_LINK_REL_NS_PREFIX;
 import static com.sdl.odata.AtomConstants.ODATA_DATA;
-import static com.sdl.odata.AtomConstants.ODATA_DATA_NS;
 import static com.sdl.odata.AtomConstants.ODATA_ENTRY_LINK_TYPE_PATTERN;
 import static com.sdl.odata.AtomConstants.ODATA_FEED_LINK_TYPE_PATTERN;
-import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.ODATA_NAVIGATION_LINK_REL_NS_PREFIX;
+import static com.sdl.odata.AtomConstants.REF;
 import static com.sdl.odata.AtomConstants.REL;
 import static com.sdl.odata.AtomConstants.TITLE;
 import static com.sdl.odata.AtomConstants.TYPE;
@@ -79,6 +81,7 @@ public class AtomWriter {
     private final ZonedDateTime dateTime;
     private final ODataUri oDataUri;
     private final EntityDataModel entityDataModel;
+    private final AtomNSConfigurationProvider nsConfigurationProvider;
     // Note: At the moment only a list of comma-separated properties are supported in the $expand operation
     private final List<String> expandedProperties = new ArrayList<>();
     private String contextURL;
@@ -89,18 +92,20 @@ public class AtomWriter {
     /**
      * Creates an instance of {@link AtomWriter} specifying the local date and time to stamp in the XML to write.
      *
-     * @param dateTime        The given date and time. It can not be {@code null}.
-     * @param oDataUri        The OData parsed URI. It can not be {@code null}.
-     * @param entityDataModel The <i>Entity Data Model (EDM)</i>. It can not be {@code null}.
+     * @param dateTime         The given date and time. It can not be {@code null}.
+     * @param oDataUri         The OData parsed URI. It can not be {@code null}.
+     * @param entityDataModel  The <i>Entity Data Model (EDM)</i>. It can not be {@code null}.
      * @param isWriteOperation True is this is a write operation or false if its a read operation
      */
-    public AtomWriter(ZonedDateTime dateTime, ODataUri oDataUri,
-                      EntityDataModel entityDataModel, boolean isWriteOperation, boolean isActionCall) {
+    public AtomWriter(ZonedDateTime dateTime, ODataUri oDataUri, EntityDataModel entityDataModel,
+                      AtomNSConfigurationProvider nsConfigurationProvider,
+                      boolean isWriteOperation, boolean isActionCall) {
 
         this.dateTime = checkNotNull(dateTime);
         this.oDataUri = checkNotNull(oDataUri);
         this.entityDataModel = checkNotNull(entityDataModel);
         this.isWriteOperation = checkNotNull(isWriteOperation);
+        this.nsConfigurationProvider = checkNotNull(nsConfigurationProvider);
         // We currently don't have a mechanism to specify that we wish to write an entity with deep insert entities.
         this.isDeepInsert = false;
         this.isActionCall = isActionCall;
@@ -119,11 +124,11 @@ public class AtomWriter {
         outputStream = new ByteArrayOutputStream();
         try {
             xmlWriter = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
-            metadataWriter = new AtomMetadataWriter(xmlWriter, oDataUri, entityDataModel);
-            dataWriter = new AtomDataWriter(xmlWriter, entityDataModel);
+            metadataWriter = new AtomMetadataWriter(xmlWriter, oDataUri, entityDataModel, nsConfigurationProvider);
+            dataWriter = new AtomDataWriter(xmlWriter, entityDataModel, nsConfigurationProvider);
             xmlWriter.writeStartDocument(UTF_8.name(), XML_VERSION);
-            xmlWriter.setPrefix(METADATA, ODATA_METADATA_NS);
-            xmlWriter.setPrefix(ODATA_DATA, ODATA_DATA_NS);
+            xmlWriter.setPrefix(METADATA, nsConfigurationProvider.getOdataMetadataNs());
+            xmlWriter.setPrefix(ODATA_DATA, nsConfigurationProvider.getOdataDataNs());
         } catch (XMLStreamException e) {
             LOG.error("Not possible to start stream XML");
             throw new ODataRenderException("Not possible to start stream XML: ", e);
@@ -197,8 +202,11 @@ public class AtomWriter {
      * @return The generated XML.
      */
     public String getXml() {
-
-        return outputStream.toString();
+        try {
+            return outputStream.toString(StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            return outputStream.toString();
+        }
     }
 
     /**
@@ -210,9 +218,9 @@ public class AtomWriter {
      * @param enclosingEntity Entity that enclose this list of entities. If it is null, it implies that the feed is at
      *                        the root.
      * @param property        The NavigationProperty for which the feed is generated.
-     * @throws XMLStreamException if unable to render the feed
-     * @throws ODataRenderException if unable to render the feed
-     * @throws NoSuchFieldException if unable to render the feed
+     * @throws XMLStreamException     if unable to render the feed
+     * @throws ODataRenderException   if unable to render the feed
+     * @throws NoSuchFieldException   if unable to render the feed
      * @throws IllegalAccessException if unable to render the feed
      */
     private void writeFeed(Collection<?> entities, Object enclosingEntity, NavigationProperty property) throws
@@ -249,16 +257,9 @@ public class AtomWriter {
         for (StructuralProperty property : entityType.getStructuralProperties()) {
             if (property instanceof NavigationProperty) {
                 // Nullable navigation properties that have null values should not be included in the output of writes
-                if (isWriteOperation && property.isNullable()) {
+                if (isWriteOperation) {
                     final Object value = getPropertyValue(property, entity);
-                    if (property.isCollection()) {
-                        if (value != null && ((Collection) value).size() > 0) {
-                            // TODO-SL: Handle collections. See OData Page: http://goo.gl/RlZmtw
-                            // NavigationProperty navigationProperty = (NavigationProperty) property;
-                            // writeEntryPropertyLink(entity, navigationProperty);
-                            LOG.trace("TODO Handle Collections check");
-                        }
-                    } else if (value != null) {
+                    if (value != null) {
                         NavigationProperty navigationProperty = (NavigationProperty) property;
                         writeEntryPropertyLink(entity, navigationProperty);
                     }
@@ -342,10 +343,11 @@ public class AtomWriter {
             final Object value = getPropertyValue(property, entity);
 
             if (property.isCollection()) {
-                // TODO-SL: Add support for writing collection references as a collection of meta:ref. See:
-                // docs.oasis-open.org/odata/odata-atom-format/v4.0/cs02/odata-atom-format-v4.0-cs02.html#_Toc372792740
                 xmlWriter.writeAttribute(HREF, String.format("%s(%s)/%s", getEntityName(entityDataModel, entity),
                         formatEntityKey(entityDataModel, entity), property.getName()));
+                if (((Collection<?>) value).size() > 0) {
+                    writeCollectionRefs(((Collection<?>) value));
+                }
             } else if (value != null) {
                 if (isSingletonEntity(entityDataModel, getPropertyValue(property, entity))) {
                     xmlWriter.writeAttribute(HREF, String.format("%s", getEntityName(entityDataModel, value)));
@@ -388,6 +390,24 @@ public class AtomWriter {
         }
 
         endLink();
+    }
+
+    private void writeCollectionRefs(Collection<?> collection) throws XMLStreamException, ODataEdmException {
+        startMetadata();
+        startFeed(true);
+        for (Object entity : collection) {
+            writeMetadataRef(entity);
+        }
+        endFeed();
+        endMetadata();
+    }
+
+    private void writeMetadataRef(Object entity) throws XMLStreamException, ODataEdmException {
+        xmlWriter.writeStartElement(METADATA, REF, "");
+        xmlWriter.writeAttribute(ID, String.format("%s(%s)", getEntityName(entityDataModel, entity),
+                formatEntityKey(entityDataModel, entity)));
+        xmlWriter.writeEndElement();
+
     }
 
     private void startMetadata() throws XMLStreamException {

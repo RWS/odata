@@ -17,7 +17,6 @@ package com.sdl.odata.service.actor
 
 import com.sdl.odata.api.ODataSystemException
 import com.sdl.odata.api.unmarshaller.{ODataUnmarshaller, UnmarshallerFactory}
-import com.sdl.odata.service.protocol.ODataActorContext
 import com.sdl.odata.service.protocol.{ODataActorContext, Unmarshall, UnmarshallResult}
 import com.sdl.odata.service.spring.ActorProducer
 import com.sdl.odata.service.util.AkkaUtil._

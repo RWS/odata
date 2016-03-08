@@ -15,6 +15,8 @@
  */
 package com.sdl.odata.service
 
+import java.util.concurrent.TimeUnit.MILLISECONDS
+
 import akka.actor.PoisonPill
 import akka.pattern.ask
 import akka.util.Timeout
@@ -43,7 +45,7 @@ class ODataServiceImpl @Autowired() (producer: ActorProducer) extends ODataServi
   override def handleRequest(request: ODataRequest): ODataResponse = {
     LOG.debug("Handling request: {}", request)
 
-    implicit val timeout = Timeout.longToTimeout(1000000000l)
+    implicit val timeout = new Timeout(1000000000l, MILLISECONDS)
 
     val start = System.currentTimeMillis()
     val messageRouter = producer.actorRef(classOf[ODataMessageRouter].getSimpleName)

@@ -32,11 +32,11 @@ public class ODataV4ClientComponentsProvider extends AbstractODataClientComponen
 
     private static final Logger LOG = getLogger(ODataV4ClientComponentsProvider.class);
 
-    public ODataV4ClientComponentsProvider(Iterable<String> edmEntityClasses, Properties properties, String token) {
-        super(edmEntityClasses, properties, token);
+    public ODataV4ClientComponentsProvider(Iterable<String> edmEntityClasses, Properties properties) {
+        super(edmEntityClasses, properties);
    }
 
-    protected void initComponetsProvider(Iterable<String> edmEntityClasses) {
+    protected void initComponentsProvider(Iterable<String> edmEntityClasses) {
         setEntityUnmarshaller(new AtomEntityUnmarshaller(
                 getClassesForNames(edmEntityClasses), getWebServiceUrl().toString()));
         setEntityMarshaller(new AtomEntityMarshaller(getClassesForNames(edmEntityClasses),

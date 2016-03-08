@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.client.api.model;
+package com.sdl.odata.client.api.exception;
 
-import java.io.Serializable;
+import static java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT;
 
 /**
- * An interface containing one method to return an id for an entity.
+ * Exception to be thrown in case, when request was timed out.
  */
-public interface ODataIdAwareEntity extends Serializable {
+public class ODataClientTimeout extends ODataClientHttpError {
+    public ODataClientTimeout(String message, Throwable cause) {
+        super(HTTP_CLIENT_TIMEOUT, message, cause);
+    }
 
-    String getId();
+    public ODataClientTimeout(String message) {
+        super(HTTP_CLIENT_TIMEOUT, message);
+    }
 }
+

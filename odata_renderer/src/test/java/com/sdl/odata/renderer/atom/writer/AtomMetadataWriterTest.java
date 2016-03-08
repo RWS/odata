@@ -63,6 +63,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     private AtomMetadataWriter metadataWriter;
     private ByteArrayOutputStream outputStream;
     private Customer customer;
+    private AtomNSConfigurationProvider nsConfigurationProvider;
 
     @Before
     public void setUp() throws Exception {
@@ -71,6 +72,7 @@ public class AtomMetadataWriterTest extends WriterTest {
         customer = createCustomerSample();
         outputStream = new ByteArrayOutputStream();
         xmlWriter = xmlOutputFactory.createXMLStreamWriter(outputStream, UTF_8.name());
+        nsConfigurationProvider = new ODataV4AtomNSConfigurationProvider();
     }
 
     @After
@@ -102,7 +104,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteODataMetadataFeed() throws Exception {
 
         startDocument(true);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeODataMetadata(CUSTOMERS_URL);
         endDocument();
 
@@ -113,7 +115,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteODataMetadataEntry() throws Exception {
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers(1)", entityDataModel);
         startDocument(false);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeODataMetadata(CUSTOMER_URL);
         endDocument();
 
@@ -125,7 +127,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteFeedId() throws Exception {
 
         startDocument(true);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeFeedId();
         endDocument();
 
@@ -136,7 +138,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteFeedLink() throws Exception {
 
         startDocument(true);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeFeedLink(null, null);
         endDocument();
 
@@ -149,7 +151,7 @@ public class AtomMetadataWriterTest extends WriterTest {
         startDocument(true);
         odataUri = new ODataParserImpl()
                 .parseUri("http://localhost:8080/odata.svc/Customers(10)/ODataDemo.ODataDemoAction", entityDataModel);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeFeedLink(null, null);
         endDocument();
 
@@ -161,7 +163,7 @@ public class AtomMetadataWriterTest extends WriterTest {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers(10)", entityDataModel);
         startDocument(false);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeEntryId(customer);
         endDocument();
 
@@ -172,7 +174,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteTitle() throws Exception {
 
         startDocument(false);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeTitle();
         endDocument();
 
@@ -183,7 +185,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteSummary() throws Exception {
 
         startDocument(false);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeSummary();
         endDocument();
 
@@ -194,7 +196,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteUpdate() throws Exception {
 
         startDocument(false);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         ZonedDateTime dateTime = ZonedDateTime.of(2014, 5, 27, 23, 0, 0, 0, ZoneId.of("UTC").normalized());
         metadataWriter.writeUpdate(dateTime);
         endDocument();
@@ -206,7 +208,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteAuthor() throws Exception {
 
         startDocument(false);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeAuthor();
         endDocument();
 
@@ -217,7 +219,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteEntryEntityLink() throws Exception {
 
         startDocument(false);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeEntryEntityLink(customer);
         endDocument();
 
@@ -229,7 +231,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     public void testWriteEntryCategory() throws Exception {
 
         startDocument(false);
-        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel);
+        metadataWriter = new AtomMetadataWriter(xmlWriter, odataUri, entityDataModel, nsConfigurationProvider);
         metadataWriter.writeEntryCategory(customer);
         endDocument();
 

@@ -18,7 +18,9 @@ package com.sdl.odata.client.api.caller;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.client.api.exception.ODataClientException;
 
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * A class which can access the provided URL and returns the response as a String.
@@ -26,21 +28,28 @@ import java.net.URL;
 public interface EndpointCaller {
 
     /**
-     * Sets token to be used to authenticate request.
-     * @param token value to set.
+     * Performs the call endpoint for the given url.
+     *
+     * @param requestProperties request properties
+     * @param urlToCall url to call
+     * @return response
+     * @throws ODataClientException
      */
-    void setAccessToken(String token);
+    String callEndpoint(Map<String, String> requestProperties, URL urlToCall) throws ODataClientException;
 
     /**
-     * Calls OData web service using url and returns string response.
-     * @param urlToCall The url to call
-     * @return The response
-     * @throws ODataClientException If unable to complete the get call
+     * Get input stream with applied OData settings (proxy connection, OAuth, timeout settings).
+     *
+     * @param requestProperties request properties
+     * @param url URL to get input stream
+     * @return input stream for passed URL parameter
      */
-    String callEndpoint(URL urlToCall) throws ODataClientException;
+    InputStream getInputStream(Map<String, String> requestProperties, URL url) throws ODataClientException;
 
     /**
      * Post an entity to OData web service that means creating it and returns passed created one.
+     *
+     * @param requestProperties request properties
      * @param urlToCall The url to call
      * @param body The body to post
      * @param contentType content type
@@ -48,17 +57,28 @@ public interface EndpointCaller {
      * @return The response
      * @throws ODataClientException If unable to complete the post operation
      */
-    String doPostEntity(URL urlToCall, String body, MediaType contentType, MediaType acceptType)
-            throws ODataClientException;
+    String doPostEntity(Map<String, String> requestProperties, URL urlToCall, String body, MediaType contentType,
+                        MediaType acceptType) throws ODataClientException;
 
     /**
      * Put an entity to OData web service that means updating it and returns the passed updated one.
+     *
+     * @param requestProperties request properties
      * @param urlToCall The url to call
      * @param body The body to put
      * @param type media type
      * @return The response
      * @throws ODataClientException If unable to complete the put operation
      */
-    String doPutEntity(URL urlToCall, String body, MediaType type) throws ODataClientException;
+    String doPutEntity(Map<String, String> requestProperties, URL urlToCall, String body,
+                       MediaType type) throws ODataClientException;
 
+    /**
+     * Delete an entity from OData web service.
+     *
+     * @param requestProperties request properties
+     * @param urlToCall The url of the entity.
+     * @throws ODataClientException
+     */
+    void doDeleteEntity(Map<String, String> requestProperties, URL urlToCall) throws ODataClientException;
 }

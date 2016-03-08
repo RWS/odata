@@ -40,6 +40,7 @@ import static com.sdl.odata.JsonConstants.VALUE;
 import static com.sdl.odata.ODataRendererUtils.getContextURL;
 import static com.sdl.odata.renderer.json.util.JsonWriterUtil.writePrimitiveValue;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Json Property Writer.
@@ -191,7 +192,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
     private String closeStream(ByteArrayOutputStream os) throws IOException {
         jsonGenerator.writeEndObject();
         jsonGenerator.close();
-        return os.toString();
+        return os.toString(UTF_8.name());
     }
 }
 

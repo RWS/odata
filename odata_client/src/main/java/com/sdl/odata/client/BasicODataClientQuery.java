@@ -37,8 +37,8 @@ public class BasicODataClientQuery extends AbstractODataClientQuery {
         if (builder.entityType == null) {
             throw new IllegalArgumentException("EntityType shouldn't be null");
         }
-
         setEntityType(builder.entityType);
+        setEntityKey(builder.entityKey);
         this.filterMap = builder.filteringMap;
         this.expandParameters = builder.expandParameters;
     }
@@ -46,7 +46,9 @@ public class BasicODataClientQuery extends AbstractODataClientQuery {
     public String getQuery() {
         StringBuilder query = new StringBuilder();
         query.append(getEdmEntityName());
-        query.append(generateParameters());
+        if (!isSingletonEntity()) {
+            query.append(generateParameters());
+        }
         return query.toString();
     }
 
@@ -55,10 +57,10 @@ public class BasicODataClientQuery extends AbstractODataClientQuery {
      * to the query string used for Odata Client.
      * An Odata Client query can have either one of filter or expand parameters (with multiple properties
      * if desired) or both.
-     * <p/>
+     * <p>
      *
      * @return String Builder showing parameters appended to the query.
-     * @see ODataClient
+     * @see {@link com.sdl.odata.client.api.ODataClient}
      */
     private StringBuilder generateParameters() {
         StringBuilder parameters = new StringBuilder();
@@ -140,6 +142,7 @@ public class BasicODataClientQuery extends AbstractODataClientQuery {
         private List<String> expandParameters;
         //Using LinkedHashMap to preserve filter parameters insertion order.
         private Map<String, String> filteringMap;
+        private String entityKey;
 
         public Builder withEntityType(Class<?> clazz) {
             this.entityType = clazz;
@@ -156,9 +159,14 @@ public class BasicODataClientQuery extends AbstractODataClientQuery {
 
         public Builder withExpandParameters(String expandParameter) {
             if (this.expandParameters == null) {
-                expandParameters = new ArrayList();
+                expandParameters = new ArrayList<>();
             }
             this.expandParameters.add(expandParameter);
+            return this;
+        }
+
+        public Builder withEntityKey(String newEntityKey) {
+            this.entityKey = newEntityKey;
             return this;
         }
 
