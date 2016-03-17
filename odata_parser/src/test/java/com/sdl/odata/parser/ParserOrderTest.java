@@ -62,4 +62,28 @@ public class ParserOrderTest extends ParserTestSuite {
         }
     }
 
+    @Test
+    public void testFirstCustomerProducts() throws ODataException {
+        uri = parser.parseUri(SERVICE_ROOT + "Customers(0)/Orders", model);
+        assertNotNull(uri);
+        RelativeUri relative = uri.relativeUri();
+        assertNotNull(relative);
+        assertTrue(relative instanceof ResourcePathUri);
+        assertTrue(relative.toString().contains("Customers"));
+        assertTrue(relative.toString().contains("NumberLiteral(0)"));
+        assertTrue(relative.toString().contains("Orders"));
+    }
+
+    @Test
+    public void testFirstCustomerFirstProductFirstOrderLine() throws ODataException {
+        uri = parser.parseUri(SERVICE_ROOT + "Customers(0)/Orders(0)/orderLines(0)", model);
+        assertNotNull(uri);
+        RelativeUri relative = uri.relativeUri();
+        assertNotNull(relative);
+        assertTrue(relative instanceof ResourcePathUri);
+        assertTrue(relative.toString().contains("Customers"));
+        assertTrue(relative.toString().contains("NumberLiteral(0)"));
+        assertTrue(relative.toString().contains("Orders"));
+        assertTrue(relative.toString().contains("orderLines"));
+    }
 }
