@@ -251,6 +251,10 @@ class ODataUriUtilTest extends FunSuite with ParserTestHelpers {
         Some("http://localhost:8080/odata.svc/$metadata#Customers/$entity"))
 
     assert(
+      getContextUrl(parser.parseUri("http://localhost:8080/odata.svc/Customers('test123')/Orders?$format=json")) ===
+        Some("http://localhost:8080/odata.svc/$metadata#Customers('test123')/Orders"))
+
+    assert(
       getContextUrl(parser.parseUri("http://localhost:8080/odata.svc/ComplexKeySamples(id=15,name='ComplexKey',period=duration'P3Y30M30D')?$format=json")) ===
         Some("http://localhost:8080/odata.svc/$metadata#ComplexKeySamples/$entity"))
   }
@@ -300,6 +304,17 @@ class ODataUriUtilTest extends FunSuite with ParserTestHelpers {
   test("context url => collection field of an entity set") {
     assert(getContextUrl(parser.parseUri("http://localhost:8080/odata.svc/Customers(1)/Orders")) ===
       Some("http://localhost:8080/odata.svc/$metadata#Customers(1)/Orders"))
+
+    assert(getContextUrl(parser.parseUri("http://localhost:8080/odata.svc/Customers(1)/Orders(2)/orderLines")) ===
+      Some("http://localhost:8080/odata.svc/$metadata#Customers(1)/Orders(2)/orderLines"))
+  }
+
+  test("context url => entity of an entity set") {
+    assert(getContextUrl(parser.parseUri("http://localhost:8080/odata.svc/Customers(1)/Orders(123)")) ===
+      Some("http://localhost:8080/odata.svc/$metadata#Customers(1)/Orders/$entity"))
+
+    assert(getContextUrl(parser.parseUri("http://localhost:8080/odata.svc/Customers(1)/Orders(123)/orderLines(5)")) ===
+      Some("http://localhost:8080/odata.svc/$metadata#Customers(1)/Orders(123)/orderLines/$entity"))
   }
 
   test("context url => simple property") {
