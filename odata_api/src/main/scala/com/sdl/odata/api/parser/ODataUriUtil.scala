@@ -16,10 +16,10 @@
 package com.sdl.odata.api.parser
 
 import com.sdl.odata.api.ODataNotImplementedException
-import com.sdl.odata.api.edm.model.{ActionImport, Function, Action, EntityDataModel, EntityType, FunctionImport, NavigationProperty}
+import com.sdl.odata.api.edm.model.{Action, ActionImport, EntityDataModel, EntityType, Function, FunctionImport, NavigationProperty}
 import com.sdl.odata.util.PrimitiveUtil
 import com.sdl.odata.util.edm.EntityDataModelUtil
-import com.sdl.odata.util.edm.EntityDataModelUtil.{getAndCheckAction, getAndCheckActionImport, getAndCheckEntitySet, getAndCheckEntityType, getAndCheckFunction, getAndCheckFunctionImport, getAndCheckSingleton, getAndCheckStructuredType, isCollection, isSingletonEntity, pluralize}
+import com.sdl.odata.util.edm.EntityDataModelUtil.{getAndCheckAction, getAndCheckActionImport, getAndCheckEntitySet, getAndCheckEntityType, getAndCheckFunction, getAndCheckFunctionImport, getAndCheckSingleton, getAndCheckStructuredType, isCollection, isSingletonEntity}
 
 /**
  * Target type of an URI: the type of entity that will be the result of a query for an URI.
@@ -257,7 +257,8 @@ object ODataUriUtil {
     }
 
     def getContextFromSubPath(typeName: String, pathSegment: Option[PathSegment], acc: String, keyPredicateValue: Option[String]): Option[String] = pathSegment match {
-      case Some(PropertyPath(propertyName, subPath)) => getContextFromSubPath(typeName, subPath, s"$acc/$propertyName", keyPredicateValue)
+      case Some(PropertyPath(propertyName, Some(EntityCollectionPath(derivedType, subPath)))) => getContextFromSubPath(propertyName, subPath, s"$acc/", keyPredicateValue)
+      case Some(PropertyPath(propertyName, subPath)) => getContextFromSubPath(propertyName, subPath, s"$acc/$propertyName", keyPredicateValue)
       case Some(ComplexPath(derivedType, subPath)) => handleEntityPath(typeName, derivedType, subPath, acc, keyPredicateValue)
       case Some(EntityPath(derivedType, subPath)) => handleEntityPath(typeName, derivedType, subPath, acc, keyPredicateValue)
       case Some(KeyPredicatePath(_, None)) => getContextFromSubPath(typeName, None, s"$acc$typeName/$ENTITY", keyPredicateValue)
