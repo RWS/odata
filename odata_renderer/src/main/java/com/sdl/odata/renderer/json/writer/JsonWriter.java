@@ -29,7 +29,11 @@ import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.edm.model.TypeDefinition;
+import com.sdl.odata.api.parser.CountOption;
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.parser.QueryOption;
+import com.sdl.odata.api.parser.RelativeUri;
+import com.sdl.odata.api.parser.ResourcePathUri;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.json.util.JsonWriterUtil;
 import org.slf4j.Logger;
@@ -46,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.sdl.odata.JsonConstants.CONTEXT;
+import static com.sdl.odata.JsonConstants.COUNT;
 import static com.sdl.odata.JsonConstants.ID;
 import static com.sdl.odata.JsonConstants.TYPE;
 import static com.sdl.odata.JsonConstants.VALUE;
@@ -95,7 +100,6 @@ public class JsonWriter {
      * @throws ODataRenderException In case it is not possible to write to the JSON stream.
      */
     public String writeFeed(List<?> entities, String contextUrl) throws ODataRenderException {
-
         this.contextURL = checkNotNull(contextUrl);
 
         String json;
@@ -153,18 +157,10 @@ public class JsonWriter {
 
         jsonGenerator.writeStringField(CONTEXT, contextURL);
 
-//        RelativeUri uri = odataUri.relativeUri();
-//        if (uri instanceof ResourcePathUri) {
-//            ResourcePathUri rpi = (ResourcePathUri) uri;
-//            scala.collection.Iterator<QueryOption> it = rpi.options().iterator();
-//            while (it.hasNext()) {
-//                QueryOption opt = it.next();
-//                if (opt instanceof CountOption && ((CountOption) opt).value() && data instanceof List) {
-//                    jsonGenerator.writeNumberField(COUNT, ((List) data).size());
-//                    break;
-//                }
-//            }
-//        }
+        if (hasCountOption(odataUri.relativeUri()) && data instanceof List) {
+            // TODO: Wrong count, should not trim for $skip and $top
+            jsonGenerator.writeNumberField(COUNT, ((List) data).size());
+        }
 
         if (!(data instanceof List)) {
             if (entitySet != null) {
@@ -186,6 +182,20 @@ public class JsonWriter {
         jsonGenerator.close();
 
         return stream.toString(StandardCharsets.UTF_8.name());
+    }
+
+    private boolean hasCountOption(RelativeUri uri) {
+        if (uri instanceof ResourcePathUri) {
+            ResourcePathUri rpi = (ResourcePathUri) uri;
+            scala.collection.Iterator<QueryOption> it = rpi.options().iterator();
+            while (it.hasNext()) {
+                QueryOption opt = it.next();
+                if (opt instanceof CountOption && ((CountOption) opt).value()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void marshallEntities(List<?> entities) throws IOException,
