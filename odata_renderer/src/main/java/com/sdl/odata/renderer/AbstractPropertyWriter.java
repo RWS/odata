@@ -147,7 +147,7 @@ public abstract class AbstractPropertyWriter {
     private void validateRequest(Type type, Object data) throws ODataRenderException,
             ODataClientException, ODataEdmException {
         if (!areValidTypesToProceed(type, data)) {
-            throw new ODataRenderException("ODataUri type is not matched with given 'data' type");
+            throw new ODataRenderException("ODataUri type is not matched with given 'data' type: " + type);
         }
     }
 

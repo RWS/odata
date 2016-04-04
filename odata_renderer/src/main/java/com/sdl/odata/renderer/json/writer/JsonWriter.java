@@ -153,6 +153,19 @@ public class JsonWriter {
 
         jsonGenerator.writeStringField(CONTEXT, contextURL);
 
+//        RelativeUri uri = odataUri.relativeUri();
+//        if (uri instanceof ResourcePathUri) {
+//            ResourcePathUri rpi = (ResourcePathUri) uri;
+//            scala.collection.Iterator<QueryOption> it = rpi.options().iterator();
+//            while (it.hasNext()) {
+//                QueryOption opt = it.next();
+//                if (opt instanceof CountOption && ((CountOption) opt).value() && data instanceof List) {
+//                    jsonGenerator.writeNumberField(COUNT, ((List) data).size());
+//                    break;
+//                }
+//            }
+//        }
+
         if (!(data instanceof List)) {
             if (entitySet != null) {
                 jsonGenerator.writeStringField(ID, String.format("%s(%s)", getEntityName(entityDataModel, data),
@@ -164,7 +177,7 @@ public class JsonWriter {
 
         // Write feed
         if (data instanceof List) {
-                marshallEntities((List<?>) data);
+            marshallEntities((List<?>) data);
         } else {
             marshall(data, this.entityDataModel.getType(data.getClass()));
         }

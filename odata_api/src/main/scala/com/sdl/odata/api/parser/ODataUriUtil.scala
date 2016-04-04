@@ -16,10 +16,10 @@
 package com.sdl.odata.api.parser
 
 import com.sdl.odata.api.ODataNotImplementedException
-import com.sdl.odata.api.edm.model.{Action, ActionImport, EntityDataModel, EntityType, Function, FunctionImport, NavigationProperty}
+import com.sdl.odata.api.edm.model._
 import com.sdl.odata.util.PrimitiveUtil
 import com.sdl.odata.util.edm.EntityDataModelUtil
-import com.sdl.odata.util.edm.EntityDataModelUtil.{getAndCheckAction, getAndCheckActionImport, getAndCheckEntitySet, getAndCheckEntityType, getAndCheckFunction, getAndCheckFunctionImport, getAndCheckSingleton, getAndCheckStructuredType, isCollection, isSingletonEntity}
+import com.sdl.odata.util.edm.EntityDataModelUtil._
 
 /**
  * Target type of an URI: the type of entity that will be the result of a query for an URI.
@@ -263,6 +263,8 @@ object ODataUriUtil {
       case Some(EntityPath(derivedType, subPath)) => handleEntityPath(typeName, derivedType, subPath, acc, keyPredicateValue)
       case Some(KeyPredicatePath(_, None)) => getContextFromSubPath(typeName, None, s"$acc$typeName/$ENTITY", keyPredicateValue)
       case Some(KeyPredicatePath(keyPredicate, subPath)) => handleKeyPredicatePath(typeName, keyPredicate, subPath, acc)
+      case Some(CountPath) => Some(acc)
+      case Some(ValuePath) => Some(acc)
       case None => Some(acc)
     }
 
@@ -355,7 +357,9 @@ object ODataUriUtil {
             resolve(TargetType(property.getTypeName, false, Some(propertyName)), subPath)
           }
 
-        case Some(CountPath) => Some(contextType)
+        case Some(CountPath) =>
+          Some(TargetType(PrimitiveType.INT64.getFullyQualifiedName, false, Some("count")))
+
         case Some(RefPath) => Some(contextType)
         case Some(ValuePath) => Some(contextType)
 
@@ -369,7 +373,7 @@ object ODataUriUtil {
         case Some(BoundFunctionCallPath(functionName, args, subPath)) =>
           val function = getAndCheckFunction(entityDataModel, functionName)
           val returnType = function.getReturnType
-          val entitySet = entityDataModel.getEntityContainer().getEntitySet(returnType)
+          val entitySet = entityDataModel.getEntityContainer.getEntitySet(returnType)
           resolve(TargetType(if (entitySet == null) returnType else entitySet.getTypeName,
             isCollection(entityDataModel, returnType)), subPath)
 
@@ -385,18 +389,18 @@ object ODataUriUtil {
           val contextTypeName = getAndCheckSingleton(entityDataModel, singletonName).getTypeName
           resolve(TargetType(contextTypeName, false), subPath)
 
-        case ActionImportCall(actionName) => {
+        case ActionImportCall(actionName) =>
           val actionImport = getAndCheckActionImport(entityDataModel, actionName)
           val returnType = actionImport.getAction.getReturnType
-          val entitySet = entityDataModel.getEntityContainer().getEntitySet(returnType)
+          val entitySet = entityDataModel.getEntityContainer.getEntitySet(returnType)
 
           resolve(TargetType(if (entitySet == null) returnType else entitySet.getTypeName,
             isCollection(entityDataModel, returnType)), None)
-        }
+
         case FunctionImportCall(functionName, args, subPath) =>
           val functionImport: FunctionImport = getAndCheckFunctionImport(entityDataModel, functionName)
           val returnType = functionImport.getFunction.getReturnType
-          val entitySet = entityDataModel.getEntityContainer().getEntitySet(returnType)
+          val entitySet = entityDataModel.getEntityContainer.getEntitySet(returnType)
 
           resolve(TargetType(if (entitySet == null) returnType else entitySet.getTypeName,
             isCollection(entityDataModel, returnType)), subPath)
