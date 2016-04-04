@@ -358,7 +358,7 @@ object ODataUriUtil {
           }
 
         case Some(CountPath) =>
-          Some(TargetType(PrimitiveType.INT64.getFullyQualifiedName, false, Some("count")))
+          Some(TargetType(PrimitiveType.INT64.getFullyQualifiedName, false, Some("$count")))
 
         case Some(RefPath) => Some(contextType)
         case Some(ValuePath) => Some(contextType)

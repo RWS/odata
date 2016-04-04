@@ -151,7 +151,7 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
     case FilterOption(expression) => applyFilterOption(source, expression)
     case TopOption(count) => LimitOperation(source, count)
     case SkipOption(count) => SkipOperation(source, count)
-    case CountOption(trueFalse) => CountOperation(source, trueFalse)
+    case CountOption(trueFalse) => source
     case ExpandOption(items) => applyExpandOption(source, items)
     case OrderByOption(items) => applyOrderByOption(source, items)
 
