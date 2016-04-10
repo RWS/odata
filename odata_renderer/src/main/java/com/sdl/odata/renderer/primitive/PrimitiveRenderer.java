@@ -3,6 +3,7 @@ package com.sdl.odata.renderer.primitive;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataUriUtil;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -25,7 +26,7 @@ public class PrimitiveRenderer extends AbstractRenderer {
     private static final int DEFAULT_PRIMITIVE_SCORE = 35;
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
         int operationScore = DEFAULT_SCORE;
 
         if (ODataUriUtil.isValuePathUri(requestContext.getUri())
@@ -38,12 +39,12 @@ public class PrimitiveRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder) throws ODataException {
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder) throws ODataException {
         LOG.debug("Start value for request: {}", requestContext);
 
         PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
-        String response = primitiveWriter.getPropertyAsString(data);
+        String response = primitiveWriter.getPropertyAsString(data.getData());
 
         LOG.debug("Response value is {}", response);
 

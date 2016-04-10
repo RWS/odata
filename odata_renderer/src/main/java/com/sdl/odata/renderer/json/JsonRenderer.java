@@ -17,6 +17,7 @@ package com.sdl.odata.renderer.json;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -30,6 +31,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.COLLECTION;
+
 /**
  * Renderer which renders data in OData JSON format.
  * Reference: <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html">
@@ -41,7 +44,7 @@ public final class JsonRenderer extends AbstractJsonRenderer {
     private static final Logger LOG = LoggerFactory.getLogger(JsonRenderer.class);
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
 
         // This renderer only handles entity queries
         if (!isEntityQuery(requestContext.getUri(), requestContext.getEntityDataModel())) {
@@ -55,7 +58,7 @@ public final class JsonRenderer extends AbstractJsonRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
         LOG.debug("Start rendering entity(es) for request: {}", requestContext);
@@ -64,10 +67,10 @@ public final class JsonRenderer extends AbstractJsonRenderer {
 
         String contextUrl = buildContextURL(requestContext, data);
         String json;
-        if (data instanceof List) {
-            json = writer.writeFeed((List<?>) data, contextUrl);
+        if (data.getType() == COLLECTION) {
+            json = writer.writeFeed((List<?>) data.getData(), contextUrl, data.getMeta());
         } else {
-            json = writer.writeEntry(data, contextUrl);
+            json = writer.writeEntry(data.getData(), contextUrl);
         }
         if (responseBuilder != null) {
             try {

@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.xml;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -41,7 +42,7 @@ public class XMLServiceDocumentRenderer extends ServiceDocumentRenderer {
     private static final Logger LOG = LoggerFactory.getLogger(XMLServiceDocumentRenderer.class);
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
 
         int score = super.scoreServiceDocument(requestContext, XML);
         if (shouldBeDefaultToXML(requestContext.getUri(), score)) {
@@ -53,7 +54,7 @@ public class XMLServiceDocumentRenderer extends ServiceDocumentRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
         LOG.debug("Start rendering service document for request: {}", requestContext);
 

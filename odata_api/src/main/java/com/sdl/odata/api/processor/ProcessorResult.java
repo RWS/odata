@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.api.processor;
 
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 
@@ -33,7 +34,7 @@ import java.util.Map;
 public final class ProcessorResult {
 
     private final ODataResponse.Status status;
-    private final Object data;
+    private final QueryResult data;
     private final Map<String, String> headers = new HashMap<>();
     private final ODataRequestContext requestContext;
 
@@ -69,7 +70,7 @@ public final class ProcessorResult {
      * @param status The given status code.
      * @param data   The data to include in the body.
      */
-    public ProcessorResult(ODataResponse.Status status, Object data) {
+    public ProcessorResult(ODataResponse.Status status, QueryResult data) {
         this.status = status;
         this.data = data;
         this.requestContext = null;
@@ -83,7 +84,7 @@ public final class ProcessorResult {
      * @param data    The data to include in the body.
      * @param headers The response headers.
      */
-    public ProcessorResult(ODataResponse.Status status, Object data, Map<String, String> headers) {
+    public ProcessorResult(ODataResponse.Status status, QueryResult data, Map<String, String> headers) {
         this.status = status;
         this.data = data;
         this.headers.putAll(headers);
@@ -101,7 +102,7 @@ public final class ProcessorResult {
      * @param headers The response headers.
      * @param requestContext Request context used for generating the processor result. Needed for sub batch requests.
      */
-    public ProcessorResult(ODataResponse.Status status, Object data, Map<String, String> headers,
+    public ProcessorResult(ODataResponse.Status status, QueryResult data, Map<String, String> headers,
                            ODataRequestContext requestContext) {
         this.status = status;
         this.data = data;
@@ -123,7 +124,7 @@ public final class ProcessorResult {
      *
      * @return The data to include in the response body.
      */
-    public Object getData() {
+    public QueryResult getData() {
         return data;
     }
 

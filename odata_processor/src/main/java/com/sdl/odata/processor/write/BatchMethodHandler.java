@@ -29,6 +29,7 @@ import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.ODataTargetTypeException;
 import com.sdl.odata.api.processor.datasource.TransactionalDataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ChangeSetEntity;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -117,7 +118,7 @@ public class BatchMethodHandler {
             if (WriteMethodUtil.isMinimalReturnPreferred(odataRequest)) {
                 return new ProcessorResult(ODataResponse.Status.NO_CONTENT, headers);
             }
-            return new ProcessorResult(ODataResponse.Status.CREATED, createdEntity, headers, requestContext);
+            return new ProcessorResult(ODataResponse.Status.CREATED, QueryResult.from(createdEntity), headers, requestContext);
 
         } catch (ODataException ex) {
             // If POST operation fails - end transaction and do not continue farther
@@ -186,7 +187,7 @@ public class BatchMethodHandler {
             if (WriteMethodUtil.isMinimalReturnPreferred(oDataRequest)) {
                 return new ProcessorResult(ODataResponse.Status.NO_CONTENT, headers);
             }
-            return new ProcessorResult(ODataResponse.Status.OK, updatedEntity, headers, requestContext);
+            return new ProcessorResult(ODataResponse.Status.OK, QueryResult.from(updatedEntity), headers, requestContext);
         } catch (ODataException ex) {
             return prepareFailedResult(dataSource, ex.getMessage(), headers, requestContext);
         }
@@ -197,7 +198,7 @@ public class BatchMethodHandler {
         if (dataSource != null) {
             dataSource.endTransaction(transactionID, false);
         }
-        return new ProcessorResult(ODataResponse.Status.BAD_REQUEST, message, headers, requestContext);
+        return new ProcessorResult(ODataResponse.Status.BAD_REQUEST, QueryResult.from(message), headers, requestContext);
     }
 
     /**

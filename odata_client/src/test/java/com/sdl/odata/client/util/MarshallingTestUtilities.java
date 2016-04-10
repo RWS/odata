@@ -26,6 +26,7 @@ import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.parser.QueryOption;
 import com.sdl.odata.api.parser.ResourcePathUri;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -72,7 +73,7 @@ public final class MarshallingTestUtilities {
         ODataResponse.Builder builder = new ODataResponse.Builder().setStatus(OK);
 
         // marshall the entity Atom XML into the response
-        new AtomRenderer().render(buildODataContext("", ATOM_XML, serviceUri), entityDto, builder);
+        new AtomRenderer().render(buildODataContext("", ATOM_XML, serviceUri), QueryResult.from(entityDto), builder);
 
         // return the text content of the response
         return builder.build().getBodyText(StandardCharsets.UTF_8.name());
