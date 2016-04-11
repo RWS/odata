@@ -72,7 +72,7 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
       actorContext.origin ! ServiceResponse(actorContext, responseBuilder.build())
     case Render(actorContext, result) =>
       val responseBuilder = new ODataResponse.Builder()
-      if (result.getData.getData != null) {
+      if (result.getData != null) {
         renderResult(actorContext, result, responseBuilder)
       }
       responseBuilder.setStatus(result.getStatus)
@@ -122,9 +122,9 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
    * @param responseBuilder The response builder.
    */
   def renderResult(actorContext: ODataActorContext, result: ProcessorResult, responseBuilder: ODataResponse.Builder) {
-    getRenderer(actorContext, result.getData) match {
+    getRenderer(actorContext, result.getQueryResult) match {
       case Some(renderer) =>
-        renderer.render(actorContext.requestContext, result.getData, responseBuilder)
+        renderer.render(actorContext.requestContext, result.getQueryResult, responseBuilder)
 
       case None =>
         renderError(actorContext, new ODataServerException(UNKNOWN_ERROR, "No renderer available"), responseBuilder)

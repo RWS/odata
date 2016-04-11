@@ -124,7 +124,16 @@ public final class ProcessorResult {
      *
      * @return The data to include in the response body.
      */
-    public QueryResult getData() {
+    public Object getData() {
+        return data != null ? data.getData() : null;
+    }
+
+    /**
+     * Get the {@link QueryResult} object.
+     *
+     * @return QueryResult object provided by query execution.
+     */
+    public QueryResult getQueryResult() {
         return data;
     }
 

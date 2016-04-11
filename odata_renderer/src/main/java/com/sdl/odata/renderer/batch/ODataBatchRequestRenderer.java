@@ -250,7 +250,7 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
             }
         } else {
             resultMap.put(FORMAT, MediaType.HTTP.getSubType());
-            resultMap.put(BODY, (String) result.getData().getData());
+            resultMap.put(BODY, (String) result.getData());
         }
 
         return resultMap;
@@ -262,7 +262,7 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
 
         ODataResponse.Builder builder = new ODataResponse.Builder()
                 .setStatus(result.getStatus());
-        renderer.render(result.getRequestContext(), result.getData(), builder);
+        renderer.render(result.getRequestContext(), result.getQueryResult(), builder);
 
         try {
             // pretty print
@@ -281,7 +281,7 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
         ODataResponse.Builder builder = new ODataResponse.Builder()
                 .setStatus(result.getStatus());
 
-        atomRenderer.render(result.getRequestContext(), result.getData(), builder);
+        atomRenderer.render(result.getRequestContext(), result.getQueryResult(), builder);
 
         try {
             return builder.build().getBodyText(StandardCharsets.UTF_8.name());
