@@ -44,7 +44,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Json Property Writer.
- *
  */
 public class JsonPropertyWriter extends AbstractPropertyWriter {
 

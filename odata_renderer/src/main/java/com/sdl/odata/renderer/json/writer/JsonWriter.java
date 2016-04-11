@@ -48,6 +48,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.sdl.odata.JsonConstants.CONTEXT;
 import static com.sdl.odata.JsonConstants.COUNT;
@@ -96,15 +98,16 @@ public class JsonWriter {
      *
      * @param entities   The list of entities to fill in the JSON stream.
      * @param contextUrl The 'Context URL' to write.
+     * @param meta
      * @return the rendered feed
      * @throws ODataRenderException In case it is not possible to write to the JSON stream.
      */
-    public String writeFeed(List<?> entities, String contextUrl) throws ODataRenderException {
+    public String writeFeed(List<?> entities, String contextUrl, Map<String, Object> meta) throws ODataRenderException {
         this.contextURL = checkNotNull(contextUrl);
 
         String json;
         try {
-            json = writeJson(entities);
+            json = writeJson(entities, meta);
         } catch (IOException | IllegalAccessException | NoSuchFieldException
                 | ODataEdmException | ODataRenderException e) {
             LOG.error("Not possible to marshall feed stream JSON");
@@ -127,7 +130,7 @@ public class JsonWriter {
 
         String json;
         try {
-            json = writeJson(entity);
+            json = writeJson(entity, null);
         } catch (IOException | IllegalAccessException | NoSuchFieldException |
                 ODataEdmException | ODataRenderException e) {
             LOG.error("Not possible to marshall single entity stream JSON");
@@ -141,10 +144,11 @@ public class JsonWriter {
      * whether it is a single object or list.
      *
      * @param data The given data.
+     * @param meta Additional values to write.
      * @return The written JSON stream.
      * @throws ODataRenderException if unable to render
      */
-    private String writeJson(Object data) throws IOException, NoSuchFieldException,
+    private String writeJson(Object data, Map<String, Object> meta) throws IOException, NoSuchFieldException,
             IllegalAccessException, ODataEdmException, ODataRenderException {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -158,8 +162,9 @@ public class JsonWriter {
         jsonGenerator.writeStringField(CONTEXT, contextURL);
 
         if (hasCountOption(odataUri.relativeUri()) && data instanceof List) {
-            // TODO: Wrong count, should not trim for $skip and $top
-            jsonGenerator.writeNumberField(COUNT, ((List) data).size());
+            long size = ((List) data).size();
+            long count = (long) Optional.ofNullable(meta).map(map -> map.getOrDefault("count", size)).orElse(size);
+            jsonGenerator.writeNumberField(COUNT, count);
         }
 
         if (!(data instanceof List)) {
@@ -433,7 +438,6 @@ public class JsonWriter {
     }
 
     private boolean isExpandedProperty(NavigationProperty property) {
-
         return expandedProperties.contains(property.getName());
     }
 
@@ -461,7 +465,6 @@ public class JsonWriter {
     }
 
     private EntityType getEntityType(Object entity) {
-
         final Type type = entityDataModel.getType(entity.getClass());
         if (type.getMetaType() != ENTITY) {
             throw new UnsupportedOperationException("Unsupported type: " + type);

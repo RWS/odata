@@ -16,6 +16,7 @@
 package com.sdl.odata.api.renderer;
 
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 
@@ -35,7 +36,7 @@ public interface ODataRenderer {
      * @return A score that indicates how suitable this renderer is for the specified request and data;
      *      0 if this renderer cannot render the response body for this request.
      */
-    int score(ODataRequestContext requestContext, Object data);
+    int score(ODataRequestContext requestContext, QueryResult data);
 
     /**
      * Renders the response body for a request.
@@ -45,6 +46,6 @@ public interface ODataRenderer {
      * @param responseBuilder The response builder to which the appropriate status code, headers and body are added.
      * @throws ODataException If an error occurs while rendering.
      */
-    void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException;
 }

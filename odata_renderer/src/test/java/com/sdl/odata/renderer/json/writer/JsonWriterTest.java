@@ -156,7 +156,7 @@ public class JsonWriterTest extends WriterTest {
 
         String jsonStream;
         if (data instanceof List) {
-            jsonStream = writer.writeFeed((List<?>) data, contextURL);
+            jsonStream = writer.writeFeed((List<?>) data, contextURL, null);
         } else {
             jsonStream = writer.writeEntry(data, contextURL);
         }

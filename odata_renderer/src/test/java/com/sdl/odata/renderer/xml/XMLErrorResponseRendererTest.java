@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.xml;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.edm.ODataEdmException;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.RendererTest;
 import org.junit.Before;
@@ -49,72 +50,62 @@ public class XMLErrorResponseRendererTest extends RendererTest {
 
     @Before
     public void setUp() throws Exception {
-
         exception = new ODataEdmException("EDM error");
         renderer = new XMLErrorResponseRenderer();
     }
 
     @Test
     public void testScoreExceptionNull() throws Exception {
-
         prepareRequestContextHeader(XML);
         assertThat(renderer.score(context, null), is(0));
     }
 
     @Test
     public void testScoreNoException() throws Exception {
-
         prepareRequestContextHeader(XML);
-        assertThat(renderer.score(context, "data"), is(0));
+        assertThat(renderer.score(context, QueryResult.from("data")), is(0));
     }
 
     @Test
     public void testScoreXmlInHeader() throws Exception {
-
         prepareRequestContextHeader(XML);
-        assertThat(renderer.score(context, exception), is(MAXIMUM_HEADER_SCORE + ERROR_EXTRA_SCORE));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(MAXIMUM_HEADER_SCORE + ERROR_EXTRA_SCORE));
     }
 
     @Test
     public void testScoreAtomXmlInHeader() throws Exception {
-
         prepareRequestContextHeader(ATOM_XML);
-        assertThat(renderer.score(context, exception), is(MAXIMUM_HEADER_SCORE + ERROR_EXTRA_SCORE));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(MAXIMUM_HEADER_SCORE + ERROR_EXTRA_SCORE));
     }
 
     @Test
     public void testScoreXmlContentTypeInHeader() throws Exception {
-
         prepareRequestContextHeaderWithContextType(XML);
-        assertThat(renderer.score(context, exception), is(CONTENT_TYPE_HEADER + ERROR_EXTRA_SCORE));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(CONTENT_TYPE_HEADER + ERROR_EXTRA_SCORE));
     }
 
     @Test
     public void testScoreAtomXmlContentTypeInHeader() throws Exception {
-
         prepareRequestContextHeaderWithContextType(ATOM_XML);
-        assertThat(renderer.score(context, exception), is(CONTENT_TYPE_HEADER + ERROR_EXTRA_SCORE));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(CONTENT_TYPE_HEADER + ERROR_EXTRA_SCORE));
     }
 
     @Test
     public void testScoreWithoutContentType() throws Exception {
-
         prepareSimpleRequestContextHeader();
-        assertThat(renderer.score(context, exception), is(PRIORITY_SCORE + ERROR_EXTRA_SCORE));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(PRIORITY_SCORE + ERROR_EXTRA_SCORE));
     }
 
     @Test
     public void testScoreEmptyHeader() throws Exception {
-
         prepareRequestContextHeader();
-        assertThat(renderer.score(context, exception), is(1 + ERROR_EXTRA_SCORE));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(1 + ERROR_EXTRA_SCORE));
     }
 
     @Test
     public void testRender() throws Exception {
-
         prepareRequestContextRender(GET, createODataUri(XML));
-        renderer.render(context, exception, responseBuilder);
+        renderer.render(context, QueryResult.from(exception), responseBuilder);
         responseBuilder.setStatus(OK);
         ODataResponse response = responseBuilder.build();
         assertResponse(response, XML, ERROR_RESPONSE_PATH);
@@ -124,6 +115,6 @@ public class XMLErrorResponseRendererTest extends RendererTest {
     @Test(expected = ODataSystemException.class)
     public void testRenderException() throws ODataException, UnsupportedEncodingException {
         prepareRequestContextRenderException(GET, createODataUri());
-        renderer.render(context, exception, responseBuilderMock);
+        renderer.render(context, QueryResult.from(exception), responseBuilderMock);
     }
 }

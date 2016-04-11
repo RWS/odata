@@ -24,6 +24,7 @@ import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.processor.link.ODataLink;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,7 @@ public class PostMethodHandler extends WriteMethodHandler {
             if (isMinimalReturnPreferred()) {
                 return new ProcessorResult(NO_CONTENT, headers);
             }
-            return new ProcessorResult(CREATED, createdEntity, headers);
+            return new ProcessorResult(CREATED, QueryResult.from(createdEntity), headers);
         } else {
             throw new ODataBadRequestException("The URI for a POST request should refer to a collection in which " +
                     "to create the entity, not to a single entity.");
