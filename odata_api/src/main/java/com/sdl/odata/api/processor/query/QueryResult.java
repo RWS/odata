@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.sdl.odata.api.processor.query;
 
 import com.sdl.odata.api.ODataException;
@@ -9,7 +24,7 @@ import java.util.Map;
 /**
  * Result of query operation.
  */
-public class QueryResult {
+public final class QueryResult {
 
     private final ResultType type;
     private final Object data;
@@ -67,11 +82,31 @@ public class QueryResult {
         return metadata;
     }
 
+    /**
+     * Description of what is stored inside of {@link QueryResult}.
+     */
     public enum ResultType {
+        /**
+         * Query returns Entity collection.
+         */
         COLLECTION,
+        /**
+         * Query returns Entity object.
+         */
         ENTITY,
+        /**
+         * Exception happened during query processing.
+         * {@link ODataException} is stored in data.
+         */
         EXCEPTION,
+        /**
+         * Query returns nothing, null.
+         */
         NOTHING,
+        /**
+         * Query returns a simple value.
+         * Data holds simple non-entity type.
+         */
         VALUE
     }
 }

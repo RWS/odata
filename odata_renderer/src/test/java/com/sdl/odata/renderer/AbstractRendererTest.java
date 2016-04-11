@@ -167,9 +167,12 @@ public class AbstractRendererTest {
                 new MediaType("application", "test", ImmutableMap.of("q", "0.8")),
                 new MediaType("*", "*", ImmutableMap.of("q", "0.1"))};
 
-        int atomXMLScore = atomRenderer.score(buildODataRequest(ODATA_URI, mediaTypes), QueryResult.from(Lists.newArrayList()));
+        int atomXMLScore = atomRenderer.score(buildODataRequest(ODATA_URI, mediaTypes),
+                QueryResult.from(Lists.newArrayList()));
         assertThat(atomXMLScore, CoreMatchers.is(AbstractRenderer.WILDCARD_MATCH_SCORE + 1));
-        int jsonScore = new JsonRenderer().score(buildODataRequest(ODATA_URI, mediaTypes), QueryResult.from(Lists.newArrayList()));
+
+        int jsonScore = new JsonRenderer().score(buildODataRequest(ODATA_URI, mediaTypes),
+                QueryResult.from(Lists.newArrayList()));
         assertTrue("Score of XML marshaller should have higher value in case of wild card matching ",
                 atomXMLScore > jsonScore);
     }

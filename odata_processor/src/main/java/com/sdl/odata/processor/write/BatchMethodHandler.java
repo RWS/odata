@@ -118,7 +118,9 @@ public class BatchMethodHandler {
             if (WriteMethodUtil.isMinimalReturnPreferred(odataRequest)) {
                 return new ProcessorResult(ODataResponse.Status.NO_CONTENT, headers);
             }
-            return new ProcessorResult(ODataResponse.Status.CREATED, QueryResult.from(createdEntity), headers, requestContext);
+
+            return new ProcessorResult(ODataResponse.Status.CREATED, QueryResult.from(createdEntity),
+                    headers, requestContext);
 
         } catch (ODataException ex) {
             // If POST operation fails - end transaction and do not continue farther
@@ -187,25 +189,27 @@ public class BatchMethodHandler {
             if (WriteMethodUtil.isMinimalReturnPreferred(oDataRequest)) {
                 return new ProcessorResult(ODataResponse.Status.NO_CONTENT, headers);
             }
-            return new ProcessorResult(ODataResponse.Status.OK, QueryResult.from(updatedEntity), headers, requestContext);
+            return new ProcessorResult(ODataResponse.Status.OK, QueryResult.from(updatedEntity),
+                    headers, requestContext);
         } catch (ODataException ex) {
             return prepareFailedResult(dataSource, ex.getMessage(), headers, requestContext);
         }
     }
 
-    private ProcessorResult prepareFailedResult(TransactionalDataSource dataSource, String message, Map<String,
-            String> headers, ODataRequestContext requestContext) {
+    private ProcessorResult prepareFailedResult(TransactionalDataSource dataSource, String message,
+                                                Map<String, String> headers, ODataRequestContext requestContext) {
         if (dataSource != null) {
             dataSource.endTransaction(transactionID, false);
         }
-        return new ProcessorResult(ODataResponse.Status.BAD_REQUEST, QueryResult.from(message), headers, requestContext);
+        return new ProcessorResult(ODataResponse.Status.BAD_REQUEST, QueryResult.from(message),
+                headers, requestContext);
     }
 
     /**
      * Returns request type.
-     * @param oDataRequest
-     * @param oDataUri
-     * @return
+     * @param oDataRequest OData request.
+     * @param oDataUri Uri.
+     * @return Request type.
      * @throws ODataTargetTypeException
      */
     private Type getRequestType(ODataRequest oDataRequest, ODataUri oDataUri) throws ODataTargetTypeException {
@@ -215,7 +219,7 @@ public class BatchMethodHandler {
 
     /**
      * If it's the first batch request call - start transaction.
-     * @param dataSource
+     * @param dataSource Datasource.
      */
     private void starTransactionIfNeeded(TransactionalDataSource dataSource) {
         if (!isTransactionStarted) {

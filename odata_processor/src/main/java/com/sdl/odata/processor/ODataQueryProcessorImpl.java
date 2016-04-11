@@ -100,8 +100,9 @@ public class ODataQueryProcessorImpl implements ODataQueryProcessor {
             if (result.getType() == QueryResult.ResultType.COLLECTION) {
                 return new ProcessorResult(OK, result);
             } else {
-                throw new ODataDataSourceException("Expected a collection result, but found " + result.getType().name() +
-                        " for this query: " + result.getType().name(), requestContext.getRequest().getUri());
+                throw new ODataDataSourceException("Expected a collection result, but found " +
+                        result.getType().name() + " for this query: " +
+                        result.getType().name(), requestContext.getRequest().getUri());
             }
         } else {
             if (result.getType() == QueryResult.ResultType.COLLECTION) {
