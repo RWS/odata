@@ -155,7 +155,7 @@ public class JsonWriter {
         jsonGenerator.writeStringField(CONTEXT, contextURL);
 
         // Write @odata.count if requested and provided.
-        if (hasCountOption(odataUri.relativeUri()) && data instanceof List &&
+        if (hasCountOption(odataUri) && data instanceof List &&
                 meta != null && meta.containsKey("count")) {
 
             long count;

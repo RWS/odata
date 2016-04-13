@@ -41,19 +41,15 @@ public final class QueryResult {
             return new QueryResult(null, ResultType.NOTHING);
         }
 
-        if (obj instanceof List<?>) {
-            return new QueryResult(obj, ResultType.COLLECTION);
-        }
-
-        if (obj instanceof Long || obj instanceof Integer || obj instanceof String) {
-            return new QueryResult(obj, ResultType.VALUE);
-        }
-
         if (obj instanceof ODataException) {
             return new QueryResult(obj, ResultType.EXCEPTION);
         }
 
-        return new QueryResult(obj, ResultType.ENTITY);
+        if (obj instanceof List<?>) {
+            return new QueryResult(obj, ResultType.COLLECTION);
+        }
+
+        return new QueryResult(obj, ResultType.OBJECT);
     }
 
     public QueryResult addMeta(String key, Object value) {
@@ -91,10 +87,6 @@ public final class QueryResult {
          */
         COLLECTION,
         /**
-         * Query returns Entity object.
-         */
-        ENTITY,
-        /**
          * Exception happened during query processing.
          * {@link ODataException} is stored in data.
          */
@@ -104,9 +96,9 @@ public final class QueryResult {
          */
         NOTHING,
         /**
-         * Query returns a simple value.
-         * Data holds simple non-entity type.
+         * Query returns value object.
+         * Data can simple or entity types.
          */
-        VALUE
+        OBJECT
     }
 }

@@ -215,12 +215,9 @@ object ODataUriUtil {
     }
   }
 
-  def hasCountOption(uri: RelativeUri): Boolean = {
-    uri match {
-      case rpi: ResourcePathUri => rpi.options.exists {
-        case CountOption(true) => true
-        case _ => false
-      }
+  def hasCountOption(uri: ODataUri): Boolean = {
+    getQueryOptions(uri).exists {
+      case CountOption(true) => true
       case _ => false
     }
   }

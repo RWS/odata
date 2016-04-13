@@ -163,7 +163,8 @@ public class AtomWriter {
      * @param meta              Additional metadata to write.
      * @throws ODataRenderException In case it is not possible to write to the XML stream.
      */
-    public void writeFeed(List<?> entities, String requestContextURL, Map<String, Object> meta) throws ODataRenderException {
+    public void writeFeed(List<?> entities, String requestContextURL, Map<String, Object> meta)
+            throws ODataRenderException {
 
         checkNotNull(entities);
         this.contextURL = checkNotNull(requestContextURL);
@@ -235,7 +236,7 @@ public class AtomWriter {
 
         startFeed(isInlineFeed);
 
-        if (ODataUriUtil.hasCountOption(oDataUri.relativeUri()) &&
+        if (ODataUriUtil.hasCountOption(oDataUri) &&
                 meta != null && meta.containsKey("count")) {
             metadataWriter.writeCount(meta.get("count"));
         }
