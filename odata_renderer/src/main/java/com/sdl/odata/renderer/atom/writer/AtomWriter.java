@@ -21,6 +21,7 @@ import com.sdl.odata.api.edm.model.EntityType;
 import com.sdl.odata.api.edm.model.NavigationProperty;
 import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.sdl.odata.AtomConstants.ATOM_ENTRY;
 import static com.sdl.odata.AtomConstants.ATOM_FEED;
@@ -158,15 +160,16 @@ public class AtomWriter {
      *
      * @param entities          The list of entities to fill in the XML stream. It can not {@code null}.
      * @param requestContextURL The 'Context URL' to write for the feed. It can not {@code null}.
+     * @param meta              Additional metadata to write.
      * @throws ODataRenderException In case it is not possible to write to the XML stream.
      */
-    public void writeFeed(List<?> entities, String requestContextURL) throws ODataRenderException {
+    public void writeFeed(List<?> entities, String requestContextURL, Map<String, Object> meta) throws ODataRenderException {
 
         checkNotNull(entities);
         this.contextURL = checkNotNull(requestContextURL);
 
         try {
-            writeFeed(entities, null, null);
+            writeFeed(entities, null, null, meta);
         } catch (XMLStreamException | IllegalAccessException | NoSuchFieldException | ODataEdmException e) {
             LOG.error("Not possible to marshall feed stream XML");
             throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
@@ -215,20 +218,28 @@ public class AtomWriter {
      * $expand operation).</p>
      *
      * @param entities        The list of entities to fill in the XML stream.
-     * @param enclosingEntity Entity that enclose this list of entities. If it is null, it implies that the feed is at
-     *                        the root.
+     * @param enclosingEntity Entity that enclose this list of entities.
+     *                        If it is null, it implies that the feed is at the root.
      * @param property        The NavigationProperty for which the feed is generated.
+     * @param meta            Additional metadata to write.
      * @throws XMLStreamException     if unable to render the feed
      * @throws ODataRenderException   if unable to render the feed
      * @throws NoSuchFieldException   if unable to render the feed
      * @throws IllegalAccessException if unable to render the feed
      */
-    private void writeFeed(Collection<?> entities, Object enclosingEntity, NavigationProperty property) throws
-            XMLStreamException, ODataRenderException, NoSuchFieldException,
-            IllegalAccessException, ODataEdmException {
+    private void writeFeed(Collection<?> entities, Object enclosingEntity, NavigationProperty property,
+                           Map<String, Object> meta) throws XMLStreamException, ODataRenderException,
+            NoSuchFieldException, IllegalAccessException, ODataEdmException {
+
         final boolean isInlineFeed = (enclosingEntity != null);
 
         startFeed(isInlineFeed);
+
+        if (ODataUriUtil.hasCountOption(oDataUri.relativeUri()) &&
+                meta != null && meta.containsKey("count")) {
+            metadataWriter.writeCount(meta.get("count"));
+        }
+
         metadataWriter.writeFeedId(enclosingEntity, property);
         metadataWriter.writeTitle();
         metadataWriter.writeUpdate(dateTime);
@@ -329,7 +340,7 @@ public class AtomWriter {
             if (property.isCollection()) {
                 if (value != null && ((Collection) value).size() > 0) {
                     startMetadata();
-                    writeFeed((Collection<?>) value, entity, property);
+                    writeFeed((Collection<?>) value, entity, property, null);
                     endMetadata();
                 }
             } else if (value != null) {
@@ -364,7 +375,7 @@ public class AtomWriter {
             startMetadata();
             if (value != null) {
                 if (property.isCollection()) {
-                    writeFeed((Collection<?>) value, entity, property);
+                    writeFeed((Collection<?>) value, entity, property, null);
                 } else {
                     writeEntry(value, true);
                 }
@@ -407,26 +418,21 @@ public class AtomWriter {
         xmlWriter.writeAttribute(ID, String.format("%s(%s)", getEntityName(entityDataModel, entity),
                 formatEntityKey(entityDataModel, entity)));
         xmlWriter.writeEndElement();
-
     }
 
     private void startMetadata() throws XMLStreamException {
-
         xmlWriter.writeStartElement(METADATA, INLINE, "");
     }
 
     private void endMetadata() throws XMLStreamException {
-
         xmlWriter.writeEndElement();
     }
 
     private void startLink() throws XMLStreamException {
-
         xmlWriter.writeStartElement(ATOM_LINK);
     }
 
     private void endLink() throws XMLStreamException {
-
         xmlWriter.writeEndElement();
     }
 

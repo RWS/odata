@@ -215,6 +215,16 @@ object ODataUriUtil {
     }
   }
 
+  def hasCountOption(uri: RelativeUri): Boolean = {
+    uri match {
+      case rpi: ResourcePathUri => rpi.options.exists {
+        case CountOption(true) => true
+        case _ => false
+      }
+      case _ => false
+    }
+  }
+
   /**
    * Builds the 'Context URL' from a given OData URI.
    * The context will be generated for entity set, entity, simple property and complex property (including derived types)
@@ -590,7 +600,8 @@ object ODataUriUtil {
 
   /**
    * Function returns the entity name bound to a bound operation
-   * @param odataUri The OData Uri
+    *
+    * @param odataUri The OData Uri
    * @return the name of bound entity name
    */
   def getBoundEntityName(odataUri: ODataUri): Option[String] = odataUri.relativeUri match {
@@ -752,7 +763,8 @@ object ODataUriUtil {
 
   /**
    * This converts compound key to string
-   * @param literals map which represent compound key
+    *
+    * @param literals map which represent compound key
    * @return converted string
    */
   def compoundKeyToString(literals: Map[String, Literal]): String =

@@ -29,11 +29,7 @@ import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.edm.model.TypeDefinition;
-import com.sdl.odata.api.parser.CountOption;
 import com.sdl.odata.api.parser.ODataUri;
-import com.sdl.odata.api.parser.QueryOption;
-import com.sdl.odata.api.parser.RelativeUri;
-import com.sdl.odata.api.parser.ResourcePathUri;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.json.util.JsonWriterUtil;
 import org.slf4j.Logger;
@@ -60,6 +56,7 @@ import static com.sdl.odata.api.edm.model.MetaType.COMPLEX;
 import static com.sdl.odata.api.edm.model.MetaType.ENTITY;
 import static com.sdl.odata.api.parser.ODataUriUtil.asJavaList;
 import static com.sdl.odata.api.parser.ODataUriUtil.getSimpleExpandPropertyNames;
+import static com.sdl.odata.api.parser.ODataUriUtil.hasCountOption;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.formatEntityKey;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.getEntityName;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
@@ -157,16 +154,16 @@ public class JsonWriter {
 
         jsonGenerator.writeStringField(CONTEXT, contextURL);
 
-        // Write @odata.count if requested.
-        if (hasCountOption(odataUri.relativeUri()) && data instanceof List) {
-            long count = ((List) data).size();
-            if (meta != null && meta.containsKey("count")) {
-                Object countObj = meta.get("count");
-                if (countObj instanceof Integer) {
-                    count = ((Integer) countObj).longValue();
-                } else {
-                    count = (long) countObj;
-                }
+        // Write @odata.count if requested and provided.
+        if (hasCountOption(odataUri.relativeUri()) && data instanceof List &&
+                meta != null && meta.containsKey("count")) {
+
+            long count;
+            Object countObj = meta.get("count");
+            if (countObj instanceof Integer) {
+                count = ((Integer) countObj).longValue();
+            } else {
+                count = (long) countObj;
             }
             jsonGenerator.writeNumberField(COUNT, count);
         }
@@ -191,20 +188,6 @@ public class JsonWriter {
         jsonGenerator.close();
 
         return stream.toString(StandardCharsets.UTF_8.name());
-    }
-
-    private boolean hasCountOption(RelativeUri uri) {
-        if (uri instanceof ResourcePathUri) {
-            ResourcePathUri rpi = (ResourcePathUri) uri;
-            scala.collection.Iterator<QueryOption> it = rpi.options().iterator();
-            while (it.hasNext()) {
-                QueryOption opt = it.next();
-                if (opt instanceof CountOption && ((CountOption) opt).value()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private void marshallEntities(List<?> entities) throws IOException,

@@ -112,10 +112,9 @@ public class JsonWriterTest extends WriterTest {
     @Test
     public void testExpandedPropertiesSample() throws Exception {
 
-        odataUri = new ODataParserImpl()
-                .parseUri("http://localhost:8080/odata.svc/ExpandedPropertiesSamples(1)" +
-                                "?$expand=ExpandedEntry,ExpandedFeed",
-                        entityDataModel);
+        odataUri = new ODataParserImpl().parseUri(
+                "http://localhost:8080/odata.svc/ExpandedPropertiesSamples(1)?$expand=ExpandedEntry,ExpandedFeed",
+                entityDataModel);
         checkWrittenJsonStream(createExpandedPropertiesSample(),
                 EXPANDED_PROPERTIES_SAMPLE_URL, EXPECTED_EXPANDED_PROPERTIES_ENTITY_PATH);
     }

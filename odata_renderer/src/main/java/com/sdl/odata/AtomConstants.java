@@ -35,6 +35,10 @@ public final class AtomConstants {
      */
     public static final String TITLE = "title";
     /**
+     * Count.
+     */
+    public static final String COUNT = "count";
+    /**
      * Type.
      */
     public static final String TYPE = "type";

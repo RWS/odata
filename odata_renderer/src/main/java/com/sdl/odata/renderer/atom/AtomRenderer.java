@@ -76,7 +76,7 @@ public class AtomRenderer extends AbstractAtomRenderer {
 
         atomWriter.startDocument();
         if (data.getType() == COLLECTION) {
-            atomWriter.writeFeed((List<?>) data.getData(), buildContextURL(requestContext, data));
+            atomWriter.writeFeed((List<?>) data.getData(), buildContextURL(requestContext, data), data.getMeta());
         } else {
             atomWriter.writeEntry(data.getData(), buildContextURL(requestContext, data));
         }
