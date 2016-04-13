@@ -23,7 +23,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintJson;
 import static com.sdl.odata.test.util.TestUtils.readContent;
@@ -42,6 +44,7 @@ public class JsonWriterTest extends WriterTest {
     private static final String EXPECTED_PRIMITIVE_TYPES_ENTITY_PATH = "/json/PrimitiveTypesSample.json";
     private static final String EXPECTED_COLLECTIONS_ENTITY_PATH = "/json/CollectionsSample.json";
     private static final String EXPECTED_CUSTOMER_FEED_PATH = "/json/Customers.json";
+    private static final String EXPECTED_CUSTOMER_FEED_WITH_COUNT_PATH = "/json/CustomersWithCount.json";
     private static final String EXPECTED_EXPANDED_PROPERTIES_ENTITY_PATH = "/json/ExpandedPropertiesSample.json";
     private static final String EXPANDED_PROPERTIES_NO_LINKS_ENTITY_PATH = "/json/ExpandedPropertiesNoLinksSample.json";
     private static final String EXPECTED_COMPLEX_KEY_ENTITY_PATH = "/json/ComplexKeySample.json";
@@ -97,6 +100,16 @@ public class JsonWriterTest extends WriterTest {
     }
 
     @Test
+    public void testCustomersWithCountSample() throws Exception {
+
+        odataUri = new ODataParserImpl().parseUri(
+                "http://localhost:8080/odata.svc/Customers?$count=true", entityDataModel);
+        Map<String, Object> meta = new HashMap<>();
+        meta.put("count", 5);
+        checkWrittenJsonStream(createCustomersSample(), meta, CUSTOMERS_URL, EXPECTED_CUSTOMER_FEED_WITH_COUNT_PATH);
+    }
+
+    @Test
     public void testExpandedPropertiesSample() throws Exception {
 
         odataUri = new ODataParserImpl()
@@ -144,19 +157,37 @@ public class JsonWriterTest extends WriterTest {
     /**
      * Checks output json with expected result.
      *
-     * @param expectedEntityPath Path to the file with the expected XML stream.
+     * @param data               Object(s) to write.
      * @param contextURL         The 'Context URL' to write.
+     * @param expectedEntityPath Path to the file with the expected XML stream.
      * @throws IOException
      * @throws ODataRenderException if unable to render
      */
     private void checkWrittenJsonStream(Object data, String contextURL, String expectedEntityPath)
             throws IOException, ODataRenderException {
 
+        checkWrittenJsonStream(data, null, contextURL, expectedEntityPath);
+    }
+
+    /**
+     * Checks output json with expected result.
+     *
+     * @param data               Object(s) to write.
+     * @param meta               Additional metadata to write.
+     * @param contextURL         The 'Context URL' to write.
+     * @param expectedEntityPath Path to the file with the expected XML stream.
+     * @throws IOException
+     * @throws ODataRenderException if unable to render
+     */
+    private void checkWrittenJsonStream(Object data, Map<String, Object> meta, String contextURL,
+                                        String expectedEntityPath)
+            throws IOException, ODataRenderException {
+
         JsonWriter writer = new JsonWriter(odataUri, entityDataModel);
 
         String jsonStream;
         if (data instanceof List) {
-            jsonStream = writer.writeFeed((List<?>) data, contextURL, null);
+            jsonStream = writer.writeFeed((List<?>) data, contextURL, meta);
         } else {
             jsonStream = writer.writeEntry(data, contextURL);
         }
@@ -164,4 +195,3 @@ public class JsonWriterTest extends WriterTest {
         assertEquals(prettyPrintJson(readContent(expectedEntityPath)), prettyPrintJson(jsonStream));
     }
 }
-
