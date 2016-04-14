@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.service.actor
 
+import com.sdl.odata.api.processor.query.QueryResult
 import com.sdl.odata.api.service.ODataResponse
 import com.sdl.odata.renderer.batch.ODataBatchRequestRenderer
 import com.sdl.odata.service.protocol.{BatchOperationResult, ServiceResponse}
@@ -35,11 +36,10 @@ class ODataBatchRendererActor @Autowired()(batchRequestRenderer: ODataBatchReque
     case BatchOperationResult(actorContext, resultList) =>
       val responseBuilder = new ODataResponse.Builder()
       if (resultList != null) {
-        batchRequestRenderer.render(actorContext.requestContext, resultList.asJava, responseBuilder)
+        batchRequestRenderer.render(actorContext.requestContext, QueryResult.from(resultList.asJava), responseBuilder)
       }
       responseBuilder.setStatus(ODataResponse.Status.OK)
       actorContext.origin ! ServiceResponse(actorContext, responseBuilder.build())
-
   }
 
 }

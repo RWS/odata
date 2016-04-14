@@ -73,6 +73,11 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
         buildFromPathSegment(context.select(propertyName), subPath)
       }
 
+    case Some(CountPath) =>
+      CountOperation(context, trueFalse = true)
+
+    case Some(ValuePath) => context
+
     case Some(_) =>
       throw new ODataNotImplementedException("This type of path segment is not supported for queries: " + pathSegment.get)
 
@@ -121,7 +126,7 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
     // Get the name of the entity type of the entity set or singleton
     val typeName = Option(entityDataModel.getEntityContainer.getEntitySet(sourceName)).map(_.getTypeName)
       .orElse(Option(entityDataModel.getEntityContainer.getSingleton(sourceName)).map(_.getTypeName))
-    if (!typeName.isDefined) {
+    if (typeName.isEmpty) {
       throw new ODataEdmException("Cannot determine type name for entity set or singleton: " + sourceName)
     }
 
@@ -146,6 +151,7 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
     case FilterOption(expression) => applyFilterOption(source, expression)
     case TopOption(count) => LimitOperation(source, count)
     case SkipOption(count) => SkipOperation(source, count)
+    case CountOption(trueFalse) => source
     case ExpandOption(items) => applyExpandOption(source, items)
     case OrderByOption(items) => applyOrderByOption(source, items)
 

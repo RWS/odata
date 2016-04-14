@@ -25,6 +25,7 @@ import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +80,7 @@ public class PatchMethodHandler extends WriteMethodHandler {
             if (isMinimalReturnPreferred()) {
                 return new ProcessorResult(NO_CONTENT, headers);
             }
-            return new ProcessorResult(OK, updatedEntity, headers);
+            return new ProcessorResult(OK, QueryResult.from(updatedEntity), headers);
         } else {
             throw new ODataBadRequestException("The URI for a PATCH request should refer to the single entity " +
                     "to be updated, not to a collection of entities.");

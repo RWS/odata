@@ -44,8 +44,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static com.sdl.odata.JsonConstants.CONTEXT;
+import static com.sdl.odata.JsonConstants.COUNT;
 import static com.sdl.odata.JsonConstants.ID;
 import static com.sdl.odata.JsonConstants.TYPE;
 import static com.sdl.odata.JsonConstants.VALUE;
@@ -54,6 +56,7 @@ import static com.sdl.odata.api.edm.model.MetaType.COMPLEX;
 import static com.sdl.odata.api.edm.model.MetaType.ENTITY;
 import static com.sdl.odata.api.parser.ODataUriUtil.asJavaList;
 import static com.sdl.odata.api.parser.ODataUriUtil.getSimpleExpandPropertyNames;
+import static com.sdl.odata.api.parser.ODataUriUtil.hasCountOption;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.formatEntityKey;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.getEntityName;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
@@ -91,22 +94,21 @@ public class JsonWriter {
      *
      * @param entities   The list of entities to fill in the JSON stream.
      * @param contextUrl The 'Context URL' to write.
-     * @return the rendered feed
+     * @param meta       Additional metadata for the writer.
+     * @return the rendered feed.
      * @throws ODataRenderException In case it is not possible to write to the JSON stream.
      */
-    public String writeFeed(List<?> entities, String contextUrl) throws ODataRenderException {
-
+    public String writeFeed(List<?> entities, String contextUrl, Map<String, Object> meta)
+            throws ODataRenderException {
         this.contextURL = checkNotNull(contextUrl);
 
-        String json;
         try {
-            json = writeJson(entities);
+            return writeJson(entities, meta);
         } catch (IOException | IllegalAccessException | NoSuchFieldException
                 | ODataEdmException | ODataRenderException e) {
             LOG.error("Not possible to marshall feed stream JSON");
             throw new ODataRenderException("Not possible to marshall feed stream JSON: ", e);
         }
-        return json;
     }
 
     /**
@@ -121,15 +123,13 @@ public class JsonWriter {
 
         this.contextURL = checkNotNull(contextUrl);
 
-        String json;
         try {
-            json = writeJson(entity);
+            return writeJson(entity, null);
         } catch (IOException | IllegalAccessException | NoSuchFieldException |
                 ODataEdmException | ODataRenderException e) {
             LOG.error("Not possible to marshall single entity stream JSON");
             throw new ODataRenderException("Not possible to marshall single entity stream JSON: ", e);
         }
-        return json;
     }
 
     /**
@@ -137,10 +137,11 @@ public class JsonWriter {
      * whether it is a single object or list.
      *
      * @param data The given data.
+     * @param meta Additional values to write.
      * @return The written JSON stream.
      * @throws ODataRenderException if unable to render
      */
-    private String writeJson(Object data) throws IOException, NoSuchFieldException,
+    private String writeJson(Object data, Map<String, Object> meta) throws IOException, NoSuchFieldException,
             IllegalAccessException, ODataEdmException, ODataRenderException {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -153,6 +154,20 @@ public class JsonWriter {
 
         jsonGenerator.writeStringField(CONTEXT, contextURL);
 
+        // Write @odata.count if requested and provided.
+        if (hasCountOption(odataUri) && data instanceof List &&
+                meta != null && meta.containsKey("count")) {
+
+            long count;
+            Object countObj = meta.get("count");
+            if (countObj instanceof Integer) {
+                count = ((Integer) countObj).longValue();
+            } else {
+                count = (long) countObj;
+            }
+            jsonGenerator.writeNumberField(COUNT, count);
+        }
+
         if (!(data instanceof List)) {
             if (entitySet != null) {
                 jsonGenerator.writeStringField(ID, String.format("%s(%s)", getEntityName(entityDataModel, data),
@@ -164,7 +179,7 @@ public class JsonWriter {
 
         // Write feed
         if (data instanceof List) {
-                marshallEntities((List<?>) data);
+            marshallEntities((List<?>) data);
         } else {
             marshall(data, this.entityDataModel.getType(data.getClass()));
         }
@@ -410,7 +425,6 @@ public class JsonWriter {
     }
 
     private boolean isExpandedProperty(NavigationProperty property) {
-
         return expandedProperties.contains(property.getName());
     }
 
@@ -438,7 +452,6 @@ public class JsonWriter {
     }
 
     private EntityType getEntityType(Object entity) {
-
         final Type type = entityDataModel.getType(entity.getClass());
         if (type.getMetaType() != ENTITY) {
             throw new UnsupportedOperationException("Unsupported type: " + type);

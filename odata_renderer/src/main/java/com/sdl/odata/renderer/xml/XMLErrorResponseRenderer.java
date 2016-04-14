@@ -17,6 +17,7 @@ package com.sdl.odata.renderer.xml;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -29,6 +30,8 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.EXCEPTION;
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.NOTHING;
 import static com.sdl.odata.api.service.HeaderNames.CONTENT_LANGUAGE;
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.MediaType.XML;
@@ -46,10 +49,9 @@ public class XMLErrorResponseRenderer extends AbstractRenderer {
     private static final Logger LOG = LoggerFactory.getLogger(XMLErrorResponseRenderer.class);
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
 
-        int totalScore;
-        if (data == null || !(data instanceof ODataException)) {
+        if (data == null || data.getType() == NOTHING || data.getType() != EXCEPTION) {
             return DEFAULT_SCORE;
         }
 
@@ -65,7 +67,7 @@ public class XMLErrorResponseRenderer extends AbstractRenderer {
         int atomXmlContentTypeScore = scoreByContentType(requestContext, ATOM_XML);
         int totalContentTypeScore = max(xmlContentTypeScore, atomXmlContentTypeScore);
 
-        totalScore = max(totalAcceptScore, totalContentTypeScore);
+        int totalScore = max(totalAcceptScore, totalContentTypeScore);
 
         // This is very ugly but if you want to default to XML then score should be little more in case of wildcard
         if (totalScore == WILDCARD_MATCH_SCORE || totalScore == DEFAULT_SCORE) {
@@ -76,14 +78,14 @@ public class XMLErrorResponseRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
         LOG.debug("Start rendering error response for request: {}", requestContext);
 
         XMLErrorResponseWriter writer = new XMLErrorResponseWriter();
         writer.startDocument();
-        writer.writeError((ODataException) data);
+        writer.writeError((ODataException) data.getData());
         writer.endDocument();
 
         try {

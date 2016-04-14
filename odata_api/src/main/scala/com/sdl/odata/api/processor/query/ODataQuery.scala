@@ -174,6 +174,27 @@ case class SkipOperation(@BeanProperty source: QueryOperation, @BeanProperty cou
 case class LimitOperation(@BeanProperty source: QueryOperation, @BeanProperty count: Int) extends FilterOperation
 
 /**
+  * Count operation. A count operation is a transform operation that gives back the count of
+  * source query operation.
+  * $skip and $limit should not affect the value of count.
+  *
+  * @param source The source operation.
+  * @param trueFalse Value of count operat
+  */
+case class CountOperation(@BeanProperty source: QueryOperation, @BeanProperty trueFalse: Boolean)
+  extends TransformOperation
+
+/**
+  * Value operation. A value operation is a transform operation that gets only primitive value of the
+  * SelectPropertiesOperation.
+  * /Persons('123')/firstName/@value
+  *
+  * @param source The source operation.
+  */
+case class ValueOperation(@BeanProperty source: QueryOperation)
+  extends TransformOperation
+
+/**
  * Criteria filter operation. A criteria filter operation filters the output of a source query operation using criteria
  * (like the "where" clause of an SQL statement).
  * 

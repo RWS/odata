@@ -31,6 +31,7 @@ import com.sdl.odata.api.processor.datasource.ODataDataSourceException;
 import com.sdl.odata.api.processor.datasource.ODataEntityNotFoundException;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.processor.query.ODataQuery;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.processor.query.strategy.QueryOperationStrategy;
 import com.sdl.odata.api.service.ODataRequestContext;
 import org.slf4j.Logger;
@@ -64,10 +65,10 @@ public class ODataQueryProcessorImpl implements ODataQueryProcessor {
 
         RelativeUri relativeUri = oDataUri.relativeUri();
         if (isMetadataUri(relativeUri)) {
-            return new ProcessorResult(OK, entityDataModel);
+            return new ProcessorResult(OK, QueryResult.from(entityDataModel));
         }
         if (isServiceRootUri(relativeUri)) {
-            return new ProcessorResult(OK, entityDataModel);
+            return new ProcessorResult(OK, QueryResult.from(entityDataModel));
         }
 
         Option<TargetType> targetTypeOption = ODataUriUtil.resolveTargetType(oDataUri, entityDataModel);
@@ -81,13 +82,13 @@ public class ODataQueryProcessorImpl implements ODataQueryProcessor {
         ODataQuery query = new QueryModelBuilder(requestContext.getEntityDataModel()).build(requestContext);
         LOG.trace("Query model: {}", query);
 
-        List<?> result;
-
         QueryOperationStrategy strategy = dataSourceFactory.getStrategy(requestContext, query.operation(), targetType);
         if (strategy == null) {
             throw new ODataNotImplementedException("This query is not supported: " +
                     requestContext.getRequest().getUri());
         }
+
+        QueryResult result;
 
         try {
             result = strategy.execute();
@@ -96,17 +97,28 @@ public class ODataQueryProcessorImpl implements ODataQueryProcessor {
             throw e;
         }
         if (targetType.isCollection()) {
-            return new ProcessorResult(OK, result);
-        } else {
-            if (result.size() == 0) {
-                throw new ODataEntityNotFoundException("Entity not found for this query: " +
-                        requestContext.getRequest().getUri());
-            } else if (result.size() > 1) {
-                throw new ODataDataSourceException("Expected one result, but found multiple for this query: " +
-                        requestContext.getRequest().getUri());
+            if (result.getType() == QueryResult.ResultType.COLLECTION) {
+                return new ProcessorResult(OK, result);
+            } else {
+                throw new ODataDataSourceException("Expected a collection result, but found " +
+                        result.getType().name() + " for this query: " +
+                        result.getType().name(), requestContext.getRequest().getUri());
             }
+        } else {
+            if (result.getType() == QueryResult.ResultType.COLLECTION) {
+                List<?> list = (List<?>) result.getData();
+                if (list.size() == 0) {
+                    throw new ODataEntityNotFoundException("Entity not found for this query: " +
+                            requestContext.getRequest().getUri());
+                } else if (list.size() > 1) {
+                    throw new ODataDataSourceException("Expected one result, but found multiple for this query: " +
+                            requestContext.getRequest().getUri());
+                }
 
-            return new ProcessorResult(OK, result.get(0));
+                return new ProcessorResult(OK, QueryResult.from(list.get(0)));
+            } else {
+                return new ProcessorResult(OK, result);
+            }
         }
     }
 

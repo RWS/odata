@@ -17,6 +17,7 @@ package com.sdl.odata.renderer.json;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -29,6 +30,8 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.EXCEPTION;
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.NOTHING;
 import static com.sdl.odata.api.service.HeaderNames.CONTENT_LANGUAGE;
 import static com.sdl.odata.api.service.MediaType.JSON;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -49,9 +52,9 @@ public class JsonErrorResponseRenderer extends AbstractRenderer {
 
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
 
-        if (data == null || !(data instanceof ODataException)) {
+        if (data == null || data.getType() == NOTHING || data.getType() != EXCEPTION) {
             return DEFAULT_SCORE;
         }
 
@@ -66,7 +69,7 @@ public class JsonErrorResponseRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
         LOG.debug("Start rendering error response for request: {}", requestContext);
 
@@ -76,7 +79,7 @@ public class JsonErrorResponseRenderer extends AbstractRenderer {
             responseBuilder.setContentType(JSON)
                     .setHeader(CONTENT_LANGUAGE, ENGLISH.getLanguage())
                     .setHeader("OData-Version", ODATA_VERSION_HEADER)
-                    .setBodyText(writer.getJsonError((ODataException) data), UTF_8.name());
+                    .setBodyText(writer.getJsonError((ODataException) data.getData()), UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             throw new ODataSystemException(e);
         }

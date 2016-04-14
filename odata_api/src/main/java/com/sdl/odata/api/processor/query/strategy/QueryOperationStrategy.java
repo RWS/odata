@@ -16,12 +16,10 @@
 package com.sdl.odata.api.processor.query.strategy;
 
 import com.sdl.odata.api.ODataException;
-
-import java.util.List;
+import com.sdl.odata.api.processor.query.QueryResult;
 
 /**
  * Query operation strategy.
- *
  */
 public interface QueryOperationStrategy {
 
@@ -31,5 +29,5 @@ public interface QueryOperationStrategy {
      * @return The result of executing the query.
      * @throws ODataException Thrown when an error occurs so that the query cannot be executed.
      */
-    List<?> execute() throws ODataException;
+    QueryResult execute() throws ODataException;
 }
