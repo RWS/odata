@@ -24,17 +24,19 @@ import java.util.Map;
 
 /**
  * <p>
- * Container with all the information resulted from processing a request (whether it is a query or write operation).
+ * Container with all the information resulted from processing a request
+ * (whether it is a query or write operation).
  * </p>
  * <p>
- * This information can be things like the 'HTTP status code', the optional data to include in the response body, or the
- * response headers or any other similar things.
+ * This information can be things like the 'HTTP status code',
+ * the optional query result object to include in the response body, or the response headers
+ * or any other similar things.
  * </p>
  */
 public final class ProcessorResult {
 
     private final ODataResponse.Status status;
-    private final QueryResult data;
+    private final QueryResult queryResult;
     private final Map<String, String> headers = new HashMap<>();
     private final ODataRequestContext requestContext;
 
@@ -45,7 +47,7 @@ public final class ProcessorResult {
      */
     public ProcessorResult(ODataResponse.Status status) {
         this.status = status;
-        this.data = null;
+        this.queryResult = null;
         this.requestContext = null;
     }
 
@@ -58,54 +60,54 @@ public final class ProcessorResult {
      */
     public ProcessorResult(ODataResponse.Status status, Map<String, String> headers) {
         this.status = status;
-        this.data = null;
+        this.queryResult = null;
         this.headers.putAll(headers);
         this.requestContext = null;
     }
 
     /**
      * Create an instance of {@link ProcessorResult} with the given HTTP status code
-     * and data to include in the body.
+     * and query result to include in the body.
      *
-     * @param status The given status code.
-     * @param data   The data to include in the body.
+     * @param status      The given status code.
+     * @param queryResult The query result to include in the body.
      */
-    public ProcessorResult(ODataResponse.Status status, QueryResult data) {
+    public ProcessorResult(ODataResponse.Status status, QueryResult queryResult) {
         this.status = status;
-        this.data = data;
+        this.queryResult = queryResult;
         this.requestContext = null;
     }
 
     /**
      * Create an instance of {@link ProcessorResult} with the given HTTP status code
-     * the data to include in the body and the response headers.
+     * the query result to include in the body and the response headers.
      *
-     * @param status  The given status code.
-     * @param data    The data to include in the body.
-     * @param headers The response headers.
+     * @param status      The given status code.
+     * @param queryResult The query result to include in the body.
+     * @param headers     The response headers.
      */
-    public ProcessorResult(ODataResponse.Status status, QueryResult data, Map<String, String> headers) {
+    public ProcessorResult(ODataResponse.Status status, QueryResult queryResult, Map<String, String> headers) {
         this.status = status;
-        this.data = data;
+        this.queryResult = queryResult;
         this.headers.putAll(headers);
         this.requestContext = null;
     }
 
     /**
      * Create an instance of {@link ProcessorResult} with the given HTTP status code
-     * the data to include in the body and the response headers. Request context is also passed along as it's needed
-     * for the final rendering of the odata entity in {@link com.sdl.odata.api.renderer.ODataRenderer} for batch
-     * requests.
+     * the query result to include in the body and the response headers.
+     * Request context is also passed along as it's needed for the final rendering of the odata entity
+     * in {@link com.sdl.odata.api.renderer.ODataRenderer} for batch requests.
      *
-     * @param status  The given status code.
-     * @param data    The data to include in the body.
-     * @param headers The response headers.
+     * @param status         The given status code.
+     * @param queryResult    The query result to include in the body.
+     * @param headers        The response headers.
      * @param requestContext Request context used for generating the processor result. Needed for sub batch requests.
      */
-    public ProcessorResult(ODataResponse.Status status, QueryResult data, Map<String, String> headers,
+    public ProcessorResult(ODataResponse.Status status, QueryResult queryResult, Map<String, String> headers,
                            ODataRequestContext requestContext) {
         this.status = status;
-        this.data = data;
+        this.queryResult = queryResult;
         this.headers.putAll(headers);
         this.requestContext = requestContext;
     }
@@ -120,21 +122,22 @@ public final class ProcessorResult {
     }
 
     /**
-     * Get the data to include in the response body.
+     * Get the query result object.
      *
-     * @return The data to include in the response body.
+     * @return The result object provided by query execution.
      */
-    public Object getData() {
-        return data != null ? data.getData() : null;
+    public QueryResult getQueryResult() {
+        return queryResult;
     }
 
     /**
-     * Get the {@link QueryResult} object.
+     * Get the query result data to include in the response body,
+     * ingoring additional metadata that query might have returned.
      *
-     * @return QueryResult object provided by query execution.
+     * @return The query result data to include in the response body.
      */
-    public QueryResult getQueryResult() {
-        return data;
+    public Object getData() {
+        return queryResult != null ? queryResult.getData() : null;
     }
 
     /**
@@ -157,6 +160,6 @@ public final class ProcessorResult {
 
     @Override
     public String toString() {
-        return "ProcessorResult { status=" + status + ", data=" + data + ", headers=" + headers + " }";
+        return "ProcessorResult { status=" + status + ", queryResult=" + queryResult + ", headers=" + headers + " }";
     }
 }
