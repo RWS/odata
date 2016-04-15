@@ -15,10 +15,6 @@
  */
 package com.sdl.odata.api.processor.datasource;
 
-import com.sdl.odata.api.ODataException;
-import com.sdl.odata.api.edm.model.EntityDataModel;
-import com.sdl.odata.api.parser.ODataUri;
-
 /**
  * Extension to traditional {@link DataSource} overloading existing API
  * methods with the addition of transaction management parameters.
@@ -26,56 +22,24 @@ import com.sdl.odata.api.parser.ODataUri;
  */
 public interface TransactionalDataSource extends DataSource {
 
-    /**
-     * Creates an entity in the data storage.
-     *
-     * @param uri             The OData URI.
-     * @param entity          The entity to create.
-     * @param entityDataModel The entity data model.
-     * @param transactionID   Unique transaction ID to be used in maintaining the transaction.
-     * @return The created entity.
-     * @throws ODataException If the operation fails.
-     */
-    Object create(ODataUri uri, Object entity, EntityDataModel entityDataModel,
-                  String transactionID) throws ODataException;
 
     /**
-     * Updates an entity in the data storage.
+     * Commits the datasource transaction to the datasource.
      *
-     * @param uri             The OData URI.
-     * @param entity          The entity to update.
-     * @param entityDataModel The entity data model.
-     * @param transactionID   Unique transaction ID to be used in maintaining the transaction.
-     * @return The updated entity.
-     * @throws ODataException If the operation fails.
+     * @return True if the transaction was succesfully stored in the datasource, False if not
      */
-    Object update(ODataUri uri, Object entity, EntityDataModel entityDataModel,
-                  String transactionID) throws ODataException;
+    boolean commit();
 
     /**
-     * Deletes an entity in the data storage.
-     *
-     * @param uri             The OData URI which identifies the entity to delete.
-     * @param entityDataModel The entity data model.
-     * @param transactionID   Unique transaction ID to be used in maintaining the transaction.
-     * @throws ODataException If the operation fails.
+     * Rolls back the active transaction if still active.
      */
-    void delete(ODataUri uri, EntityDataModel entityDataModel, String transactionID) throws ODataException;
+    void rollback();
 
     /**
-     * Creates a new transaction in the data source with given ID.
+     * Returns true if this transaction is still active, False if not. This can happen when the transaction was
+     * already rolledback or committed.
      *
-     * @param transactionID Unique transaction ID to be used in creating the transaction in Data Source..
+     * @return True if the transaction is still active, False if no longer active
      */
-    void startTransaction(String transactionID);
-
-    /**
-     * Ends the transaction in the data source committing all of the processed CRUD operations.
-     *
-     * @param transactionID Unique transaction ID to be used in committing the transaction.
-     * @param isSucccess    True -&gt; Commit the transaction, False -&gt; Rollback the transaction.
-     */
-    void endTransaction(String transactionID, boolean isSucccess);
-
-
+    boolean isActive();
 }
