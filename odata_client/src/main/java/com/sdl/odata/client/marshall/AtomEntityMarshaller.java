@@ -19,6 +19,7 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -81,7 +82,7 @@ public class AtomEntityMarshaller implements ODataEntityMarshaller {
                     URLEncoder.encode(query.getEdmEntityName(), StandardCharsets.UTF_8.name());
             ODataUri oDataServiceUri = new ODataParserImpl().parseUri(encodedServiceQueryUrl, entityDataModel);
             // marshall the entity Atom XML into the response
-            atomRenderer.render(buildODataPostContext(oDataServiceUri), oDataEntity, builder);
+            atomRenderer.render(buildODataPostContext(oDataServiceUri), QueryResult.from(oDataEntity), builder);
             // return the text content of the response
             result = builder.build().getBodyText(StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException | ODataException e) {

@@ -18,6 +18,7 @@ package com.sdl.odata.test.util;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.parser.CompoundKeyPredicate;
 import com.sdl.odata.api.parser.ContextFragment;
+import com.sdl.odata.api.parser.CountPath$;
 import com.sdl.odata.api.parser.EntityCollectionPath;
 import com.sdl.odata.api.parser.EntityPath;
 import com.sdl.odata.api.parser.EntitySetPath;
@@ -33,10 +34,13 @@ import com.sdl.odata.api.parser.NumberLiteral;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.PathExpandItem;
 import com.sdl.odata.api.parser.PathSegment;
+import com.sdl.odata.api.parser.PropertyPath;
+import com.sdl.odata.api.parser.PropertyPath$;
 import com.sdl.odata.api.parser.QueryOption;
 import com.sdl.odata.api.parser.ResourcePathUri;
 import com.sdl.odata.api.parser.ServiceRootUri;
 import com.sdl.odata.api.parser.SimpleKeyPredicate;
+import com.sdl.odata.api.parser.ValuePath$;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -213,16 +217,15 @@ public final class TestUtils {
 
         KeyPredicatePath keyPredicatePath = new KeyPredicatePath(
                 new SimpleKeyPredicate(new NumberLiteral(BigDecimal.valueOf(1))), noneSubPath);
-        EntityCollectionPath collectionPath = new EntityCollectionPath(none,
-                Option.<PathSegment>apply(keyPredicatePath));
+        EntityCollectionPath collectionPath = new EntityCollectionPath(none, Option.apply(keyPredicatePath));
         EntitySetPath entitySetPath = new EntitySetPath(entitySetName, Option.apply(collectionPath));
-        ResourcePathUri resourcePathUri = new ResourcePathUri(entitySetPath,
-                asScalaList(new ArrayList<QueryOption>()));
+        ResourcePathUri resourcePathUri = new ResourcePathUri(entitySetPath, asScalaList(new ArrayList<>()));
         return new ODataUri(SERVICE_ROOT, resourcePathUri);
     }
 
     public static ODataRequest createODataRequest(ODataRequest.Method method, Map<String, String> headers)
             throws UnsupportedEncodingException {
+
         return new ODataRequest.Builder().setBodyText("test", "UTF-8")
                 .setUri(SERVICE_ROOT)
                 .setHeaders(headers)
@@ -245,10 +248,59 @@ public final class TestUtils {
         KeyPredicate keyPredicate = createKeyPredicate(keyValuePairs);
         KeyPredicatePath keyPredicatePath = new KeyPredicatePath(keyPredicate, noEntityPath);
         scala.Option<String> noString = scala.Option.apply(null);
-        scala.Option<PathSegment> keyPredicatePathOption = scala.Option.apply((PathSegment) keyPredicatePath);
+        scala.Option<PathSegment> keyPredicatePathOption = scala.Option.apply(keyPredicatePath);
         EntityCollectionPath entityCollectionPath = new EntityCollectionPath(noString, keyPredicatePathOption);
         scala.Option<EntityCollectionPath> entityCollectionPathOption = scala.Option.apply(entityCollectionPath);
         EntitySetPath entitySetPath = new EntitySetPath(entitySetName, entityCollectionPathOption);
+        List<QueryOption> queryOptions = new ArrayList<>();
+        ResourcePathUri resourcePathUri = new ResourcePathUri(entitySetPath, asScalaList(queryOptions));
+
+        return new ODataUri(serviceRoot, resourcePathUri);
+    }
+
+    /**
+     * Create a test OData URI for /$count path with a given service root and entity set name.
+     *
+     * @param serviceRoot   The given service root.
+     * @param entitySetName The given entity set name.
+     * @return The created test OData URI.
+     */
+    public static ODataUri createODataCountEntitiesUri(String serviceRoot, String entitySetName) {
+
+        CountPath$ countPath = CountPath$.MODULE$;
+        scala.Option<PathSegment> countPathOption = scala.Option.apply(countPath);
+
+        scala.Option<String> noString = scala.Option.apply(null);
+        EntityCollectionPath entityCollectionPath = new EntityCollectionPath(noString, countPathOption);
+        scala.Option<EntityCollectionPath> entityCollectionPathOption = scala.Option.apply(entityCollectionPath);
+        EntitySetPath entitySetPath = new EntitySetPath(entitySetName, entityCollectionPathOption);
+
+        List<QueryOption> queryOptions = new ArrayList<>();
+        ResourcePathUri resourcePathUri = new ResourcePathUri(entitySetPath, asScalaList(queryOptions));
+
+        return new ODataUri(serviceRoot, resourcePathUri);
+    }
+
+    /**
+     * Create a test OData URI for /$value path with a given service root, entity set name and property to read.
+     *
+     * @param serviceRoot   The given service root.
+     * @param entitySetName The given entity set name.
+     * @return The created test OData URI.
+     */
+    public static ODataUri createODataValueEntitiesUri(String serviceRoot, String entitySetName, String propertyName) {
+
+        ValuePath$ valuePath = ValuePath$.MODULE$;
+        scala.Option<PathSegment> valuePathOption = scala.Option.apply(valuePath);
+
+        PropertyPath propertyPath = PropertyPath$.MODULE$.apply(propertyName, valuePathOption);
+        scala.Option<PathSegment> propertyPathOption = scala.Option.apply(propertyPath);
+
+        scala.Option<String> noString = scala.Option.apply(null);
+        EntityCollectionPath entityCollectionPath = new EntityCollectionPath(noString, propertyPathOption);
+        scala.Option<EntityCollectionPath> entityCollectionPathOption = scala.Option.apply(entityCollectionPath);
+        EntitySetPath entitySetPath = new EntitySetPath(entitySetName, entityCollectionPathOption);
+
         List<QueryOption> queryOptions = new ArrayList<>();
         ResourcePathUri resourcePathUri = new ResourcePathUri(entitySetPath, asScalaList(queryOptions));
 
@@ -286,8 +338,7 @@ public final class TestUtils {
         List<ExpandItem> expandItems = new ArrayList<>();
         for (String expandPathName : expandPathNames) {
             ExpandPathSegment path = new NavigationPropertyExpandPathSegment(expandPathName, none);
-            expandItems.add(new PathExpandItem(none, path,
-                    scala.collection.immutable.List$.MODULE$.<QueryOption>empty()));
+            expandItems.add(new PathExpandItem(none, path, scala.collection.immutable.List$.MODULE$.empty()));
         }
 
         ExpandOption expandOption = new ExpandOption(asScalaList(expandItems));

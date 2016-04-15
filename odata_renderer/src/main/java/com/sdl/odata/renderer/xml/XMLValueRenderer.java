@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.xml;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataUriUtil;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractAtomRenderer;
@@ -48,7 +49,7 @@ public final class XMLValueRenderer extends AbstractAtomRenderer {
     private static final int DEFAULT_OPERATION_SCORE = 50;
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
         // This renderer only handles non-entity queries
         if (!isNonEntityQuery(requestContext.getUri(), requestContext.getEntityDataModel())) {
             return DEFAULT_SCORE;
@@ -67,7 +68,7 @@ public final class XMLValueRenderer extends AbstractAtomRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
         LOG.debug("Start rendering property for request: {}", requestContext);
@@ -75,7 +76,7 @@ public final class XMLValueRenderer extends AbstractAtomRenderer {
         // Root element must be <metadata:value>
         XMLPropertyWriter propertyWriter = new XMLPropertyWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
-        String response = propertyWriter.getPropertyAsString(data);
+        String response = propertyWriter.getPropertyAsString(data.getData());
         LOG.debug("Response property xml is {}", response);
         try {
             responseBuilder

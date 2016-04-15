@@ -24,7 +24,9 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
@@ -46,6 +48,7 @@ public class AtomWriterTest extends WriterTest {
     private static final String EXPECTED_COLLECTIONS_ENTITY_PATH = "/xml/CollectionsSample.xml";
 
     private static final String EXPECTED_CUSTOMER_FEED_PATH = "/xml/Customers.xml";
+    private static final String EXPECTED_CUSTOMER_FEED_WITH_COUNT_PATH = "/xml/CustomersWithCount.xml";
     private static final String EXPECTED_CUSTOMER_FEED_PATH_WRITE = "/xml/CustomersWrite.xml";
 
     private static final String EXPECTED_EXPANDED_PROPERTIES_ENTITY_PATH = "/xml/ExpandedPropertiesSample.xml";
@@ -106,8 +109,7 @@ public class AtomWriterTest extends WriterTest {
     @Test
     public void testCollectionsSample() throws Exception {
 
-        odataUri
-                = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/CollectionsSamples(40)",
+        odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/CollectionsSamples(40)",
                 entityDataModel);
         checkWrittenXmlStream(createCollectionsSample(), COLLECTION_SAMPLE_URL,
                 EXPECTED_COLLECTIONS_ENTITY_PATH, false);
@@ -121,6 +123,18 @@ public class AtomWriterTest extends WriterTest {
     }
 
     @Test
+    public void testCustomersWithCountSample() throws Exception {
+
+        odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers?$count=true",
+                entityDataModel);
+
+        Map<String, Object> meta = new HashMap<>();
+        meta.put("count", 5);
+        checkWrittenXmlStream(createCustomersSample(), meta, CUSTOMERS_URL,
+                EXPECTED_CUSTOMER_FEED_WITH_COUNT_PATH, false);
+    }
+
+    @Test
     public void testCustomersSampleWrite() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers", entityDataModel);
@@ -130,9 +144,9 @@ public class AtomWriterTest extends WriterTest {
     @Test
     public void testExpandedPropertiesSample() throws Exception {
 
-        odataUri
-                = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/ExpandedPropertiesSamples(1)" +
-                "?$expand=ExpandedEntry,ExpandedFeed", entityDataModel);
+        odataUri = new ODataParserImpl().parseUri(
+                "http://localhost:8080/odata.svc/ExpandedPropertiesSamples(1)?$expand=ExpandedEntry,ExpandedFeed",
+                entityDataModel);
         checkWrittenXmlStream(createExpandedPropertiesSample(), EXPANDED_PROPERTIES_SAMPLE_URL,
                 EXPECTED_EXPANDED_PROPERTIES_ENTITY_PATH, false);
     }
@@ -140,9 +154,9 @@ public class AtomWriterTest extends WriterTest {
     @Test
     public void testExpandedPropertiesNoLinksSample() throws Exception {
 
-        odataUri
-                = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/ExpandedPropertiesSamples(5)" +
-                "?$expand=ExpandedEntry,ExpandedFeed", entityDataModel);
+        odataUri = new ODataParserImpl().parseUri(
+                "http://localhost:8080/odata.svc/ExpandedPropertiesSamples(5)?$expand=ExpandedEntry,ExpandedFeed",
+                entityDataModel);
         checkWrittenXmlStream(createExpandedPropertiesNoLinksSample(), EXPANDED_PROPERTIES_SAMPLE_URL,
                 EXPECTED_EXPANDED_PROPERTIES_NO_LINKS_ENTITY_PATH, false);
     }
@@ -150,8 +164,7 @@ public class AtomWriterTest extends WriterTest {
     @Test
     public void testComplexKeySample() throws Exception {
 
-        odataUri
-                = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/ComplexKeySamples(1)",
+        odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/ComplexKeySamples(1)",
                 entityDataModel);
         checkWrittenXmlStream(createComplexKeySample(), COMPLEX_KEY_SAMPLE_URL,
                 EXPECTED_COMPLEX_KEY_ENTITY_PATH, false);
@@ -170,7 +183,27 @@ public class AtomWriterTest extends WriterTest {
      * Perform the actual test by specifying the entity(es) to write and the path to the file containing the expected
      * written XML stream.
      *
-     * @param data               the entity(es) to write.
+     * @param data               The entity(es) to write.
+     * @param contextURL         The 'Context URL' to write.
+     * @param expectedEntityPath Path to the file with the expected XML stream.
+     * @param isWriteOperation   Boolean indicating that we are testing a write operation.
+     *
+     * @throws ODataRenderException If unable to render
+     * @throws IOException
+     * @throws TransformerException
+     */
+    private void checkWrittenXmlStream(Object data, String contextURL, String expectedEntityPath,
+                                       boolean isWriteOperation)
+            throws ODataRenderException, IOException, TransformerException {
+        checkWrittenXmlStream(data, null, contextURL, expectedEntityPath, isWriteOperation);
+    }
+
+    /**
+     * Perform the actual test by specifying the entity(es) to write and the path to the file containing the expected
+     * written XML stream.
+     *
+     * @param data               The entity(es) to write.
+     * @param meta               Additional metadata to write.
      * @param contextURL         the 'Context URL' to write.
      * @param expectedEntityPath path to the file with the expected XML stream.
      * @param isWriteOperation   boolean indicating that we are testing a write operation
@@ -178,19 +211,18 @@ public class AtomWriterTest extends WriterTest {
      * @throws IOException
      * @throws TransformerException
      */
-    private void checkWrittenXmlStream(Object data, String contextURL, String expectedEntityPath,
-                                       boolean isWriteOperation) throws
-            ODataRenderException, IOException, TransformerException {
+    private void checkWrittenXmlStream(Object data, Map<String, Object> meta, String contextURL,
+                                       String expectedEntityPath, boolean isWriteOperation)
+            throws ODataRenderException, IOException, TransformerException {
 
         dateTime = ZonedDateTime.of(2014, 5, 2, 0, 0, 0, 0, ZoneId.of("UTC").normalized());
 
-        AtomWriter writer
-                = new AtomWriter(dateTime, odataUri, entityDataModel,
+        AtomWriter writer = new AtomWriter(dateTime, odataUri, entityDataModel,
                 new ODataV4AtomNSConfigurationProvider(), isWriteOperation, false);
 
         writer.startDocument();
         if (data instanceof List) {
-            writer.writeFeed((List<?>) data, contextURL);
+            writer.writeFeed((List<?>) data, contextURL, meta);
         } else {
             writer.writeEntry(data, contextURL);
         }

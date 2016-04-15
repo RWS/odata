@@ -35,7 +35,10 @@ public final class JsonConstants {
      * Type.
      */
     public static final String TYPE = "@odata.type";
-
+    /**
+     * Type.
+     */
+    public static final String COUNT = "@odata.count";
     /**
      * Value.
      */
