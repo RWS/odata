@@ -43,6 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.sdl.odata.api.processor.query.QueryResult.from;
+
 /**
  * Batch Method Handler is specific to batch operations.
  */
@@ -114,7 +116,7 @@ public class BatchMethodHandler {
         if (WriteMethodUtil.isMinimalReturnPreferred(odataRequest)) {
             return new ProcessorResult(ODataResponse.Status.NO_CONTENT, headers);
         }
-        return new ProcessorResult(ODataResponse.Status.CREATED, createdEntity, headers, requestContext);
+        return new ProcessorResult(ODataResponse.Status.CREATED, from(createdEntity), headers, requestContext);
     }
 
     private ProcessorResult handleDelete(ODataUri odataUri, ChangeSetEntity changeSetEntity) throws ODataException {
@@ -162,7 +164,7 @@ public class BatchMethodHandler {
         if (WriteMethodUtil.isMinimalReturnPreferred(oDataRequest)) {
             return new ProcessorResult(ODataResponse.Status.NO_CONTENT, headers);
         }
-        return new ProcessorResult(ODataResponse.Status.OK, updatedEntity, headers, requestContext);
+        return new ProcessorResult(ODataResponse.Status.OK, from(updatedEntity), headers, requestContext);
     }
 
     private Map<String, String> buildDefaultEntityHeaders(ChangeSetEntity changeSetEntity) {
