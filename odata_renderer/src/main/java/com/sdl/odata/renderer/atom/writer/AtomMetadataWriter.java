@@ -24,12 +24,10 @@ import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.util.edm.EntityDataModelUtil;
-
 import scala.Option;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -42,14 +40,13 @@ import static com.sdl.odata.AtomConstants.ATOM_NAME;
 import static com.sdl.odata.AtomConstants.ATOM_NS;
 import static com.sdl.odata.AtomConstants.ATOM_SUMMARY;
 import static com.sdl.odata.AtomConstants.ATOM_UPDATED;
+import static com.sdl.odata.AtomConstants.COUNT;
 import static com.sdl.odata.AtomConstants.EDIT;
 import static com.sdl.odata.AtomConstants.HASH;
 import static com.sdl.odata.AtomConstants.HREF;
 import static com.sdl.odata.AtomConstants.METADATA;
 import static com.sdl.odata.AtomConstants.ODATA_CONTEXT;
 import static com.sdl.odata.AtomConstants.ODATA_DATA;
-import static com.sdl.odata.AtomConstants.ODATA_DATA_NS;
-import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.ODATA_SCHEME_NS;
 import static com.sdl.odata.AtomConstants.ODATA_XML_BASE;
 import static com.sdl.odata.AtomConstants.REL;
@@ -89,6 +86,7 @@ public class AtomMetadataWriter {
     private final XMLStreamWriter xmlWriter;
     private final ODataUri oDataUri;
     private final EntityDataModel entityDataModel;
+    private final AtomNSConfigurationProvider nsConfigurationProvider;
 
     /**
      * Creates an instance of {@link AtomMetadataWriter}
@@ -97,11 +95,14 @@ public class AtomMetadataWriter {
      * @param xmlWriter       The XML writer to use. It can not be {@code null}.
      * @param oDataUri        The OData URI. It can not be {@code null}.
      * @param entityDataModel The Entity Data Model. It can not be {@code null}.
+     * @param nsConfigurationProvider The NameSpace provider to provide OData Atom specific namespaces.
      */
-    public AtomMetadataWriter(XMLStreamWriter xmlWriter, ODataUri oDataUri, EntityDataModel entityDataModel) {
+    public AtomMetadataWriter(XMLStreamWriter xmlWriter, ODataUri oDataUri,
+                              EntityDataModel entityDataModel, AtomNSConfigurationProvider nsConfigurationProvider) {
         this.xmlWriter = checkNotNull(xmlWriter);
         this.oDataUri = checkNotNull(oDataUri);
         this.entityDataModel = checkNotNull(entityDataModel);
+        this.nsConfigurationProvider = checkNotNull(nsConfigurationProvider);
     }
 
     /**
@@ -112,10 +113,10 @@ public class AtomMetadataWriter {
      */
     void writeODataMetadata(String contextURL) throws XMLStreamException {
 
-        xmlWriter.writeNamespace(METADATA, ODATA_METADATA_NS);
-        xmlWriter.writeNamespace(ODATA_DATA, ODATA_DATA_NS);
+        xmlWriter.writeNamespace(METADATA, nsConfigurationProvider.getOdataMetadataNs());
+        xmlWriter.writeNamespace(ODATA_DATA, nsConfigurationProvider.getOdataDataNs());
         xmlWriter.writeDefaultNamespace(ATOM_NS);
-        xmlWriter.writeAttribute(ODATA_METADATA_NS, ODATA_CONTEXT, contextURL);
+        xmlWriter.writeAttribute(nsConfigurationProvider.getOdataMetadataNs(), ODATA_CONTEXT, contextURL);
         xmlWriter.writeAttribute(ODATA_XML_BASE, oDataUri.serviceRoot());
     }
 
@@ -312,5 +313,11 @@ public class AtomMetadataWriter {
             return String.format("%s/%s(%s)", oDataUri.serviceRoot(),
                     getEntityName(entityDataModel, entity), formatEntityKey(entityDataModel, entity));
         }
+    }
+
+    public void writeCount(Object count) throws XMLStreamException {
+        xmlWriter.writeStartElement(METADATA, COUNT, nsConfigurationProvider.getOdataMetadataNs());
+        xmlWriter.writeCharacters(String.valueOf(count));
+        xmlWriter.writeEndElement();
     }
 }

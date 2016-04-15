@@ -1,0 +1,7 @@
+{
+  "@odata.context": "http://localhost:8080/odata.svc/$metadata#EntityTypeSamples('id.10')/ComplexTypeProperty",
+  "value": {
+    "InheritedProperty": "Japanese: 日本語 Cyrillic: Кириллица,Кирилиця,Кірыліца,Ћирилица",
+    "SimpleProperty": "Prop 1"
+  }
+}

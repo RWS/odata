@@ -19,6 +19,7 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.MetadataUri;
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -46,13 +47,13 @@ public final class MetadataDocumentRenderer extends AbstractRenderer {
     private static final String ODATA_VERSION_HEADER = "4.0";
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
         ODataUri uri = requestContext.getUri();
         return uri != null && uri.relativeUri() instanceof MetadataUri ? MAX : 0;
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
         LOG.debug("Start rendering $metadata document for request: {}", requestContext);

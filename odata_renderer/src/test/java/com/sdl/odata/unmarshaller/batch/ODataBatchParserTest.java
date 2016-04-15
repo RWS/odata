@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.unmarshaller.batch;
 
+import com.google.common.collect.Lists;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.parser.BatchRequestComponent;
 import com.sdl.odata.parser.ODataBatchRequestContent;
@@ -49,22 +50,22 @@ public class ODataBatchParserTest extends UnmarshallerTest {
                 context.getRequest().getBodyText(StandardCharsets.UTF_8.name()));
 
         // check batch request components
-        List<ODataRequestComponent> batchRequestComponents = JavaConversions.asJavaList(
-                batchRequestContent.requestComponents());
+        List<ODataRequestComponent> batchRequestComponents = Lists.newArrayList(
+                JavaConversions.asJavaCollection(batchRequestContent.requestComponents()));
         assertFalse(batchRequestComponents.isEmpty());
         assertEquals(1, batchRequestComponents.size());
         assertTrue(batchRequestComponents.get(0) instanceof BatchRequestComponent);
         BatchRequestComponent batchRequestComponent = (BatchRequestComponent) batchRequestComponents.get(0);
 
         // check batch request component headers
-        Map<String, String> batchRequestComponentHeaders = JavaConversions.asJavaMap(
+        Map<String, String> batchRequestComponentHeaders = JavaConversions.mapAsJavaMap(
                 batchRequestComponent.getHeaders().headers());
         assertEquals(2, batchRequestComponentHeaders.size());
         assertEquals("localhost", batchRequestComponentHeaders.get("Host"));
         assertEquals("binary", batchRequestComponentHeaders.get("Content-Transfer-Encoding"));
 
         // check batch request component details
-        Map<String, String> batchRequestComponentDetails = JavaConversions.asJavaMap(
+        Map<String, String> batchRequestComponentDetails = JavaConversions.mapAsJavaMap(
                 batchRequestComponent.getRequestDetails());
         assertEquals(4, batchRequestComponentDetails.size());
         assertEquals("GET", batchRequestComponentDetails.get("RequestType"));

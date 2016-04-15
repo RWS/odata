@@ -17,6 +17,7 @@ package com.sdl.odata.renderer.json;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractRenderer;
@@ -45,7 +46,7 @@ public class JsonServiceDocumentRenderer extends ServiceDocumentRenderer {
     private static final Logger LOG = LoggerFactory.getLogger(JsonServiceDocumentRenderer.class);
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
 
         int score = super.scoreServiceDocument(requestContext, JSON);
         LOG.debug("Score of JSON service document renderer is {}", score);
@@ -54,7 +55,7 @@ public class JsonServiceDocumentRenderer extends ServiceDocumentRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
         LOG.debug("Start rendering entity(es) for request: {}", requestContext);

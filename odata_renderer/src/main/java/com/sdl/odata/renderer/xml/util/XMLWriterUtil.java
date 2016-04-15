@@ -26,9 +26,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static com.sdl.odata.AtomConstants.ELEMENT;
 import static com.sdl.odata.AtomConstants.METADATA;
 import static com.sdl.odata.AtomConstants.NULL;
@@ -64,7 +64,7 @@ public final class XMLWriterUtil {
                 writer.writeCharacters(data.toString());
             }
             endElement(writer);
-            return outputStream.toString();
+            return outputStream.toString(UTF_8.name());
         } catch (XMLStreamException | IOException e) {
             throw new ODataRenderException("Error while rendering primitive property value.", e);
         }
@@ -84,7 +84,7 @@ public final class XMLWriterUtil {
     public static XMLStreamWriter startDocument(ByteArrayOutputStream outputStream,
                                                 String prefix, String documentRootName, String nameSpaceURI)
             throws XMLStreamException {
-        XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, StandardCharsets.UTF_8.name());
+        XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
         if (isNullOrEmpty(prefix)) {
             writer.writeStartElement(documentRootName);
             writer.setDefaultNamespace(nameSpaceURI);
@@ -103,7 +103,7 @@ public final class XMLWriterUtil {
 
     public static XMLStreamWriter startElement(ByteArrayOutputStream outputStream, String rootName, String typeName,
                                                String context, boolean defaultNameSpace) throws XMLStreamException {
-        XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, "UTF-8");
+        XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
         writer.writeStartElement(METADATA, rootName, ODATA_METADATA_NS);
         if (defaultNameSpace) {
             LOG.debug("Starting {} element with default data namespace", rootName);
@@ -157,14 +157,14 @@ public final class XMLWriterUtil {
     public static String getNullPropertyXML(String rootName, String context) throws ODataRenderException {
         LOG.debug("NullPropertyXML invoked with {}", rootName);
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, "UTF-8");
+            XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
             writer.writeStartElement(METADATA, rootName, ODATA_METADATA_NS);
             writer.writeNamespace(METADATA, ODATA_METADATA_NS);
             writer.writeAttribute(ODATA_METADATA_NS, ODATA_CONTEXT, context);
             writer.writeAttribute(ODATA_METADATA_NS, NULL, "true");
 
             endElement(writer);
-            return outputStream.toString();
+            return outputStream.toString(UTF_8.name());
         } catch (XMLStreamException | IOException e) {
             throw new ODataRenderException("Error while rendering null property.", e);
         }

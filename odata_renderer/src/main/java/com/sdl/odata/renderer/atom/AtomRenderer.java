@@ -17,10 +17,12 @@ package com.sdl.odata.renderer.atom;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractAtomRenderer;
 import com.sdl.odata.renderer.atom.writer.AtomWriter;
+import com.sdl.odata.renderer.atom.writer.ODataV4AtomNSConfigurationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -31,6 +33,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.sdl.odata.api.parser.ODataUriUtil.isActionCallUri;
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.COLLECTION;
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.ODataRequestContextUtil.isWriteOperation;
 
@@ -46,13 +49,12 @@ import static com.sdl.odata.api.service.ODataRequestContextUtil.isWriteOperation
  * OData Atom Format Version 4.0 specification
  */
 @Component
-public final class AtomRenderer extends AbstractAtomRenderer {
+public class AtomRenderer extends AbstractAtomRenderer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AtomRenderer.class);
-    private String renderedData;
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
 
         // This renderer only handles entity queries
         if (!isEntityQuery(requestContext.getUri(), requestContext.getEntityDataModel())) {
@@ -65,23 +67,21 @@ public final class AtomRenderer extends AbstractAtomRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
         LOG.debug("Start rendering entity(es) for request: {} with data {}", requestContext, data);
 
-        ZonedDateTime dateTime = ZonedDateTime.now();
-        AtomWriter atomWriter = new AtomWriter(dateTime, requestContext.getUri(), requestContext.getEntityDataModel(),
-                                    isWriteOperation(requestContext), isActionCallUri(requestContext.getUri()));
+        AtomWriter atomWriter = initAtomWriter(requestContext);
 
         atomWriter.startDocument();
-        if (data instanceof List) {
-            atomWriter.writeFeed((List<?>) data, buildContextURL(requestContext, data));
+        if (data.getType() == COLLECTION) {
+            atomWriter.writeFeed((List<?>) data.getData(), buildContextURL(requestContext, data), data.getMeta());
         } else {
-            atomWriter.writeEntry(data, buildContextURL(requestContext, data));
+            atomWriter.writeEntry(data.getData(), buildContextURL(requestContext, data));
         }
         atomWriter.endDocument();
-        renderedData = atomWriter.getXml();
+        String renderedData = atomWriter.getXml();
 
         if (responseBuilder != null) {
             try {
@@ -97,9 +97,9 @@ public final class AtomRenderer extends AbstractAtomRenderer {
         LOG.debug("End rendering entity(es) for request: {}", requestContext);
     }
 
-    @Override
-    public String getRenderedData() {
-        return renderedData;
+    protected AtomWriter initAtomWriter(ODataRequestContext requestContext) {
+        return new AtomWriter(ZonedDateTime.now(), requestContext.getUri(),
+                requestContext.getEntityDataModel(), new ODataV4AtomNSConfigurationProvider(),
+                isWriteOperation(requestContext), isActionCallUri(requestContext.getUri()));
     }
-
 }

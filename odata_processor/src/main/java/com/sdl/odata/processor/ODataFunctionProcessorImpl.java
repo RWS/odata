@@ -28,6 +28,7 @@ import com.sdl.odata.api.parser.util.ParameterTypeUtil;
 import com.sdl.odata.api.processor.ODataFunctionProcessor;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
@@ -57,11 +58,17 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
     public ProcessorResult doFunction(ODataRequestContext requestContext) throws ODataException {
         LOG.debug("Building and executing a function or function import");
         Operation operation = getFunctionOrFunctionImportOperation(requestContext);
-        Object result = operation.doOperation(requestContext,
-                dataSourceFactory);
+        Object result;
+
+        try {
+            result = operation.doOperation(requestContext, dataSourceFactory);
+        } catch (Exception e) {
+            LOG.error("Unexpected exception when executing a function.", e);
+            throw e;
+        }
 
         return result == null ? new ProcessorResult(ODataResponse.Status.NO_CONTENT) :
-                new ProcessorResult(ODataResponse.Status.OK, result);
+                new ProcessorResult(ODataResponse.Status.OK, QueryResult.from(result));
     }
 
     private Operation getFunctionOrFunctionImportOperation(ODataRequestContext requestContext)
@@ -119,7 +126,7 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
                                          Set<Parameter> parameters)
             throws ODataUnmarshallingException {
         if (functionCallParameters.isDefined() && !functionCallParameters.get().isEmpty()) {
-            Map<String, String> parametersMap = JavaConversions.asJavaMap(functionCallParameters.get());
+            Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(functionCallParameters.get());
             for (Parameter parameter : parameters) {
                 ParameterTypeUtil.setParameter(functionOperationObject, parameter.getJavaField(),
                         parametersMap.get(parameter.getName()));

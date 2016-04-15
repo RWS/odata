@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.json;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.edm.ODataEdmException;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.RendererTest;
 import org.junit.Before;
@@ -48,59 +49,52 @@ public class JsonErrorResponseRendererTest extends RendererTest {
 
     @Before
     public void setUp() throws Exception {
-
         exception = new ODataEdmException("EDM error");
         renderer = new JsonErrorResponseRenderer();
     }
 
     @Test
     public void testScoreExceptionNull() throws Exception {
-
         prepareRequestContextHeader(JSON);
         assertThat(renderer.score(context, null), is(0));
     }
 
     @Test
     public void testScoreNoException() throws Exception {
-
         prepareRequestContextHeader(JSON);
-        assertThat(renderer.score(context, "data"), is(0));
+        assertThat(renderer.score(context, QueryResult.from("data")), is(0));
     }
 
     @Test
     public void testScoreJsonInHeader() throws Exception {
-
         prepareRequestContextHeader(JSON);
-        assertThat(renderer.score(context, exception), is(MAXIMUM_HEADER_SCORE + ERROR_EXTRA_SCORE));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(MAXIMUM_HEADER_SCORE + ERROR_EXTRA_SCORE));
     }
 
     @Test
     public void testScoreJsonContentTypeInHeader() throws Exception {
-
         prepareRequestContextHeaderWithContextType(JSON);
-        assertThat(renderer.score(context, exception), is(CONTENT_TYPE_HEADER + ERROR_EXTRA_SCORE));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(CONTENT_TYPE_HEADER + ERROR_EXTRA_SCORE));
     }
 
     @Test
     public void testScoreWithoutContentType() throws Exception {
-
         prepareSimpleRequestContextHeader();
-        assertThat(renderer.score(context, exception), is(0));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(0));
     }
 
 
     @Test
     public void testScoreEmptyHeader() throws Exception {
-
         prepareRequestContextHeader();
-        assertThat(renderer.score(context, exception), is(0));
+        assertThat(renderer.score(context, QueryResult.from(exception)), is(0));
     }
 
     @Test
     public void testRender() throws Exception {
 
         prepareRequestContextRender(GET, createODataUri(JSON));
-        renderer.render(context, exception, responseBuilder);
+        renderer.render(context, QueryResult.from(exception), responseBuilder);
         responseBuilder.setStatus(OK);
         ODataResponse response = responseBuilder.build();
         assertResponse(response, JSON, ERROR_RESPONSE_PATH);
@@ -110,6 +104,6 @@ public class JsonErrorResponseRendererTest extends RendererTest {
     @Test(expected = ODataSystemException.class)
     public void testRenderException() throws ODataException, UnsupportedEncodingException {
         prepareRequestContextRenderException(GET, createODataUri());
-        renderer.render(context, exception, responseBuilderMock);
+        renderer.render(context, QueryResult.from(exception), responseBuilderMock);
     }
 }

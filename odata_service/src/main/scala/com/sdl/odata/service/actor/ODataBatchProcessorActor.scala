@@ -74,17 +74,17 @@ class ODataBatchProcessorActor @Autowired()(actorProducer: ActorProducer, dataSo
   private def processBatchOperation(oDataRequestContext: ODataRequestContext,
                                    oDataBatchRequestContent: ODataBatchRequestContent): mutable.MutableList[ProcessorResult] = {
     val results: mutable.MutableList[ProcessorResult] = mutable.MutableList()
-    oDataBatchRequestContent.requestComponents.foreach(_ match {
-      case BatchRequestComponent(requestComponentHeaders: BatchRequestHeaders, requestDetails: Map[String,String]) =>
+    oDataBatchRequestContent.requestComponents.foreach {
+      case BatchRequestComponent(requestComponentHeaders: BatchRequestHeaders, requestDetails: Map[String, String]) =>
         results += handleBatchRequestComponent(requestComponentHeaders, requestDetails)
       case ChangeSetRequestComponent(changeSetHeaders: BatchRequestHeaders, changeSetRequests: List[BatchRequestComponent], changesetId: String) =>
         results ++= handleChangeSetRequestComponent(changeSetHeaders, changeSetRequests, changesetId)
-    })
+    }
 
     def handleBatchRequestComponent(requestComponentHeaders: BatchRequestHeaders, requestDetails: Map[String,String]): ProcessorResult = {
       val queryRequestContext = createODataRequestContext(requestDetails, requestComponentHeaders)
       val queryResult = oDataQueryProcessor.query(queryRequestContext, null)
-      new ProcessorResult(queryResult.getStatus, queryResult.getData, queryResult.getHeaders, queryRequestContext)
+      new ProcessorResult(queryResult.getStatus, queryResult.getQueryResult, queryResult.getHeaders, queryRequestContext)
     }
 
     def handleChangeSetRequestComponent(changeSetHeaders: BatchRequestHeaders,

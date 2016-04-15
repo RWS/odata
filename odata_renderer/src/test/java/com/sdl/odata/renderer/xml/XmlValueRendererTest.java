@@ -16,6 +16,7 @@
 package com.sdl.odata.renderer.xml;
 
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.parser.ODataUriParser;
@@ -52,7 +53,7 @@ public class XmlValueRendererTest extends RendererTest {
                 "ODataDemoFunctionImport");
         ODataRequestContext oDataRequestContext = TestUtils.createODataRequestContext(
                 createODataRequest(ODataRequest.Method.GET, XML), execFunctionODataUri, entityDataModel);
-        int score = xmlValueRenderer.score(oDataRequestContext, TEST_BUILD_VERSION);
+        int score = xmlValueRenderer.score(oDataRequestContext, QueryResult.from(TEST_BUILD_VERSION));
         assertTrue(score > 0);
     }
 }

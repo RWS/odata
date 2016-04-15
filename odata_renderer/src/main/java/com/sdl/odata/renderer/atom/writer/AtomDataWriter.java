@@ -43,8 +43,6 @@ import static com.sdl.odata.AtomConstants.METADATA;
 import static com.sdl.odata.AtomConstants.NULL;
 import static com.sdl.odata.AtomConstants.ODATA_CONTENT;
 import static com.sdl.odata.AtomConstants.ODATA_DATA;
-import static com.sdl.odata.AtomConstants.ODATA_DATA_NS;
-import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.ODATA_PROPERTIES;
 import static com.sdl.odata.AtomConstants.TYPE;
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
@@ -65,17 +63,20 @@ public class AtomDataWriter {
     private static final Logger LOG = LoggerFactory.getLogger(AtomDataWriter.class);
     private final XMLStreamWriter xmlWriter;
     private final EntityDataModel entityDataModel;
+    private final AtomNSConfigurationProvider nsConfigurationProvider;
 
     /**
-     * Creates an instance of {@link AtomDataWriter}
-     * by specifying the writer to use.
+     * Creates an instance of {@link AtomDataWriter} by specifying the writer to use.
      *
-     * @param xmlWriter       The XML writer to use. It can not be {@code null}.
-     * @param entityDataModel The Entity Data Model. It can not be {@code null}.
+     * @param xmlWriter                 The XML writer to use. It can not be {@code null}.
+     * @param entityDataModel           The Entity Data Model. It can not be {@code null}.
+     * @param nsConfigurationProvider   The NameSpace provider to provide OData Atom specific namespaces.
      */
-    public AtomDataWriter(XMLStreamWriter xmlWriter, EntityDataModel entityDataModel) {
+    public AtomDataWriter(XMLStreamWriter xmlWriter, EntityDataModel entityDataModel,
+                          AtomNSConfigurationProvider nsConfigurationProvider) {
         this.xmlWriter = checkNotNull(xmlWriter);
         this.entityDataModel = checkNotNull(entityDataModel);
+        this.nsConfigurationProvider = checkNotNull(nsConfigurationProvider);
     }
 
     /**
@@ -210,6 +211,8 @@ public class AtomDataWriter {
         }
 
         // Check if the property is a collection
+        final String odataDataNS = nsConfigurationProvider.getOdataDataNs();
+        final String odataMetadataNs = nsConfigurationProvider.getOdataMetadataNs();
         if (property.isCollection()) {
             // Get an iterator for the array or collection
             Iterator<?> iterator;
@@ -229,18 +232,18 @@ public class AtomDataWriter {
             }
 
             LOG.debug("Start collection property: {}", propertyName);
-            xmlWriter.writeStartElement(ODATA_DATA, propertyName, ODATA_DATA_NS);
+            xmlWriter.writeStartElement(ODATA_DATA, propertyName, odataDataNS);
             if (elementType.getMetaType().equals(MetaType.PRIMITIVE)) {
-                xmlWriter.writeAttribute(METADATA, ODATA_METADATA_NS, TYPE, HASH + COLLECTION
+                xmlWriter.writeAttribute(METADATA, odataMetadataNs, TYPE, HASH + COLLECTION
                         + "(" + elementType.getName() + ")");
             } else {
-                xmlWriter.writeAttribute(METADATA, ODATA_METADATA_NS, TYPE, HASH + COLLECTION
+                xmlWriter.writeAttribute(METADATA, odataMetadataNs, TYPE, HASH + COLLECTION
                         + "(" + elementType.getFullyQualifiedName() + ")");
             }
 
             while (iterator.hasNext()) {
                 Object element = iterator.next();
-                xmlWriter.writeStartElement(METADATA, ELEMENT, ODATA_METADATA_NS);
+                xmlWriter.writeStartElement(METADATA, ELEMENT, odataMetadataNs);
                 marshall(element, elementType);
                 xmlWriter.writeEndElement();
             }
@@ -256,23 +259,23 @@ public class AtomDataWriter {
                 throw new ODataRenderException("OData type not found for property: " + property);
             }
 
-            xmlWriter.writeStartElement(ODATA_DATA, propertyName, ODATA_DATA_NS);
+            xmlWriter.writeStartElement(ODATA_DATA, propertyName, odataDataNS);
             if (propertyValue == null) {
-                xmlWriter.writeAttribute(METADATA, ODATA_METADATA_NS, NULL, "true");
+                xmlWriter.writeAttribute(METADATA, odataMetadataNs, NULL, "true");
             }
 
             switch (propertyType.getMetaType()) {
                 case PRIMITIVE:
                     PrimitiveType primitiveType = (PrimitiveType) propertyType;
                     if (!primitiveType.equals(PrimitiveType.STRING)) {
-                        xmlWriter.writeAttribute(METADATA, ODATA_METADATA_NS, TYPE, primitiveType.getName());
+                        xmlWriter.writeAttribute(METADATA, odataMetadataNs, TYPE, primitiveType.getName());
                     }
                     break;
 
                 case COMPLEX:
                 case ENTITY:
                 case ENUM:
-                    xmlWriter.writeAttribute(METADATA, ODATA_METADATA_NS, TYPE, HASH
+                    xmlWriter.writeAttribute(METADATA, odataMetadataNs, TYPE, HASH
                             + propertyType.getFullyQualifiedName());
                     break;
 

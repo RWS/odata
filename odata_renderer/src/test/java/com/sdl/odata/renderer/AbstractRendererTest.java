@@ -25,6 +25,7 @@ import com.sdl.odata.api.parser.FormatOption;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.QueryOption;
 import com.sdl.odata.api.parser.ResourcePathUri;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -46,6 +47,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import scala.Option;
+import scala.collection.immutable.List$;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -70,7 +72,7 @@ public class AbstractRendererTest {
     private static final ODataUri ODATA_URI = new ODataUri("http://localhost:8080/odata.svc",
             new ResourcePathUri(
                     new EntitySetPath("Customers", Option.<EntityCollectionPath>apply(null)),
-                    scala.collection.immutable.List.<QueryOption>empty()));
+                    List$.MODULE$.<QueryOption>empty()));
 
     private EntityDataModel entityDataModel;
 
@@ -95,12 +97,12 @@ public class AbstractRendererTest {
 
     private final AbstractRenderer renderer = new AbstractRenderer() {
         @Override
-        public int score(ODataRequestContext requestContext, Object data) {
+        public int score(ODataRequestContext requestContext, QueryResult data) {
             return 0;
         }
 
         @Override
-        public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+        public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
                 throws ODataException {
         }
     };
@@ -145,16 +147,16 @@ public class AbstractRendererTest {
     @Test
     public void testScoreForAtom() throws UnsupportedEncodingException {
         AbstractRenderer atomRenderer = new AtomRenderer();
-        int score = atomRenderer.score(buildODataRequest(ODATA_URI, ATOM_XML), Lists.newArrayList());
+        int score = atomRenderer.score(buildODataRequest(ODATA_URI, ATOM_XML), QueryResult.from(Lists.newArrayList()));
         assertThat(score, is(MAXIMUM_HEADER_SCORE));
-        score = atomRenderer.score(buildODataRequest(ODATA_URI, XML), Lists.newArrayList());
+        score = atomRenderer.score(buildODataRequest(ODATA_URI, XML), QueryResult.from(Lists.newArrayList()));
         assertThat(score, is(MAXIMUM_HEADER_SCORE));
     }
 
     @Test
     public void testScoreForJsonMarshaller() throws Exception {
         AbstractRenderer atomRenderer = new JsonRenderer();
-        int score = atomRenderer.score(buildODataRequest(ODATA_URI, JSON), Lists.newArrayList());
+        int score = atomRenderer.score(buildODataRequest(ODATA_URI, JSON), QueryResult.from(Lists.newArrayList()));
         assertThat(score, is(MAXIMUM_HEADER_SCORE));
     }
 
@@ -165,9 +167,12 @@ public class AbstractRendererTest {
                 new MediaType("application", "test", ImmutableMap.of("q", "0.8")),
                 new MediaType("*", "*", ImmutableMap.of("q", "0.1"))};
 
-        int atomXMLScore = atomRenderer.score(buildODataRequest(ODATA_URI, mediaTypes), Lists.newArrayList());
+        int atomXMLScore = atomRenderer.score(buildODataRequest(ODATA_URI, mediaTypes),
+                QueryResult.from(Lists.newArrayList()));
         assertThat(atomXMLScore, CoreMatchers.is(AbstractRenderer.WILDCARD_MATCH_SCORE + 1));
-        int jsonScore = new JsonRenderer().score(buildODataRequest(ODATA_URI, mediaTypes), Lists.newArrayList());
+
+        int jsonScore = new JsonRenderer().score(buildODataRequest(ODATA_URI, mediaTypes),
+                QueryResult.from(Lists.newArrayList()));
         assertTrue("Score of XML marshaller should have higher value in case of wild card matching ",
                 atomXMLScore > jsonScore);
     }

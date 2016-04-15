@@ -7,7 +7,14 @@
         <name>SDL OData v4 framework</name>
     </author>
     <link rel="edit" title="Customer" href="Customers(10)"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="Customers(10)/Orders"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="Customers(10)/Orders">
+        <metadata:inline>
+            <feed>
+                <metadata:ref id="Orders(1)"/>
+                <metadata:ref id="Orders(2)"/>
+            </feed>
+        </metadata:inline>
+    </link>
     <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Orders" type="application/xml" title="Orders" href="Customers(10)/Orders/$ref"/>
     <link rel="http://docs.oasis-open.org/odata/ns/related/BankAccount" type="application/atom+xml;type=entry" title="BankAccount" href="BankAccounts('iban-111')"/>
     <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/BankAccount" type="application/xml" title="BankAccount" href="Customers(10)/BankAccount/$ref"/>

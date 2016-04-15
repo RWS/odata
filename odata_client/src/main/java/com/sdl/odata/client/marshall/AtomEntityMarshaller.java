@@ -19,6 +19,7 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -28,6 +29,7 @@ import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.odata.client.api.marshall.ODataEntityMarshaller;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import com.sdl.odata.parser.ODataParserImpl;
+import com.sdl.odata.renderer.AbstractAtomRenderer;
 import com.sdl.odata.renderer.atom.AtomRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +53,15 @@ public class AtomEntityMarshaller implements ODataEntityMarshaller {
 
     private String url;
     private EntityDataModel entityDataModel;
-    private AtomRenderer atomRenderer;
+    private AbstractAtomRenderer atomRenderer;
 
     public AtomEntityMarshaller(Iterable<Class<?>> edmEntityClasses, String url) {
+        this(edmEntityClasses, url, new AtomRenderer());
+    }
+
+    protected AtomEntityMarshaller(Iterable<Class<?>> edmEntityClasses, String url, AbstractAtomRenderer atomRenderer) {
         this.url = url;
-        atomRenderer = new AtomRenderer();
+        this.atomRenderer = atomRenderer;
         try {
             LOG.debug("Building entity data model...");
             this.entityDataModel = buildEntityDataModel(edmEntityClasses);
@@ -76,7 +82,7 @@ public class AtomEntityMarshaller implements ODataEntityMarshaller {
                     URLEncoder.encode(query.getEdmEntityName(), StandardCharsets.UTF_8.name());
             ODataUri oDataServiceUri = new ODataParserImpl().parseUri(encodedServiceQueryUrl, entityDataModel);
             // marshall the entity Atom XML into the response
-            atomRenderer.render(buildODataPostContext(oDataServiceUri), oDataEntity, builder);
+            atomRenderer.render(buildODataPostContext(oDataServiceUri), QueryResult.from(oDataEntity), builder);
             // return the text content of the response
             result = builder.build().getBodyText(StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException | ODataException e) {

@@ -20,6 +20,7 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.Operation;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 
@@ -54,7 +55,7 @@ public class ActionPostMethodHandler extends WriteMethodHandler {
             if (data == null) {
                 return new ProcessorResult(ODataResponse.Status.NO_CONTENT);
             } else {
-                return new ProcessorResult(ODataResponse.Status.CREATED, data);
+                return new ProcessorResult(ODataResponse.Status.CREATED, QueryResult.from(data));
             }
         } else {
             throw new ODataBadRequestException("Incorrect operation instance");

@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.renderer;
 
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public abstract class AbstractJsonRenderer extends AbstractRenderer {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractJsonRenderer.class);
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
 
         // Try scoring against the $format query parameter
         int formatScore = scoreByFormat(getFormatOption(requestContext.getUri()), JSON);

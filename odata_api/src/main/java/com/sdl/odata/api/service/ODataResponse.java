@@ -31,7 +31,7 @@ public final class ODataResponse extends ODataRequestResponseBase {
     /**
      * Response status value.
      */
-    public static enum Status {
+    public enum Status {
         /**
          * OK Status.
          */
@@ -103,7 +103,7 @@ public final class ODataResponse extends ODataRequestResponseBase {
 
         private final int code;
 
-        private Status(int code) {
+        Status(int code) {
             this.code = code;
         }
 

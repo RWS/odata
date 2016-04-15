@@ -40,6 +40,22 @@ In order to build and run the OData framework on your pc the following is requir
 
 If above pre-requisites are met building is as simple as running the following command `mvn clean install`
 
+# Maven Artefacts
+```
+<depedencies>
+   <dependency>
+      <groupId>com.sdl</groupId>
+      <artifactId>odata_service</artifactId>
+      <version>2.0.4</version>
+   </dependency>
+   <dependency>
+      <groupId>com.sdl</groupId>
+      <artifactId>odata_common</artifactId>
+      <version>2.0.4</version>
+   </dependency>
+<dependencies>
+```
+
 ## Components
 
 The SDL OData v4 Framework consists of the following Architecture components, each represented by their own Maven module:
@@ -59,3 +75,15 @@ The SDL OData v4 Framework consists of the following Architecture components, ea
 - `odata_war` - OData WAR distribution artifact
 - `odata_webservice` - Spring Boot based OData HTTP webservice container
 
+# License
+Copyright (c) 2014 All Rights Reserved by the SDL Group.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

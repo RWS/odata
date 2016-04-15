@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import scala.Option;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.sdl.odata.ODataRendererUtils.buildContextUrlFromOperationCall;
 import static com.sdl.odata.api.parser.ODataUriUtil.getContextUrl;
@@ -83,6 +84,10 @@ public abstract class AbstractRenderer implements ODataRenderer {
      */
     protected static final String ODATA_VERSION_HEADER = "4.0";
 
+    protected boolean isGetRequest(ODataRequest request) {
+        return request.getMethod() == Method.GET;
+    }
+
     /**
      * Check if the parsed OData URI is a query and it results in an entity or a collection of entities.
      *
@@ -91,13 +96,7 @@ public abstract class AbstractRenderer implements ODataRenderer {
      * @return {@code true} if it is about an entity query.
      */
     protected boolean isEntityQuery(ODataUri uri, EntityDataModel entityDataModel) {
-        Type type = getTargetTypeOrNull(uri, entityDataModel);
-
-        return type != null && type.getMetaType() == MetaType.ENTITY;
-    }
-
-    protected boolean isGetRequest(ODataRequest request) {
-        return request.getMethod() == Method.GET;
+        return getTargetType(uri, entityDataModel).map(t -> t.getMetaType() == MetaType.ENTITY).orElse(false);
     }
 
     /**
@@ -109,19 +108,17 @@ public abstract class AbstractRenderer implements ODataRenderer {
      * @return {@code true} if it is about an entity query.
      */
     protected boolean isNonEntityQuery(ODataUri uri, EntityDataModel entityDataModel) {
-        Type type = getTargetTypeOrNull(uri, entityDataModel);
-
-        return type != null && type.getMetaType() != MetaType.ENTITY;
+        return getTargetType(uri, entityDataModel).map(t -> t.getMetaType() != MetaType.ENTITY).orElse(false);
     }
 
-    private Type getTargetTypeOrNull(ODataUri uri, EntityDataModel entityDataModel) {
+    private Optional<Type> getTargetType(ODataUri uri, EntityDataModel entityDataModel) {
         final Option<TargetType> targetTypeOption = ODataUriUtil.resolveTargetType(uri, entityDataModel);
         if (!targetTypeOption.isEmpty()) {
             TargetType targetType = targetTypeOption.get();
             LOG.debug("Target type is {} and is it collection {}", targetType.typeName(), targetType.isCollection());
-            return entityDataModel.getType(targetType.typeName());
+            return Optional.ofNullable(entityDataModel.getType(targetType.typeName()));
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -227,15 +224,5 @@ public abstract class AbstractRenderer implements ODataRenderer {
             throw new ODataRenderException(
                     String.format("Not possible to create context URL for request %s", requestContext));
         }
-    }
-
-    /**
-     * Returns the rendered odata entity (for batch request purposes mainly.
-     * This method is to get overridden in renderer classes.
-     *
-     * @return Rendered data.
-     */
-    public String getRenderedData() {
-        return null;
     }
 }

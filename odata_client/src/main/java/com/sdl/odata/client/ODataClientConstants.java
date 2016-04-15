@@ -87,44 +87,6 @@ public final class ODataClientConstants {
     }
 
     /**
-     * Client caching properties.
-     */
-    public static final class Cache {
-
-        private Cache() {
-        }
-
-        /**
-         * Property to identify if cache is enabled.
-         */
-        public static final String CLIENT_CACHE_ENABLED = "CacheEnabled";
-
-        /**
-         * Cache expiration duration property (in seconds).
-         */
-        public static final String CLIENT_CACHE_EXPIRATION_DURATION = "CacheExpirationDuration";
-    }
-
-    /**
-     * Client security properties.
-     */
-    public static final class Security {
-
-        private Security() {
-        }
-
-        /**
-         * OAuth client id.
-         */
-        public static final String CLIENT_ID = "ClientId";
-
-        /**
-         * OAuth client secret.
-         */
-        public static final String CLIENT_SECRET = "ClientSecret";
-    }
-
-    /**
      * Quote constant, used in forming exception/error messaging, etc.
      */
     public static final char QUOTE = '\'';

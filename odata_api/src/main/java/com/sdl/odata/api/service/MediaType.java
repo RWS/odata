@@ -50,6 +50,10 @@ public final class MediaType {
      */
     public static final MediaType JSON = new MediaType("application", "json");
     /**
+     * Media Type Text/Plain.
+     */
+    public static final MediaType TEXT = new MediaType("text", "plain");
+    /**
      * Media Type Wildcard.
      */
     public static final MediaType WILDCARD_ANY = new MediaType("*", "*");
