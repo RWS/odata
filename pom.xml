@@ -853,6 +853,7 @@
                                         </exclude>
                                         <exclude>com/sdl/odata/renderer/metadata/*Writer.class</exclude>
                                         <exclude>com/sdl/odata/renderer/xml/**/*.class</exclude>
+                                        <exclude>com/sdl/odata/renderer/primitive/**/*.class</exclude>
                                         <exclude>com/sdl/odata/renderer/batch/**/*.class</exclude>
                                         <exclude>com/sdl/odata/renderer/RendererFactoryImpl.class</exclude>
                                         <exclude>com/sdl/odata/renderer/AbstractRenderer.class</exclude>

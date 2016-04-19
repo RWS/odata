@@ -86,4 +86,16 @@ public interface DataSource {
      */
     void deleteLink(ODataUri uri, ODataLink link, EntityDataModel entityDataModel)
             throws ODataException;
+
+    /**
+     * Starts a DataSource transaction and returns the transactional datasource against which all
+     * data operations for the active transaction can be completed.
+     *
+     * The returned TransactionalDatasource is not re-usable and every invocation of 'startTransaction()' should
+     * return a new active transaction. All data operations belogning to the transaction need to be completed against
+     * the instance of the TransactionalDataSource.
+     *
+     * @return The newly created active DataSource transaction instance
+     */
+    TransactionalDataSource startTransaction();
 }
