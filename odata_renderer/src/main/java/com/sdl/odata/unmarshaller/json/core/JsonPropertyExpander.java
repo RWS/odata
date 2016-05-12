@@ -117,7 +117,9 @@ public class JsonPropertyExpander {
         } else {
             valueSet = new ArrayList<>();
         }
-        for (Object subValue : (Iterable) ((Map) currentNode).get(node)) {
+
+        Object current = (currentNode instanceof Map) ? currentNode : map.get(currentNode);
+        for (Object subValue : (Iterable) ((Map) current).get(node)) {
             Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);
 
             if (value != null) {
@@ -168,7 +170,7 @@ public class JsonPropertyExpander {
                                        String node, Map<String, Object> map) throws ODataException {
         for (String target : keySet) {
             if (node.equalsIgnoreCase(target)) {
-                Iterable subValues = (Iterable) map.get(target);
+                    Iterable subValues = (Iterable) map.get(target);
                 List<Object> valueList = new ArrayList<>();
                 for (Object subValue : subValues) {
                     Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);

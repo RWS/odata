@@ -25,6 +25,7 @@ import com.sdl.odata.test.model.ComplexTypeSample;
 import com.sdl.odata.test.model.Customer;
 import com.sdl.odata.test.model.EntityTypeSample;
 import com.sdl.odata.test.model.Order;
+import com.sdl.odata.test.model.ComplexTypeSampleList;
 import com.sdl.odata.test.util.TestUtils;
 import org.junit.Before;
 
@@ -178,7 +179,7 @@ public abstract class WriterUnmarshallerTest {
      * @return The created instance.
      */
     protected EntityTypeSample createEntityType(String id, String inheritedProperty, String simpleProperty,
-                                                String complexInheritedProperty) {
+                                                String complexInheritedProperty, List<String> listProperty) {
 
         ComplexTypeSample complexTypeSample = new ComplexTypeSample();
         complexTypeSample.setSimpleProperty(simpleProperty).setInheritedProperty(complexInheritedProperty);
@@ -186,6 +187,10 @@ public abstract class WriterUnmarshallerTest {
         EntityTypeSample entityTypeSample = new EntityTypeSample();
         entityTypeSample.setId(id).setInheritedProperty(inheritedProperty);
         entityTypeSample.setComplexTypeProperty(complexTypeSample);
+
+        ComplexTypeSampleList complexTypeSampleList = new ComplexTypeSampleList();
+        complexTypeSampleList.setListProperty(listProperty);
+        entityTypeSample.setComplexTypeListProperty(complexTypeSampleList);
 
         return entityTypeSample;
     }

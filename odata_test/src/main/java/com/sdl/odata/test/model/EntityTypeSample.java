@@ -38,6 +38,10 @@ public class EntityTypeSample extends AbstractEntityTypeSample {
     @EdmProperty(name = "ComplexTypeProperties", nullable = true)
     private List<ComplexTypeSample> complexTypeProperties = new ArrayList<>();
 
+    @EdmProperty(name = "ComplexTypeListProperty", nullable = true)
+    private ComplexTypeSampleList complexTypeListProperty;
+
+
     public String getId() {
         return id;
     }
@@ -62,5 +66,13 @@ public class EntityTypeSample extends AbstractEntityTypeSample {
 
     public void setComplexTypeProperties(List<ComplexTypeSample> complexTypeProperties) {
         this.complexTypeProperties = complexTypeProperties;
+    }
+
+    public ComplexTypeSampleList getComplexTypeListProperty() {
+        return complexTypeListProperty;
+    }
+
+    public void setComplexTypeListProperty(ComplexTypeSampleList complexTypeListProperty) {
+        this.complexTypeListProperty = complexTypeListProperty;
     }
 }

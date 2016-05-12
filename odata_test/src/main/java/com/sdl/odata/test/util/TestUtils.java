@@ -30,7 +30,6 @@ import com.sdl.odata.api.parser.KeyPredicatePath;
 import com.sdl.odata.api.parser.Literal;
 import com.sdl.odata.api.parser.MetadataUri;
 import com.sdl.odata.api.parser.NavigationPropertyExpandPathSegment;
-import com.sdl.odata.api.parser.NumberLiteral;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.PathExpandItem;
 import com.sdl.odata.api.parser.PathSegment;
@@ -40,6 +39,7 @@ import com.sdl.odata.api.parser.QueryOption;
 import com.sdl.odata.api.parser.ResourcePathUri;
 import com.sdl.odata.api.parser.ServiceRootUri;
 import com.sdl.odata.api.parser.SimpleKeyPredicate;
+import com.sdl.odata.api.parser.StringLiteral;
 import com.sdl.odata.api.parser.ValuePath$;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
@@ -54,6 +54,7 @@ import com.sdl.odata.test.model.Category;
 import com.sdl.odata.test.model.CollectionsSample;
 import com.sdl.odata.test.model.ComplexKeySample;
 import com.sdl.odata.test.model.ComplexTypeSample;
+import com.sdl.odata.test.model.ComplexTypeSampleList;
 import com.sdl.odata.test.model.Customer;
 import com.sdl.odata.test.model.EntityTypeSample;
 import com.sdl.odata.test.model.EnumSample;
@@ -76,7 +77,6 @@ import com.sdl.odata.test.model.complex.ODataDemoPropertyValue;
 import com.sdl.odata.test.model.complex.ODataVersion;
 import com.sdl.odata.test.model.complex.ODataVersionPart;
 import scala.Option;
-import scala.math.BigDecimal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -113,6 +113,7 @@ public final class TestUtils {
                 Customer.class,
                 AbstractComplexTypeSample.class,
                 ComplexTypeSample.class,
+                ComplexTypeSampleList.class,
                 AbstractEntityTypeSample.class,
                 EntityTypeSample.class,
                 Address.class,
@@ -216,7 +217,7 @@ public final class TestUtils {
         scala.Option<EntityPath> noneSubPath = scala.Option.apply(null);
 
         KeyPredicatePath keyPredicatePath = new KeyPredicatePath(
-                new SimpleKeyPredicate(new NumberLiteral(BigDecimal.valueOf(1))), noneSubPath);
+                new SimpleKeyPredicate(new StringLiteral("1")), noneSubPath);
         EntityCollectionPath collectionPath = new EntityCollectionPath(none, Option.apply(keyPredicatePath));
         EntitySetPath entitySetPath = new EntitySetPath(entitySetName, Option.apply(collectionPath));
         ResourcePathUri resourcePathUri = new ResourcePathUri(entitySetPath, asScalaList(new ArrayList<>()));

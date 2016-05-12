@@ -17,11 +17,14 @@ package com.sdl.odata.processor.write;
 
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.processor.model.ODataPerson;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.api.service.ODataResponse.Status.CREATED;
@@ -29,66 +32,90 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * The POST Method Handler Test.
  */
 public class PostMethodHandlerTest extends MethodHandlerTest {
-    private WriteMethodHandler writeMethodHandler;
 
     @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        ODataRequestContext requestContext = createContextWithEntitySet(POST);
-        writeMethodHandler = new PostMethodHandler(requestContext, dataSourceFactoryMock);
+    public void setup() throws Exception {
+        super.setup("Persons");
+    }
+
+    private void stubForTesting(Object entity, EntityDataModel entityDataModel) throws ODataException {
+        super.stubForTesting(entity);
+        when(dataSourceMock.create(entitySetOdataURI, entity, entityDataModel)).thenReturn(entity);
+    }
+
+    private WriteMethodHandler getPostMethodHandler(EntityDataModel entityDataModel, boolean isEntitySetUri)
+            throws UnsupportedEncodingException {
+        ODataRequestContext requestContext = super.createRequestContext(POST, isEntitySetUri, entityDataModel);
+        return new PostMethodHandler(requestContext, dataSourceFactoryMock);
     }
 
     @Test(expected = ODataBadRequestException.class)
     public void testWriteWithNull() throws Exception {
-        stubForTesting();
-        writeMethodHandler.handleWrite(null);
+        EntityDataModel entityDataModel = getEntityDataModel();
+        stubForTesting(getEntity(), entityDataModel);
+        getPostMethodHandler(entityDataModel, true).handleWrite(null);
+    }
+
+
+    public void doWrite(Object entity, EntityDataModel entityDataModel) throws Exception {
+        stubForTesting(entity,  entityDataModel);
+        ProcessorResult result = getPostMethodHandler(entityDataModel, true).handleWrite(entity);
+        assertThat(result.getStatus(), is(CREATED));
+        assertThat(result.getData(), is(entity));
+        verify(dataSourceMock, times(1)).create(entitySetOdataURI, entity,  entityDataModel);
     }
 
     @Test
     public void testWrite() throws Exception {
-        stubForTesting();
-        ProcessorResult result = writeMethodHandler.handleWrite(entity);
-        assertThat(result.getStatus(), is(CREATED));
-        assertThat(result.getData(), is(entity));
-        verify(dataSourceMock, times(1)).create(entitySetOdataURI, entity, entityDataModel);
+        // With ODataPerson
+        doWrite(getEntity(), getEntityDataModel());
+
+        // With ODataPersonNamedKey
+        doWrite(getEntityForNamedKey(), getEntityDataModelForNamedKey());
     }
 
     @Test(expected = ODataBadRequestException.class)
     public void testWriteNonEntitySet() throws Exception {
-        writeMethodHandler = new PostMethodHandler(createContextWithEntity(POST), dataSourceFactoryMock);
-        stubForTesting();
-        writeMethodHandler.handleWrite(entity);
-    }
-
-    @Test(expected = ODataBadRequestException.class)
-    public void testWriteWithPrimitive() throws Exception {
-        writeMethodHandler = new PostMethodHandler(createContextWithEntity(POST), dataSourceFactoryMock);
-        stubForTesting();
-        writeMethodHandler.handleWrite(entity);
+        stubForTesting(getEntity(), getEntityDataModel());
+        WriteMethodHandler writeMethodHandler = getPostMethodHandler(getEntityDataModel(), false);
+        writeMethodHandler.handleWrite(getEntity());
     }
 
     @Test
-    public void testValidateProperties() throws ODataException {
-        writeMethodHandler.validateProperties(entity, entityDataModel);
-        // Should pass without exceptions
+    public void testValidateProperties() throws Exception {
+        // With ODataPerson
+        WriteMethodHandler writeMethodHandler = getPostMethodHandler(getEntityDataModel(), true);
+        writeMethodHandler.validateProperties(getEntity(), getEntityDataModel());
+
+        // With ODataPersonNamedKey
+        writeMethodHandler = getPostMethodHandler(getEntityDataModelForNamedKey(), true);
+        writeMethodHandler.validateProperties(getEntityForNamedKey(), getEntityDataModelForNamedKey());
     }
 
     @Test(expected = ODataBadRequestException.class)
-    public void testValidatePropertiesMissingEntity() throws ODataException {
+    public void testValidatePropertiesMissingEntity() throws Exception {
+        Object entity = getEntity();
         ((ODataPerson) entity).setPrimaryPhone(null);
-        writeMethodHandler.validateProperties(entity, entityDataModel);
+        WriteMethodHandler writeMethodHandler = getPostMethodHandler(getEntityDataModel(), true);
+        writeMethodHandler.validateProperties(entity, getEntityDataModel());
         // Should fail with an exception because 'primaryPhone' is not nullable
     }
 
     @Test(expected = ODataBadRequestException.class)
-    public void testValidatePropertiesMissingComplex() throws ODataException {
+    public void testValidatePropertiesMissingComplex() throws Exception {
+        Object entity = getEntity();
         ((ODataPerson) entity).setPrimaryAddress(null);
-        writeMethodHandler.validateProperties(entity, entityDataModel);
+        WriteMethodHandler writeMethodHandler = getPostMethodHandler(getEntityDataModel(), true);
+        writeMethodHandler.validateProperties(entity, getEntityDataModel());
         // Should fail with an exception because 'primaryAddress' is not nullable
     }
+
+
+
 }
