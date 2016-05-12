@@ -17,6 +17,7 @@ package com.sdl.odata.renderer.atom;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractAtomRenderer;
@@ -32,6 +33,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.sdl.odata.api.parser.ODataUriUtil.isActionCallUri;
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.COLLECTION;
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.ODataRequestContextUtil.isWriteOperation;
 
@@ -52,7 +54,7 @@ public class AtomRenderer extends AbstractAtomRenderer {
     private static final Logger LOG = LoggerFactory.getLogger(AtomRenderer.class);
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
 
         // This renderer only handles entity queries
         if (!isEntityQuery(requestContext.getUri(), requestContext.getEntityDataModel())) {
@@ -65,7 +67,7 @@ public class AtomRenderer extends AbstractAtomRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
         LOG.debug("Start rendering entity(es) for request: {} with data {}", requestContext, data);
@@ -73,10 +75,10 @@ public class AtomRenderer extends AbstractAtomRenderer {
         AtomWriter atomWriter = initAtomWriter(requestContext);
 
         atomWriter.startDocument();
-        if (data instanceof List) {
-            atomWriter.writeFeed((List<?>) data, buildContextURL(requestContext, data));
+        if (data.getType() == COLLECTION) {
+            atomWriter.writeFeed((List<?>) data.getData(), buildContextURL(requestContext, data), data.getMeta());
         } else {
-            atomWriter.writeEntry(data, buildContextURL(requestContext, data));
+            atomWriter.writeEntry(data.getData(), buildContextURL(requestContext, data));
         }
         atomWriter.endDocument();
         String renderedData = atomWriter.getXml();

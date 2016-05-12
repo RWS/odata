@@ -16,10 +16,12 @@
 package com.sdl.odata.service.actor
 
 import java.nio.charset.StandardCharsets.UTF_8
+
 import com.sdl.odata.api.ODataErrorCode.UNKNOWN_ERROR
 import com.sdl.odata.api._
 import com.sdl.odata.api.processor.ProcessorResult
 import com.sdl.odata.api.processor.datasource.{ODataDataSourceException, ODataEntityNotFoundException}
+import com.sdl.odata.api.processor.query.QueryResult
 import com.sdl.odata.api.renderer.{ODataRenderer, RendererFactory}
 import com.sdl.odata.api.service.ODataResponse
 import com.sdl.odata.api.service.ODataResponse.Status._
@@ -102,9 +104,10 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
    * @param responseBuilder The response builder.
    */
   def renderError(actorContext: ODataActorContext, exception: ODataException, responseBuilder: ODataResponse.Builder) {
-    getRenderer(actorContext, exception) match {
+    val exceptionResult = QueryResult.from(exception)
+    getRenderer(actorContext, exceptionResult) match {
       case Some(renderer) =>
-        renderer.render(actorContext.requestContext, exception, responseBuilder)
+        renderer.render(actorContext.requestContext, exceptionResult, responseBuilder)
 
       case None =>
         renderErrorAsText(exception, responseBuilder)
@@ -119,9 +122,9 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
    * @param responseBuilder The response builder.
    */
   def renderResult(actorContext: ODataActorContext, result: ProcessorResult, responseBuilder: ODataResponse.Builder) {
-    getRenderer(actorContext, result.getData) match {
+    getRenderer(actorContext, result.getQueryResult) match {
       case Some(renderer) =>
-        renderer.render(actorContext.requestContext, result.getData, responseBuilder)
+        renderer.render(actorContext.requestContext, result.getQueryResult, responseBuilder)
 
       case None =>
         renderError(actorContext, new ODataServerException(UNKNOWN_ERROR, "No renderer available"), responseBuilder)
@@ -139,7 +142,7 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
     responseBuilder.setStatus(INTERNAL_SERVER_ERROR)
   }
 
-  private def getRenderer(actorContext: ODataActorContext, data: AnyRef): Option[ODataRenderer] = {
+  private def getRenderer(actorContext: ODataActorContext, data: QueryResult): Option[ODataRenderer] = {
     import scala.collection.JavaConversions._
     val r = rendererFactory.getRenderers
     r.map(renderer => (renderer.score(actorContext.requestContext, data), renderer))

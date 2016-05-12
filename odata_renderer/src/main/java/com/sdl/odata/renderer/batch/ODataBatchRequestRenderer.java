@@ -21,6 +21,7 @@ import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataBatchException;
 import com.sdl.odata.api.parser.ODataBatchRendererException;
 import com.sdl.odata.api.processor.ProcessorResult;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
@@ -78,12 +79,12 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
      * @return batch score
      */
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
-        if (data == null || !(data instanceof ODataException)) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
+        if (data.getType() == QueryResult.ResultType.NOTHING || data.getType() != QueryResult.ResultType.EXCEPTION) {
             return DEFAULT_SCORE;
         }
 
-        if (data instanceof ODataBatchException) {
+        if (data.getData() instanceof ODataBatchException) {
             return MAXIMUM_FORMAT_SCORE;
         }
 
@@ -96,10 +97,11 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, Object data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
         LOG.debug("Starting rendering batch request entities for request: {} with data {}", requestContext, data);
         checkNotNull(data);
+        checkNotNull(data.getData());
 
         StringBuilder sb = new StringBuilder();
 
@@ -117,8 +119,8 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
         sb.append(NEW_LINE);
 
         int changeSetCount = 0;
-        if (data instanceof List) {
-            List<ProcessorResult> results = (List<ProcessorResult>) data;
+        if (data.getType() == QueryResult.ResultType.COLLECTION) {
+            List<ProcessorResult> results = (List<ProcessorResult>) data.getData();
             int numberOfChangeSets = getNumberOfChangeSetsInResult(results);
             for (ProcessorResult result : results) {
 
@@ -167,8 +169,8 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
                 }
             }
 
-        } else if (data instanceof ODataException) {
-            buildException((ODataException) data, sb, null);
+        } else if (data.getType() == QueryResult.ResultType.EXCEPTION) {
+            buildException((ODataException) data.getData(), sb, null);
         }
 
         // the end of batch
@@ -208,7 +210,6 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
             // DELETE shouldn't contain message inside the batch body
             sb.append(NEW_LINE);
         }
-
     }
 
     private void buildException(ODataException ex, StringBuilder sb, ProcessorResult result) {
@@ -261,7 +262,7 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
 
         ODataResponse.Builder builder = new ODataResponse.Builder()
                 .setStatus(result.getStatus());
-        renderer.render(result.getRequestContext(), result.getData(), builder);
+        renderer.render(result.getRequestContext(), result.getQueryResult(), builder);
 
         try {
             // pretty print
@@ -272,7 +273,6 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
         } catch (IOException ex) {
             throw new ODataBatchRendererException("Unable to pretty print following json data");
         }
-
     }
 
     private String getRenderedXML(ProcessorResult result) throws ODataException {
@@ -281,7 +281,7 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
         ODataResponse.Builder builder = new ODataResponse.Builder()
                 .setStatus(result.getStatus());
 
-        atomRenderer.render(result.getRequestContext(), result.getData(), builder);
+        atomRenderer.render(result.getRequestContext(), result.getQueryResult(), builder);
 
         try {
             return builder.build().getBodyText(StandardCharsets.UTF_8.name());
@@ -320,5 +320,4 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
         // substring existing batch id after "batch_" charset
         return sb.toString();
     }
-
 }

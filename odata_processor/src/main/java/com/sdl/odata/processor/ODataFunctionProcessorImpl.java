@@ -28,6 +28,7 @@ import com.sdl.odata.api.parser.util.ParameterTypeUtil;
 import com.sdl.odata.api.processor.ODataFunctionProcessor;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
@@ -67,7 +68,7 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
         }
 
         return result == null ? new ProcessorResult(ODataResponse.Status.NO_CONTENT) :
-                new ProcessorResult(ODataResponse.Status.OK, result);
+                new ProcessorResult(ODataResponse.Status.OK, QueryResult.from(result));
     }
 
     private Operation getFunctionOrFunctionImportOperation(ODataRequestContext requestContext)

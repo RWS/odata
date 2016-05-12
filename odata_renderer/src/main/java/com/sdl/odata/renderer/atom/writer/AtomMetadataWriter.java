@@ -40,6 +40,7 @@ import static com.sdl.odata.AtomConstants.ATOM_NAME;
 import static com.sdl.odata.AtomConstants.ATOM_NS;
 import static com.sdl.odata.AtomConstants.ATOM_SUMMARY;
 import static com.sdl.odata.AtomConstants.ATOM_UPDATED;
+import static com.sdl.odata.AtomConstants.COUNT;
 import static com.sdl.odata.AtomConstants.EDIT;
 import static com.sdl.odata.AtomConstants.HASH;
 import static com.sdl.odata.AtomConstants.HREF;
@@ -312,5 +313,11 @@ public class AtomMetadataWriter {
             return String.format("%s/%s(%s)", oDataUri.serviceRoot(),
                     getEntityName(entityDataModel, entity), formatEntityKey(entityDataModel, entity));
         }
+    }
+
+    public void writeCount(Object count) throws XMLStreamException {
+        xmlWriter.writeStartElement(METADATA, COUNT, nsConfigurationProvider.getOdataMetadataNs());
+        xmlWriter.writeCharacters(String.valueOf(count));
+        xmlWriter.writeEndElement();
     }
 }

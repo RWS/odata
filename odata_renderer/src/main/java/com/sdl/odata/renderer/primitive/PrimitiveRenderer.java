@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.renderer.json;
+package com.sdl.odata.renderer.primitive;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
@@ -22,8 +22,8 @@ import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
-import com.sdl.odata.renderer.AbstractJsonRenderer;
-import com.sdl.odata.renderer.json.writer.JsonPropertyWriter;
+import com.sdl.odata.renderer.AbstractRenderer;
+import com.sdl.odata.renderer.primitive.writer.PrimitiveWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,48 +32,43 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * The Json Value Renderer.
+ * Render primitive data: $count, $value.
  */
 @Component
-public class JsonValueRenderer extends AbstractJsonRenderer {
+public class PrimitiveRenderer extends AbstractRenderer {
+    private static final Logger LOG = LoggerFactory.getLogger(PrimitiveRenderer.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(JsonValueRenderer.class);
-    private static final int DEFAULT_OPERATION_SCORE = 50;
-
+    private static final int DEFAULT_PRIMITIVE_SCORE = 35;
 
     @Override
     public int score(ODataRequestContext requestContext, QueryResult data) {
-        // This renderer only handles non-entity queries
-        if (!isNonEntityQuery(requestContext.getUri(), requestContext.getEntityDataModel())) {
-            return DEFAULT_SCORE;
-        }
-
         int operationScore = DEFAULT_SCORE;
-        if (ODataUriUtil.isFunctionCallUri(requestContext.getUri())
-                || ODataUriUtil.isActionCallUri(requestContext.getUri())) {
-            operationScore = DEFAULT_OPERATION_SCORE;
+
+        if (ODataUriUtil.isValuePathUri(requestContext.getUri())
+                || ODataUriUtil.isCountPathUri(requestContext.getUri())) {
+            operationScore = DEFAULT_PRIMITIVE_SCORE;
         }
 
-        int returnScore = Math.max(super.score(requestContext, data), operationScore);
-        LOG.debug("Renderer score is {}", returnScore);
-
-        return returnScore;
+        LOG.debug("Renderer score is {}", operationScore);
+        return operationScore;
     }
 
     @Override
     public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
-        LOG.debug("Start rendering property for request: {}", requestContext);
+        LOG.debug("Start value for request: {}", requestContext);
 
-        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+        PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
-        String json = propertyWriter.getPropertyAsString(data.getData());
-        LOG.debug("Response property json is {}", json);
+        String response = primitiveWriter.getPropertyAsString(data.getData());
+
+        LOG.debug("Response value is {}", response);
+
         try {
             responseBuilder
-                    .setContentType(MediaType.JSON)
+                    .setContentType(MediaType.TEXT)
                     .setHeader("OData-Version", ODATA_VERSION_HEADER)
-                    .setBodyText(json, StandardCharsets.UTF_8.name());
+                    .setBodyText(response, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             throw new ODataSystemException(e);
         }

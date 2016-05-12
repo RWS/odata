@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.renderer;
 
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 
@@ -32,7 +33,7 @@ public abstract class AbstractAtomRenderer extends AbstractRenderer {
     private static final int DEFAULT_XML_RENDER_SCORE = 31;
 
     @Override
-    public int score(ODataRequestContext requestContext, Object data) {
+    public int score(ODataRequestContext requestContext, QueryResult data) {
 
         // Try scoring against the $format query parameter
         int atomXmlFormatScore = scoreByFormat(getFormatOption(requestContext.getUri()), ATOM_XML);

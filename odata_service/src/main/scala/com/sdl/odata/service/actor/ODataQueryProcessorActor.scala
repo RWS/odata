@@ -32,9 +32,10 @@ class ODataQueryProcessorActor @Autowired()(actorProducer: ActorProducer, queryP
     def receive = {
     case ReadOperation(actorContext, data) =>
       log.debug("ODataQueryProcessor found and submitting for query result")
+
       val result = if (isFunctionCallUri(actorContext.requestContext.getUri))
         oDataFunctionProcessor.doFunction(actorContext.requestContext) else
-        queryProcessor.query(actorContext.requestContext, data.getOrElse(null))
+        queryProcessor.query(actorContext.requestContext, data.orNull)
       log.debug("Execution completed, submitting result to event bus")
 
       routeMessage(actorProducer, context, Render(actorContext, result))
