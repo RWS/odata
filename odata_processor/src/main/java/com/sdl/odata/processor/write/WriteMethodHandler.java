@@ -145,9 +145,10 @@ public abstract class WriteMethodHandler {
         Map<String, Object> keyValues = new HashMap<>();
         for (PropertyRef propertyRef : entityType.getKey().getPropertyRefs()) {
             try {
-                Field keyField = entity.getClass().getDeclaredField(propertyRef.getPath());
+                String keyFieldName = entityType.getStructuralProperty(propertyRef.getPath()).getJavaField().getName();
+                Field keyField = entity.getClass().getDeclaredField(keyFieldName);
                 keyField.setAccessible(true);
-                keyValues.put(propertyRef.getPath(), keyField.get(entity));
+                keyValues.put(keyFieldName, keyField.get(entity));
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new ODataProcessorException(PROCESSOR_ERROR,
                         "Not possible to extract the key/values from the entity", e);

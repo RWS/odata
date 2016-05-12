@@ -16,21 +16,15 @@
 package com.sdl.odata.processor.write;
 
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.annotations.EdmEntity;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
-import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import com.sdl.odata.processor.ODataWriteProcessorImpl;
-import com.sdl.odata.processor.model.ODataAddress;
-import com.sdl.odata.processor.model.ODataMobilePhone;
-import com.sdl.odata.processor.model.ODataPerson;
-
-import org.junit.Before;
-
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 
@@ -43,35 +37,62 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import com.sdl.odata.api.service.ODataRequest.Method;
+import com.sdl.odata.processor.model.ODataAddress;
+import com.sdl.odata.processor.model.ODataMobilePhone;
+import com.sdl.odata.processor.model.ODataPerson;
+import com.sdl.odata.processor.model.ODataPersonNamedKey;
 
 /**
  *
  */
 public abstract class MethodHandlerTest {
-    protected EntityDataModel entityDataModel;
     protected DataSource dataSourceMock = mock(DataSource.class);
     protected DataSourceFactory dataSourceFactoryMock = mock(DataSourceFactory.class);
-    protected Object entity;
     protected ODataUri entitySetOdataURI;
     protected ODataUri entityOdataURI;
 
-    @Before
-    public void setUp() throws Exception {
-        setupEntity();
 
-        entityDataModel = new AnnotationEntityDataModelFactory()
+    protected void setup(String entitySetName) throws Exception {
+        entitySetOdataURI = createODataUri(SERVICE_ROOT, entitySetName);
+        entityOdataURI = createODataUriWithSimpleKeyPredicate(entitySetName);
+        initMocks(ODataWriteProcessorImpl.class);
+    }
+
+    protected void stubForTesting(Object entity) throws ODataException {
+        when(dataSourceFactoryMock.getDataSource(any(ODataRequestContext.class),
+                eq(getEntityType(entity)))).thenReturn(dataSourceMock);
+    }
+
+    protected ODataRequestContext createRequestContext(Method method, boolean isEntitySetUri,
+                                                       EntityDataModel entityDataModel)
+            throws UnsupportedEncodingException {
+        if (isEntitySetUri) {
+            return createODataRequestContext(method, entitySetOdataURI, entityDataModel);
+        }
+
+        return createODataRequestContext(method, entityOdataURI, entityDataModel);
+    }
+
+    protected String getEntityType(Object entity) {
+        String entityType = entity.getClass().getSimpleName();
+        EdmEntity annotation = entity.getClass().getAnnotation(EdmEntity.class);
+        if (annotation != null) {
+            entityType = annotation.namespace() + "." + entity.getClass().getSimpleName();
+        }
+
+        return entityType;
+    }
+
+    protected EntityDataModel getEntityDataModel() throws ODataEdmException {
+        return new AnnotationEntityDataModelFactory()
                 .addClass(ODataAddress.class)
                 .addClass(ODataMobilePhone.class)
                 .addClass(ODataPerson.class)
                 .buildEntityDataModel();
-
-        entitySetOdataURI = createODataUri(SERVICE_ROOT, "Persons");
-        entityOdataURI = createODataUriWithSimpleKeyPredicate("Persons");
-        initMocks(ODataWriteProcessorImpl.class);
-
     }
 
-    private void setupEntity() {
+    protected Object getEntity() {
         ODataPerson source = new ODataPerson();
         source.setId("1");
         source.setFirstName("Bill");
@@ -91,27 +112,38 @@ public abstract class MethodHandlerTest {
         address.setCountryName("Forestland");
         source.setPrimaryAddress(address);
 
-        this.entity = source;
+        return source;
     }
 
-    protected void stubForTesting() throws ODataException {
-        String entityType = entity.getClass().getSimpleName();
-        EdmEntity annotation = entity.getClass().getAnnotation(EdmEntity.class);
-        if (annotation != null) {
-            entityType = annotation.namespace() + "." + entity.getClass().getSimpleName();
-        }
-        when(dataSourceFactoryMock.getDataSource(any(ODataRequestContext.class),
-                eq(entityType))).thenReturn(dataSourceMock);
-        when(dataSourceMock.create(entitySetOdataURI, entity, entityDataModel)).thenReturn(entity);
+    protected EntityDataModel getEntityDataModelForNamedKey() throws ODataEdmException {
+        return new AnnotationEntityDataModelFactory()
+                .addClass(ODataAddress.class)
+                .addClass(ODataMobilePhone.class)
+                .addClass(ODataPersonNamedKey.class)
+                .buildEntityDataModel();
     }
 
-    protected ODataRequestContext createContextWithEntitySet(ODataRequest.Method method)
-            throws UnsupportedEncodingException {
-        return createODataRequestContext(method, entitySetOdataURI, entityDataModel);
+    protected Object getEntityForNamedKey() {
+        ODataPersonNamedKey source = new ODataPersonNamedKey();
+        source.setId("1");
+        source.setFirstName("Bill");
+        source.setFamilyName("Gates");
+        source.setBirthDate(LocalDate.of(1955, 10, 28));
+
+        ODataMobilePhone phone = new ODataMobilePhone();
+        phone.setId(43L);
+        phone.setModel("Google Nexus 5");
+        phone.setPhoneNumber("28623478600");
+        source.setPrimaryPhone(phone);
+
+        ODataAddress address = new ODataAddress();
+        address.setStreetName("Woodstreet");
+        address.setHouseNumber("13");
+        address.setCityName("Timberville");
+        address.setCountryName("Forestland");
+        source.setPrimaryAddress(address);
+
+        return source;
     }
 
-    protected ODataRequestContext createContextWithEntity(ODataRequest.Method method)
-            throws UnsupportedEncodingException {
-        return createODataRequestContext(method, entityOdataURI, entityDataModel);
-    }
 }

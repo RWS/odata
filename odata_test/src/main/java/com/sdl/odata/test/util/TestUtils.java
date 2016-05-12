@@ -29,7 +29,7 @@ import com.sdl.odata.api.parser.KeyPredicatePath;
 import com.sdl.odata.api.parser.Literal;
 import com.sdl.odata.api.parser.MetadataUri;
 import com.sdl.odata.api.parser.NavigationPropertyExpandPathSegment;
-import com.sdl.odata.api.parser.NumberLiteral;
+import com.sdl.odata.api.parser.StringLiteral;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.PathExpandItem;
 import com.sdl.odata.api.parser.PathSegment;
@@ -72,7 +72,6 @@ import com.sdl.odata.test.model.complex.ODataDemoPropertyValue;
 import com.sdl.odata.test.model.complex.ODataVersion;
 import com.sdl.odata.test.model.complex.ODataVersionPart;
 import scala.Option;
-import scala.math.BigDecimal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -212,7 +211,7 @@ public final class TestUtils {
         scala.Option<EntityPath> noneSubPath = scala.Option.apply(null);
 
         KeyPredicatePath keyPredicatePath = new KeyPredicatePath(
-                new SimpleKeyPredicate(new NumberLiteral(BigDecimal.valueOf(1))), noneSubPath);
+                new SimpleKeyPredicate(new StringLiteral("1")), noneSubPath);
         EntityCollectionPath collectionPath = new EntityCollectionPath(none,
                 Option.<PathSegment>apply(keyPredicatePath));
         EntitySetPath entitySetPath = new EntitySetPath(entitySetName, Option.apply(collectionPath));
