@@ -22,6 +22,12 @@
                 <data:SimpleProperty>Simple value</data:SimpleProperty>
             </data:ComplexTypeProperty>
             <data:ComplexTypeProperties metadata:type="#Collection(ODataDemo.ComplexTypeSample)"/>
+            <data:ComplexTypeListProperty metadata:type="#ODataDemo.ComplexTypeSampleList">
+                <data:ListProperty metadata:type="#Collection(String)">
+                    <metadata:element>Value 1</metadata:element>
+                    <metadata:element>Value 2</metadata:element>
+                </data:ListProperty>
+            </data:ComplexTypeListProperty>
         </metadata:properties>
     </content>
 </entry>

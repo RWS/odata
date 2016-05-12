@@ -9,5 +9,9 @@
     "InheritedProperty": "Inherited value",
     "SimpleProperty": "Simple value"
   },
-  "ComplexTypeProperties": []
+  "ComplexTypeProperties": [],
+  "ComplexTypeListProperty" : {
+    "@odata.type" : "#ODataDemo.ComplexTypeSampleList",
+    "ListProperty" : ["Value 1", "Value 2"]
+  }
 }

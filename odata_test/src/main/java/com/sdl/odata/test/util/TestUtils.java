@@ -50,6 +50,7 @@ import com.sdl.odata.test.model.Category;
 import com.sdl.odata.test.model.CollectionsSample;
 import com.sdl.odata.test.model.ComplexKeySample;
 import com.sdl.odata.test.model.ComplexTypeSample;
+import com.sdl.odata.test.model.ComplexTypeSampleList;
 import com.sdl.odata.test.model.Customer;
 import com.sdl.odata.test.model.EntityTypeSample;
 import com.sdl.odata.test.model.EnumSample;
@@ -108,6 +109,7 @@ public final class TestUtils {
                 Customer.class,
                 AbstractComplexTypeSample.class,
                 ComplexTypeSample.class,
+                ComplexTypeSampleList.class,
                 AbstractEntityTypeSample.class,
                 EntityTypeSample.class,
                 Address.class,
