@@ -137,8 +137,11 @@ class LiteralParsersTest extends FunSuite with ParserTestHelpers {
   }
 
 
+  test("longParameterForStringLiteral") {
     implicit val p = parser.stringValue
+    // this uri was causing StackOverflowError through the stringValue function
     val bigParameter = scala.io.Source.fromInputStream(
+      getClass.getClassLoader.getResourceAsStream("BigParameterSample1.txt")).mkString
     testSuccess(bigParameter, bigParameter.replace("'", ""))
   }
 
