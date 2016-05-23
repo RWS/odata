@@ -136,6 +136,12 @@ class LiteralParsersTest extends FunSuite with ParserTestHelpers {
     testNoSuccess("wrong-input-to-guid-literal-should-fail")
   }
 
+
+    implicit val p = parser.stringValue
+    val bigParameter = scala.io.Source.fromInputStream(
+    testSuccess(bigParameter, bigParameter.replace("'", ""))
+  }
+
   test("binaryLiteral") {
     // Note: Test case not implemented yet
   }
