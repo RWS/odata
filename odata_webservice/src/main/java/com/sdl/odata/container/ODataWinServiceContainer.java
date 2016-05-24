@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 
+import static org.springframework.boot.Banner.Mode.OFF;
+
 /**
  * OData Windows Service Container.
  *
@@ -41,7 +43,7 @@ public final class ODataWinServiceContainer {
         LOG.info("Starting Spring Application container");
 
         SpringApplication springApplication = new SpringApplication(ODataServiceContainer.class);
-        springApplication.setShowBanner(false);
+        springApplication.setBannerMode(OFF);
         springApplication.run(args);
 
         LOG.info("Spring application container started");

@@ -25,6 +25,8 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import static org.springframework.boot.Banner.Mode.OFF;
+
 /**
  * <p>
  * This is the main entry point to the OData Web Service.
@@ -35,9 +37,9 @@ import org.springframework.context.annotation.Configuration;
  * </p>
  */
 @Configuration
-@EnableAutoConfiguration(exclude = { HibernateJpaAutoConfiguration.class, DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class })
-@ComponentScan({"com.sdl.odata.controller" })
+@EnableAutoConfiguration(exclude = {HibernateJpaAutoConfiguration.class, DataSourceAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class})
+@ComponentScan({"com.sdl.odata.controller"})
 public class ODataServiceContainer {
     private static final Logger LOG = LoggerFactory.getLogger(ODataServiceContainer.class);
 
@@ -45,7 +47,7 @@ public class ODataServiceContainer {
         LOG.info("Starting Spring Application container");
 
         SpringApplication springApplication = new SpringApplication(ODataServiceContainer.class);
-        springApplication.setShowBanner(false);
+        springApplication.setBannerMode(OFF);
         springApplication.run(args);
 
         LOG.info("Spring application container started");
