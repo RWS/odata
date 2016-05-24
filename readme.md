@@ -1,4 +1,4 @@
-# SDL OData v4 Framework
+# SDL OData v4 Framework [![Build Status](https://travis-ci.org/sdl/odata.svg?branch=master)](https://travis-ci.org/sdl/odata) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata)
 
 This is the SDL Open Data Framework based on OData standard (http://www.odata.org/) fully implemented in Java. The SDL OData framework offers a Java
 implementation of the OData Service and also provides Java Client Libraries. The SDL OData framework is aligned to the v4 version of the OData OASIS standard.
