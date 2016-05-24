@@ -136,6 +136,15 @@ class LiteralParsersTest extends FunSuite with ParserTestHelpers {
     testNoSuccess("wrong-input-to-guid-literal-should-fail")
   }
 
+
+  test("longParameterForStringLiteral") {
+    implicit val p = parser.stringValue
+    // this uri was causing StackOverflowError through the stringValue function
+    val bigParameter = scala.io.Source.fromInputStream(
+      getClass.getClassLoader.getResourceAsStream("BigParameterSample1.txt")).mkString
+    testSuccess(bigParameter, bigParameter.replace("'", ""))
+  }
+
   test("binaryLiteral") {
     // Note: Test case not implemented yet
   }
