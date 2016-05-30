@@ -55,7 +55,6 @@ public class BatchMethodHandler {
     private final EntityDataModel entityDataModel;
     private final DataSourceFactory dataSourceFactory;
     private final ODataRequestContext requestContext;
-    private final ODataRequest odataRequest;
 
     private final Map<String, TransactionalDataSource> dataSourceMap = new HashMap<>();
 
@@ -65,7 +64,6 @@ public class BatchMethodHandler {
         this.entityDataModel = requestContext.getEntityDataModel();
         this.dataSourceFactory = dataSourceFactory;
         this.requestContext = requestContext;
-        this.odataRequest = requestContext.getRequest();
     }
 
     /**
@@ -80,16 +78,17 @@ public class BatchMethodHandler {
         try {
             try {
                 for (ChangeSetEntity changeSetEntity : changeSetEntities) {
+                    ODataRequestContext requestContext = changeSetEntity.getRequestContext();
                     ODataUri requestUri = requestContext.getUri();
                     ODataRequest.Method method = requestContext.getRequest().getMethod();
 
                     ProcessorResult result = null;
                     if (method == ODataRequest.Method.POST) {
-                        result = handlePOST(requestUri, changeSetEntity);
+                        result = handlePOST(requestContext, requestUri, changeSetEntity);
                     } else if (method == ODataRequest.Method.PUT || method == ODataRequest.Method.PATCH) {
-                        result = handlePutAndPatch(requestUri, changeSetEntity);
+                        result = handlePutAndPatch(requestContext, requestUri, changeSetEntity);
                     } else if (method == ODataRequest.Method.DELETE) {
-                        result = handleDelete(requestUri, changeSetEntity);
+                        result = handleDelete(requestContext, requestUri, changeSetEntity);
                     }
                     resultList.add(result);
                 }
@@ -97,34 +96,40 @@ public class BatchMethodHandler {
                 commitTransactions();
             }
         } catch (ODataException e) {
-            LOG.error("Transaction could not be processed, rolling back");
+            LOG.error("Transaction could not be processed, rolling back", e);
             rollbackTransactions();
         }
         return resultList;
     }
 
-    private ProcessorResult handlePOST(ODataUri oDataUri, ChangeSetEntity changeSetEntity) throws ODataException {
+    private ProcessorResult handlePOST(ODataRequestContext requestContext,
+                                       ODataUri oDataUri, ChangeSetEntity changeSetEntity) throws ODataException {
         LOG.debug("Handling POST operation");
         Object entityData = changeSetEntity.getOdataEntity();
         Map<String, String> headers = buildDefaultEntityHeaders(changeSetEntity);
+        ODataRequest oDataRequest = requestContext.getRequest();
 
-        validateEntityData(oDataUri, entityData);
-        DataSource dataSource = getTransactionalDataSource(getRequestType(oDataUri));
-        headers.putAll(WriteMethodUtil.getResponseHeaders(entityData, oDataUri, entityDataModel));
+        validateEntityData(oDataRequest, oDataUri, entityData);
+        DataSource dataSource = getTransactionalDataSource(requestContext, getRequestType(oDataRequest, oDataUri));
+        headers.putAll(oDataRequest.getHeaders());
+        headers.put("changeSetId", changeSetEntity.getChangeSetId());
+
         Object createdEntity = dataSource.create(oDataUri, entityData, entityDataModel);
 
-        if (WriteMethodUtil.isMinimalReturnPreferred(odataRequest)) {
+        if (WriteMethodUtil.isMinimalReturnPreferred(oDataRequest)) {
             return new ProcessorResult(ODataResponse.Status.NO_CONTENT, headers);
         }
         return new ProcessorResult(ODataResponse.Status.CREATED, from(createdEntity), headers, requestContext);
     }
 
-    private ProcessorResult handleDelete(ODataUri odataUri, ChangeSetEntity changeSetEntity) throws ODataException {
+    private ProcessorResult handleDelete(ODataRequestContext odataRequestContext,
+                                         ODataUri odataUri, ChangeSetEntity changeSetEntity) throws ODataException {
         LOG.debug("Handling DELETE operation");
         Map<String, String> headers = buildDefaultEntityHeaders(changeSetEntity);
 
         Option<String> singletonName = ODataUriUtil.getSingletonName(odataUri);
-        DataSource dataSource = getTransactionalDataSource(getRequestType(odataUri));
+        DataSource dataSource = getTransactionalDataSource(odataRequestContext,
+                getRequestType(odataRequestContext.getRequest(), odataUri));
         if (singletonName.isDefined()) {
             throw new ODataBadRequestException("The URI refers to the singleton '" + singletonName.get() +
                     "'. Singletons cannot be deleted.");
@@ -133,14 +138,15 @@ public class BatchMethodHandler {
         return new ProcessorResult(ODataResponse.Status.NO_CONTENT, null, headers, requestContext);
     }
 
-    private ProcessorResult handlePutAndPatch(ODataUri requestUri,
+    private ProcessorResult handlePutAndPatch(ODataRequestContext odataRequestContext,
+                                              ODataUri requestUri,
                                               ChangeSetEntity changeSetEntity) throws ODataException {
         LOG.debug("Handling PUT or PATCH operation");
         Object entityData = changeSetEntity.getOdataEntity();
 
         Map<String, String> headers = new HashMap<>();
         headers.put("changeSetId", changeSetEntity.getChangeSetId());
-        validateEntityData(requestUri, entityData);
+        validateEntityData(odataRequestContext.getRequest(), requestUri, entityData);
 
         ODataRequest oDataRequest = requestContext.getRequest();
         TargetType targetType = WriteMethodUtil.getTargetType(oDataRequest, entityDataModel, requestUri);
@@ -156,7 +162,7 @@ public class BatchMethodHandler {
         Type type = entityDataModel.getType(targetType.typeName());
         WriteMethodUtil.validateKeys(entityData, (EntityType) type, requestUri, entityDataModel);
 
-        DataSource dataSource = getTransactionalDataSource(type);
+        DataSource dataSource = getTransactionalDataSource(odataRequestContext, type);
         Object updatedEntity = dataSource.update(requestUri, entityData, entityDataModel);
 
         // add additional headers
@@ -192,8 +198,8 @@ public class BatchMethodHandler {
      * @return the request type
      * @throws ODataTargetTypeException if unable to determine request type
      */
-    private Type getRequestType(ODataUri oDataUri) throws ODataTargetTypeException {
-        TargetType targetType = WriteMethodUtil.getTargetType(odataRequest, entityDataModel, oDataUri);
+    private Type getRequestType(ODataRequest oDataRequest, ODataUri oDataUri) throws ODataTargetTypeException {
+        TargetType targetType = WriteMethodUtil.getTargetType(oDataRequest, entityDataModel, oDataUri);
         return entityDataModel.getType(targetType.typeName());
     }
 
@@ -201,20 +207,24 @@ public class BatchMethodHandler {
      * If it's the first batch request call - start transaction.
      * @param type The type of the entity to request a datasource for
      */
-    private TransactionalDataSource getTransactionalDataSource(Type type) throws ODataException {
-        DataSource dataSource = dataSourceFactory.getDataSource(requestContext, type.getFullyQualifiedName());
+    private TransactionalDataSource getTransactionalDataSource(
+            ODataRequestContext odataRequestContext, Type type) throws ODataException {
+        DataSource dataSource = dataSourceFactory.getDataSource(odataRequestContext, type.getFullyQualifiedName());
         String dataSourceKey = dataSource.getClass().toString();
         if (dataSourceMap.containsKey(dataSourceKey)) {
             return dataSourceMap.get(dataSourceKey);
         } else {
             TransactionalDataSource transactionalDataSource = dataSource.startTransaction();
+
             dataSourceMap.put(dataSourceKey, transactionalDataSource);
             return transactionalDataSource;
         }
     }
 
-    private void validateEntityData(ODataUri oDataUri, Object entityData) throws ODataException {
-        Type targetType = getRequestType(oDataUri);
+    private void validateEntityData(ODataRequest oDataRequest,
+                                    ODataUri oDataUri,
+                                    Object entityData) throws ODataException {
+        Type targetType = getRequestType(oDataRequest, oDataUri);
         if (!MetaType.ENTITY.equals(targetType.getMetaType())) {
             throw new ODataBadRequestException("The body of the write request must contain a valid entity.");
         }
