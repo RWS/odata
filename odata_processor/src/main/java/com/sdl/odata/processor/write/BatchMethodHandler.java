@@ -78,17 +78,17 @@ public class BatchMethodHandler {
         try {
             try {
                 for (ChangeSetEntity changeSetEntity : changeSetEntities) {
-                    ODataRequestContext requestContext = changeSetEntity.getRequestContext();
-                    ODataUri requestUri = requestContext.getUri();
-                    ODataRequest.Method method = requestContext.getRequest().getMethod();
+                    ODataRequestContext odataRequestContext = changeSetEntity.getRequestContext();
+                    ODataUri requestUri = odataRequestContext.getUri();
+                    ODataRequest.Method method = odataRequestContext.getRequest().getMethod();
 
                     ProcessorResult result = null;
                     if (method == ODataRequest.Method.POST) {
-                        result = handlePOST(requestContext, requestUri, changeSetEntity);
+                        result = handlePOST(odataRequestContext, requestUri, changeSetEntity);
                     } else if (method == ODataRequest.Method.PUT || method == ODataRequest.Method.PATCH) {
-                        result = handlePutAndPatch(requestContext, requestUri, changeSetEntity);
+                        result = handlePutAndPatch(odataRequestContext, requestUri, changeSetEntity);
                     } else if (method == ODataRequest.Method.DELETE) {
-                        result = handleDelete(requestContext, requestUri, changeSetEntity);
+                        result = handleDelete(odataRequestContext, requestUri, changeSetEntity);
                     }
                     resultList.add(result);
                 }
@@ -102,15 +102,15 @@ public class BatchMethodHandler {
         return resultList;
     }
 
-    private ProcessorResult handlePOST(ODataRequestContext requestContext,
+    private ProcessorResult handlePOST(ODataRequestContext oDataRequestContext,
                                        ODataUri oDataUri, ChangeSetEntity changeSetEntity) throws ODataException {
         LOG.debug("Handling POST operation");
         Object entityData = changeSetEntity.getOdataEntity();
         Map<String, String> headers = buildDefaultEntityHeaders(changeSetEntity);
-        ODataRequest oDataRequest = requestContext.getRequest();
+        ODataRequest oDataRequest = oDataRequestContext.getRequest();
 
         validateEntityData(oDataRequest, oDataUri, entityData);
-        DataSource dataSource = getTransactionalDataSource(requestContext, getRequestType(oDataRequest, oDataUri));
+        DataSource dataSource = getTransactionalDataSource(oDataRequestContext, getRequestType(oDataRequest, oDataUri));
         headers.putAll(oDataRequest.getHeaders());
         headers.put("changeSetId", changeSetEntity.getChangeSetId());
 
@@ -119,7 +119,7 @@ public class BatchMethodHandler {
         if (WriteMethodUtil.isMinimalReturnPreferred(oDataRequest)) {
             return new ProcessorResult(ODataResponse.Status.NO_CONTENT, headers);
         }
-        return new ProcessorResult(ODataResponse.Status.CREATED, from(createdEntity), headers, requestContext);
+        return new ProcessorResult(ODataResponse.Status.CREATED, from(createdEntity), headers, oDataRequestContext);
     }
 
     private ProcessorResult handleDelete(ODataRequestContext odataRequestContext,
