@@ -29,6 +29,7 @@
                 <Property Name="Id" Type="Edm.String" Nullable="false"/>
                 <Property Name="ComplexTypeProperty" Type="ODataDemo.ComplexTypeSample" Nullable="true"/>
                 <Property Name="ComplexTypeProperties" Type="Collection(ODataDemo.ComplexTypeSample)" Nullable="true"/>
+                <Property Name="ComplexTypeListProperty" Type="ODataDemo.ComplexTypeSampleList" Nullable="true"/>
             </EntityType>
             <EntityType Name="Order">
                 <Key>
@@ -72,6 +73,9 @@
             <ComplexType Name="ComplexTypeSample">
                 <Property Name="InheritedProperty" Type="Edm.String" Nullable="true"/>
                 <Property Name="SimpleProperty" Type="Edm.String" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="ComplexTypeSampleList">
+                <Property Name="ListProperty" Type="Collection(Edm.String)" Nullable="true"/>
             </ComplexType>
             <ComplexType Name="Address">
                 <Property Name="Street" Type="Edm.String" Nullable="false"/>

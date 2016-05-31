@@ -770,7 +770,7 @@ object ODataUriUtil {
   def getEntityKey(entityType: EntityType): String = {
     val keys = entityType.getKey.getPropertyRefs
     if (keys.size() == 1)
-      keys.get(0).getPath
+      entityType.getStructuralProperty(keys.get(0).getPath).getJavaField.getName
     else
       throw new ODataUriParseException(
         s"The entity type $entityType has a compound key, all key fields must be specified in the URI")

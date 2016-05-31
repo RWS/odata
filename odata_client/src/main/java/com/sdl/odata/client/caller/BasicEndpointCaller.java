@@ -25,25 +25,24 @@ import com.sdl.odata.client.api.exception.ODataClientNotAuthorized;
 import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.odata.client.api.exception.ODataClientSocketException;
 import com.sdl.odata.client.api.exception.ODataClientTimeout;
-
-import java.io.BufferedWriter;
-import java.io.Closeable;
-import java.io.OutputStreamWriter;
-import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.SocketException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -207,16 +206,23 @@ public class BasicEndpointCaller implements EndpointCaller {
                                         ? httpConnection.getErrorStream()
                                         : httpConnection.getInputStream();
             LOG.debug("Request ended with {} status code.", responseCode);
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+
             StringBuilder response = new StringBuilder(isError ? "Unable to get response from OData service: " : "");
 
-            String inputLine;
-            while ((inputLine = bufferedReader.readLine()) != null) {
-                response.append(inputLine).append(System.lineSeparator());
+            if (inputStream != null) {
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                String inputLine;
+                while ((inputLine = bufferedReader.readLine()) != null) {
+                    response.append(inputLine).append(System.lineSeparator());
+                }
+            } else {
+                response.append("No Response.");
             }
+
             if (isError) {
                 throw buildException(response.toString(), responseCode);
             }
+
             return response.toString();
         } catch (SocketException e) {
             throw new ODataClientSocketException("Could not initiate connection to the endpoint.", e);

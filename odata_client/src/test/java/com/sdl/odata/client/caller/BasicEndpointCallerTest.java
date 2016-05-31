@@ -84,6 +84,14 @@ public class BasicEndpointCallerTest {
     }
 
     @Test
+    public void callEndpointWithoutResponse() throws ODataClientException, MalformedURLException {
+        thrown.expect(ODataClientHttpError.class);
+        thrown.expectMessage("Unable to get response from OData service: No Response");
+        caller.callEndpoint(singletonMap("Accept", JSON.getType()), new URL(basePath));
+    }
+
+
+    @Test
     public void getInputStream() throws ODataClientException, IOException {
         URL url = new URL(basePath + RESPONSE);
         InputStream stream = caller.getInputStream(singletonMap("Accept", JSON.getType()),

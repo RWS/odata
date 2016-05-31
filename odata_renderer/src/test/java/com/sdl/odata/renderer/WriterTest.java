@@ -38,6 +38,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -240,7 +241,8 @@ public abstract class WriterTest extends WriterUnmarshallerTest {
      * @return The predefined {@link EntityTypeSample} sample entity.
      */
     protected EntityTypeSample createEntityTypeSample() {
-        return createEntityType("id.10", "Some inherited value", "Simple value", "Inherited value");
+        return createEntityType("id.10", "Some inherited value", "Simple value", "Inherited value",
+                Arrays.asList(new String[] {"Value 1", "Value 2"}));
     }
 
     /**
