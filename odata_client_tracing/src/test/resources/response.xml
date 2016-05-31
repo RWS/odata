@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:m="http://docs.oasis-open.org/odata/ns/metadata"
+       xmlns:d="http://docs.oasis-open.org/odata/ns/data"
+       xml:base="http://localhost:8080/odata.svc/"
+       m:context="$metadata#Article/$entity">
+    <id>http://localhost:8080/odata.svc/$metadata#Article('artid')</id>
+    <title/>
+    <summary/>
+    <updated>2014-08-11T10:00:00Z</updated>
+    <author>
+        <name/>
+    </author>
+    <link rel="edit" title="Article" href="Articles('artid')"/>
+    <category term="#SDL.Article"
+              scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
+    <content type="application/xml">
+        <m:properties>
+            <d:id>artid</d:id>
+            <d:Name>article1_name</d:Name>
+        </m:properties>
+    </content>
+</entry>
