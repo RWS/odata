@@ -17,6 +17,7 @@ package com.sdl.odata.client.caller;
 
 import com.github.kristofa.brave.Brave;
 import com.github.kristofa.brave.EmptySpanCollectorMetricsHandler;
+import com.github.kristofa.brave.Sampler;
 import com.github.kristofa.brave.http.DefaultSpanNameProvider;
 import com.github.kristofa.brave.http.HttpSpanCollector;
 import com.github.kristofa.brave.httpclient.BraveHttpRequestInterceptor;
@@ -72,6 +73,7 @@ public class TracingEndpointCaller implements EndpointCaller {
 
     private static final String WRONG_URL_MESSAGE = "The URL syntax is wrong";
     private static final String REQUEST_FAILED_MESSAGE = "Cannot make a request to URL: ";
+    private static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";
 
     private CloseableHttpClient closeableHttpClient;
 
@@ -81,7 +83,6 @@ public class TracingEndpointCaller implements EndpointCaller {
         String proxyServerHostName = getStringProperty(properties, CLIENT_SERVICE_PROXY_HOST_NAME);
         Integer proxyPort = getIntegerProperty(properties, CLIENT_SERVICE_PROXY_PORT);
         Integer proxyServerPort = proxyPort == null ? CLIENT_PROXY_PORT_DEFAULT : proxyPort;
-
 
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(timeout)
@@ -96,10 +97,17 @@ public class TracingEndpointCaller implements EndpointCaller {
             httpClientBuilder.setProxy(new HttpHost(proxyServerHostName, proxyServerPort));
         }
 
-        Brave brave = new Brave.Builder("azaza1")
-                // you can setup here also how much data we should trace, default 1.0 - 100%
-                // span collector, let's use zipkin here
-                .spanCollector(HttpSpanCollector.create("http://192.168.99.100:9411",
+        Properties applicationProperties = new Properties();
+        try (InputStream stream = this.getClass().getResourceAsStream(APPLICATION_PROPERTIES_FILE_NAME)) {
+            applicationProperties.load(stream);
+        } catch (IOException e) {
+            LOG.warn("'{}' file is not available in the classpath", APPLICATION_PROPERTIES_FILE_NAME);
+        }
+        Brave brave = new Brave.Builder(applicationProperties.getProperty("spring.application.name", "cil-call"))
+                .traceSampler(Sampler.create(
+                        Float.valueOf(applicationProperties.getProperty("spring.sleuth.sampler.percentage", "1.0"))))
+                .spanCollector(HttpSpanCollector.create(
+                        applicationProperties.getProperty("spring.zipkin.baseUrl", "http://192.168.99.100:9411"),
                         new EmptySpanCollectorMetricsHandler()))
                 .build();
 
@@ -118,7 +126,7 @@ public class TracingEndpointCaller implements EndpointCaller {
         try {
             RequestBuilder requestBuilder = RequestBuilder.get()
                     .setUri(url.toURI());
-            populateRequestProperties(requestProperties, -1, null, XML).entrySet().stream()
+            getRequestHeaders(requestProperties, -1, null, XML).entrySet().stream()
                     .forEach(entry -> requestBuilder.addHeader(entry.getKey(), entry.getValue()));
             closeableResponse = closeableHttpClient.execute(requestBuilder.build());
             String response = EntityUtils.toString(closeableResponse.getEntity(), "UTF-8");
@@ -140,12 +148,11 @@ public class TracingEndpointCaller implements EndpointCaller {
     public InputStream getInputStream(Map<String, String> requestProperties, URL url) throws ODataClientException {
         LOG.debug("Preparing for getting an input stream by calling endpoint for given url: {}", url);
 
-        CloseableHttpResponse closeableResponse = null;
         try {
             RequestBuilder requestBuilder = RequestBuilder.get().setUri(url.toURI());
             requestProperties.entrySet().stream()
                     .forEach(entry -> requestBuilder.addHeader(entry.getKey(), entry.getValue()));
-            closeableResponse = closeableHttpClient.execute(requestBuilder.build());
+            CloseableHttpResponse closeableResponse = closeableHttpClient.execute(requestBuilder.build());
 
             if (closeableResponse.getStatusLine().getStatusCode() >= HTTP_BAD_REQUEST) {
                 throw buildException(EntityUtils.toString(closeableResponse.getEntity(), "UTF-8"),
@@ -155,7 +162,7 @@ public class TracingEndpointCaller implements EndpointCaller {
         } catch (URISyntaxException e) {
             throw new ODataClientException(WRONG_URL_MESSAGE, e);
         } catch (IOException e) {
-            throw new ODataClientException(REQUEST_FAILED_MESSAGE + url, e);
+            throw new ODataClientRuntimeException(REQUEST_FAILED_MESSAGE + url, e);
         }
     }
 
@@ -207,7 +214,7 @@ public class TracingEndpointCaller implements EndpointCaller {
         } catch (URISyntaxException e) {
             throw new ODataClientException(WRONG_URL_MESSAGE, e);
         } catch (IOException e) {
-            throw new ODataClientException(REQUEST_FAILED_MESSAGE + url, e);
+            throw new ODataClientRuntimeException(REQUEST_FAILED_MESSAGE + url, e);
         } finally {
             closeIfNecessary(closeableResponse);
         }
