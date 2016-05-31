@@ -911,6 +911,7 @@
                                         <exclude>com/sdl/odata/client/exception/*.class</exclude>
                                         <exclude>com/sdl/odata/client/*.class</exclude>
                                         <exclude>com/sdl/odata/client/caller/BasicEndpointCaller.class</exclude>
+                                        <exclude>com/sdl/odata/client/caller/TracingEndpointCaller.class</exclude>
                                         <!--odata_test-->
                                         <exclude>com/sdl/odata/test/util/**/*.class</exclude>
                                         <exclude>com/sdl/odata/test/model/*.class</exclude>

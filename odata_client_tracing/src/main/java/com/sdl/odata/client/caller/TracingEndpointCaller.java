@@ -73,7 +73,7 @@ public class TracingEndpointCaller implements EndpointCaller {
 
     private static final String WRONG_URL_MESSAGE = "The URL syntax is wrong";
     private static final String REQUEST_FAILED_MESSAGE = "Cannot make a request to URL: ";
-    private static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";
+    private static final String APPLICATION_PROPERTIES_FILE_NAME = "/application.properties";
 
     private CloseableHttpClient closeableHttpClient;
 
@@ -97,9 +97,12 @@ public class TracingEndpointCaller implements EndpointCaller {
             httpClientBuilder.setProxy(new HttpHost(proxyServerHostName, proxyServerPort));
         }
 
+        // load application.properties to know zipkin host, service name and how often to collect spans
         Properties applicationProperties = new Properties();
         try (InputStream stream = this.getClass().getResourceAsStream(APPLICATION_PROPERTIES_FILE_NAME)) {
-            applicationProperties.load(stream);
+            if (stream != null) {
+                applicationProperties.load(stream);
+            }
         } catch (IOException e) {
             LOG.warn("'{}' file is not available in the classpath", APPLICATION_PROPERTIES_FILE_NAME);
         }
