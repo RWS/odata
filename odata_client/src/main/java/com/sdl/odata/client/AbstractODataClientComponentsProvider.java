@@ -41,6 +41,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public abstract class AbstractODataClientComponentsProvider implements ODataClientComponentsProvider {
     private static final Logger LOG = getLogger(AbstractODataClientComponentsProvider.class);
 
+    private static final String TRACING_ENDPOINT_CALLER_CLASSNAME = "com.sdl.odata.client.caller.TracingEndpointCaller";
+
     private URL webServiceUri;
     private EndpointCaller endpointCaller;
     private ODataEntityUnmarshaller unmarshaller;
@@ -62,16 +64,16 @@ public abstract class AbstractODataClientComponentsProvider implements ODataClie
     public static EndpointCaller initializeEndpointCaller(Properties properties) {
         EndpointCaller ec;
         try {
-            LOG.debug("Initializing endpoint caller. " +
-                    "Checking whether 'com.sdl.odata.client.caller.TracingEndpointCaller' is in classpath.");
-            Class<?> tracingEndpointCallerClass = Class.forName("com.sdl.odata.client.caller.TracingEndpointCaller");
+            LOG.debug("Initializing endpoint caller. Checking whether '{}' is in classpath.",
+                    TRACING_ENDPOINT_CALLER_CLASSNAME);
+            Class<?> tracingEndpointCallerClass = Class.forName(TRACING_ENDPOINT_CALLER_CLASSNAME);
             Constructor<?> tracingEndpointCallerConstructor = tracingEndpointCallerClass
                     .getConstructor(Properties.class);
             ec = (EndpointCaller) tracingEndpointCallerConstructor.newInstance(properties);
-            LOG.debug("Using 'com.sdl.odata.client.caller.TracingEndpointCaller' instance as endpoint caller object.");
+            LOG.debug("Using '{}' instance as endpoint caller object.", TRACING_ENDPOINT_CALLER_CLASSNAME);
         } catch (Exception e) {
             ec = new BasicEndpointCaller(properties);
-            LOG.debug("Using 'com.sdl.odata.client.caller.BasicEndpointCaller' instance as endpoint caller object.");
+            LOG.debug("Using '{}' instance as endpoint caller object.", BasicEndpointCaller.class.getName());
         }
         return ec;
     }
