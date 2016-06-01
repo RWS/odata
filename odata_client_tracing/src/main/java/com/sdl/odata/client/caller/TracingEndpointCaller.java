@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -74,6 +74,7 @@ public class TracingEndpointCaller implements EndpointCaller {
     private static final String WRONG_URL_MESSAGE = "The URL syntax is wrong";
     private static final String REQUEST_FAILED_MESSAGE = "Cannot make a request to URL: ";
     private static final String APPLICATION_PROPERTIES_FILE_NAME = "/config/application.properties";
+    private static final String DEFAULT_ZIPKIN_HOSTNAME = "http://192.168.99.100:9411";
 
     private CloseableHttpClient closeableHttpClient;
 
@@ -110,7 +111,7 @@ public class TracingEndpointCaller implements EndpointCaller {
                 .traceSampler(Sampler.create(
                         Float.valueOf(applicationProperties.getProperty("spring.sleuth.sampler.percentage", "1.0"))))
                 .spanCollector(HttpSpanCollector.create(
-                        applicationProperties.getProperty("spring.zipkin.baseUrl", "http://192.168.99.100:9411"),
+                        applicationProperties.getProperty("spring.zipkin.baseUrl", DEFAULT_ZIPKIN_HOSTNAME),
                         new EmptySpanCollectorMetricsHandler()))
                 .build();
 
