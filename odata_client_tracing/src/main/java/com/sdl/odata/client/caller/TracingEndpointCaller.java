@@ -73,7 +73,7 @@ public class TracingEndpointCaller implements EndpointCaller {
 
     private static final String WRONG_URL_MESSAGE = "The URL syntax is wrong";
     private static final String REQUEST_FAILED_MESSAGE = "Cannot make a request to URL: ";
-    private static final String APPLICATION_PROPERTIES_FILE_NAME = "/application.properties";
+    private static final String APPLICATION_PROPERTIES_FILE_NAME = "/config/application.properties";
 
     private CloseableHttpClient closeableHttpClient;
 
