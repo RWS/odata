@@ -24,13 +24,13 @@ In order to build your own service you need to provide some data models and data
 
 # DataSources
 
-The OData standard is based around resources that are well defined and modelled in something called the EDM. The SDL OData framework is build around
-the principle of having a well defined EDM. The EDM is a registry that contains which entities are present in the model and which properties
-and relations they have.
+The OData standard is based around resources that are well defined and modelled in something called the EDM. The SDL OData framework is build around the principle of having a well defined EDM. The EDM is a registry that contains which entities are present in the model and which properties and relations they have.
 
-Based on the EDM the OData framework parses the input that is being sent or requested. Most important is that in order to return a result or show
-requested data there needs to be a datasource. That is why in the OData framework this is the most critical component and we offer the flexibility
-to plug in any datasource you want.
+Based on the EDM the OData framework parses the input that is being sent or requested. Most important is that in order to return a result or show requested data there needs to be a datasource. That is why in the OData framework this is the most critical component and we offer the flexibility to plug in any datasource you want.
+
+## JPA DataSource
+
+There is a JPA Datasource available that allows you to use JPA annotated entities in your OData framework with minimal effort. Just simply configure the JPA Datasource to point to your JPA model and where the database is and you are good to go. You can find more information and the JPA datasource extension itself here: https://github.com/sdl/odata-jpa-datasource
 
 # Building the OData Framework
 In order to build and run the OData framework on your pc the following is required:
