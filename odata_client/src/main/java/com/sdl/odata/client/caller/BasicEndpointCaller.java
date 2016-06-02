@@ -15,22 +15,17 @@
  */
 package com.sdl.odata.client.caller;
 
-import com.sdl.odata.api.service.HeaderNames;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.client.api.caller.EndpointCaller;
 import com.sdl.odata.client.api.exception.ODataClientException;
-import com.sdl.odata.client.api.exception.ODataClientHttpError;
-import com.sdl.odata.client.api.exception.ODataClientNotAuthorized;
 import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.odata.client.api.exception.ODataClientSocketException;
-import com.sdl.odata.client.api.exception.ODataClientTimeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +37,6 @@ import java.net.Proxy;
 import java.net.SocketException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -55,6 +49,9 @@ import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVIC
 import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_PORT;
 import static com.sdl.odata.client.property.PropertyUtils.getIntegerProperty;
 import static com.sdl.odata.client.property.PropertyUtils.getStringProperty;
+import static com.sdl.odata.client.util.ODataClientUtils.buildException;
+import static com.sdl.odata.client.util.ODataClientUtils.closeIfNecessary;
+import static com.sdl.odata.client.util.ODataClientUtils.populateRequestProperties;
 
 /**
  * The basic implementation of Endpoint Caller.
@@ -144,27 +141,6 @@ public class BasicEndpointCaller implements EndpointCaller {
         return getResponse(httpConnection);
     }
 
-    private Map<String, String> populateRequestProperties(Map<String, String> requestProperties, int bodyLength,
-                                                          MediaType contentType, MediaType acceptType) {
-        Map<String, String> properties;
-        // requestProperties may be immutable. It can be null or empty, so copying will take place, if necessary.
-        if (requestProperties == null || requestProperties.isEmpty()) {
-            properties = new HashMap<>();
-        } else {
-            properties = new HashMap<>(requestProperties);
-        }
-        if (acceptType != null) {
-            properties.put(HeaderNames.ACCEPT, acceptType.toString());
-        }
-        if (contentType != null) {
-            properties.put(HeaderNames.CONTENT_TYPE, contentType.toString());
-        }
-        if (bodyLength > -1) {
-            properties.put(HeaderNames.CONTENT_LENGTH, String.valueOf(bodyLength));
-        }
-        return properties;
-    }
-
     private HttpURLConnection getConnection(Map<String, String> requestProperties, URL url)
             throws ODataClientRuntimeException {
         HttpURLConnection urlConnection;
@@ -203,8 +179,8 @@ public class BasicEndpointCaller implements EndpointCaller {
             int responseCode = httpConnection.getResponseCode();
             boolean isError = responseCode >= HttpURLConnection.HTTP_BAD_REQUEST;
             InputStream inputStream = isError
-                                        ? httpConnection.getErrorStream()
-                                        : httpConnection.getInputStream();
+                    ? httpConnection.getErrorStream()
+                    : httpConnection.getInputStream();
             LOG.debug("Request ended with {} status code.", responseCode);
 
             StringBuilder response = new StringBuilder(isError ? "Unable to get response from OData service: " : "");
@@ -234,34 +210,13 @@ public class BasicEndpointCaller implements EndpointCaller {
         }
     }
 
-    private void closeIfNecessary(Closeable closeable) throws ODataClientException {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                throw new ODataClientException("Could not close '" + closeable.getClass().getSimpleName() + "'.", e);
-            }
-        }
-    }
-
-    private ODataClientRuntimeException buildException(String errorMessage, int responseCode) {
-        if (responseCode == HttpURLConnection.HTTP_CLIENT_TIMEOUT) {
-            return new ODataClientTimeout(errorMessage);
-        } else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-            return new ODataClientNotAuthorized(errorMessage);
-        } else if (responseCode > 0) {
-            return new ODataClientHttpError(responseCode, errorMessage);
-        }
-        return new ODataClientRuntimeException(errorMessage);
-    }
-
     private void logConfiguration() {
         if (LOG.isDebugEnabled()) {
             StringBuilder configLog = new StringBuilder("Client is initialized with following parameters: timeout = ")
                     .append(timeout);
             if (proxyServerHostName != null) {
                 configLog.append(", proxyServerHostName = '").append(proxyServerHostName)
-                         .append("', proxyServerPort = ").append(proxyServerPort);
+                        .append("', proxyServerPort = ").append(proxyServerPort);
             }
             LOG.debug(configLog.toString());
         }
