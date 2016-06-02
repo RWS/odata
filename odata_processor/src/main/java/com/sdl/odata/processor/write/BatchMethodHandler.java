@@ -54,7 +54,6 @@ public class BatchMethodHandler {
     private final List<ChangeSetEntity> changeSetEntities;
     private final EntityDataModel entityDataModel;
     private final DataSourceFactory dataSourceFactory;
-    private final ODataRequestContext requestContext;
 
     private final Map<String, TransactionalDataSource> dataSourceMap = new HashMap<>();
 
@@ -63,7 +62,6 @@ public class BatchMethodHandler {
         this.changeSetEntities = changeSetEntries;
         this.entityDataModel = requestContext.getEntityDataModel();
         this.dataSourceFactory = dataSourceFactory;
-        this.requestContext = requestContext;
     }
 
     /**
@@ -106,7 +104,7 @@ public class BatchMethodHandler {
                                        ODataUri oDataUri, ChangeSetEntity changeSetEntity) throws ODataException {
         LOG.debug("Handling POST operation");
         Object entityData = changeSetEntity.getOdataEntity();
-        Map<String, String> headers = buildDefaultEntityHeaders(changeSetEntity);
+        Map<String, String> headers = buildDefaultEntityHeaders(oDataRequestContext, changeSetEntity);
         ODataRequest oDataRequest = oDataRequestContext.getRequest();
 
         validateEntityData(oDataRequest, oDataUri, entityData);
@@ -125,7 +123,7 @@ public class BatchMethodHandler {
     private ProcessorResult handleDelete(ODataRequestContext odataRequestContext,
                                          ODataUri odataUri, ChangeSetEntity changeSetEntity) throws ODataException {
         LOG.debug("Handling DELETE operation");
-        Map<String, String> headers = buildDefaultEntityHeaders(changeSetEntity);
+        Map<String, String> headers = buildDefaultEntityHeaders(odataRequestContext, changeSetEntity);
 
         Option<String> singletonName = ODataUriUtil.getSingletonName(odataUri);
         DataSource dataSource = getTransactionalDataSource(odataRequestContext,
@@ -135,7 +133,7 @@ public class BatchMethodHandler {
                     "'. Singletons cannot be deleted.");
         }
         dataSource.delete(odataUri, entityDataModel);
-        return new ProcessorResult(ODataResponse.Status.NO_CONTENT, null, headers, requestContext);
+        return new ProcessorResult(ODataResponse.Status.NO_CONTENT, null, headers, odataRequestContext);
     }
 
     private ProcessorResult handlePutAndPatch(ODataRequestContext odataRequestContext,
@@ -143,12 +141,14 @@ public class BatchMethodHandler {
                                               ChangeSetEntity changeSetEntity) throws ODataException {
         LOG.debug("Handling PUT or PATCH operation");
         Object entityData = changeSetEntity.getOdataEntity();
+        ODataRequest oDataRequest = odataRequestContext.getRequest();
+
 
         Map<String, String> headers = new HashMap<>();
         headers.put("changeSetId", changeSetEntity.getChangeSetId());
-        validateEntityData(odataRequestContext.getRequest(), requestUri, entityData);
+        validateEntityData(oDataRequest, requestUri, entityData);
 
-        ODataRequest oDataRequest = requestContext.getRequest();
+
         TargetType targetType = WriteMethodUtil.getTargetType(oDataRequest, entityDataModel, requestUri);
 
         if (targetType.isCollection()) {
@@ -170,12 +170,13 @@ public class BatchMethodHandler {
         if (WriteMethodUtil.isMinimalReturnPreferred(oDataRequest)) {
             return new ProcessorResult(ODataResponse.Status.NO_CONTENT, headers);
         }
-        return new ProcessorResult(ODataResponse.Status.OK, from(updatedEntity), headers, requestContext);
+        return new ProcessorResult(ODataResponse.Status.OK, from(updatedEntity), headers, odataRequestContext);
     }
 
-    private Map<String, String> buildDefaultEntityHeaders(ChangeSetEntity changeSetEntity) {
+    private Map<String, String> buildDefaultEntityHeaders(ODataRequestContext odataRequestContext,
+                                                          ChangeSetEntity changeSetEntity) {
         Map<String, String> headers = new HashMap<>();
-        ODataRequest oDataRequest = requestContext.getRequest();
+        ODataRequest oDataRequest = odataRequestContext.getRequest();
         headers.putAll(oDataRequest.getHeaders());
         headers.put("changeSetId", changeSetEntity.getChangeSetId());
 
