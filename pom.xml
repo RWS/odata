@@ -16,7 +16,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -50,6 +51,7 @@
         <module>odata_controller</module>
         <module>odata_webservice</module>
         <module>odata_war</module>
+        <module>odata_client_tracing</module>
     </modules>
 
     <organization>
@@ -114,7 +116,8 @@
         <spring.boot.version>1.3.5.RELEASE</spring.boot.version>
         <sonar.jacoco.version>0.7.1.201405082137</sonar.jacoco.version>
         <typesafe.config.version>1.2.0</typesafe.config.version>
-
+        <brave.version>3.8.0</brave.version>
+        <apache.httpclient.version>4.3.3</apache.httpclient.version>
     </properties>
 
     <!-- Dependency management -->
@@ -172,6 +175,11 @@
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>2.8.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${apache.httpclient.version}</version>
             </dependency>
 
             <!-- Akka -->
@@ -302,6 +310,18 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Tracing libraries for sending spans to zipkin -->
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-apache-http-interceptors</artifactId>
+                <version>${brave.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-spancollector-http</artifactId>
+                <version>${brave.version}</version>
+            </dependency>
+
             <!-- OData dependencies -->
             <dependency>
                 <groupId>com.sdl</groupId>
@@ -357,6 +377,13 @@
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_webservice</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl</groupId>
+                <artifactId>odata_client</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -884,6 +911,7 @@
                                         <exclude>com/sdl/odata/client/exception/*.class</exclude>
                                         <exclude>com/sdl/odata/client/*.class</exclude>
                                         <exclude>com/sdl/odata/client/caller/BasicEndpointCaller.class</exclude>
+                                        <exclude>com/sdl/odata/client/caller/TracingEndpointCaller.class</exclude>
                                         <!--odata_test-->
                                         <exclude>com/sdl/odata/test/util/**/*.class</exclude>
                                         <exclude>com/sdl/odata/test/model/*.class</exclude>

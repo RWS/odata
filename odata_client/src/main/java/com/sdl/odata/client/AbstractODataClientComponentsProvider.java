@@ -16,13 +16,14 @@
 package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataClientComponentsProvider;
-import com.sdl.odata.client.caller.BasicEndpointCaller;
+import com.sdl.odata.client.api.caller.EndpointCaller;
 import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.odata.client.api.marshall.ODataEntityMarshaller;
 import com.sdl.odata.client.api.marshall.ODataEntityUnmarshaller;
-import com.sdl.odata.client.api.caller.EndpointCaller;
+import com.sdl.odata.client.caller.BasicEndpointCaller;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,6 +41,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public abstract class AbstractODataClientComponentsProvider implements ODataClientComponentsProvider {
     private static final Logger LOG = getLogger(AbstractODataClientComponentsProvider.class);
 
+    private static final String TRACING_ENDPOINT_CALLER_CLASSNAME = "com.sdl.odata.client.caller.TracingEndpointCaller";
+
     private URL webServiceUri;
     private EndpointCaller endpointCaller;
     private ODataEntityUnmarshaller unmarshaller;
@@ -47,9 +50,32 @@ public abstract class AbstractODataClientComponentsProvider implements ODataClie
 
     public AbstractODataClientComponentsProvider(Iterable<String> edmEntityClasses, Properties properties) {
         webServiceUri = getServiceUri(properties);
-        endpointCaller = new BasicEndpointCaller(properties);
+        endpointCaller = initializeEndpointCaller(properties);
 
         initComponentsProvider(edmEntityClasses);
+    }
+
+    /**
+     * If the TracingEndpointCaller class is in a classpath - use it, otherwise use BasicEndpointCaller.
+     *
+     * @param properties properties argument for endpoint caller
+     * @return endpoint caller instance
+     */
+    public static EndpointCaller initializeEndpointCaller(Properties properties) {
+        EndpointCaller ec;
+        try {
+            LOG.debug("Initializing endpoint caller. Checking whether '{}' is in classpath.",
+                    TRACING_ENDPOINT_CALLER_CLASSNAME);
+            Class<?> tracingEndpointCallerClass = Class.forName(TRACING_ENDPOINT_CALLER_CLASSNAME);
+            Constructor<?> tracingEndpointCallerConstructor = tracingEndpointCallerClass
+                    .getConstructor(Properties.class);
+            ec = (EndpointCaller) tracingEndpointCallerConstructor.newInstance(properties);
+            LOG.debug("Using '{}' instance as endpoint caller object.", TRACING_ENDPOINT_CALLER_CLASSNAME);
+        } catch (Exception e) {
+            ec = new BasicEndpointCaller(properties);
+            LOG.debug("Using '{}' instance as endpoint caller object.", BasicEndpointCaller.class.getName());
+        }
+        return ec;
     }
 
     protected void setEntityMarshaller(ODataEntityMarshaller entityMarshaller) {
