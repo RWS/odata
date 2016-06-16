@@ -182,8 +182,16 @@ public abstract class AbstractRenderer implements ODataRenderer {
         return checkForContentType(oDataRequestContext, ATOM_XML) || checkForContentType(oDataRequestContext, JSON);
     }
 
-    protected boolean isCollection(Object data) {
-        return data instanceof List;
+    protected boolean isCollection(ODataUri uri, EntityDataModel entityDataModel, Object data) {
+        if (data instanceof List) {
+            return true;
+        }
+
+        final Option<TargetType> targetTypeOption = ODataUriUtil.resolveTargetType(uri, entityDataModel);
+        if (!targetTypeOption.isEmpty()) {
+            return targetTypeOption.get().isCollection();
+        }
+        return false;
     }
 
     /**
@@ -195,9 +203,9 @@ public abstract class AbstractRenderer implements ODataRenderer {
      */
     protected String buildContextURL(ODataRequestContext requestContext, Object data) throws ODataRenderException {
         ODataUri oDataUri = requestContext.getUri();
-        if (ODataUriUtil.isActionCallUri(oDataUri) ||
-                ODataUriUtil.isFunctionCallUri(oDataUri)) {
-            return buildContextUrlFromOperationCall(oDataUri, requestContext.getEntityDataModel(), isCollection(data));
+        if (ODataUriUtil.isActionCallUri(oDataUri) || ODataUriUtil.isFunctionCallUri(oDataUri)) {
+            EntityDataModel edm = requestContext.getEntityDataModel();
+            return buildContextUrlFromOperationCall(oDataUri, edm, isCollection(oDataUri, edm, data));
         }
 
         Option<String> contextURL;
