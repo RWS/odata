@@ -58,19 +58,19 @@ public final class JsonRenderer extends AbstractJsonRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult result, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
         LOG.debug("Start rendering entity(es) for request: {}", requestContext);
 
         JsonWriter writer = new JsonWriter(requestContext.getUri(), requestContext.getEntityDataModel());
 
-        String contextUrl = buildContextURL(requestContext, data);
+        String contextUrl = buildContextURL(requestContext, result.getData());
         String json;
-        if (data.getType() == COLLECTION) {
-            json = writer.writeFeed((List<?>) data.getData(), contextUrl, data.getMeta());
+        if (result.getType() == COLLECTION) {
+            json = writer.writeFeed((List<?>) result.getData(), contextUrl, result.getMeta());
         } else {
-            json = writer.writeEntry(data.getData(), contextUrl);
+            json = writer.writeEntry(result.getData(), contextUrl);
         }
         if (responseBuilder != null) {
             try {
