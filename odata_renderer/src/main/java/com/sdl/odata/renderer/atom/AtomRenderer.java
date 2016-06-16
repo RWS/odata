@@ -67,18 +67,19 @@ public class AtomRenderer extends AbstractAtomRenderer {
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
+    public void render(ODataRequestContext requestContext, QueryResult result, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
-        LOG.debug("Start rendering entity(es) for request: {} with data {}", requestContext, data);
+        LOG.debug("Start rendering entity(es) for request: {} with result {}", requestContext, result);
 
         AtomWriter atomWriter = initAtomWriter(requestContext);
 
         atomWriter.startDocument();
-        if (data.getType() == COLLECTION) {
-            atomWriter.writeFeed((List<?>) data.getData(), buildContextURL(requestContext, data), data.getMeta());
+        if (result.getType() == COLLECTION) {
+            atomWriter.writeFeed((List<?>) result.getData(), buildContextURL(requestContext, result.getData()),
+                    result.getMeta());
         } else {
-            atomWriter.writeEntry(data.getData(), buildContextURL(requestContext, data));
+            atomWriter.writeEntry(result.getData(), buildContextURL(requestContext, result.getData()));
         }
         atomWriter.endDocument();
         String renderedData = atomWriter.getXml();
