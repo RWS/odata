@@ -101,22 +101,22 @@
         <!-- Third party dependency versions, sorted alphabetically -->
         <akka.version>2.4.1</akka.version>
         <apache.procrun.version>1.0</apache.procrun.version>
+        <brave.version>3.8.0</brave.version>
         <guava.version>18.0</guava.version>
-        <jackson.version>2.6.0</jackson.version>
+        <httpcomponents.version>4.5.2</httpcomponents.version>
+        <jackson.version>2.7.0</jackson.version>
+        <jacoco.version>0.7.6.201602180812</jacoco.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.1.7</logback.version>
-        <mockito.version>1.9.5</mockito.version>
+        <mockito.version>1.10.5</mockito.version>
         <scala.version>2.11.7</scala.version>
         <scala.parser.combinators.version>1.0.4</scala.parser.combinators.version>
         <scalatest.version>2.2.6</scalatest.version>
         <servlet.api.version>3.0.1</servlet.api.version>
         <slf4j.version>1.7.12</slf4j.version>
-        <spring.version>4.2.6.RELEASE</spring.version>
+        <spring.version>4.3.0.RELEASE</spring.version>
         <spring.boot.version>1.3.5.RELEASE</spring.boot.version>
-        <sonar.jacoco.version>0.7.1.201405082137</sonar.jacoco.version>
         <typesafe.config.version>1.2.0</typesafe.config.version>
-        <brave.version>3.8.0</brave.version>
-        <apache.httpclient.version>4.3.3</apache.httpclient.version>
     </properties>
 
     <!-- Dependency management -->
@@ -178,7 +178,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>${apache.httpclient.version}</version>
+                <version>${httpcomponents.version}</version>
             </dependency>
 
             <!-- Akka -->
@@ -715,7 +715,7 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <!--suppress MavenModelInspection -->
-                    <version>${sonar.jacoco.version}</version>
+                    <version>${jacoco.version}</version>
                 </dependency>
             </dependencies>
             <build>
