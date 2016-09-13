@@ -254,13 +254,19 @@ public class ODataAtomParser extends AbstractParser {
         LOG.debug("Found property element: {}", propertyName);
 
         PropertyType propertyTypeFromXML = getPropertyTypeFromXML(propertyElement);
+        if (propertyTypeFromXML == null) {
+            LOG.warn("Skip rendering for {} property", propertyName);
+            return;
+        }
+
         LOG.debug("Property type from XML: {}", propertyTypeFromXML);
 
         StructuralProperty property = getStructuralProperty(getEntityDataModel(), structType, propertyName);
         if (property == null) {
             if (!structType.isOpen()) {
-                throw new ODataUnmarshallingException("The request body contains a property that does not exist " +
-                        "in the structured type: " + structType + ", property: " + propertyName);
+                LOG.warn("{} property is not found in the following {} type. Ignoring",
+                        propertyName, structType.toString());
+                return;
             } else {
                 throw new ODataNotImplementedException("Open types are not supported, cannot set property value " +
                         "for property '" + propertyName + "' in instance of type: " + structType);
@@ -348,8 +354,8 @@ public class ODataAtomParser extends AbstractParser {
 
         type = getEntityDataModel().getType(typeName);
         if (type == null) {
-            throw new ODataUnmarshallingException("The type of the property '" + propertyName + "' does not exist " +
-                    "in the entity data model: " + typeName);
+            LOG.warn("Type for property {} is not found", propertyName);
+            return null;
         }
 
         return new PropertyType(type, collection);
