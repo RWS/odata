@@ -56,7 +56,7 @@ abstract class AnnotationNavigationPropertyBindingFactory {
                     if (!isNullOrEmpty(target)) {
                         result.add(new NavigationPropertyBindingImpl(path, target));
                     } else {
-                        LOG.warn("Target not found for navigation property binding in: {}, path={}", typeName, path);
+                        LOG.debug("Target not found for navigation property binding in: {}, path={}", typeName, path);
                     }
                 } else {
                     // Non-navigation property. The type that this property refers to must not be an entity type
