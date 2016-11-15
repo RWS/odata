@@ -255,7 +255,7 @@ public class ODataAtomParser extends AbstractParser {
 
         PropertyType propertyTypeFromXML = getPropertyTypeFromXML(propertyElement);
         if (propertyTypeFromXML == null) {
-            LOG.warn("Skip rendering for {} property", propertyName);
+            LOG.debug("Skip rendering for {} property", propertyName);
             return;
         }
 
@@ -264,7 +264,7 @@ public class ODataAtomParser extends AbstractParser {
         StructuralProperty property = getStructuralProperty(getEntityDataModel(), structType, propertyName);
         if (property == null) {
             if (!structType.isOpen()) {
-                LOG.warn("{} property is not found in the following {} type. Ignoring",
+                LOG.debug("{} property is not found in the following {} type. Ignoring",
                         propertyName, structType.toString());
                 return;
             } else {
