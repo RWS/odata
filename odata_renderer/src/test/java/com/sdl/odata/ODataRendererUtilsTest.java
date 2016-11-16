@@ -28,7 +28,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.sdl.odata.ODataRendererUtils.buildContextUrlFromOperationCall;
+import static com.sdl.odata.ODataRendererUtils.isForceExpandParamSet;
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for {@link com.sdl.odata.ODataRendererUtils}.
@@ -61,6 +64,28 @@ public class ODataRendererUtilsTest {
         String contextUrl = buildContextUrlFromOperationCall(odataUri, entityDataModel, true);
 
         TestCase.assertEquals("http://some.com/xyz.svc/$metadata#Edm.String", contextUrl);
+    }
+
+    @Test
+    public void testForceExpandOnFunctions() throws Exception {
+
+        ODataUri odataUri = new ODataParserImpl()
+                .parseUri("http://localhost:8080/odata.svc/Customers/ODataDemo.ODataDemoFunction(par1=1)",
+                        entityDataModel);
+
+        assertFalse(isForceExpandParamSet(odataUri));
+
+        odataUri = new ODataParserImpl()
+                .parseUri("http://localhost:8080/odata.svc/Customers/ODataDemo.ODataDemoFunction(expand=true)",
+                        entityDataModel);
+
+        assertTrue(isForceExpandParamSet(odataUri));
+
+        odataUri = new ODataParserImpl()
+                .parseUri("http://localhost:8080/odata.svc/Customers/ODataDemo.ODataDemoFunction(expand='',par2='bar')",
+                        entityDataModel);
+
+        assertFalse(isForceExpandParamSet(odataUri));
     }
 
     private EntityDataModel buildEntityDataModel() throws ODataEdmException {
