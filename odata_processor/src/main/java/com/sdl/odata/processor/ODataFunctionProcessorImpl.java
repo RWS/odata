@@ -125,7 +125,7 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
                                          Option<scala.collection.immutable.Map<String, String>> functionCallParameters,
                                          Set<Parameter> parameters)
             throws ODataUnmarshallingException {
-        if (functionCallParameters.isDefined() && !functionCallParameters.get().isEmpty()) {
+        if (functionCallParameters.isDefined() && functionCallParameters.get().size() != 0) {
             Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(functionCallParameters.get());
             for (Parameter parameter : parameters) {
                 ParameterTypeUtil.setParameter(functionOperationObject, parameter.getJavaField(),

@@ -278,11 +278,34 @@ trait ExpressionsParser extends RegexParsers {
 
   def methodCallExpr(contextTypeName: String): Parser[MethodCallExpr] =
     methodName ~ methodCallArgs(contextTypeName) ^^ { case methodName ~ args => MethodCallExpr(methodName, args) }
-
+  
   def methodName: Parser[String] = "length" | "indexof" | "substring" | "tolower" | "toupper" | "trim" | "concat" |
     "year" | "month" | "day" | "hour" | "minute" | "second" | "fractionalseconds" | "totalseconds" | "date" | "time" |
     "totaloffsetminutes" | "mindatetime" | "maxdatetime" | "now" | "round" | "floor" | "ceiling" |"geo.distance" |
     "geo.length" withFailureMessage "Expected a method name"
+    
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  def applyExpr(contextTypeName: String): Parser[ApplyExpr] =
+  (applyMethodName <~ """\s*\(""".r) ~ ("""\(\s*""".r ~> applyMethodCallArgs(contextTypeName) <~ """\s*\)""".r) ^^ { case methodName ~ args => 
+  ApplyExpr(methodName, args) }
+    
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  def applyFunctionCallExpr(contextTypeName: String): Parser[ApplyFunctionExpr] =
+  		applyFunctionName ~ applyfunctionParams ^^ { case methodName ~ args => ApplyFunctionExpr(methodName, args) }
+    
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  def applyfunctionParams: Parser[String] = """\(\s*""".r ~> """[\$\w\s*]+""".r <~ """\s*\)""".r withFailureMessage "Expected words"
+    
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  def applyMethodName: Parser[String] = "groupby" withFailureMessage "Expected a method name"
+  
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  def applyFunctionName: Parser[String] = "aggregate" withFailureMessage "Expected a method name"
+  
+  def applyMethodCallArgs(contextTypeName: String): Parser[ApplyMethodCallExpr] =
+  (repsep(memberExpr(contextTypeName), """\s*,\s*""".r) <~ """\s*\)\s*""".r) ~ (""",\s*""".r ~>applyFunctionCallExpr(contextTypeName)) ^^ {
+  case properties ~ function => ApplyMethodCallExpr(ApplyPropertyExpr(properties), function);
+	}
 
   def methodCallArgs(contextTypeName: String): Parser[List[Expression]] =
     """\(\s*""".r ~> repsep(commonExpr(contextTypeName), """\s*,\s*""".r) <~ """\s*\)""".r withFailureMessage "Invalid method call arguments"
@@ -290,7 +313,7 @@ trait ExpressionsParser extends RegexParsers {
   def boolMethodCallExpr(contextTypeName: String): Parser[BooleanMethodCallExpr] =
     boolMethodName ~ ("""\(\s*""".r ~> repsep(commonExpr(contextTypeName), """\s*,\s*""".r) <~ """\s*\)""".r) ^^ {
       case methodName ~ args => BooleanMethodCallExpr(methodName, args)
-    }
+  }
 
   def boolMethodName: Parser[String] = "contains" | "startswith" | "endswith" | "geo.intersects"
 

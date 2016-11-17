@@ -97,7 +97,8 @@ public class ODataQueryProcessorImpl implements ODataQueryProcessor {
             throw e;
         }
         if (targetType.isCollection()) {
-            if (result.getType() == QueryResult.ResultType.COLLECTION) {
+            if (result.getType() == QueryResult.ResultType.COLLECTION ||
+                    result.getType() == QueryResult.ResultType.RAW_JSON) {
                 return new ProcessorResult(OK, result);
             } else {
                 throw new ODataDataSourceException("Expected a collection result, but found " +

@@ -273,4 +273,28 @@ class QueryModelBuilderTest extends FunSuite {
 
     assert(query === expected)
   }
+  
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  // groupby test
+  test("groupby") {
+    val uri = ODataUri("", ResourcePathUri(
+        EntitySetPath("Persons", None), 
+         List(ApplyOption(ApplyExpr("groupby", ApplyMethodCallExpr(ApplyPropertyExpr(
+                                    List(EntityPathExpr(None,Some(PropertyPathExpr("id",None))))),
+                                        ApplyFunctionExpr("aggregate","$count as PersonCount")))))))
+    val query = new QueryModelBuilder(entityDataModel).build(new ODataRequestContext(null, uri, entityDataModel))
+    val expected = ODataQuery(ApplyOperation(SelectOperation("Persons", true), "groupby", List("id"), ApplyFunction("aggregate", "$count as PersonCount")))
+    assert(query === expected)
+  }
+  
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  // $count test
+  test("$count") {
+    val uri = ODataUri("", ResourcePathUri(
+        EntitySetPath("Persons", None), 
+         List(CountOption(true))))
+    val query = new QueryModelBuilder(entityDataModel).build(new ODataRequestContext(null, uri, entityDataModel))
+    val expected = ODataQuery(CountOperation(SelectOperation("Persons",true),true))
+    assert(query === expected)
+  }
 }

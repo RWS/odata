@@ -350,5 +350,38 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
 
     testSuccess("id=1", ("id", NumberLiteral(1)))
   }
+  
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  // apply option test
+  test("apply option") {
+    implicit val p = parser.odataUri
+
+    val serviceRoot = "http://localhost:8080/odata.svc"
+    val relativeUri = "/Products?$apply=groupby((id, name), aggregate($count as ProductCount))"
+
+    testSuccess(serviceRoot + relativeUri,
+      ODataUri(serviceRoot, ResourcePathUri(
+        EntitySetPath("Products", None), 
+         List(ApplyOption(
+                            ApplyExpr("groupby",
+                                ApplyMethodCallExpr(ApplyPropertyExpr(
+                                    List(EntityPathExpr(None,Some(PropertyPathExpr("id",None))),
+                                        EntityPathExpr(None,Some(PropertyPathExpr("name",None))))),
+                                        ApplyFunctionExpr("aggregate","$count as ProductCount"))))))))
+  }
+  
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  // count option test
+  test("count option") {
+    implicit val p = parser.odataUri
+
+    val serviceRoot = "http://localhost:8080/odata.svc"
+    val relativeUri = "/Products?$count=true"
+
+    testSuccess(serviceRoot + relativeUri,
+      ODataUri(serviceRoot, ResourcePathUri(
+        EntitySetPath("Products", None), 
+         List(CountOption(true)))))
+  }
 
 }

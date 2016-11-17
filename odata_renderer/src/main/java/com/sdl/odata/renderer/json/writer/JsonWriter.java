@@ -15,6 +15,33 @@
  */
 package com.sdl.odata.renderer.json.writer;
 
+import static com.sdl.odata.JsonConstants.CONTEXT;
+import static com.sdl.odata.JsonConstants.COUNT;
+import static com.sdl.odata.JsonConstants.ID;
+import static com.sdl.odata.JsonConstants.TYPE;
+import static com.sdl.odata.JsonConstants.VALUE;
+import static com.sdl.odata.ODataRendererUtils.checkNotNull;
+import static com.sdl.odata.api.edm.model.MetaType.COMPLEX;
+import static com.sdl.odata.api.edm.model.MetaType.ENTITY;
+import static com.sdl.odata.api.edm.model.MetaType.PRIMITIVE;
+import static com.sdl.odata.util.edm.EntityDataModelUtil.formatEntityKey;
+import static com.sdl.odata.util.edm.EntityDataModelUtil.getEntityName;
+import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -29,37 +56,8 @@ import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.edm.model.TypeDefinition;
-import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.json.util.JsonWriterUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static com.sdl.odata.JsonConstants.CONTEXT;
-import static com.sdl.odata.JsonConstants.COUNT;
-import static com.sdl.odata.JsonConstants.ID;
-import static com.sdl.odata.JsonConstants.TYPE;
-import static com.sdl.odata.JsonConstants.VALUE;
-import static com.sdl.odata.ODataRendererUtils.checkNotNull;
-import static com.sdl.odata.api.edm.model.MetaType.COMPLEX;
-import static com.sdl.odata.api.edm.model.MetaType.ENTITY;
-import static com.sdl.odata.api.parser.ODataUriUtil.asJavaList;
-import static com.sdl.odata.api.parser.ODataUriUtil.getSimpleExpandPropertyNames;
-import static com.sdl.odata.api.parser.ODataUriUtil.hasCountOption;
-import static com.sdl.odata.util.edm.EntityDataModelUtil.formatEntityKey;
-import static com.sdl.odata.util.edm.EntityDataModelUtil.getEntityName;
-import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
 
 /**
  * Writer capable of creating a JSON stream containing either
@@ -74,7 +72,7 @@ public class JsonWriter {
     private final ODataUri odataUri;
     private final EntityDataModel entityDataModel;
     private EntitySet entitySet;
-    private List<String> expandedProperties = new ArrayList<>();
+    private final List<String> expandedProperties = new ArrayList<>();
     private String contextURL = null;
 
     /**
@@ -83,7 +81,7 @@ public class JsonWriter {
      * @param oDataUri        The OData parsed URI. It can not be {@code null}.
      * @param entityDataModel The <i>Entity Data Model (EDM)</i>. It can not be {@code null}.
      */
-    public JsonWriter(ODataUri oDataUri, EntityDataModel entityDataModel) {
+    public JsonWriter(final ODataUri oDataUri, final EntityDataModel entityDataModel) {
         this.odataUri = checkNotNull(oDataUri);
         this.entityDataModel = checkNotNull(entityDataModel);
         expandedProperties.addAll(asJavaList(getSimpleExpandPropertyNames(oDataUri)));
@@ -98,7 +96,7 @@ public class JsonWriter {
      * @return the rendered feed.
      * @throws ODataRenderException In case it is not possible to write to the JSON stream.
      */
-    public String writeFeed(List<?> entities, String contextUrl, Map<String, Object> meta)
+    public String writeFeed(final List<?> entities, final String contextUrl, final Map<String, Object> meta)
             throws ODataRenderException {
         this.contextURL = checkNotNull(contextUrl);
 
@@ -119,7 +117,7 @@ public class JsonWriter {
      * @return the rendered entry
      * @throws ODataRenderException In case it is not possible to write to the JSON stream.
      */
-    public String writeEntry(Object entity, String contextUrl) throws ODataRenderException {
+    public String writeEntry(final Object entity, final String contextUrl) throws ODataRenderException {
 
         this.contextURL = checkNotNull(contextUrl);
 
@@ -133,6 +131,24 @@ public class JsonWriter {
     }
 
     /**
+     * Copyright (c) 2016 All rights reserved by Siemens AG
+     * Writes raw json to the JSON stream.
+     */
+    public String writeRawJson(final String json, final String contextUrl) throws ODataRenderException
+    {
+        this.contextURL = checkNotNull(contextUrl);
+        try {
+            final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            jsonGenerator = JSON_FACTORY.createGenerator(stream, JsonEncoding.UTF8);
+            jsonGenerator.writeRaw(json);
+            jsonGenerator.close();
+            return stream.toString(StandardCharsets.UTF_8.name());
+        } catch (final IOException e) {
+            throw new ODataRenderException("Not possible to write raw json to stream JSON: ", e);
+        }
+    }
+
+    /**
      * Write the given data to the JSON stream. The data to write will be either a single entity or a feed depending on
      * whether it is a single object or list.
      *
@@ -141,10 +157,10 @@ public class JsonWriter {
      * @return The written JSON stream.
      * @throws ODataRenderException if unable to render
      */
-    private String writeJson(Object data, Map<String, Object> meta) throws IOException, NoSuchFieldException,
-            IllegalAccessException, ODataEdmException, ODataRenderException {
+    private String writeJson(final Object data, final Map<String, Object> meta)
+            throws IOException, NoSuchFieldException, IllegalAccessException, ODataEdmException, ODataRenderException {
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        final ByteArrayOutputStream stream = new ByteArrayOutputStream();
         jsonGenerator = JSON_FACTORY.createGenerator(stream, JsonEncoding.UTF8);
 
         jsonGenerator.writeStartObject();
@@ -159,7 +175,7 @@ public class JsonWriter {
                 meta != null && meta.containsKey("count")) {
 
             long count;
-            Object countObj = meta.get("count");
+            final Object countObj = meta.get("count");
             if (countObj instanceof Integer) {
                 count = ((Integer) countObj).longValue();
             } else {
@@ -190,10 +206,10 @@ public class JsonWriter {
         return stream.toString(StandardCharsets.UTF_8.name());
     }
 
-    private void marshallEntities(List<?> entities) throws IOException,
+    private void marshallEntities(final List<?> entities) throws IOException,
             ODataRenderException, ODataEdmException, NoSuchFieldException, IllegalAccessException {
         jsonGenerator.writeArrayFieldStart(VALUE);
-        for (Object entity : entities) {
+        for (final Object entity : entities) {
             jsonGenerator.writeStartObject();
             jsonGenerator.writeStringField(ID, String.format("%s(%s)", getEntityName(entityDataModel, entity),
                     formatEntityKey(entityDataModel, entity)));
@@ -203,7 +219,7 @@ public class JsonWriter {
         jsonGenerator.writeEndArray();
     }
 
-    private void marshall(Object object, Type type)
+    private void marshall(final Object object, final Type type)
             throws IOException, ODataRenderException, NoSuchFieldException, IllegalAccessException {
         // Decide what to do depending on what kind of type this is
         switch (type.getMetaType()) {
@@ -232,7 +248,7 @@ public class JsonWriter {
         }
     }
 
-    private void marshallPrimitive(Object value, PrimitiveType primitiveType) throws IOException {
+    private void marshallPrimitive(final Object value, final PrimitiveType primitiveType) throws IOException {
         LOG.debug("Primitive value: {} of type: {}", value, primitiveType);
         if (value != null) {
             JsonWriterUtil.writePrimitiveValue(value, jsonGenerator);
@@ -241,24 +257,23 @@ public class JsonWriter {
         }
     }
 
-    private void marshallStructured(final Object object, StructuredType structuredType)
+    private void marshallStructured(final Object object, final StructuredType structuredType)
             throws ODataRenderException, IOException, NoSuchFieldException, IllegalAccessException {
 
         LOG.debug("Start structured value of type: {}", structuredType);
         if (object != null) {
             writeODataType(structuredType);
-
             visitProperties(entityDataModel, structuredType, property -> {
                 try {
                     if (property instanceof NavigationProperty) {
                         LOG.debug("Start marshalling navigation property: {}", property.getName());
-                        NavigationProperty navProperty = (NavigationProperty) property;
-                        if (isExpandedProperty(navProperty)) {
+                            final NavigationProperty navProperty = (NavigationProperty) property;
+                            if (isExpandedProperty(navProperty)) {
                             final Object value = getValueFromProperty(object, navProperty);
                             if (value != null) {
                                 if (navProperty.isCollection()) {
                                     jsonGenerator.writeArrayFieldStart(navProperty.getName());
-                                    for (Object propertyValue : (Collection<?>) value) {
+                                    for (final Object propertyValue : (Collection<?>) value) {
                                         jsonGenerator.writeStartObject();
                                         marshall(propertyValue, entityDataModel.getType(propertyValue.getClass()));
                                         jsonGenerator.writeEndObject();
@@ -294,10 +309,10 @@ public class JsonWriter {
      *
      * @param structuredType structuredType
      */
-    private void writeODataType(StructuredType structuredType) throws IOException {
+    private void writeODataType(final StructuredType structuredType) throws IOException {
         if (entitySet != null) {
-            String typeName = entitySet.getTypeName();
-            String type = typeName.substring(typeName.lastIndexOf(".") + 1, typeName.length());
+            final String typeName = entitySet.getTypeName();
+            final String type = typeName.substring(typeName.lastIndexOf(".") + 1, typeName.length());
 
             if (!type.equals(structuredType.getName())) {
                 jsonGenerator.writeStringField(TYPE, String.format("#%s.%s",
@@ -308,17 +323,17 @@ public class JsonWriter {
         }
     }
 
-    private void marshallStructuralProperty(Object object, StructuralProperty property)
+    private void marshallStructuralProperty(final Object object, final StructuralProperty property)
             throws ODataRenderException, IOException, NoSuchFieldException, IllegalAccessException {
-        String propertyName = property.getName();
+        final String propertyName = property.getName();
 
         // Get the property value through reflection
         Object propertyValue;
-        Field field = property.getJavaField();
+        final Field field = property.getJavaField();
         try {
             field.setAccessible(true);
             propertyValue = field.get(object);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             LOG.error("Error getting field value of field: " + field.toGenericString());
             throw new ODataRenderException("Error getting field value of field: " + field.toGenericString());
         }
@@ -346,7 +361,7 @@ public class JsonWriter {
             }
 
             // Get the OData type of the elements of the collection
-            Type elementType = entityDataModel.getType(property.getElementTypeName());
+            final Type elementType = entityDataModel.getType(property.getElementTypeName());
             if (elementType == null) {
                 throw new ODataRenderException("OData type not found for elements of property: " + property);
             }
@@ -357,7 +372,7 @@ public class JsonWriter {
                 jsonGenerator.writeEndArray();
             } else {
                 while (iterator.hasNext()) {
-                    Object element = iterator.next();
+                    final Object element = iterator.next();
                     if (element instanceof Number | element instanceof String | element.getClass().isEnum()) {
                         marshallToArray(propertyName, element, iterator);
                     } else {
@@ -371,7 +386,7 @@ public class JsonWriter {
             LOG.debug("Start property: {}", propertyName);
 
             // Get the OData type of the property
-            Type propertyType = entityDataModel.getType(property.getTypeName());
+            final Type propertyType = entityDataModel.getType(property.getTypeName());
             if (propertyType == null) {
                 throw new ODataRenderException("OData type not found for property: " + property);
             }
@@ -388,14 +403,15 @@ public class JsonWriter {
         }
     }
 
-    private void marshallCollection(String propertyName, Iterator<?> iterator, Object first, Type elementType)
+    private void marshallCollection(final String propertyName, final Iterator<?> iterator,
+            final Object first, final Type elementType)
             throws IOException, ODataRenderException, NoSuchFieldException, IllegalAccessException {
         jsonGenerator.writeArrayFieldStart(propertyName);
         jsonGenerator.writeStartObject();
         marshall(first, elementType);
         jsonGenerator.writeEndObject();
         while (iterator.hasNext()) {
-            Object element = iterator.next();
+            final Object element = iterator.next();
             jsonGenerator.writeStartObject();
             marshall(element, elementType);
             jsonGenerator.writeEndObject();
@@ -403,11 +419,12 @@ public class JsonWriter {
         jsonGenerator.writeEndArray();
     }
 
-    private void marshallToArray(String propertyName, Object first, Iterator<?> iterator) throws IOException {
+    private void marshallToArray(final String propertyName, final Object first, final Iterator<?> iterator)
+            throws IOException {
         jsonGenerator.writeArrayFieldStart(propertyName);
         jsonGenerator.writeObject(first.toString());
         while (iterator.hasNext()) {
-            Object element = iterator.next();
+            final Object element = iterator.next();
             jsonGenerator.writeObject(element.toString());
         }
         jsonGenerator.writeEndArray();
@@ -419,27 +436,27 @@ public class JsonWriter {
      * @param value    The value to marshall. Can be {@code null}.
      * @param enumType The OData enum type.
      */
-    private void marshallEnum(Object value, EnumType enumType) throws IOException {
+    private void marshallEnum(final Object value, final EnumType enumType) throws IOException {
         LOG.debug("Enum value: {} of type: {}", value, enumType);
         jsonGenerator.writeString(value.toString());
     }
 
-    private boolean isExpandedProperty(NavigationProperty property) {
+    private boolean isExpandedProperty(final NavigationProperty property) {
         return expandedProperties.contains(property.getName());
     }
 
-    private Object getValueFromProperty(Object entity, NavigationProperty property)
+    private Object getValueFromProperty(final Object entity, final NavigationProperty property)
             throws NoSuchFieldException, IllegalAccessException {
 
-        Field propertyField = property.getJavaField();
+        final Field propertyField = property.getJavaField();
         propertyField.setAccessible(true);
 
         return propertyField.get(entity);
     }
 
-    private EntitySet getEntitySet(Object entity) {
-        String entityTypeName = getEntityType(entity).getFullyQualifiedName();
-        for (EntitySet eSet : entityDataModel.getEntityContainer().getEntitySets()) {
+    private EntitySet getEntitySet(final Object entity) {
+        final String entityTypeName = getEntityType(entity).getFullyQualifiedName();
+        for (final EntitySet eSet : entityDataModel.getEntityContainer().getEntitySets()) {
             if (eSet.getTypeName().equals(entityTypeName)) {
                 return eSet;
             }
@@ -447,13 +464,13 @@ public class JsonWriter {
         return null;
     }
 
-    private EntitySet getEntitySet(List<?> entityList) {
+    private EntitySet getEntitySet(final List<?> entityList) {
         return entityList.size() > 0 ? getEntitySet(entityList.get(0)) : null;
     }
 
-    private EntityType getEntityType(Object entity) {
+    private EntityType getEntityType(final Object entity) {
         final Type type = entityDataModel.getType(entity.getClass());
-        if (type.getMetaType() != ENTITY) {
+        if (type.getMetaType() != ENTITY && type.getMetaType() != PRIMITIVE) {
             throw new UnsupportedOperationException("Unsupported type: " + type);
         }
         return (EntityType) type;

@@ -48,9 +48,11 @@ trait QueryOptionsParser extends RegexParsers {
 
   def id: Parser[IdOption] = "$id=" ~> """[^&]+""".r ^^ IdOption
 
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  // apply systemQueryoption added
   def systemQueryOption(contextTypeName: String): Parser[SystemQueryOption] =
     expand(contextTypeName) | filter(contextTypeName) | format | id | inlinecount | orderby(contextTypeName) |
-    search(contextTypeName) | select(contextTypeName) | skip | skiptoken | top
+    search(contextTypeName) | select(contextTypeName) | skip | skiptoken | top | apply(contextTypeName)
 
   def expand(contextTypeName: String): Parser[ExpandOption] =
     "$expand=" ~> rep1sep(expandItem(contextTypeName), ",") ^^ ExpandOption
@@ -168,6 +170,12 @@ trait QueryOptionsParser extends RegexParsers {
     ("$filter=" ~> boolCommonExpr(contextTypeName) ^^ FilterOption)
       .withFailureMessage("The URI contains an incorrectly specified $filter option")
 
+  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+  // $apply option parsing
+  def apply(contextTypeName: String): Parser[ApplyOption] =
+    ("$apply=" ~> applyExpr(contextTypeName) ^^ ApplyOption)
+      .withFailureMessage("The URI contains an incorrectly specified $apply option")
+      
   def orderby(contextTypeName: String): Parser[OrderByOption] =
     ("$orderby=" ~> rep1sep(orderbyItem(contextTypeName), ",") ^^ OrderByOption)
       .withFailureMessage("The URI contains an incorrectly specified $orderby option")
