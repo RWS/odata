@@ -74,28 +74,27 @@ public class BatchMethodHandler {
         List<ProcessorResult> resultList = new ArrayList<>();
 
         try {
-            try {
-                for (ChangeSetEntity changeSetEntity : changeSetEntities) {
-                    ODataRequestContext odataRequestContext = changeSetEntity.getRequestContext();
-                    ODataUri requestUri = odataRequestContext.getUri();
-                    ODataRequest.Method method = odataRequestContext.getRequest().getMethod();
+            for (ChangeSetEntity changeSetEntity : changeSetEntities) {
+                ODataRequestContext odataRequestContext = changeSetEntity.getRequestContext();
+                ODataUri requestUri = odataRequestContext.getUri();
+                ODataRequest.Method method = odataRequestContext.getRequest().getMethod();
 
-                    ProcessorResult result = null;
-                    if (method == ODataRequest.Method.POST) {
-                        result = handlePOST(odataRequestContext, requestUri, changeSetEntity);
-                    } else if (method == ODataRequest.Method.PUT || method == ODataRequest.Method.PATCH) {
-                        result = handlePutAndPatch(odataRequestContext, requestUri, changeSetEntity);
-                    } else if (method == ODataRequest.Method.DELETE) {
-                        result = handleDelete(odataRequestContext, requestUri, changeSetEntity);
-                    }
-                    resultList.add(result);
+                ProcessorResult result = null;
+                if (method == ODataRequest.Method.POST) {
+                    result = handlePOST(odataRequestContext, requestUri, changeSetEntity);
+                } else if (method == ODataRequest.Method.PUT || method == ODataRequest.Method.PATCH) {
+                    result = handlePutAndPatch(odataRequestContext, requestUri, changeSetEntity);
+                } else if (method == ODataRequest.Method.DELETE) {
+                    result = handleDelete(odataRequestContext, requestUri, changeSetEntity);
                 }
-            } finally {
-                commitTransactions();
+                resultList.add(result);
             }
+
+            commitTransactions();
         } catch (ODataException e) {
             LOG.error("Transaction could not be processed, rolling back", e);
             rollbackTransactions();
+            throw e;
         }
         return resultList;
     }
