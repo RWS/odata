@@ -25,8 +25,6 @@ import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.Option;
-import scala.collection.JavaConversions;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -58,10 +56,9 @@ import static com.sdl.odata.AtomConstants.TITLE;
 import static com.sdl.odata.AtomConstants.TYPE;
 import static com.sdl.odata.AtomConstants.XML_VERSION;
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
+import static com.sdl.odata.ODataRendererUtils.isForceExpandParamSet;
 import static com.sdl.odata.api.parser.ODataUriUtil.asJavaList;
-import static com.sdl.odata.api.parser.ODataUriUtil.getFunctionCallParameters;
 import static com.sdl.odata.api.parser.ODataUriUtil.getSimpleExpandPropertyNames;
-import static com.sdl.odata.api.parser.ODataUriUtil.isFunctionCallUri;
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.MediaType.XML;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.formatEntityKey;
@@ -79,7 +76,6 @@ public class AtomWriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(AtomWriter.class);
     private static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
-    private static final String FORCE_EXPAND_PARAM = "expand";
 
     private XMLStreamWriter xmlWriter = null;
     private ByteArrayOutputStream outputStream = null;
@@ -119,25 +115,7 @@ public class AtomWriter {
         this.isActionCall = isActionCall;
 
         expandedProperties.addAll(asJavaList(getSimpleExpandPropertyNames(oDataUri)));
-        forceExpand = isForceExpandParamSet();
-    }
-
-    /*
-     * Checks if we are trying to force expand all Nav properties for function calls by looking at expand parameter.
-     */
-    private boolean isForceExpandParamSet() {
-        if (isFunctionCallUri(oDataUri)) {
-            // Check if we have expand param set to true
-            Option<scala.collection.immutable.Map<String, String>> params = getFunctionCallParameters(oDataUri);
-
-            if (params.isDefined() && !params.get().isEmpty()) {
-                Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(params.get());
-                if (parametersMap.containsKey(FORCE_EXPAND_PARAM)) {
-                    return Boolean.parseBoolean(parametersMap.get(FORCE_EXPAND_PARAM));
-                }
-            }
-        }
-        return false;
+        forceExpand = isForceExpandParamSet(oDataUri);
     }
 
     /**

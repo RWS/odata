@@ -22,7 +22,6 @@ import org.junit.Test;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -32,8 +31,6 @@ import java.util.Map;
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for {@link AtomWriter}.
@@ -182,41 +179,6 @@ public class AtomWriterTest extends WriterTest {
                 ABSTRACT_ENTITY_SAMPLE_URL, EXPECTED_ABSTRACT_ENTITY_PATH, false);
     }
 
-    @Test
-    public void testForceExpandOnFunctions() throws Exception {
-
-        odataUri = new ODataParserImpl()
-                .parseUri("http://localhost:8080/odata.svc/Customers/ODataDemo.ODataDemoFunction(par1=1)",
-                entityDataModel);
-        dateTime = ZonedDateTime.of(2014, 5, 2, 0, 0, 0, 0, ZoneId.of("UTC").normalized());
-
-        AtomWriter writer = new AtomWriter(dateTime, odataUri, entityDataModel,
-                new ODataV4AtomNSConfigurationProvider(), false, false);
-
-        Method method = AtomWriter.class.getDeclaredMethod("isForceExpandParamSet");
-        method.setAccessible(true);
-
-        assertFalse((Boolean) method.invoke(writer));
-
-        odataUri = new ODataParserImpl()
-                .parseUri("http://localhost:8080/odata.svc/Customers/ODataDemo.ODataDemoFunction(expand=true)",
-                        entityDataModel);
-
-        writer = new AtomWriter(dateTime, odataUri, entityDataModel,
-                new ODataV4AtomNSConfigurationProvider(), false, false);
-
-        assertTrue((Boolean) method.invoke(writer));
-
-        odataUri = new ODataParserImpl()
-                .parseUri("http://localhost:8080/odata.svc/Customers/ODataDemo.ODataDemoFunction(expand='',par2='bar')",
-                        entityDataModel);
-
-        writer = new AtomWriter(dateTime, odataUri, entityDataModel,
-                new ODataV4AtomNSConfigurationProvider(), false, false);
-
-        assertFalse((Boolean) method.invoke(writer));
-    }
-
     /**
      * Perform the actual test by specifying the entity(es) to write and the path to the file containing the expected
      * written XML stream.
@@ -225,7 +187,6 @@ public class AtomWriterTest extends WriterTest {
      * @param contextURL         The 'Context URL' to write.
      * @param expectedEntityPath Path to the file with the expected XML stream.
      * @param isWriteOperation   Boolean indicating that we are testing a write operation.
-     *
      * @throws ODataRenderException If unable to render
      * @throws IOException
      * @throws TransformerException
