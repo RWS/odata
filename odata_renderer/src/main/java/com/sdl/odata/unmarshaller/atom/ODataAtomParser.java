@@ -354,7 +354,7 @@ public class ODataAtomParser extends AbstractParser {
 
         type = getEntityDataModel().getType(typeName);
         if (type == null) {
-            LOG.warn("Type for property {} is not found", propertyName);
+            LOG.debug("Type for property {} is not found", propertyName);
             return null;
         }
 
