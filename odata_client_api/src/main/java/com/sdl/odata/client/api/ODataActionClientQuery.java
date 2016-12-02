@@ -23,7 +23,7 @@ public interface ODataActionClientQuery extends ODataClientQuery {
     /**
      * Returns built request body to process it within action execution.
      *
-     * @return  action request body
+     * @return action request body
      */
     String getActionRequestBody();
 }
