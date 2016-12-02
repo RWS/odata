@@ -17,7 +17,6 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataActionClientQuery;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -123,7 +122,7 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
     }
 
     @Override
-    public Serializable getCacheKey() {
+    public String getCacheKey() {
         String requestParametersKey = builder.actionParameterMap == null || builder.actionParameterMap.isEmpty() ?
                 "" : (builder.actionParameterMap.entrySet().stream()
                 .filter(entry -> omitCacheProperties.stream()
