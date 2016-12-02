@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,6 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
     private String actionName;
     private String actionRequestBody;
     private Builder builder;
-    private Set<String> omitCacheProperties;
 
     private ActionImportClientQuery(Builder initBuilder) {
         checkNotNull(initBuilder.returnType, "Action return type should not be null");
@@ -72,10 +71,6 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
                 && actionRequestBody.equals(that.actionRequestBody);
     }
 
-    public void setOmitCacheProperties(Set<String> omitCacheProperties) {
-        this.omitCacheProperties = omitCacheProperties;
-    }
-
     @Override
     public int hashCode() {
         int result = getEntityType().hashCode();
@@ -97,6 +92,7 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
         private Class<?> returnType;
         private String actionName;
         private Map<String, String> actionParameterMap;
+        private Set<String> omitCacheProperties;
 
         public Builder withReturnType(Class<?> clazz) {
             returnType = clazz;
@@ -104,10 +100,18 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
         }
 
         public Builder withActionParameter(String actionParameterName, String actionParameterValue) {
+            return withActionParameter(actionParameterName, actionParameterValue, false);
+        }
+
+        public Builder withActionParameter(String actionParameterName, String actionParameterValue,
+                                           boolean excludeInCache) {
             if (actionParameterMap == null) {
                 actionParameterMap = new LinkedHashMap<>();
             }
             actionParameterMap.put(actionParameterName, actionParameterValue);
+            if (excludeInCache) {
+                omitCacheProperties.add(actionParameterName);
+            }
             return this;
         }
 
@@ -125,7 +129,7 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
     public String getCacheKey() {
         String requestParametersKey = builder.actionParameterMap == null || builder.actionParameterMap.isEmpty() ?
                 "" : (builder.actionParameterMap.entrySet().stream()
-                .filter(entry -> omitCacheProperties.stream()
+                .filter(entry -> builder.omitCacheProperties.stream()
                         .noneMatch(propertyToOmit -> entry.getKey().contains(propertyToOmit)))
                 .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining(":")));
