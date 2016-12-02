@@ -17,8 +17,10 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataActionClientQuery;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -28,15 +30,18 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
 
     private String actionName;
     private String actionRequestBody;
+    private Builder builder;
+    private Set<String> omitCacheProperties;
 
-    private ActionImportClientQuery(Builder builder) {
-        checkNotNull(builder.returnType, "Action return type should not be null");
-        checkNotNull(builder.actionName, "Action name should not be null");
+    private ActionImportClientQuery(Builder initBuilder) {
+        checkNotNull(initBuilder.returnType, "Action return type should not be null");
+        checkNotNull(initBuilder.actionName, "Action name should not be null");
 
-        setEntityType(builder.returnType);
-        this.actionName = builder.actionName;
-        actionRequestBody = builder.actionParameterMap == null || builder.actionParameterMap.isEmpty() ?
-                "" : ("{" + builder.actionParameterMap.entrySet().stream()
+        this.builder = initBuilder;
+        setEntityType(initBuilder.returnType);
+        this.actionName = initBuilder.actionName;
+        actionRequestBody = initBuilder.actionParameterMap == null || initBuilder.actionParameterMap.isEmpty() ?
+                "" : ("{" + initBuilder.actionParameterMap.entrySet().stream()
                 .map(entry -> String.format("\"%s\":%s", entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining(","))
                 + "}");
@@ -66,6 +71,10 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
 
         return getEntityType().equals(that.getEntityType()) && actionName.equals(that.actionName)
                 && actionRequestBody.equals(that.actionRequestBody);
+    }
+
+    public void setOmitCacheProperties(Set<String> omitCacheProperties) {
+        this.omitCacheProperties = omitCacheProperties;
     }
 
     @Override
@@ -111,5 +120,16 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
         public ODataActionClientQuery build() {
             return new ActionImportClientQuery(this);
         }
+    }
+
+    @Override
+    public Serializable getCacheKey() {
+        String requestParametersKey = builder.actionParameterMap == null || builder.actionParameterMap.isEmpty() ?
+                "" : (builder.actionParameterMap.entrySet().stream()
+                .filter(entry -> omitCacheProperties.stream()
+                        .noneMatch(propertyToOmit -> entry.getKey().contains(propertyToOmit)))
+                .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining(":")));
+        return actionName + ":" + requestParametersKey;
     }
 }

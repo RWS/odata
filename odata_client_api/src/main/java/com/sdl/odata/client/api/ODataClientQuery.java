@@ -40,4 +40,5 @@ public interface ODataClientQuery extends Serializable {
      */
     Class<?> getEntityType();
 
+    Serializable getCacheKey();
 }

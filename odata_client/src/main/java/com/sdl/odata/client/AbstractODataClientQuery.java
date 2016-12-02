@@ -20,6 +20,8 @@ import com.sdl.odata.api.edm.annotations.EdmSingleton;
 import com.sdl.odata.client.api.ODataClientQuery;
 import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 
+import java.io.Serializable;
+
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.pluralize;
 import static java.lang.String.format;
@@ -96,5 +98,9 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
 
     protected boolean isSingletonEntity() {
         return isSingletonEntity;
+    }
+
+    public Serializable getCacheKey() {
+        return this;
     }
 }
