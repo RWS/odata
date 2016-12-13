@@ -34,7 +34,19 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 
-import static com.sdl.odata.MetadataDocumentConstants.*;
+import static com.sdl.odata.MetadataDocumentConstants.EDMX_NS;
+import static com.sdl.odata.MetadataDocumentConstants.EDMX_PREFIX;
+import static com.sdl.odata.MetadataDocumentConstants.XML_VERSION;
+import static com.sdl.odata.MetadataDocumentConstants.EDMX;
+import static com.sdl.odata.MetadataDocumentConstants.VERSION;
+import static com.sdl.odata.MetadataDocumentConstants.ODATA_VERSION;
+import static com.sdl.odata.MetadataDocumentConstants.EDMX_DATA_SERVICES;
+import static com.sdl.odata.MetadataDocumentConstants.EDM_NS;
+import static com.sdl.odata.MetadataDocumentConstants.SCHEMA;
+import static com.sdl.odata.MetadataDocumentConstants.NAMESPACE;
+import static com.sdl.odata.MetadataDocumentConstants.ENTITY_CONTAINER;
+import static com.sdl.odata.MetadataDocumentConstants.NAME;
+
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
