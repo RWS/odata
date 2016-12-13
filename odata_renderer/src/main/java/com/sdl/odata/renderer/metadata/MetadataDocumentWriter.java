@@ -15,7 +15,16 @@
  */
 package com.sdl.odata.renderer.metadata;
 
-import com.sdl.odata.api.edm.model.*;
+import com.sdl.odata.api.edm.model.ComplexType;
+import com.sdl.odata.api.edm.model.EntityContainer;
+import com.sdl.odata.api.edm.model.EntityDataModel;
+import com.sdl.odata.api.edm.model.EntitySet;
+import com.sdl.odata.api.edm.model.EntityType;
+import com.sdl.odata.api.edm.model.EnumType;
+import com.sdl.odata.api.edm.model.Function;
+import com.sdl.odata.api.edm.model.Schema;
+import com.sdl.odata.api.edm.model.Singleton;
+import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
