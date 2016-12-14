@@ -30,10 +30,10 @@ import com.sdl.odata.api.service.ODataRequestContext;
 @EdmReturnType(type = "Edm.String")
 public class FunctionSample implements Operation<String> {
 
-    @EdmParameter(name = "stringParam", type = "Edm.String", nullable = false)
+    @EdmParameter(name = "stringFunctionField", type = "String", nullable = false)
     private String stringFunctionField;
 
-    @EdmParameter(name = "intParam", type = "Edm.Int32", nullable = false)
+    @EdmParameter(name = "intFunctionField", type = "Int16", nullable = false)
     private int intFunctionField;
 
     public String getStringFunctionField() {

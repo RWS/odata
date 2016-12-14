@@ -55,7 +55,7 @@ public class AnnotationFunctionFactoryTest {
         assertEquals(2, function.getParameters().size());
         assertTrue(Iterables.all(function.getParameters(), parameter ->
                 parameter.getName().equals("stringFunctionField") && parameter.getType().equals("String") ||
-                parameter.getName().equals("intFunctionField") && parameter.getType().equals("int")));
+                parameter.getName().equals("intFunctionField") && parameter.getType().equals("Int16")));
 
         assertEquals("Edm.String", function.getReturnType());
         assertTrue(function.isBound());

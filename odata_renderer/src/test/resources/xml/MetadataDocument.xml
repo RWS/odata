@@ -132,13 +132,13 @@
                 <Member Name="VERSION"/>
             </EnumType>
             <Function Name="ODataDemoFunction">
-                <Parameter Name="stringParam" Type="Edm.String" Nullable="false"/>
-                <Parameter Name="intParam" Type="Edm.Int32" Nullable="false"/>
+                <Parameter Name="intFunctionField" Type="Int16" Nullable="false"/>
+                <Parameter Name="stringFunctionField" Type="String" Nullable="false"/>
                 <ReturnType Type="Edm.String"/>
             </Function>
             <Function Name="UnboundODataDemoFunction">
-                <Parameter Name="intFunctionField" Type="int" Nullable="true"/>
                 <Parameter Name="stringFunctionField" Type="String" Nullable="true"/>
+                <Parameter Name="intFunctionField" Type="Int16" Nullable="true"/>
                 <ReturnType Type="Edm.String"/>
             </Function>
             <EntityContainer Name="ODataDemoContainer">
