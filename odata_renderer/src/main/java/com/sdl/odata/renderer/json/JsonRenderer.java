@@ -15,6 +15,17 @@
  */
 package com.sdl.odata.renderer.json;
 
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.COLLECTION;
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.RAW_JSON;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.processor.query.QueryResult;
@@ -23,20 +34,14 @@ import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractJsonRenderer;
 import com.sdl.odata.renderer.json.writer.JsonWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import static com.sdl.odata.api.processor.query.QueryResult.ResultType.COLLECTION;
 
 /**
  * Renderer which renders data in OData JSON format.
  * Reference: <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html">
  * OData Atom Format Version 4.0 specification</a>
+ *
+ * Copyright (c) 2016 All rights reserved by Siemens AG
+ * handling raw json result
  */
 @Component
 public final class JsonRenderer extends AbstractJsonRenderer {
@@ -44,31 +49,33 @@ public final class JsonRenderer extends AbstractJsonRenderer {
     private static final Logger LOG = LoggerFactory.getLogger(JsonRenderer.class);
 
     @Override
-    public int score(ODataRequestContext requestContext, QueryResult data) {
+    public int score(final ODataRequestContext requestContext, final QueryResult data) {
 
         // This renderer only handles entity queries
         if (!isEntityQuery(requestContext.getUri(), requestContext.getEntityDataModel())) {
             return 0;
         }
 
-        int returnScore = super.score(requestContext, data);
+        final int returnScore = super.score(requestContext, data);
         LOG.debug("Renderer score is {}", returnScore);
 
         return returnScore;
     }
 
     @Override
-    public void render(ODataRequestContext requestContext, QueryResult result, ODataResponse.Builder responseBuilder)
-            throws ODataException {
+    public void render(final ODataRequestContext requestContext, final QueryResult result,
+            final ODataResponse.Builder responseBuilder) throws ODataException {
 
         LOG.debug("Start rendering entity(es) for request: {}", requestContext);
 
-        JsonWriter writer = new JsonWriter(requestContext.getUri(), requestContext.getEntityDataModel());
+        final JsonWriter writer = new JsonWriter(requestContext.getUri(), requestContext.getEntityDataModel());
 
-        String contextUrl = buildContextURL(requestContext, result.getData());
+        final String contextUrl = buildContextURL(requestContext, result.getData());
         String json;
         if (result.getType() == COLLECTION) {
             json = writer.writeFeed((List<?>) result.getData(), contextUrl, result.getMeta());
+        } else if (result.getType() == RAW_JSON) {
+            json = writer.writeRawJson(result.getData().toString(), contextUrl);
         } else {
             json = writer.writeEntry(result.getData(), contextUrl);
         }
@@ -78,7 +85,7 @@ public final class JsonRenderer extends AbstractJsonRenderer {
                         .setContentType(MediaType.JSON)
                         .setHeader("OData-Version", ODATA_VERSION_HEADER)
                         .setBodyText(json, StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException e) {
+            } catch (final UnsupportedEncodingException e) {
                 throw new ODataSystemException(e);
             }
         }

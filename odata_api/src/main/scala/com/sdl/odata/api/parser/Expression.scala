@@ -40,6 +40,23 @@ case class NegateExpr(expression: Expression) extends Expression
 // methodCallExpr
 case class MethodCallExpr(methodName: String, args: List[Expression]) extends Expression
 
+// applyPropertyExpr
+/**Copyright (c) 2016 All Rights Reserved by Siemens.*/
+case class ApplyPropertyExpr(args: List[Expression]) extends Expression
+
+// applyfunctionExpr
+/**Copyright (c) 2016 All Rights Reserved by Siemens.*/
+case class ApplyFunctionExpr(methodName: String, args: String) extends Expression
+
+// methodCallExpr
+/**Copyright (c) 2016 All Rights Reserved by Siemens.*/
+case class ApplyMethodCallExpr(properties: ApplyPropertyExpr, function: ApplyFunctionExpr) extends Expression
+
+// applyExpr
+/**Copyright (c) 2016 All Rights Reserved by Siemens.*/
+// args changed from List[Expression] to ApplyMethodCallExpr
+case class ApplyExpr(methodName: String, args: ApplyMethodCallExpr) extends Expression
+
 // castExpr
 case class CastExpr(expression: Option[Expression], typeName: String) extends Expression
 
@@ -110,7 +127,6 @@ case class LambdaVariableAndPredicate(variableName: String, predicate: BooleanEx
 
 // boundFunctionExpr
 case class BoundFunctionCallPathExpr(functionName: String, args: Map[String, FunctionExprParam], subPath: Option[PathExpr]) extends PathExpr with SubPathExpr
-
 
 // boolCommonExpr
 sealed trait BooleanExpr extends Expression

@@ -25,6 +25,8 @@ import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Option;
+import scala.collection.JavaConversions;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
