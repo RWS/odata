@@ -13,11 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 package com.sdl.odata.parser
 
-import org.scalatest.FunSuite
 import com.sdl.odata.api.parser._
 import com.sdl.odata.api.service.MediaType
+import org.scalatest.FunSuite
 
 class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
 
@@ -192,9 +207,9 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
     val relativeUri = "/Customers?$expand=Orders($levels=10)"
 
     testSuccess(serviceRoot + relativeUri, ODataUri(serviceRoot,
-      ResourcePathUri(EntitySetPath("Customers",None),
+      ResourcePathUri(EntitySetPath("Customers", None),
         List(ExpandOption(List(PathExpandItem(None,
-          NavigationPropertyExpandPathSegment("Orders",None),List(
+          NavigationPropertyExpandPathSegment("Orders", None), List(
             LevelsQueryOption(10)))))))))
   }
 
@@ -241,10 +256,10 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
 
     testSuccess(serviceRoot + relativeUri, ODataUri(
       serviceRoot,
-      ResourcePathUri(EntitySetPath("Customers",None),
+      ResourcePathUri(EntitySetPath("Customers", None),
         List(ExpandOption(
           List(PathExpandItem(None,
-            NavigationPropertyExpandPathSegment("Orders",None),List()))),
+            NavigationPropertyExpandPathSegment("Orders", None), List()))),
           SkipOption(1),
           OrderByOption(List(
             AscendingOrderByItem(ImplicitVariableExpr(None)))),
@@ -350,8 +365,7 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
 
     testSuccess("id=1", ("id", NumberLiteral(1)))
   }
-  
-  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+
   // apply option test
   test("apply option") {
     implicit val p = parser.odataUri
@@ -361,16 +375,15 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
 
     testSuccess(serviceRoot + relativeUri,
       ODataUri(serviceRoot, ResourcePathUri(
-        EntitySetPath("Products", None), 
-         List(ApplyOption(
-                            ApplyExpr("groupby",
-                                ApplyMethodCallExpr(ApplyPropertyExpr(
-                                    List(EntityPathExpr(None,Some(PropertyPathExpr("id",None))),
-                                        EntityPathExpr(None,Some(PropertyPathExpr("name",None))))),
-                                        ApplyFunctionExpr("aggregate","$count as ProductCount"))))))))
+        EntitySetPath("Products", None),
+        List(ApplyOption(
+          ApplyExpr("groupby",
+            ApplyMethodCallExpr(ApplyPropertyExpr(
+              List(EntityPathExpr(None, Some(PropertyPathExpr("id", None))),
+                EntityPathExpr(None, Some(PropertyPathExpr("name", None))))),
+              ApplyFunctionExpr("aggregate", "$count as ProductCount"))))))))
   }
-  
-  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+
   // count option test
   test("count option") {
     implicit val p = parser.odataUri
@@ -380,8 +393,8 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
 
     testSuccess(serviceRoot + relativeUri,
       ODataUri(serviceRoot, ResourcePathUri(
-        EntitySetPath("Products", None), 
-         List(CountOption(true)))))
+        EntitySetPath("Products", None),
+        List(CountOption(true)))))
   }
 
 }

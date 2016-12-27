@@ -76,11 +76,10 @@ sealed trait CriteriaValue {
   def gt(right: CriteriaValue): ComparisonCriteria = ComparisonCriteria(GtOperator, this, right)
   def ge(right: CriteriaValue): ComparisonCriteria = ComparisonCriteria(GeOperator, this, right)
 
-  /** Copyright (c) 2016 All rights reserved by Siemens AG */
   // String functions and geo.intersect function added.
-  def startswith(right: CriteriaValue): StartswithMethodCriteria = StartswithMethodCriteria(this, right)
+  def startswith(right: CriteriaValue): StartsWithMethodCriteria = StartsWithMethodCriteria(this, right)
   def contains(right: CriteriaValue): ContainsMethodCriteria = ContainsMethodCriteria(this, right)
-  def endswith(right: CriteriaValue): EndswithMethodCriteria = EndswithMethodCriteria(this, right)
+  def endswith(right: CriteriaValue): EndsWithMethodCriteria = EndsWithMethodCriteria(this, right)
   def geointersects(right: CriteriaValue): GeoIntersectsMethodCriteria = GeoIntersectsMethodCriteria(this, right)
 }
 
@@ -159,7 +158,6 @@ case object GeOperator extends ComparisonOperator {
 
 /**
  * Trait for method criteria.
- * Copyright (c) 2016 All rights reserved by Siemens AG
  */
 trait MethodCriteria extends Criteria
 
@@ -172,29 +170,26 @@ trait MethodCriteria extends Criteria
  */
 case class ComparisonCriteria(@BeanProperty operator: ComparisonOperator,
                               @BeanProperty left: CriteriaValue, @BeanProperty right: CriteriaValue) extends Criteria
-                              
-/**
- * StartswithMethodCriteria criteria.
- * Copyright (c) 2016 All rights reserved by Siemens AG
- * 
- * @param property The property name.
- * @param stringLiteral The string literal as criteria value.
- */
-case class StartswithMethodCriteria(@BeanProperty property: CriteriaValue, @BeanProperty stringLiteral: CriteriaValue) extends MethodCriteria
 
 /**
- * EndswithMethodCriteria criteria.
- * Copyright (c) 2016 All rights reserved by Siemens AG
- * 
+ * StartsWithMethodCriteria criteria.
+ *
  * @param property The property name.
  * @param stringLiteral The string literal as criteria value.
  */
-case class EndswithMethodCriteria(@BeanProperty property: CriteriaValue, @BeanProperty stringLiteral: CriteriaValue) extends MethodCriteria
+case class StartsWithMethodCriteria(@BeanProperty property: CriteriaValue, @BeanProperty stringLiteral: CriteriaValue) extends MethodCriteria
+
+/**
+ * EndsWithMethodCriteria criteria.
+ *
+ * @param property The property name.
+ * @param stringLiteral The string literal as criteria value.
+ */
+case class EndsWithMethodCriteria(@BeanProperty property: CriteriaValue, @BeanProperty stringLiteral: CriteriaValue) extends MethodCriteria
 
 /**
  * ContainsMethodCriteria criteria.
- * Copyright (c) 2016 All rights reserved by Siemens AG
- * 
+ *
  * @param property The property name.
  * @param stringLiteral The string literal as criteria value.
  */
@@ -202,8 +197,7 @@ case class ContainsMethodCriteria(@BeanProperty property: CriteriaValue, @BeanPr
 
 /**
  * GeoIntersectsMethodCriteria criteria.
- * Copyright (c) 2016 All rights reserved by Siemens AG
- * 
+ *
  * @param property The property name.
  * @param stringLiteral The string literal as criteria value.
  */

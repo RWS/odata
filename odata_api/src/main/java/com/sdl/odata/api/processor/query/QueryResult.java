@@ -49,12 +49,10 @@ public final class QueryResult {
             return new QueryResult(obj, ResultType.COLLECTION);
         }
 
-        /** Copyright (c) 2016 All rights reserved by Siemens AG */
         // returns raw json
         if (obj instanceof String) {
             return new QueryResult(obj, ResultType.RAW_JSON);
         }
-
         return new QueryResult(obj, ResultType.OBJECT);
     }
 
@@ -107,7 +105,6 @@ public final class QueryResult {
          */
         OBJECT,
         /**
-         * Copyright (c) 2016 All rights reserved by Siemens AG
          * Query returns raw json object.
          */
         RAW_JSON

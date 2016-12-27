@@ -13,11 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 package com.sdl.odata.parser
 
-import scala.util.parsing.combinator.RegexParsers
 import com.sdl.odata.api.parser._
 import com.sdl.odata.api.service.MediaType
+
+import scala.util.parsing.combinator.RegexParsers
 
 trait QueryOptionsParser extends RegexParsers {
   this: ExpressionsParser with NamesAndIdentifiersParser with LiteralsParser with EntityDataModelHelpers =>
@@ -38,20 +54,19 @@ trait QueryOptionsParser extends RegexParsers {
 
   // Query options for named entities: limited subset allowed, must include an 'id' query option
   def entityCastOptions(contextTypeName: String): Parser[List[QueryOption]] =
-    rep(entityCastOption(contextTypeName) <~ "&") ~ id ~ rep("&" ~> entityCastOption(contextTypeName)) ^^ {
-      case left ~ id ~ right => (left :+ id) ++ right
-    }
+  rep(entityCastOption(contextTypeName) <~ "&") ~ id ~ rep("&" ~> entityCastOption(contextTypeName)) ^^ {
+    case left ~ id ~ right => (left :+ id) ++ right
+  }
 
   // Subset of query options allowed for named entities
   def entityCastOption(contextTypeName: String): Parser[QueryOption] =
-    entityIdOption | expand(contextTypeName) | select(contextTypeName)
+  entityIdOption | expand(contextTypeName) | select(contextTypeName)
 
   def id: Parser[IdOption] = "$id=" ~> """[^&]+""".r ^^ IdOption
 
-  /** Copyright (c) 2016 All rights reserved by Siemens AG */
   // apply systemQueryoption added
   def systemQueryOption(contextTypeName: String): Parser[SystemQueryOption] =
-    expand(contextTypeName) | filter(contextTypeName) | format | id | inlinecount | orderby(contextTypeName) |
+  expand(contextTypeName) | filter(contextTypeName) | format | id | inlinecount | orderby(contextTypeName) |
     search(contextTypeName) | select(contextTypeName) | skip | skiptoken | top | apply(contextTypeName)
 
   def expand(contextTypeName: String): Parser[ExpandOption] =
@@ -105,7 +120,7 @@ trait QueryOptionsParser extends RegexParsers {
 
   def expandPathSegment(contextTypeName: String): Parser[ExpandPathSegment] =
     complexPropertyExpandPathSegment(contextTypeName) | complexColPropertyExpandPathSegment(contextTypeName) |
-    navigationPropertyExpandPathSegment(contextTypeName)
+      navigationPropertyExpandPathSegment(contextTypeName)
 
   def complexPropertyExpandPathSegment(contextTypeName: String): Parser[ComplexPropertyExpandPathSegment] =
     (complexProperty(contextTypeName) ~ ("/" ~> opt(qualifiedComplexTypeName <~ "/"))) into {
@@ -170,12 +185,11 @@ trait QueryOptionsParser extends RegexParsers {
     ("$filter=" ~> boolCommonExpr(contextTypeName) ^^ FilterOption)
       .withFailureMessage("The URI contains an incorrectly specified $filter option")
 
-  /** Copyright (c) 2016 All rights reserved by Siemens AG */
   // $apply option parsing
   def apply(contextTypeName: String): Parser[ApplyOption] =
-    ("$apply=" ~> applyExpr(contextTypeName) ^^ ApplyOption)
-      .withFailureMessage("The URI contains an incorrectly specified $apply option")
-      
+  ("$apply=" ~> applyExpr(contextTypeName) ^^ ApplyOption)
+    .withFailureMessage("The URI contains an incorrectly specified $apply option")
+
   def orderby(contextTypeName: String): Parser[OrderByOption] =
     ("$orderby=" ~> rep1sep(orderbyItem(contextTypeName), ",") ^^ OrderByOption)
       .withFailureMessage("The URI contains an incorrectly specified $orderby option")
@@ -199,7 +213,9 @@ trait QueryOptionsParser extends RegexParsers {
   def formatMediaType: Parser[MediaType] = "$format=" ~> (formatAtom | formatJson | formatXML | mediaType)
 
   def formatAtom: Parser[MediaType] = "(?i)atom".r ^^^ MediaType.ATOM_XML
+
   def formatJson: Parser[MediaType] = "(?i)json".r ^^^ MediaType.JSON
+
   def formatXML: Parser[MediaType] = "(?i)xml".r ^^^ MediaType.XML
 
   def mediaType: Parser[MediaType] = mediaTypePart ~ ("/" ~> mediaTypePart) ^^ {
@@ -207,7 +223,8 @@ trait QueryOptionsParser extends RegexParsers {
   }
 
   // String consisting of one or more pchar
-  def mediaTypePart: Parser[String] = """([A-Za-z0-9\-\._~:@\$\&'=!\(\)\*\+,;])+""".r
+  def mediaTypePart: Parser[String] =
+  """([A-Za-z0-9\-\._~:@\$\&'=!\(\)\*\+,;])+""".r
 
   def inlinecount: Parser[CountOption] = ("$count=" ~> booleanValue ^^ CountOption)
     .withFailureMessage("The URI contains an incorrectly specified $count option")
@@ -264,8 +281,8 @@ trait QueryOptionsParser extends RegexParsers {
 
   def selectPathSegment(contextTypeName: String): Parser[SelectPathSegment] =
     complexPropertySelectPathSegment(contextTypeName) | complexColPropertySelectPathSegment(contextTypeName) |
-    primitivePropertySelectPathSegment(contextTypeName) | primitiveColPropertySelectPathSegment(contextTypeName) |
-    navigationPropertySelectPathSegment(contextTypeName)
+      primitivePropertySelectPathSegment(contextTypeName) | primitiveColPropertySelectPathSegment(contextTypeName) |
+      navigationPropertySelectPathSegment(contextTypeName)
 
   def complexPropertySelectPathSegment(contextTypeName: String): Parser[ComplexPropertySelectPathSegment] =
     (complexProperty(contextTypeName) ~ opt("/" ~> qualifiedComplexTypeName)) into {
@@ -301,7 +318,7 @@ trait QueryOptionsParser extends RegexParsers {
 
   // String consisting of one or more qchar-NO-AMP
   def skiptoken: Parser[SkipTokenOption] =
-    "$skiptoken=" ~> """([A-Za-z0-9\-\._~!\(\)\*\+,;:@/\?\$'=])+""".r ^^ SkipTokenOption
+  "$skiptoken=" ~> """([A-Za-z0-9\-\._~!\(\)\*\+,;:@/\?\$'=])+""".r ^^ SkipTokenOption
 
   def aliasAndValue(contextTypeName: String): Parser[AliasAndValueOption] =
     "@" ~> odataIdentifier ~ ("=" ~> commonExpr(contextTypeName)) ^^ {
@@ -314,8 +331,9 @@ trait QueryOptionsParser extends RegexParsers {
 
   // One qchar-no-AMP-EQ-AT-DOLLAR followed by zero or more qchar-no-AMP-EQ
   def customName: Parser[String] =
-    """[A-Za-z0-9\-\._~!\(\)\*\+,;:/\?']([A-Za-z0-9\-\._~!\(\)\*\+,;:@/\?\$'])*""".r
+  """[A-Za-z0-9\-\._~!\(\)\*\+,;:/\?']([A-Za-z0-9\-\._~!\(\)\*\+,;:@/\?\$'])*""".r
 
   // Zero or more qchar-no-AMP
-  def customValue: Parser[String] = """([A-Za-z0-9\-\._~!\(\)\*\+,;:@/\?\$'=])*""".r
+  def customValue: Parser[String] =
+  """([A-Za-z0-9\-\._~!\(\)\*\+,;:@/\?\$'=])*""".r
 }

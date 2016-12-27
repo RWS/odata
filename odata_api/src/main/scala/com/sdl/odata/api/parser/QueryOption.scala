@@ -143,6 +143,5 @@ case class AliasAndValueOption(alias: String, value: Expression) extends QueryOp
 
 case class CustomOption(name: String, value: Option[String]) extends QueryOption
 
-/**Copyright (c) 2016 All Rights Reserved by Siemens.*/
 // ApplyOption
 case class ApplyOption(expression: ApplyExpr) extends SystemQueryOption

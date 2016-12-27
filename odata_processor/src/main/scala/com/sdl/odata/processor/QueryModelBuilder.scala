@@ -12,10 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- * Copyright (c) 2016 All rights reserved by Siemens AG:
- * - Extended applyFilterOption functionality to handle boolean method call expression(startswith, endswith, contains, geo.intersects).
- * - Added functionality to process the $apply option.
  */
 package com.sdl.odata.processor
 
@@ -153,7 +149,6 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
 
   private def applyOption(source: QueryOperation, option: QueryOption): QueryOperation = option match {
     case FilterOption(expression) => applyFilterOption(source, expression)
-    /** Copyright (c) 2016 All rights reserved by Siemens AG */
     // ApplyOption
     case ApplyOption(applyMethod) => applyApplyOption(source, applyMethod)
     case TopOption(count) => LimitOperation(source, count)
@@ -161,8 +156,7 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
     case CountOption(trueFalse) => CountOperation(source, trueFalse)
     case ExpandOption(items) => applyExpandOption(source, items)
     case OrderByOption(items) => applyOrderByOption(source, items)
-    
-    /** Copyright (c) 2016 All rights reserved by Siemens AG */
+
     // SelectOption
     case SelectOption(items) => applySelectOption(source, items)
 
@@ -173,8 +167,6 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
     case _ =>
       throw new ODataNotImplementedException("This type of option is not supported for queries: " + option)
   }
-  
-  /** Copyright (c) 2016 All rights reserved by Siemens AG */
   // SelectOption handling
   private def applySelectOption(source: QueryOperation, items: List[SelectItem]): QueryOperation = {
     def getSelectPath(segment: SelectPathSegment): String = segment match {
@@ -271,8 +263,7 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
 
     ExpandOperation(source, expandFields)
   }
-  
-  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+
   // applyApplyOption to handle ApplyOption
   private def applyApplyOption(source: QueryOperation, applyExp: ApplyExpr): QueryOperation = {
     

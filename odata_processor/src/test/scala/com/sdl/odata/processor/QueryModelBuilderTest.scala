@@ -13,6 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 package com.sdl.odata.processor
 
 import com.sdl.odata.api.parser._
@@ -20,7 +35,6 @@ import com.sdl.odata.api.processor.query._
 import com.sdl.odata.api.service.{MediaType, ODataRequestContext}
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory
 import com.sdl.odata.processor.model.{ODataMobilePhone, ODataPerson}
-import com.sdl.odata.processor.model.ODataMobilePhone
 import org.scalatest.FunSuite
 
 class QueryModelBuilderTest extends FunSuite {
@@ -249,7 +263,7 @@ class QueryModelBuilderTest extends FunSuite {
     val uri = ODataUri("", ResourcePathUri(EntitySetPath("Persons",
       Some(EntityCollectionPath(None, Some(KeyPredicatePath(SimpleKeyPredicate(StringLiteral(id)),
         Some(EntityPath(None, Some(PropertyPath("mobilePhones", None))))))))),
-        List(SkipOption(10), OrderByOption(List(AscendingOrderByItem(PropertyPathExpr("phoneNumber", None)))))))
+      List(SkipOption(10), OrderByOption(List(AscendingOrderByItem(PropertyPathExpr("phoneNumber", None)))))))
 
     val query = new QueryModelBuilder(entityDataModel).build(new ODataRequestContext(null, uri, entityDataModel))
 
@@ -273,28 +287,26 @@ class QueryModelBuilderTest extends FunSuite {
 
     assert(query === expected)
   }
-  
-  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+
   // groupby test
   test("groupby") {
     val uri = ODataUri("", ResourcePathUri(
-        EntitySetPath("Persons", None), 
-         List(ApplyOption(ApplyExpr("groupby", ApplyMethodCallExpr(ApplyPropertyExpr(
-                                    List(EntityPathExpr(None,Some(PropertyPathExpr("id",None))))),
-                                        ApplyFunctionExpr("aggregate","$count as PersonCount")))))))
+      EntitySetPath("Persons", None),
+      List(ApplyOption(ApplyExpr("groupby", ApplyMethodCallExpr(ApplyPropertyExpr(
+        List(EntityPathExpr(None, Some(PropertyPathExpr("id", None))))),
+        ApplyFunctionExpr("aggregate", "$count as PersonCount")))))))
     val query = new QueryModelBuilder(entityDataModel).build(new ODataRequestContext(null, uri, entityDataModel))
     val expected = ODataQuery(ApplyOperation(SelectOperation("Persons", true), "groupby", List("id"), ApplyFunction("aggregate", "$count as PersonCount")))
     assert(query === expected)
   }
-  
-  /** Copyright (c) 2016 All rights reserved by Siemens AG */
+
   // $count test
   test("$count") {
     val uri = ODataUri("", ResourcePathUri(
-        EntitySetPath("Persons", None), 
-         List(CountOption(true))))
+      EntitySetPath("Persons", None),
+      List(CountOption(true))))
     val query = new QueryModelBuilder(entityDataModel).build(new ODataRequestContext(null, uri, entityDataModel))
-    val expected = ODataQuery(CountOperation(SelectOperation("Persons",true),true))
+    val expected = ODataQuery(CountOperation(SelectOperation("Persons", true), true))
     assert(query === expected)
   }
 }
