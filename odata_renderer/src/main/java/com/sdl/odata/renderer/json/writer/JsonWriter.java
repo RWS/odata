@@ -136,6 +136,23 @@ public class JsonWriter {
     }
 
     /**
+     * Writes raw json to the JSON stream.
+     */
+    public String writeRawJson(final String json, final String contextUrl) throws ODataRenderException
+    {
+        this.contextURL = checkNotNull(contextUrl);
+        try {
+            final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            jsonGenerator = JSON_FACTORY.createGenerator(stream, JsonEncoding.UTF8);
+            jsonGenerator.writeRaw(json);
+            jsonGenerator.close();
+            return stream.toString(StandardCharsets.UTF_8.name());
+        } catch (final IOException e) {
+            throw new ODataRenderException("Not possible to write raw json to stream JSON: ", e);
+        }
+    }
+
+    /**
      * Write the given data to the JSON stream. The data to write will be either a single entity or a feed depending on
      * whether it is a single object or list.
      *

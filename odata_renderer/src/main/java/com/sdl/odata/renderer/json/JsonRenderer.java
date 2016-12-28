@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.sdl.odata.api.processor.query.QueryResult.ResultType.COLLECTION;
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.RAW_JSON;
 
 /**
  * Renderer which renders data in OData JSON format.
@@ -69,6 +70,8 @@ public final class JsonRenderer extends AbstractJsonRenderer {
         String json;
         if (result.getType() == COLLECTION) {
             json = writer.writeFeed((List<?>) result.getData(), contextUrl, result.getMeta());
+        } else if (result.getType() == RAW_JSON) {
+            json = writer.writeRawJson(result.getData().toString(), contextUrl);
         } else {
             json = writer.writeEntry(result.getData(), contextUrl);
         }

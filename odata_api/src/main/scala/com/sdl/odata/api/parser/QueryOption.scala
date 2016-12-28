@@ -133,7 +133,6 @@ case class ComplexPropertySelectPathSegment(propertyName: String, derivedTypeNam
 // Select path segment at the end of the path that refers to a primitive or navigation property
 case class TerminalPropertySelectPathSegment(propertyName: String) extends SelectPathSegment
 
-
 case class SkipOption(value: Int) extends SystemQueryOption
 
 case class SkipTokenOption(token: String) extends SystemQueryOption
@@ -143,3 +142,6 @@ case class TopOption(value: Int) extends SystemQueryOption
 case class AliasAndValueOption(alias: String, value: Expression) extends QueryOption
 
 case class CustomOption(name: String, value: Option[String]) extends QueryOption
+
+// ApplyOption
+case class ApplyOption(expression: ApplyExpr) extends SystemQueryOption

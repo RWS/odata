@@ -49,6 +49,10 @@ public final class QueryResult {
             return new QueryResult(obj, ResultType.COLLECTION);
         }
 
+        // returns raw json
+        if (obj instanceof String) {
+            return new QueryResult(obj, ResultType.RAW_JSON);
+        }
         return new QueryResult(obj, ResultType.OBJECT);
     }
 
@@ -99,6 +103,10 @@ public final class QueryResult {
          * Query returns value object.
          * Data can simple or entity types.
          */
-        OBJECT
+        OBJECT,
+        /**
+         * Query returns raw json object.
+         */
+        RAW_JSON
     }
 }
