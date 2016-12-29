@@ -17,6 +17,7 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataActionClientQuery;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -92,7 +93,7 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
         private Class<?> returnType;
         private String actionName;
         private Map<String, String> actionParameterMap;
-        private Set<String> omitCacheProperties;
+        private Set<String> omitCacheProperties = new HashSet<>();
 
         public Builder withReturnType(Class<?> clazz) {
             returnType = clazz;
