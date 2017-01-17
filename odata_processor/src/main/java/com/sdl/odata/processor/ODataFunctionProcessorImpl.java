@@ -125,12 +125,44 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
                                          Option<scala.collection.immutable.Map<String, String>> functionCallParameters,
                                          Set<Parameter> parameters)
             throws ODataUnmarshallingException {
+        StringBuilder validationMessage = new StringBuilder();
         if (functionCallParameters.isDefined() && !functionCallParameters.get().isEmpty()) {
             Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(functionCallParameters.get());
+            validateAndSetParameters(functionOperationObject, parameters, parametersMap, validationMessage);
+        } else {
+            validateAndSetParameters(functionOperationObject, parameters, null, validationMessage);
+        }
+        if (!"".equals(validationMessage.toString())) {
+            throwValidationException(validationMessage);
+        }
+    }
+
+    private void validateAndSetParameters(Object functionOperationObject, Set<Parameter> parameters,
+                                          Map<String, String> parametersMap, StringBuilder validationMessage)
+            throws ODataUnmarshallingException {
+        if (parametersMap == null) {
+            parameters.stream().filter(parameter -> !parameter.isNullable()).
+                    forEach(parameter -> validationMessage.append(parameter.getName() + ", "));
+        } else {
             for (Parameter parameter : parameters) {
-                ParameterTypeUtil.setParameter(functionOperationObject, parameter.getJavaField(),
-                        parametersMap.get(parameter.getName()));
+                String parameterName = parameter.getName();
+                String parameterValue = parametersMap.get(parameterName);
+                if (!parameter.isNullable() && parameterValue == null) {
+                    validationMessage.append(parameterName + ", ");
+                }
+                if (parameterValue != null) {
+                    ParameterTypeUtil.setParameter(functionOperationObject, parameter.getJavaField(),
+                            parameterValue);
+                }
             }
         }
     }
+
+    private void throwValidationException(StringBuilder validationMessage)
+            throws ODataUnmarshallingException {
+        validationMessage.insert(0, "Cannot send null value for not nullable field(s) ");
+        throw new ODataUnmarshallingException(validationMessage.delete(validationMessage.
+                lastIndexOf(", "), validationMessage.length()).toString());
+    }
+
 }
