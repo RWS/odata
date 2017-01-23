@@ -18,6 +18,8 @@ package com.sdl.odata.api.mapper;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.processor.datasource.ODataDataSourceException;
 
+import java.util.List;
+
 /**
  * Converts OData entities to Datasource entities and vice versa.
  *
@@ -37,15 +39,40 @@ public interface EntityMapper<T, U> {
     U convertODataEntityToDS(T odataEntity, EntityDataModel entityDataModel) throws ODataDataSourceException;
 
     /**
+     * Convert an OData entities list to a Datasource entities list.
+     *
+     * @param odataEntities   The list of OData entities.
+     * @param entityDataModel The entity data model.
+     * @return The list of Datasource entities.
+     * @throws ODataDataSourceException If an error happens while converting the entity.
+     */
+    List<U> convertODataEntitiesListToDS(List<T> odataEntities, EntityDataModel entityDataModel)
+            throws ODataDataSourceException;
+
+    /**
      * Convert a Datasource entity to an OData entity.
      *
-     * @param <R> The odata entity result type
-     * @param dsEntity        The Datasource entity.
+     * @param <R>              The odata entity result type
+     * @param dsEntity         The Datasource entity.
      * @param odataEntityClass The class of the OData entity to create.
      * @param entityDataModel  The entity data model.
      * @return The OData entity.
      * @throws ODataDataSourceException If an error happens while converting the entity.
      */
     <R extends T> R convertDSEntityToOData(U dsEntity, Class<R> odataEntityClass, EntityDataModel entityDataModel)
+            throws ODataDataSourceException;
+
+    /**
+     * Convert a Datasource entities list to an OData entities list.
+     *
+     * @param <R>              The odata entity result type
+     * @param dsEntities       The list of Datasource entities.
+     * @param odataEntityClass The class of the OData entity to create.
+     * @param entityDataModel  The entity data model.
+     * @return The list of OData entities.
+     * @throws ODataDataSourceException If an error happens while converting the entity.
+     */
+    <R extends T> List<R> convertDSEntitiesListToOData(List<U> dsEntities, Class<R> odataEntityClass,
+                                                             EntityDataModel entityDataModel)
             throws ODataDataSourceException;
 }
