@@ -27,7 +27,7 @@
 
     <groupId>com.sdl</groupId>
     <artifactId>odata</artifactId>
-    <version>2.3.5</version>
+    <version>2.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OData v4 Framework</name>
@@ -84,7 +84,7 @@
         <connection>scm:git:git@github.com:sdl/odata.git</connection>
         <developerConnection>scm:git:git@github.com:sdl/odata.git</developerConnection>
         <url>git@github.com:sdl/odata.git</url>
-        <tag>v2.3.5</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
