@@ -97,4 +97,8 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
     protected boolean isSingletonEntity() {
         return isSingletonEntity;
     }
+
+    public String getCacheKey() {
+        return getQuery();
+    }
 }

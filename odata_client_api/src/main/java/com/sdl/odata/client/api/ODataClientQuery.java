@@ -36,8 +36,9 @@ public interface ODataClientQuery extends Serializable {
 
     /**
      * Returns result type of OData execution result.
-     * @return  result type of executed result
+     * @return result type of executed result
      */
     Class<?> getEntityType();
 
+    String getCacheKey();
 }
