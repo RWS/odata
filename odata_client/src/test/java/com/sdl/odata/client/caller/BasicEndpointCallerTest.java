@@ -35,10 +35,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.sdl.odata.api.service.MediaType.JSON;
 import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_HOST_NAME;
@@ -55,9 +55,8 @@ import static org.junit.Assert.assertThat;
 /**
  * Integration test for {@link BasicEndpointCaller}.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfiguration.class)
-@WebIntegrationTest({"server.port=0", "management.port=0"})
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TestConfiguration.class)
 @DirtiesContext
 public class BasicEndpointCallerTest {
     private static final String RESPONSE = "/response.xml";
