@@ -103,19 +103,19 @@
         <apache-procrun.version>1.0</apache-procrun.version>
         <brave.version>3.8.0</brave.version>
         <guava.version>18.0</guava.version>
-        <httpcomponents.version>4.5.2</httpcomponents.version>
-        <jackson.version>2.8.3</jackson.version>
-        <jacoco.version>0.7.7.201606060606</jacoco.version>
+        <httpcomponents.version>4.5.3</httpcomponents.version>
+        <jackson.version>2.8.6</jackson.version>
+        <jacoco.version>0.7.9</jacoco.version>
         <junit.version>4.12</junit.version>
-        <logback.version>1.1.7</logback.version>
+        <logback.version>1.1.8</logback.version>
         <mockito.version>1.10.5</mockito.version>
         <scala.version>2.11.7</scala.version>
         <scala-parser-combinators.version>1.0.4</scala-parser-combinators.version>
         <scalatest.version>2.2.6</scalatest.version>
         <servlet-api.version>3.0.1</servlet-api.version>
-        <slf4j.version>1.7.12</slf4j.version>
-        <spring.version>4.3.3.RELEASE</spring.version>
-        <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
+        <slf4j.version>1.7.23</slf4j.version>
+        <spring.version>4.3.6.RELEASE</spring.version>
+        <spring-boot.version>1.5.1.RELEASE</spring-boot.version>
         <typesafe-config.version>1.2.0</typesafe-config.version>
     </properties>
 
