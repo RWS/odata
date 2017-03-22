@@ -27,7 +27,7 @@
 
     <groupId>com.sdl</groupId>
     <artifactId>odata</artifactId>
-    <version>2.3-SNAPSHOT</version>
+    <version>2.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OData v4 Framework</name>
@@ -66,12 +66,6 @@
     </licenses>
 
     <developers>
-        <developer>
-            <name>Renze de Vries</name>
-            <email>rdevries@sdl.com</email>
-            <organization>sdl</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
         <developer>
             <name>Ben Middleton</name>
             <email>bmiddleton@sdl.com</email>
