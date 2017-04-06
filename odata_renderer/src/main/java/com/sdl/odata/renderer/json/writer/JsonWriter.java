@@ -50,6 +50,7 @@ import static com.sdl.odata.JsonConstants.ID;
 import static com.sdl.odata.JsonConstants.TYPE;
 import static com.sdl.odata.JsonConstants.VALUE;
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
+import static com.sdl.odata.ODataRendererUtils.isForceExpandParamSet;
 import static com.sdl.odata.api.edm.model.MetaType.COMPLEX;
 import static com.sdl.odata.api.edm.model.MetaType.ENTITY;
 import static com.sdl.odata.api.parser.ODataUriUtil.asJavaList;
@@ -73,6 +74,7 @@ public class JsonWriter {
     private EntitySet entitySet;
     private List<String> expandedProperties = new ArrayList<>();
     private String contextURL = null;
+    private final boolean forceExpand;
 
     /**
      * Create an OData JSON Writer.
@@ -84,6 +86,7 @@ public class JsonWriter {
         this.odataUri = checkNotNull(oDataUri);
         this.entityDataModel = checkNotNull(entityDataModel);
         expandedProperties.addAll(asJavaList(getSimpleExpandPropertyNames(oDataUri)));
+        forceExpand = isForceExpandParamSet(odataUri);
     }
 
     /**
@@ -238,7 +241,7 @@ public class JsonWriter {
                     if (property instanceof NavigationProperty) {
                         LOG.debug("Start marshalling navigation property: {}", property.getName());
                         NavigationProperty navProperty = (NavigationProperty) property;
-                        if (isExpandedProperty(navProperty)) {
+                        if (forceExpand || isExpandedProperty(navProperty)) {
                             final Object value = getValueFromProperty(object, navProperty);
                             if (value != null) {
                                 if (navProperty.isCollection()) {

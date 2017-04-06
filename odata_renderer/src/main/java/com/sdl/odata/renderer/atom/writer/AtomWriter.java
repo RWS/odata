@@ -54,6 +54,7 @@ import static com.sdl.odata.AtomConstants.TITLE;
 import static com.sdl.odata.AtomConstants.TYPE;
 import static com.sdl.odata.AtomConstants.XML_VERSION;
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
+import static com.sdl.odata.ODataRendererUtils.isForceExpandParamSet;
 import static com.sdl.odata.api.parser.ODataUriUtil.asJavaList;
 import static com.sdl.odata.api.parser.ODataUriUtil.getSimpleExpandPropertyNames;
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
@@ -88,6 +89,7 @@ public class AtomWriter {
     private final boolean isWriteOperation;
     private final boolean isDeepInsert;
     private final boolean isActionCall;
+    private final boolean forceExpand;
 
     /**
      * Creates an instance of {@link AtomWriter} specifying the local date and time to stamp in the XML to write.
@@ -111,6 +113,7 @@ public class AtomWriter {
         this.isActionCall = isActionCall;
 
         expandedProperties.addAll(asJavaList(getSimpleExpandPropertyNames(oDataUri)));
+        forceExpand = isForceExpandParamSet(oDataUri);
     }
 
     /**
@@ -356,7 +359,7 @@ public class AtomWriter {
                             formatEntityKey(entityDataModel, value)));
                 }
             }
-        } else if (isActionCall || expandedProperties.contains(property.getName())) {
+        } else if (isActionCall || expandedProperties.contains(property.getName()) || forceExpand) {
             xmlWriter.writeAttribute(HREF, getHrefAttributeValue(entity, property));
 
             final Object value = getPropertyValue(property, entity);

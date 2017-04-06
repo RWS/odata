@@ -20,14 +20,21 @@ import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import scala.Option;
+import scala.collection.JavaConversions;
+
+import java.util.Map;
 
 import static com.sdl.odata.JsonConstants.METADATA;
+import static com.sdl.odata.api.parser.ODataUriUtil.getFunctionCallParameters;
+import static com.sdl.odata.api.parser.ODataUriUtil.isFunctionCallUri;
 import static com.sdl.odata.api.parser.ODataUriUtil.getContextUrl;
 
 /**
  * This class contains render utility classes.
  */
 public final class ODataRendererUtils {
+    private static final String FORCE_EXPAND_PARAM = "expand";
+
     private ODataRendererUtils() {
     }
 
@@ -90,8 +97,9 @@ public final class ODataRendererUtils {
     /**
      * Check if the reference is not null.
      * This differs from Guava that throws Illegal Argument Exception
+     *
      * @param reference reference
-     * @param <T> type
+     * @param <T>       type
      * @return reference or exception
      */
     public static <T> T checkNotNull(T reference) {
@@ -104,8 +112,9 @@ public final class ODataRendererUtils {
     /**
      * Check if the reference is not null.
      * This differs from Guava that throws Illegal Argument Exception + message.
+     *
      * @param reference reference
-     * @param <T> type
+     * @param <T>       type
      * @return reference or exception
      */
     public static <T> T checkNotNull(T reference, String message, Object... args) {
@@ -114,4 +123,25 @@ public final class ODataRendererUtils {
         }
         return reference;
     }
+
+    /**
+     * Checks if we are trying to force expand all Nav properties for function calls by looking at expand parameter.
+     * @param oDataUri  The odata uri
+     * @return
+     */
+    public static boolean isForceExpandParamSet(ODataUri oDataUri) {
+        if (isFunctionCallUri(oDataUri)) {
+            // Check if we have expand param set to true
+            Option<scala.collection.immutable.Map<String, String>> params = getFunctionCallParameters(oDataUri);
+
+            if (params.isDefined() && !params.get().isEmpty()) {
+                Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(params.get());
+                if (parametersMap.containsKey(FORCE_EXPAND_PARAM)) {
+                    return Boolean.parseBoolean(parametersMap.get(FORCE_EXPAND_PARAM));
+                }
+            }
+        }
+        return false;
+    }
+
 }
