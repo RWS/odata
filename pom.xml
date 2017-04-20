@@ -116,6 +116,7 @@
         <slf4j.version>1.7.12</slf4j.version>
         <spring.version>4.3.3.RELEASE</spring.version>
         <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
+        <tomcat.version>8.5.13</tomcat.version>
         <typesafe-config.version>1.2.0</typesafe-config.version>
     </properties>
 
@@ -307,6 +308,23 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- Override Tomcat Version supplied in spring-boot-starter-tomcat -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat.version}</version>
             </dependency>
 
             <!-- Tracing libraries for sending spans to zipkin -->
