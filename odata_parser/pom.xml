@@ -36,7 +36,7 @@
     <dependencies>
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
-            <artifactId>scala-parser-combinators_2.11</artifactId>
+            <artifactId>scala-parser-combinators_2.12</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sdl</groupId>
@@ -49,7 +49,7 @@
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.11</artifactId>
+            <artifactId>scalatest_2.12</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
