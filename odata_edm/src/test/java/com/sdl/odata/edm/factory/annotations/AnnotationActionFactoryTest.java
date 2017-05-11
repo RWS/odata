@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.edm.factory.annotations;
 
-import com.google.common.collect.Iterables;
 import com.sdl.odata.api.edm.model.Action;
 import com.sdl.odata.test.model.ActionSample;
 import com.sdl.odata.test.model.DefaultActionSample;
@@ -40,7 +39,7 @@ public class AnnotationActionFactoryTest {
         assertThat(action.isBound(), is(true));
         assertThat(action.getEntitySetPath(), is("ODataDemoEntitySetPath"));
         assertThat(action.getParameters().size(), is(5));
-        assertTrue(Iterables.all(action.getParameters(), parameter -> parameter.getName().equals("StringParameter")
+        assertTrue(action.getParameters().stream().allMatch(parameter -> parameter.getName().equals("StringParameter")
                 || parameter.getName().equals("NumberParameter")
                 || parameter.getName().equals("parametersMap")
                 || parameter.getName().equals("parametersMapList")
@@ -57,7 +56,7 @@ public class AnnotationActionFactoryTest {
         assertThat(action.isBound(), is(false));
         assertThat(action.getEntitySetPath(), is(""));
         assertThat(action.getParameters().size(), is(1));
-        assertTrue(Iterables.all(action.getParameters(), parameter -> parameter.getName().equals("someParameter")));
+        assertTrue(action.getParameters().stream().allMatch(parameter -> parameter.getName().equals("someParameter")));
         assertThat(action.getReturnType(), is("BankAccounts"));
     }
 

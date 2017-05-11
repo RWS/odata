@@ -20,7 +20,7 @@ import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import scala.Option;
-import scala.collection.JavaConversions;
+import scala.collection.JavaConverters;
 
 import java.util.Map;
 
@@ -127,7 +127,7 @@ public final class ODataRendererUtils {
     /**
      * Checks if we are trying to force expand all Nav properties for function calls by looking at expand parameter.
      * @param oDataUri  The odata uri
-     * @return
+     * @return boolean if force expand parameter is set
      */
     public static boolean isForceExpandParamSet(ODataUri oDataUri) {
         if (isFunctionCallUri(oDataUri)) {
@@ -135,7 +135,7 @@ public final class ODataRendererUtils {
             Option<scala.collection.immutable.Map<String, String>> params = getFunctionCallParameters(oDataUri);
 
             if (params.isDefined() && !params.get().isEmpty()) {
-                Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(params.get());
+                Map<String, String> parametersMap = JavaConverters.mapAsJavaMap(params.get());
                 if (parametersMap.containsKey(FORCE_EXPAND_PARAM)) {
                     return Boolean.parseBoolean(parametersMap.get(FORCE_EXPAND_PARAM));
                 }

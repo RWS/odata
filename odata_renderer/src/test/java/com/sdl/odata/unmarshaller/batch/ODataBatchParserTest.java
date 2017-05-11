@@ -23,7 +23,7 @@ import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.parser.ODataRequestComponent;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
 import org.junit.Test;
-import scala.collection.JavaConversions;
+import scala.collection.JavaConverters;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -51,21 +51,21 @@ public class ODataBatchParserTest extends UnmarshallerTest {
 
         // check batch request components
         List<ODataRequestComponent> batchRequestComponents = Lists.newArrayList(
-                JavaConversions.asJavaCollection(batchRequestContent.requestComponents()));
+                JavaConverters.asJavaCollection(batchRequestContent.requestComponents()));
         assertFalse(batchRequestComponents.isEmpty());
         assertEquals(1, batchRequestComponents.size());
         assertTrue(batchRequestComponents.get(0) instanceof BatchRequestComponent);
         BatchRequestComponent batchRequestComponent = (BatchRequestComponent) batchRequestComponents.get(0);
 
         // check batch request component headers
-        Map<String, String> batchRequestComponentHeaders = JavaConversions.mapAsJavaMap(
+        Map<String, String> batchRequestComponentHeaders = JavaConverters.mapAsJavaMap(
                 batchRequestComponent.getHeaders().headers());
         assertEquals(2, batchRequestComponentHeaders.size());
         assertEquals("localhost", batchRequestComponentHeaders.get("Host"));
         assertEquals("binary", batchRequestComponentHeaders.get("Content-Transfer-Encoding"));
 
         // check batch request component details
-        Map<String, String> batchRequestComponentDetails = JavaConversions.mapAsJavaMap(
+        Map<String, String> batchRequestComponentDetails = JavaConverters.mapAsJavaMap(
                 batchRequestComponent.getRequestDetails());
         assertEquals(4, batchRequestComponentDetails.size());
         assertEquals("GET", batchRequestComponentDetails.get("RequestType"));

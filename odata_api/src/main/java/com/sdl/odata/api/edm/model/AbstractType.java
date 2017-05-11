@@ -37,7 +37,7 @@ public enum AbstractType implements Type {
 
     private final String name;
 
-    private AbstractType(String name) {
+    AbstractType(String name) {
         this.name = name;
     }
 

@@ -143,9 +143,9 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
   }
 
   private def getRenderer(actorContext: ODataActorContext, data: QueryResult): Option[ODataRenderer] = {
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
     val r = rendererFactory.getRenderers
-    r.map(renderer => (renderer.score(actorContext.requestContext, data), renderer))
+    r.asScala.map(renderer => (renderer.score(actorContext.requestContext, data), renderer))
       .filter({ case (score, _) => score > 0})
       .sortBy({ case (score, _) => -score})
       .map({ case (_, renderer) => renderer})

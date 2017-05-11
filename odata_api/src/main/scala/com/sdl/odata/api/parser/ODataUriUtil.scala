@@ -783,8 +783,8 @@ object ODataUriUtil {
    * @return The converted Java list.
    */
   def asJavaList[T](list: List[T]): java.util.List[T] = {
-    import scala.collection.JavaConversions._
-    list
+    import scala.collection.JavaConverters._
+    list.asJava
   }
 
   /**
@@ -794,8 +794,8 @@ object ODataUriUtil {
    * @return The converted Scala list.
    */
   def asScalaList[T](list: java.util.List[T]): List[T] = {
-    import scala.collection.JavaConversions._
-    list.toList
+    import scala.collection.JavaConverters._
+    list.asScala.toList
   }
 
   /**
@@ -807,8 +807,8 @@ object ODataUriUtil {
    * @return THe converted Java map
    */
   def asJavaMap[K, V](map: Map[K, V]): java.util.Map[K, V] = {
-    import scala.collection.JavaConversions._
-    map
+    import scala.collection.JavaConverters._
+    map.asJava
   }
 
   /**
@@ -818,7 +818,7 @@ object ODataUriUtil {
    * @return The converted Scala map.
    */
   def asScalaMap[K, V](map: java.util.Map[K, V]): Map[K, V] = {
-    import scala.collection.JavaConversions._
-    map.toMap
+    import scala.collection.JavaConverters._
+    map.asScala.toMap
   }
 }
