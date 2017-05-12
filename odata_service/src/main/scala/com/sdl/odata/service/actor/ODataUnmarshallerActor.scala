@@ -43,10 +43,11 @@ class ODataUnmarshallerActor @Autowired() (actorProducer: ActorProducer, unmarsh
   }
 
   private def getUnmarshaller(actorContext: ODataActorContext): Option[ODataUnmarshaller] = {
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
+
     val u = unmarshallerFactory.getUnmarshallers
 
-    u.map(unmarshaller => (unmarshaller.score(actorContext.requestContext), unmarshaller))
+    u.asScala.map(unmarshaller => (unmarshaller.score(actorContext.requestContext), unmarshaller))
       .filter({ case (score, _) => score > 0 })
       .sortBy({ case (score, _) => -score })
       .map({ case (_, unmarshaller) => unmarshaller })

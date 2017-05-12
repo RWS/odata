@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import scala.Option;
-import scala.collection.JavaConversions;
+import scala.collection.JavaConverters;
 
 import java.util.Map;
 import java.util.Set;
@@ -127,7 +127,7 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
             throws ODataUnmarshallingException {
         StringBuilder validationMessage = new StringBuilder();
         if (functionCallParameters.isDefined() && !functionCallParameters.get().isEmpty()) {
-            Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(functionCallParameters.get());
+            Map<String, String> parametersMap = JavaConverters.mapAsJavaMap(functionCallParameters.get());
             validateAndSetParameters(functionOperationObject, parameters, parametersMap, validationMessage);
         } else {
             validateAndSetParameters(functionOperationObject, parameters, null, validationMessage);

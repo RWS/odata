@@ -138,8 +138,7 @@ public class JsonWriter {
     /**
      * Writes raw json to the JSON stream.
      */
-    public String writeRawJson(final String json, final String contextUrl) throws ODataRenderException
-    {
+    public String writeRawJson(final String json, final String contextUrl) throws ODataRenderException {
         this.contextURL = checkNotNull(contextUrl);
         try {
             final ByteArrayOutputStream stream = new ByteArrayOutputStream();

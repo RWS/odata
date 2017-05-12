@@ -56,7 +56,6 @@ public class AtomWriterTest extends WriterTest {
             = "/xml/ExpandedPropertiesNoLinksSample.xml";
     private static final String EXPECTED_COMPLEX_KEY_ENTITY_PATH = "/xml/ComplexKeySample.xml";
     private static final String EXPECTED_ABSTRACT_ENTITY_PATH = "/xml/AbstractEntitySample.xml";
-    private ZonedDateTime dateTime;
 
 
     @Test
@@ -214,7 +213,7 @@ public class AtomWriterTest extends WriterTest {
                                        String expectedEntityPath, boolean isWriteOperation)
             throws ODataRenderException, IOException, TransformerException {
 
-        dateTime = ZonedDateTime.of(2014, 5, 2, 0, 0, 0, 0, ZoneId.of("UTC").normalized());
+        ZonedDateTime dateTime = ZonedDateTime.of(2014, 5, 2, 0, 0, 0, 0, ZoneId.of("UTC").normalized());
 
         AtomWriter writer = new AtomWriter(dateTime, odataUri, entityDataModel,
                 new ODataV4AtomNSConfigurationProvider(), isWriteOperation, false);

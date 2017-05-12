@@ -29,7 +29,7 @@ import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
  */
 final class AnnotationComplexTypeFactory extends AnnotationStructuredTypeFactory<ComplexType> {
 
-    public AnnotationComplexTypeFactory(TypeNameResolver typeNameResolver) {
+    AnnotationComplexTypeFactory(TypeNameResolver typeNameResolver) {
         super(typeNameResolver);
     }
 
