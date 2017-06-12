@@ -129,7 +129,6 @@ public class AtomWriter {
         this.entityDataModel = checkNotNull(entityDataModel);
         this.isWriteOperation = checkNotNull(isWriteOperation);
         this.nsConfigurationProvider = checkNotNull(nsConfigurationProvider);
-        // We currently don't have a mechanism to specify that we wish to write an entity with deep insert entities.
         this.isDeepInsert = isDeepInsert;
         this.isActionCall = isActionCall;
 
@@ -351,7 +350,7 @@ public class AtomWriter {
         xmlWriter.writeAttribute(TYPE, String.format(linkType, ATOM_XML.toString()));
         xmlWriter.writeAttribute(TITLE, property.getName());
 
-        // Deep inserts allow us to create referenced entities as part of a single create entity operatio. See spec:
+        // Deep inserts allow us to create referenced entities as part of a single create entity operation. See spec:
         // http://docs.oasis-open.org/odata/odata-atom-format/v4.0/cs02/odata-atom-format-v4.0-cs02.html#_Toc372792739:
         if (isDeepInsert) {
             // Handle deep insert create operations (only applicable to POST)
