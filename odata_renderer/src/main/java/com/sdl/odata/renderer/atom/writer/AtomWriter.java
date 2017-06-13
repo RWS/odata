@@ -96,22 +96,40 @@ public class AtomWriter {
     /**
      * Creates an instance of {@link AtomWriter} specifying the local date and time to stamp in the XML to write.
      *
-     * @param dateTime         The given date and time. It can not be {@code null}.
-     * @param oDataUri         The OData parsed URI. It can not be {@code null}.
-     * @param entityDataModel  The <i>Entity Data Model (EDM)</i>. It can not be {@code null}.
-     * @param isWriteOperation True is this is a write operation or false if its a read operation
+     * @param dateTime                The given date and time. It can not be {@code null}.
+     * @param oDataUri                The OData parsed URI. It can not be {@code null}.
+     * @param entityDataModel         The <i>Entity Data Model (EDM)</i>. It can not be {@code null}.
+     * @param nsConfigurationProvider The configuration provider for namespaces
+     * @param isWriteOperation        True if this is a write operation or false if its a read operation
+     * @param isActionCall            True if this is a action call
      */
     public AtomWriter(ZonedDateTime dateTime, ODataUri oDataUri, EntityDataModel entityDataModel,
                       AtomNSConfigurationProvider nsConfigurationProvider,
                       boolean isWriteOperation, boolean isActionCall) {
+        this(dateTime, oDataUri, entityDataModel, nsConfigurationProvider, isWriteOperation, isActionCall, false);
+    }
+
+    /**
+     * Creates an instance of {@link AtomWriter} specifying the local date and time to stamp in the XML to write.
+     *
+     * @param dateTime                The given date and time. It can not be {@code null}.
+     * @param oDataUri                The OData parsed URI. It can not be {@code null}.
+     * @param entityDataModel         The <i>Entity Data Model (EDM)</i>. It can not be {@code null}.
+     * @param nsConfigurationProvider The configuration provider for namespaces
+     * @param isWriteOperation        True if this is a write operation or false if its a read operation
+     * @param isActionCall            True if this is a action call
+     * @param isDeepInsert            True if this is a deep insert
+     */
+    public AtomWriter(ZonedDateTime dateTime, ODataUri oDataUri, EntityDataModel entityDataModel,
+                      AtomNSConfigurationProvider nsConfigurationProvider,
+                      boolean isWriteOperation, boolean isActionCall, boolean isDeepInsert) {
 
         this.dateTime = checkNotNull(dateTime);
         this.oDataUri = checkNotNull(oDataUri);
         this.entityDataModel = checkNotNull(entityDataModel);
         this.isWriteOperation = checkNotNull(isWriteOperation);
         this.nsConfigurationProvider = checkNotNull(nsConfigurationProvider);
-        // We currently don't have a mechanism to specify that we wish to write an entity with deep insert entities.
-        this.isDeepInsert = false;
+        this.isDeepInsert = isDeepInsert;
         this.isActionCall = isActionCall;
 
         expandedProperties.addAll(asJavaList(getSimpleExpandPropertyNames(oDataUri)));
@@ -332,7 +350,7 @@ public class AtomWriter {
         xmlWriter.writeAttribute(TYPE, String.format(linkType, ATOM_XML.toString()));
         xmlWriter.writeAttribute(TITLE, property.getName());
 
-        // Deep inserts allow us to create referenced entities as part of a single create entity operatio. See spec:
+        // Deep inserts allow us to create referenced entities as part of a single create entity operation. See spec:
         // http://docs.oasis-open.org/odata/odata-atom-format/v4.0/cs02/odata-atom-format-v4.0-cs02.html#_Toc372792739:
         if (isDeepInsert) {
             // Handle deep insert create operations (only applicable to POST)
