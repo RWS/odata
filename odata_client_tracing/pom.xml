@@ -60,6 +60,10 @@
             <groupId>io.zipkin.brave</groupId>
             <artifactId>brave-spancollector-http</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter</groupId>
+            <artifactId>zipkin-sender-urlconnection</artifactId>
+        </dependency>
 
         <!-- Test dependencies -->
         <dependency>

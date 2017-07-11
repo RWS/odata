@@ -26,9 +26,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.POST;
-import static java.util.Arrays.asList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,7 +47,7 @@ public class BatchMethodHandlerTest extends MethodHandlerTest {
             throws UnsupportedEncodingException {
         ODataRequestContext requestContext = super.createRequestContext(POST, true, entityDataModel);
         ChangeSetEntity entity = new ChangeSetEntity("1", requestContext, odataEntity);
-        return new BatchMethodHandler(requestContext, dataSourceFactoryMock, asList(entity));
+        return new BatchMethodHandler(requestContext, dataSourceFactoryMock, Collections.singletonList(entity));
     }
 
     @Test(expected = ODataException.class)

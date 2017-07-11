@@ -17,7 +17,6 @@ package com.sdl.odata.unmarshaller.json.core;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.NavigationProperty;
-import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import org.slf4j.Logger;
@@ -79,14 +78,13 @@ public class JsonNullableValidator {
     public void ensureNavigationProperties(StructuredType entityType) throws ODataException {
         List<String> missingNavigationPropertyNames = new ArrayList<>();
 
-        for (StructuralProperty property : entityType.getStructuralProperties()) {
-            if ((property instanceof NavigationProperty) && !property.isNullable()) {
-                LOG.debug("Validating non-nullable NavigationProperty property : {}", property.getName());
-                if (!links.containsKey(property.getName())) {
-                    missingNavigationPropertyNames.add(property.getName());
-                }
+        entityType.getStructuralProperties().stream().filter(property -> (property instanceof NavigationProperty)
+                && !property.isNullable()).forEach(property -> {
+            LOG.debug("Validating non-nullable NavigationProperty property : {}", property.getName());
+            if (!links.containsKey(property.getName())) {
+                missingNavigationPropertyNames.add(property.getName());
             }
-        }
+        });
         if (missingNavigationPropertyNames.size() != 0) {
             StringJoiner joiner = new StringJoiner(",");
             missingNavigationPropertyNames.forEach(joiner::add);
