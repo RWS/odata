@@ -27,7 +27,7 @@
 
     <groupId>com.sdl</groupId>
     <artifactId>odata</artifactId>
-    <version>2.4-SNAPSHOT</version>
+    <version>2.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OData v4 Framework</name>
