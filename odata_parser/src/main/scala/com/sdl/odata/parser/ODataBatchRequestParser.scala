@@ -167,7 +167,7 @@ class ODataBatchRequestParser extends RegexParsers {
     }
   }
 
-  def getRequestURI: Parser[Map[String, String]] = opt("^(http|https):\\/\\/.*?(:)\\d{0,5}".r) ~ opt("\\/.+\\/(?=[a-zA-Z])".r) ~ opt("\\$.d{0,5}\\/".r) ~
+  def getRequestURI: Parser[Map[String, String]] = opt("^(http|https):\\/\\/[^\\/]*[:\\d{0,5}]?".r) ~ opt("\\/.+\\/(?=[a-zA-Z])".r) ~ opt("\\$.d{0,5}\\/".r) ~
     ("[^\\s]+".r <~ opt(" HTTP/\\d\\.\\d".r)) <~ lineSeparator ^^ {
     case hostComponent ~ relativePath ~ contentId ~ reqUri => {
       var components = Map("RequestEntity" -> reqUri)
