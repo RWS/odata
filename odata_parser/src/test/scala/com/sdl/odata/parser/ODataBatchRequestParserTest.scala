@@ -440,4 +440,57 @@ class ODataBatchRequestParserTest extends FunSuite {
     assert(noWhiteSpacesResult != null)
     assertEquals(whiteSpacesResult, noWhiteSpacesResult)
   }
+
+  test("Batch request with full urls") {
+    val fileContents = "--batch_1f5bbc13-ac60-458e-988f-18c4a8c09cae" + newLine +
+      "Content-Type: multipart/mixed; boundary=changeset_926a7f6a-5307-4ce7-91ad-397ff2f83ff5" + newLine + newLine +
+      "--changeset_926a7f6a-5307-4ce7-91ad-397ff2f83ff5" + newLine +
+      "Content-Type: application/http" + newLine +
+      "Content-Transfer-Encoding: binary" + newLine +
+      "Content-ID: 666" + newLine + newLine +
+      "POST https://secure-host/service.root/applications HTTP/1.1" + newLine +
+      "OData-Version: 4.0" + newLine +
+      "OData-MaxVersion: 4.0" + newLine +
+      "Content-Type: application/json;odata.metadata=minimal" + newLine +
+      "Accept: application/json;odata.metadata=minimal" + newLine +
+      "User-Agent: Microsoft ADO.NET Data Services" + newLine + newLine +
+      "{ \"some\" : \"content\" }" + newLine + "" + newLine +
+      "--changeset_926a7f6a-5307-4ce7-91ad-397ff2f83ff5--" + newLine +
+      "--batch_1f5bbc13-ac60-458e-988f-18c4a8c09cae--"
+
+    implicit val parsedContent = batchRequestParser.parseBatch(fileContents)
+
+    assert(parsedContent != null)
+    assert(parsedContent.requestComponents != null)
+    assert(parsedContent.requestComponents.size == 1)
+
+    assert(parsedContent.requestComponents(0).isInstanceOf[ChangeSetRequestComponent])
+
+
+    val changesetRequestComponent = parsedContent.requestComponents(0).asInstanceOf[ChangeSetRequestComponent]
+
+    assert(changesetRequestComponent.getHeaders() != null)
+    assert(changesetRequestComponent.getHeaders().headers.size == 0)
+
+    assert(changesetRequestComponent.changesetRequests != null)
+
+    assert(changesetRequestComponent.changesetRequests.size == 1)
+
+    val changeSetOperation1 = changesetRequestComponent.changesetRequests(0)
+
+    assert(changeSetOperation1.requestComponentHeaders != null)
+    assert(changeSetOperation1.requestComponentHeaders.headers.size == 7)
+    assert(changeSetOperation1.requestComponentHeaders.headerType == IndividualRequestHeader)
+
+    val changeSetOperation1Headers = changeSetOperation1.requestComponentHeaders.headers
+    assert(changeSetOperation1Headers.contains("Content-ID") && changeSetOperation1Headers.get("Content-ID").get.equals("666"))
+
+    assert(changeSetOperation1.requestDetails != null)
+    assert(changeSetOperation1.requestDetails.get("RequestType").get == "POST")
+    assert(changeSetOperation1.requestDetails.get("RequestEntity").get == "applications")
+    assert(changeSetOperation1.requestDetails.get("RelativePath").get == "/service.root/")
+    assert(changeSetOperation1.requestDetails.get("RequestHost").get == "https://secure-host")
+    assert(changeSetOperation1.requestDetails.get("RequestBody").get == "{ \"some\" : \"content\" }")
+  }
+
 }
