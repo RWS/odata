@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,6 +41,7 @@ import scala.collection.JavaConverters;
 import java.util.Map;
 import java.util.Set;
 
+import static com.sdl.odata.api.service.HeaderNames.TE;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -50,6 +51,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
 
     private static final Logger LOG = getLogger(ODataFunctionProcessorImpl.class);
+
+    private static final String TRANSFER_ENCODING_CHUNKED = "chunked";
 
     @Autowired
     private DataSourceFactory dataSourceFactory;
@@ -61,7 +64,9 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
         Object result;
 
         try {
-            result = operation.doOperation(requestContext, dataSourceFactory);
+            boolean isChunkedRequest = requestContext.getRequest().getHeader(TE).equals(TRANSFER_ENCODING_CHUNKED);
+            result = isChunkedRequest ? operation.doStreamOperation(requestContext, dataSourceFactory) :
+                    operation.doOperation(requestContext, dataSourceFactory);
         } catch (Exception e) {
             LOG.error("Unexpected exception when executing a function.", e);
             throw e;

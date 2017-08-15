@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,10 +31,12 @@ public abstract class ODataRequestResponseBase {
 
     private Map<String, String> headers;
     private final byte[] body;
+    private ODataContent streamingContent;
 
-    protected ODataRequestResponseBase(Map<String, String> headers, byte[] body) {
+    protected ODataRequestResponseBase(Map<String, String> headers, byte[] body, ODataContent streamingContent) {
         this.headers = headers;
         this.body = body;
+        this.streamingContent = streamingContent;
     }
 
     public Map<String, String> getHeaders() {
@@ -78,6 +80,10 @@ public abstract class ODataRequestResponseBase {
 
     public byte[] getBody() {
         return body;
+    }
+
+    public ODataContent getStreamingContent() {
+        return streamingContent;
     }
 
     public String getBodyText(String charset) throws UnsupportedEncodingException {
