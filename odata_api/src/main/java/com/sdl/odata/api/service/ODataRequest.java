@@ -136,7 +136,7 @@ public final class ODataRequest extends ODataRequestResponseBase {
     private final Map<Class<?>, Object> additionalData;
 
     private ODataRequest(Builder builder) {
-        super(unmodifiableMap(builder.headersBuilder), builder.body);
+        super(unmodifiableMap(builder.headersBuilder), builder.body, null);
 
         if (builder.method == null) {
             throw new IllegalArgumentException("Method is required");

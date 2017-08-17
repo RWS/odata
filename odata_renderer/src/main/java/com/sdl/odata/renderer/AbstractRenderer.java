@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.renderer;
 
+import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.MetaType;
 import com.sdl.odata.api.edm.model.Type;
@@ -22,6 +23,7 @@ import com.sdl.odata.api.parser.FormatOption;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.parser.TargetType;
+import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.api.renderer.ODataRenderer;
 import com.sdl.odata.api.service.MediaType;
@@ -197,7 +199,7 @@ public abstract class AbstractRenderer implements ODataRenderer {
         ODataUri oDataUri = requestContext.getUri();
         if (ODataUriUtil.isActionCallUri(oDataUri) || ODataUriUtil.isFunctionCallUri(oDataUri)) {
             return buildContextUrlFromOperationCall(oDataUri, requestContext.getEntityDataModel(),
-                isCollection(data));
+                    isCollection(data));
         }
 
         Option<String> contextURL;
@@ -224,5 +226,20 @@ public abstract class AbstractRenderer implements ODataRenderer {
             throw new ODataRenderException(
                     String.format("Not possible to create context URL for request %s", requestContext));
         }
+    }
+
+    @Override
+    public String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        return null;
+    }
+
+    @Override
+    public String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        return null;
+    }
+
+    @Override
+    public String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        return null;
     }
 }

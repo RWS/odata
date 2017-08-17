@@ -186,13 +186,65 @@ public class AtomWriter {
      */
     public void writeFeed(List<?> entities, String requestContextURL, Map<String, Object> meta)
             throws ODataRenderException {
+        writeStartFeed(requestContextURL, meta);
+        writeBodyFeed(entities);
+        writeEndFeed();
+    }
 
-        checkNotNull(entities);
+    /**
+     * Write start feed to the XML stream.
+     *
+     * @param requestContextURL The 'Context URL' to write for the feed. It can not {@code null}.
+     * @param meta              Additional metadata to write.
+     * @throws ODataRenderException In case it is not possible to write to the XML stream.
+     */
+    public void writeStartFeed(String requestContextURL, Map<String, Object> meta) throws ODataRenderException {
         this.contextURL = checkNotNull(requestContextURL);
-
         try {
-            writeFeed(entities, null, null, meta);
+            startFeed(false);
+
+            if (ODataUriUtil.hasCountOption(oDataUri) &&
+                    meta != null && meta.containsKey("count")) {
+                metadataWriter.writeCount(meta.get("count"));
+            }
+
+            metadataWriter.writeFeedId(null, null);
+            metadataWriter.writeTitle();
+            metadataWriter.writeUpdate(dateTime);
+            metadataWriter.writeFeedLink(null, null);
+        } catch (XMLStreamException | ODataEdmException e) {
+            LOG.error("Not possible to marshall feed stream XML");
+            throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
+        }
+    }
+
+    /**
+     * Write feed body.
+     *
+     * @param entities The list of entities to fill in the XML stream. It can not {@code null}.
+     * @throws ODataRenderException In case it is not possible to write to the XML stream.
+     */
+    public void writeBodyFeed(List<?> entities) throws ODataRenderException {
+        checkNotNull(entities);
+        try {
+            for (Object entity : entities) {
+                writeEntry(entity, true);
+            }
         } catch (XMLStreamException | IllegalAccessException | NoSuchFieldException | ODataEdmException e) {
+            LOG.error("Not possible to marshall feed stream XML");
+            throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
+        }
+    }
+
+    /**
+     * Write end feed.
+     *
+     * @throws ODataRenderException In case it is not possible to write to the XML stream.
+     */
+    public void writeEndFeed() throws ODataRenderException {
+        try {
+            endFeed();
+        } catch (XMLStreamException e) {
             LOG.error("Not possible to marshall feed stream XML");
             throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
         }
@@ -321,7 +373,6 @@ public class AtomWriter {
     }
 
     private void endFeed() throws XMLStreamException {
-
         xmlWriter.writeEndElement();
     }
 

@@ -32,20 +32,53 @@ public interface ODataRenderer {
      * specified request and data. A return value of 0 means that this renderer cannot be used this request.
      *
      * @param requestContext The request context.
-     * @param data The data to render.
+     * @param data           The data to render.
      * @return A score that indicates how suitable this renderer is for the specified request and data;
-     *      0 if this renderer cannot render the response body for this request.
+     * 0 if this renderer cannot render the response body for this request.
      */
     int score(ODataRequestContext requestContext, QueryResult data);
 
     /**
      * Renders the response body for a request.
      *
-     * @param requestContext The request context.
-     * @param data The data to render.
+     * @param requestContext  The request context.
+     * @param data            The data to render.
      * @param responseBuilder The response builder to which the appropriate status code, headers and body are added.
      * @throws ODataException If an error occurs while rendering.
      */
     void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException;
+
+    /**
+     * Renders the response start content including OData specification metadata.
+     * Used for streaming requests.
+     * First render start and write to response, then sequentially proceed with renderBody and finish with renderEnd.
+     *
+     * @param requestContext
+     * @param result
+     * @throws ODataException
+     */
+    String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException;
+
+    /**
+     * Renders the response body.
+     * Used for streaming requests.
+     * This method should be called sequentially as new data comes through stream.
+     *
+     * @param requestContext
+     * @param result
+     * @throws ODataException
+     */
+    String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException;
+
+    /**
+     * Renders the response end content tags.
+     * Used for streaming requests.
+     * Finish writing to response with this method.
+     *
+     * @param requestContext
+     * @param result
+     * @throws ODataException
+     */
+    String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException;
 }

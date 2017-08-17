@@ -39,11 +39,11 @@ import static com.sdl.odata.api.service.ODataRequestContextUtil.isWriteOperation
 
 /**
  * Renderer which renders either an OData Atom XML feed or entry.
- *
+ * <p>
  * This renderer can generate an XML response body with either an &lt;atom:feed&gt; root element (to be used when the
  * result of a query consists of a collection of entities) or a &lt;atom:entry&gt; root element (to be used when the
  * result of a query consists of a single entity).
- *
+ * <p>
  * Reference:
  * http://docs.oasis-open.org/odata/odata-atom-format/v4.0/cs02/odata-atom-format-v4.0-cs02.html#_Toc372792738
  * OData Atom Format Version 4.0 specification
@@ -96,6 +96,44 @@ public class AtomRenderer extends AbstractAtomRenderer {
         }
 
         LOG.debug("End rendering entity(es) for request: {}", requestContext);
+    }
+
+    @Override
+    public String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering response start content including OData specification metadata " +
+                "for request: {} with result {}", requestContext, result);
+
+        AtomWriter atomWriter = initAtomWriter(requestContext);
+        atomWriter.startDocument();
+
+        if (result.getType() == COLLECTION) {
+            atomWriter.writeStartFeed(buildContextURL(requestContext, result.getData()), result.getMeta());
+        }
+
+        return atomWriter.getXml();
+    }
+
+    @Override
+    public String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        AtomWriter atomWriter = initAtomWriter(requestContext);
+        if (result.getType() == COLLECTION) {
+            atomWriter.writeBodyFeed((List<?>) result.getData());
+        } else {
+            atomWriter.writeEntry(result.getData(), buildContextURL(requestContext, result.getData()));
+        }
+
+        return atomWriter.getXml();
+    }
+
+    @Override
+    public String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        AtomWriter atomWriter = initAtomWriter(requestContext);
+        if (result.getType() == COLLECTION) {
+            atomWriter.writeEndFeed();
+        }
+        atomWriter.endDocument();
+
+        return atomWriter.getXml();
     }
 
     protected AtomWriter initAtomWriter(ODataRequestContext requestContext) {
