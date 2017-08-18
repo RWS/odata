@@ -54,9 +54,10 @@ public interface ODataRenderer {
      * Used for streaming requests.
      * First render start and write to response, then sequentially proceed with renderBody and finish with renderEnd.
      *
-     * @param requestContext
-     * @param result
-     * @throws ODataException
+     * @param requestContext The request context.
+     * @param result         The data to render.
+     * @return Response start content including OData specification metadata
+     * @throws ODataException If an error occurs while rendering.
      */
     String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException;
 
@@ -65,9 +66,9 @@ public interface ODataRenderer {
      * Used for streaming requests.
      * This method should be called sequentially as new data comes through stream.
      *
-     * @param requestContext
-     * @param result
-     * @throws ODataException
+     * @param requestContext The request context.
+     * @param result         The data to render.
+     * @throws ODataException If an error occurs while rendering.
      */
     String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException;
 
@@ -76,9 +77,9 @@ public interface ODataRenderer {
      * Used for streaming requests.
      * Finish writing to response with this method.
      *
-     * @param requestContext
-     * @param result
-     * @throws ODataException
+     * @param requestContext The request context.
+     * @param result         The data to render.
+     * @throws ODataException If an error occurs while rendering.
      */
     String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException;
 }

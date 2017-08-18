@@ -29,12 +29,15 @@ import com.sdl.odata.api.renderer.ODataRenderer;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
+import com.sdl.odata.api.service.ODataResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.sdl.odata.ODataRendererUtils.buildContextUrlFromOperationCall;
 import static com.sdl.odata.api.parser.ODataUriUtil.getContextUrl;
@@ -43,6 +46,9 @@ import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.MediaType.JSON;
 import static com.sdl.odata.api.service.ODataRequest.Method;
 import static com.sdl.odata.api.service.ODataRequestContextUtil.isWriteOperation;
+import static com.sdl.odata.api.service.ODataResponse.Status.OK;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.text.MessageFormat.format;
 
 /**
  * Abstract superclass with common functionality for renderers.
@@ -184,8 +190,8 @@ public abstract class AbstractRenderer implements ODataRenderer {
         return checkForContentType(oDataRequestContext, ATOM_XML) || checkForContentType(oDataRequestContext, JSON);
     }
 
-    protected boolean isCollection(Object data) {
-        return data instanceof List;
+    protected boolean isListOrStream(Object data) {
+        return data instanceof List || data instanceof Stream;
     }
 
     /**
@@ -199,7 +205,7 @@ public abstract class AbstractRenderer implements ODataRenderer {
         ODataUri oDataUri = requestContext.getUri();
         if (ODataUriUtil.isActionCallUri(oDataUri) || ODataUriUtil.isFunctionCallUri(oDataUri)) {
             return buildContextUrlFromOperationCall(oDataUri, requestContext.getEntityDataModel(),
-                    isCollection(data));
+                    isListOrStream(data));
         }
 
         Option<String> contextURL;
@@ -228,18 +234,40 @@ public abstract class AbstractRenderer implements ODataRenderer {
         }
     }
 
+    /**
+     * Default implementation. Returns empty string, the real content goes when triggering renderBody.
+     * <p>
+     * {@inheritDoc}
+     */
     @Override
     public String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException {
-        return null;
+        return "";
     }
 
+    /**
+     * Default implementation. Return the whole rendered data within this method call.
+     * <p>
+     * {@inheritDoc}
+     */
     @Override
     public String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException {
-        return null;
+        ODataResponse.Builder responseBuilder = new ODataResponse.Builder().setStatus(OK);
+        render(requestContext, result, responseBuilder);
+        try {
+            return responseBuilder.build().getBodyText(UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            throw new ODataRenderException(format("Unable to render result: {0} for request: {1}",
+                    result, requestContext.getRequest()), e);
+        }
     }
 
+    /**
+     * Default implementation. Return empty string as we get all rendered data by triggering renderBody.
+     * <p>
+     * {@inheritDoc}
+     */
     @Override
     public String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException {
-        return null;
+        return "";
     }
 }
