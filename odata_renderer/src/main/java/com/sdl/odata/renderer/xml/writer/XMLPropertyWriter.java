@@ -27,6 +27,7 @@ import com.sdl.odata.renderer.AbstractPropertyWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
@@ -42,22 +43,76 @@ import static com.sdl.odata.ODataRendererUtils.getContextURL;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.endElement;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.getNullPropertyXML;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.getPropertyXmlForPrimitives;
+import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.getPropertyXmlForPrimitivesBodyDocument;
+import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.getPropertyXmlForPrimitivesEndDocument;
+import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.getPropertyXmlForPrimitivesStartDocument;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.startElement;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.writeElementWithNull;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.writePrimitiveCollection;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.writePrimitiveElement;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.text.MessageFormat.format;
 
 /**
  * This class responsible for writing property in XML format.
- *
  */
 public class XMLPropertyWriter extends AbstractPropertyWriter {
     private static final Logger LOG = LoggerFactory.getLogger(XMLPropertyWriter.class);
 
+    private static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
+
     public XMLPropertyWriter(ODataUri uri, EntityDataModel entityDataModel) throws ODataRenderException {
         super(uri, entityDataModel);
+    }
+
+    @Override
+    protected String getPrimitivePropertyChunked(Object data, Type type, ChunkedStreamAction action)
+            throws ODataException {
+        switch (action) {
+            case START_DOCUMENT:
+                String context = getContextURL(getODataUri(), getEntityDataModel(), true);
+                return getPropertyXmlForPrimitivesStartDocument(VALUE, type, data, context);
+            case BODY_DOCUMENT:
+                return getPropertyXmlForPrimitivesBodyDocument(VALUE, type, data);
+            case END_DOCUMENT:
+                return getPropertyXmlForPrimitivesEndDocument(VALUE, type, data);
+            default:
+                throw new ODataRenderException(format(
+                        "Unable to render primitive type value because of wrong ChunkedStreamAction: {0}",
+                        action));
+        }
+    }
+
+    @Override
+    protected String getComplexPropertyChunked(Object data, StructuredType type, ChunkedStreamAction action)
+            throws ODataException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            XMLStreamWriter writer;
+            switch (action) {
+                case START_DOCUMENT:
+                    String typeFullyQualifiedName = type.getFullyQualifiedName();
+                    String context = getContextURL(getODataUri(), getEntityDataModel());
+                    LOG.debug("Context for complex property is {}", context);
+                    startElement(outputStream, VALUE, HASH + typeFullyQualifiedName, context, true);
+                    return outputStream.toString(UTF_8.name());
+                case BODY_DOCUMENT:
+                    writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream,
+                            UTF_8.name());
+                    handleCollectionAndComplexProperties(data, type, writer);
+                    return outputStream.toString(UTF_8.name());
+                case END_DOCUMENT:
+                    writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
+                    endElement(writer);
+                    return outputStream.toString(UTF_8.name());
+                default:
+                    throw new ODataRenderException(format(
+                            "Unable to render complex type value because of wrong ChunkedStreamAction: {0}",
+                            action));
+            }
+        } catch (XMLStreamException | IOException e) {
+            throw new ODataRenderException("Error while rendering complex property value", e);
+        }
     }
 
     @Override
@@ -77,7 +132,6 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
     protected String generateComplexProperty(Object data, StructuredType type) throws ODataException {
         return generateXMLForComplexProperty(data, type);
     }
-
 
     private String generateXMLForComplexProperty(Object entity, StructuredType type) throws ODataException {
         LOG.debug("Complex property rendering started");

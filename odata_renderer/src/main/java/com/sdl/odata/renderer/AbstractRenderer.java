@@ -241,6 +241,7 @@ public abstract class AbstractRenderer implements ODataRenderer {
      */
     @Override
     public String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering property for request start: {}", requestContext);
         return "";
     }
 
@@ -251,6 +252,7 @@ public abstract class AbstractRenderer implements ODataRenderer {
      */
     @Override
     public String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering property for request body: {}", requestContext);
         ODataResponse.Builder responseBuilder = new ODataResponse.Builder().setStatus(OK);
         render(requestContext, result, responseBuilder);
         try {
@@ -268,6 +270,7 @@ public abstract class AbstractRenderer implements ODataRenderer {
      */
     @Override
     public String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering property for request end: {}", requestContext);
         return "";
     }
 }

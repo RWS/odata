@@ -80,4 +80,28 @@ public class JsonValueRenderer extends AbstractJsonRenderer {
 
         LOG.debug("End rendering property for request: {}", requestContext);
     }
+
+    @Override
+    public String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering start property for request: {}", requestContext);
+        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return propertyWriter.getPropertyStartDocument(result.getData());
+    }
+
+    @Override
+    public String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering body property for request: {}", requestContext);
+        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return propertyWriter.getPropertyBodyDocument(result.getData());
+    }
+
+    @Override
+    public String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering end property for request: {}", requestContext);
+        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return propertyWriter.getPropertyEndDocument(result.getData());
+    }
 }

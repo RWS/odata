@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,6 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * This is unit test for {@link XMLPropertyWriter}.
- *
  */
 public class XMLPropertyWriterTest extends WriterTest {
 
@@ -201,6 +200,24 @@ public class XMLPropertyWriterTest extends WriterTest {
         prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperty");
         String xml = propertyWriter.getPropertyAsString(createComplexType("Prop 1", "Inherited 1"));
         assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_PATH)), prettyPrintXml(xml));
+    }
+
+    @Test
+    public void test1() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/Customers(1)/id");
+
+        Long id = 1L;
+//        String startDocument = propertyWriter.getPropertyStartDocument(id);
+//        String bodyDocument = propertyWriter.getPropertyBodyDocument(id);
+        String endDocument = propertyWriter.getPropertyEndDocument(id);
+        String xml = propertyWriter.getPropertyAsString(id);
+
+//        assertEquals(xml, startDocument + bodyDocument + endDocument);
+
+        // Checking expected values
+        NodeList nodeList = assertNodeList(xml, 1);
+        assertThat(nodeList.item(0).getTextContent(), is("1"));
+        assertAttributes(nodeList, 4, "metadata:type", "Int64");
     }
 
     private void prepareForTest(String url) throws ODataRenderException {

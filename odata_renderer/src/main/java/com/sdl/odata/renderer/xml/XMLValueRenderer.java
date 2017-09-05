@@ -34,11 +34,11 @@ import static com.sdl.odata.api.service.MediaType.XML;
 
 /**
  * Renderer which renders an OData XML value.
- *
+ * <p>
  * This renderer generates an XML response body with an &lt;metadata:value&gt; root element. This should for example be
  * used when the result of a query consists of a single primitive or complex value, or a collection of primitive or
  * complex values.
- *
+ * <p>
  * Reference: OData Atom Format Version 4.0 specification
  */
 @Component
@@ -87,5 +87,29 @@ public final class XMLValueRenderer extends AbstractAtomRenderer {
         }
 
         LOG.debug("End rendering property for request: {}", requestContext);
+    }
+
+    @Override
+    public String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering start property for request: {}", requestContext);
+        XMLPropertyWriter propertyWriter = new XMLPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return propertyWriter.getPropertyStartDocument(result.getData());
+    }
+
+    @Override
+    public String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering body property for request: {}", requestContext);
+        XMLPropertyWriter propertyWriter = new XMLPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return propertyWriter.getPropertyBodyDocument(result.getData());
+    }
+
+    @Override
+    public String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        LOG.debug("Start rendering end property for request: {}", requestContext);
+        XMLPropertyWriter propertyWriter = new XMLPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return propertyWriter.getPropertyEndDocument(result.getData());
     }
 }

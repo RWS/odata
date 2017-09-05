@@ -75,4 +75,25 @@ public class PrimitiveRenderer extends AbstractRenderer {
 
         LOG.debug("End rendering property for request: {}", requestContext);
     }
+
+    @Override
+    public String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return primitiveWriter.getPropertyStartDocument(result.getData());
+    }
+
+    @Override
+    public String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return primitiveWriter.getPropertyBodyDocument(result.getData());
+    }
+
+    @Override
+    public String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+        PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return primitiveWriter.getPropertyEndDocument(result.getData());
+    }
 }

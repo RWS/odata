@@ -41,6 +41,7 @@ import static com.sdl.odata.ODataRendererUtils.getContextURL;
 import static com.sdl.odata.renderer.json.util.JsonWriterUtil.writePrimitiveValue;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.text.MessageFormat.format;
 
 /**
  * Json Property Writer.
@@ -63,6 +64,94 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
             jsonGenerator.writeStartObject();
         } catch (IOException e) {
             throw new ODataRenderException("Unable to render with following configuration");
+        }
+    }
+
+    @Override
+    protected String getPrimitivePropertyChunked(Object data, Type type, ChunkedStreamAction action)
+            throws ODataException {
+        try {
+            switch (action) {
+                case START_DOCUMENT:
+                    if (isCollection(data)) {
+                        jsonGenerator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(),
+                                true));
+                        jsonGenerator.writeArrayFieldStart(VALUE);
+
+                        return closeStream(outputStream);
+                    } else {
+                        jsonGenerator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(),
+                                true));
+                        jsonGenerator.writeFieldName(VALUE);
+
+                        return closeStream(outputStream);
+                    }
+                case BODY_DOCUMENT:
+                    if (isCollection(data)) {
+                        for (Object element : (List) data) {
+                            jsonGenerator.writeObject(element);
+                        }
+
+                        return closeStream(outputStream);
+                    } else {
+                        jsonGenerator.writeObject(data);
+
+                        return closeStream(outputStream);
+                    }
+                case END_DOCUMENT:
+                    if (isCollection(data)) {
+                        jsonGenerator.writeEndArray();
+
+                        return closeStream(outputStream);
+                    } else {
+                        return "";
+                    }
+                default:
+                    throw new ODataRenderException(format(
+                            "Unable to render primitive type value because of wrong ChunkedStreamAction: {0}",
+                            action));
+            }
+        } catch (IOException e) {
+            throw new ODataRenderException("Unable to marshall primitive");
+        }
+    }
+
+    @Override
+    protected String getComplexPropertyChunked(Object data, StructuredType type, ChunkedStreamAction action)
+            throws ODataException {
+        try {
+            switch (action) {
+                case START_DOCUMENT:
+                    jsonGenerator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel()));
+                    jsonGenerator.writeFieldName("value");
+                    if (isCollection(data)) {
+                        jsonGenerator.writeStartArray();
+                    }
+
+                    return closeStream(outputStream);
+                case BODY_DOCUMENT:
+                    if (isCollection(data)) {
+                        for (Object obj : (List) data) {
+                            writeAllProperties(obj, type);
+                        }
+                    } else {
+                        writeAllProperties(data, type);
+                    }
+
+                    return closeStream(outputStream);
+                case END_DOCUMENT:
+                    if (isCollection(data)) {
+                        jsonGenerator.writeEndArray();
+                    }
+
+                    return closeStream(outputStream);
+                default:
+                    throw new ODataRenderException(format(
+                            "Unable to render complex type value because of wrong ChunkedStreamAction: {0}",
+                            action));
+            }
+        } catch (ODataException | IOException e) {
+            throw new ODataRenderException("Unable to marshall complex");
         }
     }
 
@@ -107,42 +196,42 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                 jsonGenerator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel()));
             }
             jsonGenerator.writeFieldName("value");
-            processData(data, type, jsonGenerator);
+            processData(data, type);
             return closeStream(outputStream);
         } catch (ODataException | IOException | IllegalAccessException e) {
             throw new ODataRenderException("Unable to marshall complex");
         }
     }
 
-    private void processData(Object data, StructuredType type, JsonGenerator generator)
+    private void processData(Object data, StructuredType type)
             throws IllegalAccessException, IOException, ODataException {
         if (isCollection(data)) {
             LOG.debug("Given property is collection of complex values");
-            generator.writeStartArray();
+            jsonGenerator.writeStartArray();
             for (Object obj : (List) data) {
-                writeAllProperties(obj, type, generator);
+                writeAllProperties(obj, type);
             }
-            generator.writeEndArray();
+            jsonGenerator.writeEndArray();
         } else {
             LOG.debug("Given property is single complex value");
-            writeAllProperties(data, type, generator);
+            writeAllProperties(data, type);
         }
 
     }
 
-    private void writeAllProperties(final Object data, StructuredType type, final JsonGenerator generator)
+    private void writeAllProperties(final Object data, StructuredType type)
             throws IOException, ODataRenderException {
-        generator.writeStartObject();
+        jsonGenerator.writeStartObject();
         visitProperties(getEntityDataModel(), type, property -> {
             try {
                 if (!(property instanceof NavigationProperty)) {
-                    handleProperty(data, property, generator);
+                    handleProperty(data, property, jsonGenerator);
                 }
             } catch (IllegalAccessException | IOException | ODataException e) {
                 throw new ODataRenderException("Error while writing property: " + property.getName(), e);
             }
         });
-        generator.writeEndObject();
+        jsonGenerator.writeEndObject();
     }
 
     private void handleProperty(Object data, StructuralProperty property, JsonGenerator generator)
