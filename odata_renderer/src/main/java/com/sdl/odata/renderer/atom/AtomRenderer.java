@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.atom;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractAtomRenderer;
@@ -99,7 +100,8 @@ public class AtomRenderer extends AbstractAtomRenderer {
     }
 
     @Override
-    public String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
+            throws ODataException {
         LOG.debug("Start rendering response start content including OData specification metadata " +
                 "for request: {} with result {}", requestContext, result);
 
@@ -110,11 +112,12 @@ public class AtomRenderer extends AbstractAtomRenderer {
             atomWriter.writeStartFeed(buildContextURL(requestContext, result.getData()), result.getMeta());
         }
 
-        return atomWriter.getXml();
+        return new ChunkedActionRenderResult(atomWriter.getXml());
     }
 
     @Override
-    public String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+    public ChunkedActionRenderResult renderBody(ODataRequestContext requestContext, QueryResult result,
+                                                ChunkedActionRenderResult previousResult) throws ODataException {
         AtomWriter atomWriter = initAtomWriter(requestContext);
         if (result.getType() == COLLECTION) {
             atomWriter.writeBodyFeed((List<?>) result.getData());
@@ -122,11 +125,12 @@ public class AtomRenderer extends AbstractAtomRenderer {
             atomWriter.writeEntry(result.getData(), buildContextURL(requestContext, result.getData()));
         }
 
-        return atomWriter.getXml();
+        return new ChunkedActionRenderResult(atomWriter.getXml());
     }
 
     @Override
-    public String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+    public String renderEnd(ODataRequestContext requestContext, QueryResult result,
+                            ChunkedActionRenderResult previousResult) throws ODataException {
         AtomWriter atomWriter = initAtomWriter(requestContext);
         if (result.getType() == COLLECTION) {
             atomWriter.writeEndFeed();

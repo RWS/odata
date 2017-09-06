@@ -17,6 +17,7 @@ package com.sdl.odata.api.service;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderer;
 
 import java.io.IOException;
@@ -42,16 +43,20 @@ public class ODataContentStreamer implements ODataContent {
 
     @Override
     public void write(OutputStream outputStream) throws IOException, ODataException {
-        writeWithFlush(outputStream, oDataRenderer.renderStart(oDataRequestContext, queryResult));
+        ChunkedActionRenderResult startRenderResult = oDataRenderer.renderStart(oDataRequestContext, queryResult);
+        writeWithFlush(outputStream, startRenderResult.getResult());
 
         Iterator resultDataIterator = ((Stream) queryResult.getData()).iterator();
+        ChunkedActionRenderResult bodyRenderResult = null;
         while (resultDataIterator.hasNext()) {
             Object nextResultChunk = resultDataIterator.next();
-            writeWithFlush(outputStream, oDataRenderer.renderBody(
-                    oDataRequestContext, QueryResult.from(nextResultChunk)));
+            bodyRenderResult = oDataRenderer.renderBody(
+                    oDataRequestContext, QueryResult.from(nextResultChunk), startRenderResult);
+            writeWithFlush(outputStream, bodyRenderResult.getResult());
         }
 
-        writeWithFlush(outputStream, oDataRenderer.renderEnd(oDataRequestContext, queryResult));
+        writeWithFlush(outputStream, oDataRenderer.renderEnd(oDataRequestContext, queryResult,
+                bodyRenderResult == null ? startRenderResult : bodyRenderResult));
     }
 
     private void writeWithFlush(OutputStream outputStream, String content) throws IOException {

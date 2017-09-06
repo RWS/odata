@@ -20,6 +20,7 @@ import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.AbstractPropertyWriter;
 import org.slf4j.Logger;
@@ -41,15 +42,16 @@ public class PrimitiveWriter extends AbstractPropertyWriter {
     }
 
     @Override
-    protected String getPrimitivePropertyChunked(Object data, Type type, ChunkedStreamAction action)
+    protected ChunkedActionRenderResult getPrimitivePropertyChunked(
+            Object data, Type type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
             throws ODataException {
         switch (action) {
             case START_DOCUMENT:
-                return "";
+                return new ChunkedActionRenderResult("");
             case BODY_DOCUMENT:
-                return generatePrimitiveProperty(data, type);
+                return new ChunkedActionRenderResult(generatePrimitiveProperty(data, type));
             case END_DOCUMENT:
-                return "";
+                return new ChunkedActionRenderResult("");
             default:
                 throw new ODataRenderException(format(
                         "Unable to render primitive type value because of wrong ChunkedStreamAction: {0}",
@@ -58,9 +60,10 @@ public class PrimitiveWriter extends AbstractPropertyWriter {
     }
 
     @Override
-    protected String getComplexPropertyChunked(Object data, StructuredType type, ChunkedStreamAction action)
+    protected ChunkedActionRenderResult getComplexPropertyChunked(
+            Object data, StructuredType type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
             throws ODataException {
-        return generateComplexProperty(data, type);
+        return new ChunkedActionRenderResult(generateComplexProperty(data, type));
     }
 
     @Override

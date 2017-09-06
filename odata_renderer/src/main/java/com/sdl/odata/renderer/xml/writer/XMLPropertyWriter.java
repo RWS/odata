@@ -22,6 +22,7 @@ import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.AbstractPropertyWriter;
 import org.slf4j.Logger;
@@ -67,16 +68,17 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
     }
 
     @Override
-    protected String getPrimitivePropertyChunked(Object data, Type type, ChunkedStreamAction action)
+    protected ChunkedActionRenderResult getPrimitivePropertyChunked(Object data, Type type, ChunkedStreamAction action,
+                                                                    ChunkedActionRenderResult previousResult)
             throws ODataException {
         switch (action) {
             case START_DOCUMENT:
                 String context = getContextURL(getODataUri(), getEntityDataModel(), true);
                 return getPropertyXmlForPrimitivesStartDocument(VALUE, type, data, context);
             case BODY_DOCUMENT:
-                return getPropertyXmlForPrimitivesBodyDocument(VALUE, type, data);
+                return getPropertyXmlForPrimitivesBodyDocument(VALUE, type, data, previousResult);
             case END_DOCUMENT:
-                return getPropertyXmlForPrimitivesEndDocument(VALUE, type, data);
+                return getPropertyXmlForPrimitivesEndDocument(VALUE, type, data, previousResult);
             default:
                 throw new ODataRenderException(format(
                         "Unable to render primitive type value because of wrong ChunkedStreamAction: {0}",
@@ -85,26 +87,35 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
     }
 
     @Override
-    protected String getComplexPropertyChunked(Object data, StructuredType type, ChunkedStreamAction action)
+    protected ChunkedActionRenderResult getComplexPropertyChunked(
+            Object data, StructuredType type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
             throws ODataException {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        try {
             XMLStreamWriter writer;
+            ByteArrayOutputStream outputStream;
+            int initialContentLength;
             switch (action) {
                 case START_DOCUMENT:
+                    outputStream = new ByteArrayOutputStream();
                     String typeFullyQualifiedName = type.getFullyQualifiedName();
                     String context = getContextURL(getODataUri(), getEntityDataModel());
                     LOG.debug("Context for complex property is {}", context);
-                    startElement(outputStream, VALUE, HASH + typeFullyQualifiedName, context, true);
-                    return outputStream.toString(UTF_8.name());
+                    writer = startElement(outputStream, VALUE, HASH + typeFullyQualifiedName, context, true);
+                    return new ChunkedActionRenderResult(outputStream.toString(UTF_8.name()), outputStream, writer);
                 case BODY_DOCUMENT:
-                    writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream,
-                            UTF_8.name());
+                    writer = previousResult.getWriter();
+                    outputStream = previousResult.getOutputStream();
+                    initialContentLength = previousResult.getOutputStreamContentLength();
                     handleCollectionAndComplexProperties(data, type, writer);
-                    return outputStream.toString(UTF_8.name());
+                    return new ChunkedActionRenderResult(
+                            outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
                 case END_DOCUMENT:
-                    writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
+                    writer = previousResult.getWriter();
+                    outputStream = previousResult.getOutputStream();
+                    initialContentLength = previousResult.getOutputStreamContentLength();
                     endElement(writer);
-                    return outputStream.toString(UTF_8.name());
+                    return new ChunkedActionRenderResult(
+                            outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
                 default:
                     throw new ODataRenderException(format(
                             "Unable to render complex type value because of wrong ChunkedStreamAction: {0}",

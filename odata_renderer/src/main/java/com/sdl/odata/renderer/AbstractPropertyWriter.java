@@ -24,6 +24,7 @@ import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.parser.TargetType;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,41 +71,44 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
     }
 
     @Override
-    public String getPropertyStartDocument(Object data) throws ODataException {
+    public ChunkedActionRenderResult getPropertyStartDocument(Object data) throws ODataException {
         LOG.debug("GetPropertyStartDocument invoked with {}", data);
         if (data == null) {
             // If null - return info in one piece within getPropertyBodyDocument() call and here just empty string
-            return "";
+            return new ChunkedActionRenderResult("");
         } else {
-            return makePropertyStringChunked(data, START_DOCUMENT);
+            return makePropertyStringChunked(data, START_DOCUMENT, null);
         }
     }
 
     @Override
-    public String getPropertyBodyDocument(Object data) throws ODataException {
+    public ChunkedActionRenderResult getPropertyBodyDocument(Object data, ChunkedActionRenderResult previousResult)
+            throws ODataException {
         LOG.debug("GetPropertyBodyDocument invoked with {}", data);
         if (data == null) {
-            return generateNullPropertyString();
+            return new ChunkedActionRenderResult(generateNullPropertyString());
         } else {
-            return makePropertyStringChunked(data, BODY_DOCUMENT);
+            return makePropertyStringChunked(data, BODY_DOCUMENT, previousResult);
         }
     }
 
     @Override
-    public String getPropertyEndDocument(Object data) throws ODataException {
+    public String getPropertyEndDocument(Object data, ChunkedActionRenderResult previousResult) throws ODataException {
         LOG.debug("GetPropertyEndDocument invoked with {}", data);
         if (data == null) {
             // For null value we return all result within getPropertyBodyDocument() method
             return "";
         } else {
-            return makePropertyStringChunked(data, END_DOCUMENT);
+            return makePropertyStringChunked(data, END_DOCUMENT, previousResult).getResult();
         }
     }
 
-    protected abstract String getPrimitivePropertyChunked(Object data, Type type, ChunkedStreamAction action)
+    protected abstract ChunkedActionRenderResult getPrimitivePropertyChunked(
+            Object data, Type type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
             throws ODataException;
 
-    protected abstract String getComplexPropertyChunked(Object data, StructuredType type, ChunkedStreamAction action)
+    protected abstract ChunkedActionRenderResult getComplexPropertyChunked(
+            Object data, StructuredType type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
             throws ODataException;
 
     /**
@@ -184,16 +188,18 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
         return propertyXML;
     }
 
-    private String makePropertyStringChunked(Object data, ChunkedStreamAction action) throws ODataException {
+    private ChunkedActionRenderResult makePropertyStringChunked(Object data, ChunkedStreamAction action,
+                                                                ChunkedActionRenderResult previousResult)
+            throws ODataException {
         Type type = getTypeFromODataUri();
         validateRequest(type, data);
         switch (type.getMetaType()) {
             case PRIMITIVE:
                 LOG.debug("Given property type is primitive");
-                return getPrimitivePropertyChunked(data, type, action);
+                return getPrimitivePropertyChunked(data, type, action, previousResult);
             case COMPLEX:
                 LOG.debug("Given property type is complex");
-                return getComplexPropertyChunked(data, (StructuredType) type, action);
+                return getComplexPropertyChunked(data, (StructuredType) type, action, previousResult);
             default:
                 defaultHandling(type);
         }

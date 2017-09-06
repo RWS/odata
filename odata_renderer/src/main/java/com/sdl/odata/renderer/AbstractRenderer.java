@@ -24,6 +24,7 @@ import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.api.renderer.ODataRenderer;
 import com.sdl.odata.api.service.MediaType;
@@ -240,9 +241,10 @@ public abstract class AbstractRenderer implements ODataRenderer {
      * {@inheritDoc}
      */
     @Override
-    public String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
+            throws ODataException {
         LOG.debug("Start rendering property for request start: {}", requestContext);
-        return "";
+        return new ChunkedActionRenderResult("");
     }
 
     /**
@@ -251,12 +253,13 @@ public abstract class AbstractRenderer implements ODataRenderer {
      * {@inheritDoc}
      */
     @Override
-    public String renderBody(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+    public ChunkedActionRenderResult renderBody(ODataRequestContext requestContext, QueryResult result,
+                                                ChunkedActionRenderResult previousResult) throws ODataException {
         LOG.debug("Start rendering property for request body: {}", requestContext);
         ODataResponse.Builder responseBuilder = new ODataResponse.Builder().setStatus(OK);
         render(requestContext, result, responseBuilder);
         try {
-            return responseBuilder.build().getBodyText(UTF_8.name());
+            return new ChunkedActionRenderResult(responseBuilder.build().getBodyText(UTF_8.name()));
         } catch (UnsupportedEncodingException e) {
             throw new ODataRenderException(format("Unable to render result: {0} for request: {1}",
                     result, requestContext.getRequest()), e);
@@ -269,7 +272,8 @@ public abstract class AbstractRenderer implements ODataRenderer {
      * {@inheritDoc}
      */
     @Override
-    public String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException {
+    public String renderEnd(ODataRequestContext requestContext, QueryResult result,
+                            ChunkedActionRenderResult previousResult) throws ODataException {
         LOG.debug("Start rendering property for request end: {}", requestContext);
         return "";
     }

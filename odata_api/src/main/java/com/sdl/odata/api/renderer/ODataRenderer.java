@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ public interface ODataRenderer {
      * @return Response start content including OData specification metadata
      * @throws ODataException If an error occurs while rendering.
      */
-    String renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException;
+    ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException;
 
     /**
      * Renders the response body.
@@ -68,18 +68,11 @@ public interface ODataRenderer {
      *
      * @param requestContext The request context.
      * @param result         The data to render.
+     * @param previousResult Previous result needed for body rendering.
      * @throws ODataException If an error occurs while rendering.
      */
-    /**
-     *
-     * @param requestContext
-     * @param result
-
-     * @return
-     * @throws ODataException
-     */
-    String renderBody(ODataRequestContext requestContext, QueryResult result)
-            throws ODataException;
+    ChunkedActionRenderResult renderBody(ODataRequestContext requestContext, QueryResult result,
+                                         ChunkedActionRenderResult previousResult) throws ODataException;
 
     /**
      * Renders the response end content tags.
@@ -90,5 +83,6 @@ public interface ODataRenderer {
      * @param result         The data to render.
      * @throws ODataException If an error occurs while rendering.
      */
-    String renderEnd(ODataRequestContext requestContext, QueryResult result) throws ODataException;
+    String renderEnd(ODataRequestContext requestContext, QueryResult result,
+                     ChunkedActionRenderResult previousResult) throws ODataException;
 }
