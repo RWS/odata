@@ -112,32 +112,36 @@ public class AtomRenderer extends AbstractAtomRenderer {
             atomWriter.writeStartFeed(buildContextURL(requestContext, result.getData()), result.getMeta());
         }
 
-        return new ChunkedActionRenderResult(atomWriter.getXml());
+        return new ChunkedActionRenderResult(atomWriter.getXml(), atomWriter.getOutputStream(), atomWriter);
     }
 
     @Override
-    public ChunkedActionRenderResult renderBody(ODataRequestContext requestContext, QueryResult result,
-                                                ChunkedActionRenderResult previousResult) throws ODataException {
-        AtomWriter atomWriter = initAtomWriter(requestContext);
+    public ChunkedActionRenderResult renderBody(
+            ODataRequestContext requestContext, QueryResult result, ChunkedActionRenderResult previousResult)
+            throws ODataException {
+        AtomWriter atomWriter = (AtomWriter) previousResult.getWriter();
+        int previousContentLength = previousResult.getOutputStreamContentLength();
         if (result.getType() == COLLECTION) {
             atomWriter.writeBodyFeed((List<?>) result.getData());
         } else {
             atomWriter.writeEntry(result.getData(), buildContextURL(requestContext, result.getData()));
         }
 
-        return new ChunkedActionRenderResult(atomWriter.getXml());
+        return new ChunkedActionRenderResult(atomWriter.getXml().substring(previousContentLength),
+                atomWriter.getOutputStream(), atomWriter);
     }
 
     @Override
     public String renderEnd(ODataRequestContext requestContext, QueryResult result,
                             ChunkedActionRenderResult previousResult) throws ODataException {
-        AtomWriter atomWriter = initAtomWriter(requestContext);
+        AtomWriter atomWriter = (AtomWriter) previousResult.getWriter();
+        int previousContentLength = previousResult.getOutputStreamContentLength();
         if (result.getType() == COLLECTION) {
             atomWriter.writeEndFeed();
         }
         atomWriter.endDocument();
 
-        return atomWriter.getXml();
+        return atomWriter.getXml().substring(previousContentLength);
     }
 
     protected AtomWriter initAtomWriter(ODataRequestContext requestContext) {

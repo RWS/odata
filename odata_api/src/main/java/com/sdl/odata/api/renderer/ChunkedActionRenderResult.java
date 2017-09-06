@@ -15,7 +15,8 @@
  */
 package com.sdl.odata.api.renderer;
 
-import javax.xml.stream.XMLStreamWriter;
+import com.sdl.odata.api.ODataSystemException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 
@@ -28,28 +29,23 @@ public class ChunkedActionRenderResult {
 
     private String result;
     private ByteArrayOutputStream outputStream;
-    private XMLStreamWriter writer;
+    private Object writer;
 
-    public ChunkedActionRenderResult(String result, XMLStreamWriter writer) {
-        this.result = result;
-        this.writer = writer;
-    }
-
-    public ChunkedActionRenderResult(String result, ByteArrayOutputStream outputStream, XMLStreamWriter writer) {
+    public ChunkedActionRenderResult(String result, ByteArrayOutputStream outputStream, Object writer) {
         this.result = result;
         this.outputStream = outputStream;
         this.writer = writer;
     }
 
     public ChunkedActionRenderResult(String result) {
-        this(result, null);
+        this(result, null, null);
     }
 
     public String getResult() {
         return result;
     }
 
-    public XMLStreamWriter getWriter() {
+    public Object getWriter() throws ODataRenderException {
         return writer;
     }
 
@@ -57,7 +53,11 @@ public class ChunkedActionRenderResult {
         return outputStream;
     }
 
-    public int getOutputStreamContentLength() throws UnsupportedEncodingException {
-        return outputStream.toString(UTF_8.name()).length();
+    public int getOutputStreamContentLength() {
+        try {
+            return outputStream.toString(UTF_8.name()).length();
+        } catch (UnsupportedEncodingException e) {
+            throw new ODataSystemException(e);
+        }
     }
 }

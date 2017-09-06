@@ -87,7 +87,7 @@ public final class XMLWriterUtil {
         LOG.debug("PropertyXMLForPrimitivesBodyDocument invoked with {}, {}, {}", rootName, type, data);
         try (ByteArrayOutputStream outputStream = previousResult.getOutputStream()) {
             int initialContentLength = previousResult.getOutputStreamContentLength();
-            XMLStreamWriter writer = previousResult.getWriter();
+            XMLStreamWriter writer = (XMLStreamWriter) previousResult.getWriter();
             // write values
             if (data instanceof List<?>) {
                 writeMultipleElementsForPrimitives(writer, (List<?>) data);
@@ -107,11 +107,10 @@ public final class XMLWriterUtil {
         LOG.debug("PropertyXMLForPrimitivesEndDocument invoked with {}, {}, {}", rootName, type, data);
         try (ByteArrayOutputStream outputStream = previousResult.getOutputStream()) {
             int initialContentLength = previousResult.getOutputStreamContentLength();
-            XMLStreamWriter writer = previousResult.getWriter();
+            XMLStreamWriter writer = (XMLStreamWriter) previousResult.getWriter();
             endElement(writer);
             return new ChunkedActionRenderResult(
-                    outputStream.toString(UTF_8.name()).substring(initialContentLength),
-                    writer);
+                    outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
         } catch (XMLStreamException | IOException e) {
             throw new ODataRenderException("Error while rendering end document primitive property value.", e);
         }

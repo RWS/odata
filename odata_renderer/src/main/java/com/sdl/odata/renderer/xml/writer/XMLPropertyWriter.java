@@ -28,7 +28,6 @@ import com.sdl.odata.renderer.AbstractPropertyWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
@@ -61,15 +60,13 @@ import static java.text.MessageFormat.format;
 public class XMLPropertyWriter extends AbstractPropertyWriter {
     private static final Logger LOG = LoggerFactory.getLogger(XMLPropertyWriter.class);
 
-    private static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
-
     public XMLPropertyWriter(ODataUri uri, EntityDataModel entityDataModel) throws ODataRenderException {
         super(uri, entityDataModel);
     }
 
     @Override
-    protected ChunkedActionRenderResult getPrimitivePropertyChunked(Object data, Type type, ChunkedStreamAction action,
-                                                                    ChunkedActionRenderResult previousResult)
+    protected ChunkedActionRenderResult getPrimitivePropertyChunked(
+            Object data, Type type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
             throws ODataException {
         switch (action) {
             case START_DOCUMENT:
@@ -103,14 +100,14 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
                     writer = startElement(outputStream, VALUE, HASH + typeFullyQualifiedName, context, true);
                     return new ChunkedActionRenderResult(outputStream.toString(UTF_8.name()), outputStream, writer);
                 case BODY_DOCUMENT:
-                    writer = previousResult.getWriter();
+                    writer = (XMLStreamWriter) previousResult.getWriter();
                     outputStream = previousResult.getOutputStream();
                     initialContentLength = previousResult.getOutputStreamContentLength();
                     handleCollectionAndComplexProperties(data, type, writer);
                     return new ChunkedActionRenderResult(
                             outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
                 case END_DOCUMENT:
-                    writer = previousResult.getWriter();
+                    writer = (XMLStreamWriter) previousResult.getWriter();
                     outputStream = previousResult.getOutputStream();
                     initialContentLength = previousResult.getOutputStreamContentLength();
                     endElement(writer);

@@ -517,4 +517,8 @@ public class AtomWriter {
                     formatEntityKey(entityDataModel, entity), property.getName());
         }
     }
+
+    public ByteArrayOutputStream getOutputStream() {
+        return outputStream;
+    }
 }
