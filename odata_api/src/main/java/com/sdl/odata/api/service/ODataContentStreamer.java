@@ -43,19 +43,25 @@ public class ODataContentStreamer implements ODataContent {
 
     @Override
     public void write(OutputStream outputStream) throws IOException, ODataException {
-        ChunkedActionRenderResult startRenderResult = oDataRenderer.renderStart(oDataRequestContext, queryResult);
-        writeWithFlush(outputStream, startRenderResult.getResult());
-
-        Iterator resultDataIterator = ((Stream) queryResult.getData()).iterator();
+        boolean firstChunk = true;
+        ChunkedActionRenderResult startRenderResult = null;
         ChunkedActionRenderResult bodyRenderResult = null;
+        Iterator resultDataIterator = ((Stream) queryResult.getData()).iterator();
+        Object currentDataChunk = null;
         while (resultDataIterator.hasNext()) {
-            Object nextResultChunk = resultDataIterator.next();
+            currentDataChunk = resultDataIterator.next();
+            if (firstChunk) {
+                startRenderResult = oDataRenderer.renderStart(oDataRequestContext,
+                        QueryResult.from(currentDataChunk));
+                writeWithFlush(outputStream, startRenderResult.getResult());
+                firstChunk = false;
+            }
             bodyRenderResult = oDataRenderer.renderBody(
-                    oDataRequestContext, QueryResult.from(nextResultChunk), startRenderResult);
+                    oDataRequestContext, QueryResult.from(currentDataChunk), startRenderResult);
             writeWithFlush(outputStream, bodyRenderResult.getResult());
         }
 
-        writeWithFlush(outputStream, oDataRenderer.renderEnd(oDataRequestContext, queryResult,
+        writeWithFlush(outputStream, oDataRenderer.renderEnd(oDataRequestContext, QueryResult.from(currentDataChunk),
                 bodyRenderResult == null ? startRenderResult : bodyRenderResult));
     }
 
