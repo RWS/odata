@@ -31,6 +31,9 @@ public class ChunkedActionRenderResult {
     private ByteArrayOutputStream outputStream;
     private Object writer;
 
+    public ChunkedActionRenderResult() {
+    }
+
     public ChunkedActionRenderResult(String result, ByteArrayOutputStream outputStream, Object writer) {
         this.result = result;
         this.outputStream = outputStream;
@@ -55,7 +58,7 @@ public class ChunkedActionRenderResult {
 
     public int getOutputStreamContentLength() {
         try {
-            return outputStream.toString(UTF_8.name()).length();
+            return outputStream == null ? 0 : outputStream.toString(UTF_8.name()).length();
         } catch (UnsupportedEncodingException e) {
             throw new ODataSystemException(e);
         }

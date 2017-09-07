@@ -77,7 +77,7 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
             // If null - return info in one piece within getPropertyBodyDocument() call and here just empty string
             return new ChunkedActionRenderResult("");
         } else {
-            return makePropertyStringChunked(data, START_DOCUMENT, null);
+            return makePropertyStringChunked(data, START_DOCUMENT, new ChunkedActionRenderResult());
         }
     }
 

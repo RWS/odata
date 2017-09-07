@@ -111,8 +111,10 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
                     outputStream = previousResult.getOutputStream();
                     initialContentLength = previousResult.getOutputStreamContentLength();
                     endElement(writer);
-                    return new ChunkedActionRenderResult(
-                            outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
+                    String result = outputStream.toString(UTF_8.name()).substring(initialContentLength);
+                    writer.close();
+                    outputStream.close();
+                    return new ChunkedActionRenderResult(result, outputStream, writer);
                 default:
                     throw new ODataRenderException(format(
                             "Unable to render complex type value because of wrong ChunkedStreamAction: {0}",
