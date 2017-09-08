@@ -88,7 +88,11 @@ public class JsonValueRenderer extends AbstractJsonRenderer {
         LOG.debug("Start rendering start property for request: {}", requestContext);
         JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
-        return propertyWriter.getPropertyStartDocument(result.getData());
+        ChunkedActionRenderResult renderResult = propertyWriter.getPropertyStartDocument(result.getData());
+        renderResult.setContentType(MediaType.JSON);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
+
+        return renderResult;
     }
 
     @Override

@@ -173,7 +173,7 @@ public abstract class AbstractODataController {
             out.flush();
         } else if (oDataResponse.getStreamingContent() != null) {
             servletResponse.setHeader(TRANSFER_ENCODING, "chunked");
-            oDataResponse.getStreamingContent().write(servletResponse.getOutputStream());
+            oDataResponse.getStreamingContent().write(servletResponse);
         }
     }
 

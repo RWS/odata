@@ -111,8 +111,12 @@ public class AtomRenderer extends AbstractAtomRenderer {
         if (result.getType() == COLLECTION) {
             atomWriter.writeStartFeed(buildContextURL(requestContext, result.getData()), result.getMeta());
         }
+        ChunkedActionRenderResult renderResult = new ChunkedActionRenderResult(atomWriter.getXml(),
+                atomWriter.getOutputStream(), atomWriter);
+        renderResult.setContentType(ATOM_XML);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
 
-        return new ChunkedActionRenderResult(atomWriter.getXml(), atomWriter.getOutputStream(), atomWriter);
+        return renderResult;
     }
 
     @Override

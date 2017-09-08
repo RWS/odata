@@ -20,6 +20,7 @@ import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderer;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -42,7 +43,7 @@ public class ODataContentStreamer implements ODataContent {
     }
 
     @Override
-    public void write(OutputStream outputStream) throws IOException, ODataException {
+    public void write(HttpServletResponse httpServletResponse) throws IOException, ODataException {
         boolean firstChunk = true;
         ChunkedActionRenderResult startRenderResult = null;
         ChunkedActionRenderResult bodyRenderResult = null;
@@ -53,16 +54,24 @@ public class ODataContentStreamer implements ODataContent {
             if (firstChunk) {
                 startRenderResult = oDataRenderer.renderStart(oDataRequestContext,
                         QueryResult.from(currentDataChunk));
-                writeWithFlush(outputStream, startRenderResult.getResult());
+                // First set headers added within renderer before sending first chunk
+                addHeaders(startRenderResult, httpServletResponse);
+                writeWithFlush(httpServletResponse.getOutputStream(), startRenderResult.getResult());
                 firstChunk = false;
             }
             bodyRenderResult = oDataRenderer.renderBody(
                     oDataRequestContext, QueryResult.from(currentDataChunk), startRenderResult);
-            writeWithFlush(outputStream, bodyRenderResult.getResult());
+            writeWithFlush(httpServletResponse.getOutputStream(), bodyRenderResult.getResult());
         }
 
-        writeWithFlush(outputStream, oDataRenderer.renderEnd(oDataRequestContext, QueryResult.from(currentDataChunk),
+        writeWithFlush(httpServletResponse.getOutputStream(), oDataRenderer.renderEnd(oDataRequestContext,
+                QueryResult.from(currentDataChunk),
                 bodyRenderResult == null ? startRenderResult : bodyRenderResult));
+    }
+
+    private void addHeaders(ChunkedActionRenderResult result, HttpServletResponse httpServletResponse) {
+        result.getHeaders().entrySet().forEach(headerEntry ->
+                httpServletResponse.setHeader(headerEntry.getKey(), headerEntry.getValue()));
     }
 
     private void writeWithFlush(OutputStream outputStream, String content) throws IOException {

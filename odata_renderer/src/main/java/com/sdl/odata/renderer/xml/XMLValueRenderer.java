@@ -96,7 +96,9 @@ public final class XMLValueRenderer extends AbstractAtomRenderer {
         LOG.debug("Start rendering start property for request: {}", requestContext);
         XMLPropertyWriter propertyWriter = new XMLPropertyWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
-        return propertyWriter.getPropertyStartDocument(result.getData());
+        ChunkedActionRenderResult renderResult = propertyWriter.getPropertyStartDocument(result.getData());
+        renderResult.setContentType(XML);
+        return renderResult;
     }
 
     @Override

@@ -17,6 +17,7 @@ package com.sdl.odata.api.service;
 
 import com.sdl.odata.api.ODataException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -31,5 +32,5 @@ public interface ODataContent {
      *
      * @param outputStream {@link OutputStream} in which the content is written.
      */
-    void write(OutputStream outputStream) throws IOException, ODataException;
+    void write(HttpServletResponse outputStream) throws IOException, ODataException;
 }

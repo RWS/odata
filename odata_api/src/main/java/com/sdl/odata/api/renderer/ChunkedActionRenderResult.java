@@ -16,9 +16,13 @@
 package com.sdl.odata.api.renderer;
 
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.service.HeaderNames;
+import com.sdl.odata.api.service.MediaType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -30,6 +34,7 @@ public class ChunkedActionRenderResult {
     private String result;
     private ByteArrayOutputStream outputStream;
     private Object writer;
+    private Map<String, String> headers = new HashMap<>();
 
     public ChunkedActionRenderResult() {
     }
@@ -62,5 +67,21 @@ public class ChunkedActionRenderResult {
         } catch (UnsupportedEncodingException e) {
             throw new ODataSystemException(e);
         }
+    }
+
+    public void addHeader(String name, String value) {
+        headers.put(name, value);
+    }
+
+    public void setContentType(MediaType mediaType) {
+        headers.put(HeaderNames.CONTENT_TYPE, mediaType.toString());
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 }

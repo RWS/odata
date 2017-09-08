@@ -109,7 +109,6 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                     generator.writeEndObject();
                     generator.flush();
                     generator.close();
-                    os.close();
                     return new ChunkedActionRenderResult(getOutputStreamContent(os).substring(initialContentLength),
                             os, generator);
                 default:

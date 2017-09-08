@@ -108,7 +108,7 @@ public final class XMLWriterUtil {
         try (ByteArrayOutputStream outputStream = previousResult.getOutputStream()) {
             int initialContentLength = previousResult.getOutputStreamContentLength();
             XMLStreamWriter writer = (XMLStreamWriter) previousResult.getWriter();
-            endElement(writer);
+            endDocument(writer);
             return new ChunkedActionRenderResult(
                     outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
         } catch (XMLStreamException | IOException e) {

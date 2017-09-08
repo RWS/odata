@@ -40,6 +40,7 @@ import static com.sdl.odata.AtomConstants.HASH;
 import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.VALUE;
 import static com.sdl.odata.ODataRendererUtils.getContextURL;
+import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.endDocument;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.endElement;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.getNullPropertyXML;
 import static com.sdl.odata.renderer.xml.util.XMLWriterUtil.getPropertyXmlForPrimitives;
@@ -110,10 +111,8 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
                     writer = (XMLStreamWriter) previousResult.getWriter();
                     outputStream = previousResult.getOutputStream();
                     initialContentLength = previousResult.getOutputStreamContentLength();
-                    endElement(writer);
+                    endDocument(writer);
                     String result = outputStream.toString(UTF_8.name()).substring(initialContentLength);
-                    writer.close();
-                    outputStream.close();
                     return new ChunkedActionRenderResult(result, outputStream, writer);
                 default:
                     throw new ODataRenderException(format(
