@@ -27,7 +27,7 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * Chunked action result.
+ * Chunked action result. Used in renderer to bind together result chunks.
  */
 public class ChunkedActionRenderResult {
 

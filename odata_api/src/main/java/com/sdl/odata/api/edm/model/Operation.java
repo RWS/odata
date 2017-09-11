@@ -39,6 +39,15 @@ public interface Operation<T> {
     T doOperation(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory)
             throws ODataException;
 
+    /**
+     * Stream method for operation. Used for chunked result streaming.
+     * Default implementation returns stream of doOperation result method.
+     *
+     * @param requestContext    The OData request context.
+     * @param dataSourceFactory The Data Source Factory.
+     * @return The stream result of operation.
+     * @throws ODataException if unable to execute the operation
+     */
     default Stream<?> doStreamOperation(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory)
             throws ODataException {
         return Stream.of(doOperation(requestContext, dataSourceFactory));
