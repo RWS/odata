@@ -192,7 +192,7 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
                                                                 ChunkedActionRenderResult previousResult)
             throws ODataException {
         Type type = getTypeFromODataUri();
-        validateRequest(type, data);
+        validateRequestChunk(type, data);
         switch (type.getMetaType()) {
             case PRIMITIVE:
                 LOG.debug("Given property type is primitive");
@@ -216,6 +216,17 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
     private boolean areValidTypesToProceed(Type type, Object data) throws ODataRenderException, ODataEdmException {
         return isEmptyCollection(data) || !(isCollection(data) ^ targetType.isCollection())
                 && getType(data).equals(type);
+    }
+
+    private void validateRequestChunk(Type type, Object data) throws ODataRenderException,
+            ODataClientException, ODataEdmException {
+        if (!areValidTypesToProceedChunk(type, data)) {
+            throw new ODataRenderException("ODataUri type is not matched with given 'data' type: " + type);
+        }
+    }
+
+    private boolean areValidTypesToProceedChunk(Type type, Object data) throws ODataRenderException, ODataEdmException {
+        return isEmptyCollection(data) || getType(data).equals(type);
     }
 
     protected Type getTypeFromODataUri() throws ODataRenderException {
