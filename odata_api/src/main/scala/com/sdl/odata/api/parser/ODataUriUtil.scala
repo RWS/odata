@@ -561,7 +561,7 @@ object ODataUriUtil {
   }
 
   /**
-   * Determites if an URI is an action or action import call.
+   * Determines if an URI is an action or action import call.
    *
    * @param odataUri The OData URI.
    * @return `true` if the URI is an action or action import call.
