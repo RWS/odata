@@ -47,26 +47,29 @@ public class ODataContentStreamer implements ODataContent {
         boolean firstChunk = true;
         ChunkedActionRenderResult startRenderResult = null;
         ChunkedActionRenderResult bodyRenderResult = null;
-        Iterator resultDataIterator = ((Stream) queryResult.getData()).iterator();
-        Object currentDataChunk = null;
-        while (resultDataIterator.hasNext()) {
-            currentDataChunk = resultDataIterator.next();
-            if (firstChunk) {
-                startRenderResult = oDataRenderer.renderStart(oDataRequestContext,
-                        QueryResult.from(currentDataChunk));
-                // First set headers added within renderer before sending first chunk
-                addHeaders(startRenderResult, httpServletResponse);
-                writeWithFlush(httpServletResponse.getOutputStream(), startRenderResult.getResult());
-                firstChunk = false;
-            }
-            bodyRenderResult = oDataRenderer.renderBody(
-                    oDataRequestContext, QueryResult.from(currentDataChunk), startRenderResult);
-            writeWithFlush(httpServletResponse.getOutputStream(), bodyRenderResult.getResult());
-        }
 
-        writeWithFlush(httpServletResponse.getOutputStream(), oDataRenderer.renderEnd(oDataRequestContext,
-                QueryResult.from(currentDataChunk),
-                bodyRenderResult == null ? startRenderResult : bodyRenderResult));
+        try (Stream resultStream = (Stream) queryResult.getData()) {
+            Iterator resultDataIterator = resultStream.iterator();
+            Object currentDataChunk = null;
+            while (resultDataIterator.hasNext()) {
+                currentDataChunk = resultDataIterator.next();
+                if (firstChunk) {
+                    startRenderResult = oDataRenderer.renderStart(oDataRequestContext,
+                            QueryResult.from(currentDataChunk));
+                    // First set headers added within renderer before sending first chunk
+                    addHeaders(startRenderResult, httpServletResponse);
+                    writeWithFlush(httpServletResponse.getOutputStream(), startRenderResult.getResult());
+                    firstChunk = false;
+                }
+                bodyRenderResult = oDataRenderer.renderBody(
+                        oDataRequestContext, QueryResult.from(currentDataChunk), startRenderResult);
+                writeWithFlush(httpServletResponse.getOutputStream(), bodyRenderResult.getResult());
+            }
+
+            writeWithFlush(httpServletResponse.getOutputStream(), oDataRenderer.renderEnd(oDataRequestContext,
+                    QueryResult.from(currentDataChunk),
+                    bodyRenderResult == null ? startRenderResult : bodyRenderResult));
+        }
     }
 
     private void addHeaders(ChunkedActionRenderResult result, HttpServletResponse httpServletResponse) {
