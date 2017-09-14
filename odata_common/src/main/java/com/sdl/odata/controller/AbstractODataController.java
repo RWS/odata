@@ -35,13 +35,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Map;
 
+import static com.sdl.odata.api.service.HeaderNames.TRANSFER_ENCODING;
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
  * The abstract OData Controller.
@@ -70,11 +71,10 @@ public abstract class AbstractODataController {
             ODataRequest oDataRequest = buildODataRequest(servletRequest);
             doWireLogging(oDataRequest);
             oDataResponse = oDataService.handleRequest(oDataRequest);
+            fillServletResponse(oDataResponse, servletResponse);
         } catch (ODataException e) {
             throw new ServletException(e);
         }
-
-        fillServletResponse(oDataResponse, servletResponse);
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Finished processing request from: {}", servletRequest.getRemoteAddr());
@@ -159,7 +159,7 @@ public abstract class AbstractODataController {
      * @throws java.io.IOException If an I/O error occurs.
      */
     private void fillServletResponse(ODataResponse oDataResponse, HttpServletResponse servletResponse)
-            throws IOException {
+            throws IOException, ODataException {
         servletResponse.setStatus(oDataResponse.getStatus().getCode());
 
         for (Map.Entry<String, String> entry : oDataResponse.getHeaders().entrySet()) {
@@ -171,6 +171,9 @@ public abstract class AbstractODataController {
             OutputStream out = servletResponse.getOutputStream();
             out.write(oDataResponse.getBody());
             out.flush();
+        } else if (oDataResponse.getStreamingContent() != null) {
+            servletResponse.setHeader(TRANSFER_ENCODING, "chunked");
+            oDataResponse.getStreamingContent().write(servletResponse);
         }
     }
 

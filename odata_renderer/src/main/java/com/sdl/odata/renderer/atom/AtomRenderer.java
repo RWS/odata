@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.atom;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractAtomRenderer;
@@ -39,11 +40,11 @@ import static com.sdl.odata.api.service.ODataRequestContextUtil.isWriteOperation
 
 /**
  * Renderer which renders either an OData Atom XML feed or entry.
- *
+ * <p>
  * This renderer can generate an XML response body with either an &lt;atom:feed&gt; root element (to be used when the
  * result of a query consists of a collection of entities) or a &lt;atom:entry&gt; root element (to be used when the
  * result of a query consists of a single entity).
- *
+ * <p>
  * Reference:
  * http://docs.oasis-open.org/odata/odata-atom-format/v4.0/cs02/odata-atom-format-v4.0-cs02.html#_Toc372792738
  * OData Atom Format Version 4.0 specification
@@ -96,6 +97,55 @@ public class AtomRenderer extends AbstractAtomRenderer {
         }
 
         LOG.debug("End rendering entity(es) for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
+            throws ODataException {
+        LOG.debug("Start rendering response start content including OData specification metadata " +
+                "for request: {} with result {}", requestContext, result);
+
+        AtomWriter atomWriter = initAtomWriter(requestContext);
+        atomWriter.startDocument();
+
+        if (result.getType() == COLLECTION) {
+            atomWriter.writeStartFeed(buildContextURL(requestContext, result.getData()), result.getMeta());
+        }
+        ChunkedActionRenderResult renderResult = new ChunkedActionRenderResult(atomWriter.getXml(),
+                atomWriter.getOutputStream(), atomWriter);
+        renderResult.setContentType(ATOM_XML);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
+
+        return renderResult;
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderBody(
+            ODataRequestContext requestContext, QueryResult result, ChunkedActionRenderResult previousResult)
+            throws ODataException {
+        AtomWriter atomWriter = (AtomWriter) previousResult.getWriter();
+        int previousContentLength = previousResult.getOutputStreamContentLength();
+        if (result.getType() == COLLECTION) {
+            atomWriter.writeBodyFeed((List<?>) result.getData());
+        } else {
+            atomWriter.writeEntry(result.getData(), buildContextURL(requestContext, result.getData()));
+        }
+
+        return new ChunkedActionRenderResult(atomWriter.getXml().substring(previousContentLength),
+                atomWriter.getOutputStream(), atomWriter);
+    }
+
+    @Override
+    public String renderEnd(ODataRequestContext requestContext, QueryResult result,
+                            ChunkedActionRenderResult previousResult) throws ODataException {
+        AtomWriter atomWriter = (AtomWriter) previousResult.getWriter();
+        int previousContentLength = previousResult.getOutputStreamContentLength();
+        if (result.getType() == COLLECTION) {
+            atomWriter.writeEndFeed();
+        }
+        atomWriter.endDocument();
+
+        return atomWriter.getXml().substring(previousContentLength);
     }
 
     protected AtomWriter initAtomWriter(ODataRequestContext requestContext) {

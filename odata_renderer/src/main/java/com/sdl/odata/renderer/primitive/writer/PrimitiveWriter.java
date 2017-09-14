@@ -20,19 +20,50 @@ import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.parser.ODataUri;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.AbstractPropertyWriter;
+import org.slf4j.Logger;
 
 import java.util.List;
+
+import static java.text.MessageFormat.format;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Primitive writer for simple text responses,
  * like /Entity/$count, /Entity/prop/$value.
  */
 public class PrimitiveWriter extends AbstractPropertyWriter {
+    private static final Logger LOG = getLogger(PrimitiveWriter.class);
 
     public PrimitiveWriter(ODataUri oDataUri, EntityDataModel entityDataModel) throws ODataRenderException {
         super(oDataUri, entityDataModel);
+    }
+
+    @Override
+    protected ChunkedActionRenderResult getPrimitivePropertyChunked(
+            Object data, Type type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
+            throws ODataException {
+        switch (action) {
+            case START_DOCUMENT:
+                return new ChunkedActionRenderResult("");
+            case BODY_DOCUMENT:
+                return new ChunkedActionRenderResult(generatePrimitiveProperty(data, type));
+            case END_DOCUMENT:
+                return new ChunkedActionRenderResult("");
+            default:
+                throw new ODataRenderException(format(
+                        "Unable to render primitive type value because of wrong ChunkedStreamAction: {0}",
+                        action));
+        }
+    }
+
+    @Override
+    protected ChunkedActionRenderResult getComplexPropertyChunked(
+            Object data, StructuredType type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
+            throws ODataException {
+        return new ChunkedActionRenderResult(generateComplexProperty(data, type));
     }
 
     @Override

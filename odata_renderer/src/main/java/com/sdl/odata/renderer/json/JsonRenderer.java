@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.json;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -87,5 +88,15 @@ public final class JsonRenderer extends AbstractJsonRenderer {
         }
 
         LOG.debug("End rendering entity(es) for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
+            throws ODataException {
+        ChunkedActionRenderResult renderResult = super.renderStart(requestContext, result);
+        renderResult.setContentType(MediaType.JSON);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
+
+        return renderResult;
     }
 }

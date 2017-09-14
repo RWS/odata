@@ -17,6 +17,7 @@ package com.sdl.odata.renderer.xml.util;
 
 import com.sdl.odata.api.edm.model.PrimitiveType;
 import com.sdl.odata.api.edm.model.Type;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static com.sdl.odata.AtomConstants.ELEMENT;
 import static com.sdl.odata.AtomConstants.METADATA;
 import static com.sdl.odata.AtomConstants.NULL;
@@ -38,10 +38,10 @@ import static com.sdl.odata.AtomConstants.ODATA_DATA_NS;
 import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.TYPE;
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * This class is util class for writing atom xml properties.
- *
  */
 public final class XMLWriterUtil {
 
@@ -67,6 +67,52 @@ public final class XMLWriterUtil {
             return outputStream.toString(UTF_8.name());
         } catch (XMLStreamException | IOException e) {
             throw new ODataRenderException("Error while rendering primitive property value.", e);
+        }
+    }
+
+    public static ChunkedActionRenderResult getPropertyXmlForPrimitivesStartDocument(
+            String rootName, Type type, Object data, String context) throws ODataRenderException {
+        LOG.debug("PropertyXMLForPrimitivesStartDocument invoked with {}, {}, {}", rootName, type, data);
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            XMLStreamWriter writer = startElement(outputStream, rootName, type.getName(), context, false);
+            return new ChunkedActionRenderResult(outputStream.toString(UTF_8.name()), outputStream, writer);
+        } catch (XMLStreamException | IOException e) {
+            throw new ODataRenderException("Error while rendering start document primitive property value.", e);
+        }
+    }
+
+    public static ChunkedActionRenderResult getPropertyXmlForPrimitivesBodyDocument(
+            String rootName, Type type, Object data, ChunkedActionRenderResult previousResult)
+            throws ODataRenderException {
+        LOG.debug("PropertyXMLForPrimitivesBodyDocument invoked with {}, {}, {}", rootName, type, data);
+        try (ByteArrayOutputStream outputStream = previousResult.getOutputStream()) {
+            int initialContentLength = previousResult.getOutputStreamContentLength();
+            XMLStreamWriter writer = (XMLStreamWriter) previousResult.getWriter();
+            // write values
+            if (data instanceof List<?>) {
+                writeMultipleElementsForPrimitives(writer, (List<?>) data);
+            } else {
+                writer.writeCharacters(data.toString());
+            }
+            return new ChunkedActionRenderResult(
+                    outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
+        } catch (XMLStreamException | IOException e) {
+            throw new ODataRenderException("Error while rendering body document primitive property value.", e);
+        }
+    }
+
+    public static ChunkedActionRenderResult getPropertyXmlForPrimitivesEndDocument(
+            String rootName, Type type, Object data, ChunkedActionRenderResult previousResult)
+            throws ODataRenderException {
+        LOG.debug("PropertyXMLForPrimitivesEndDocument invoked with {}, {}, {}", rootName, type, data);
+        try (ByteArrayOutputStream outputStream = previousResult.getOutputStream()) {
+            int initialContentLength = previousResult.getOutputStreamContentLength();
+            XMLStreamWriter writer = (XMLStreamWriter) previousResult.getWriter();
+            endDocument(writer);
+            return new ChunkedActionRenderResult(
+                    outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
+        } catch (XMLStreamException | IOException e) {
+            throw new ODataRenderException("Error while rendering end document primitive property value.", e);
         }
     }
 

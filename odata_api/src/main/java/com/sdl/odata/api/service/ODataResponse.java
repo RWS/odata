@@ -147,6 +147,7 @@ public final class ODataResponse extends ODataRequestResponseBase {
         private final Map<String, String> headersMap = new HashMap<>();
 
         private byte[] body;
+        private ODataContent oDataContent;
 
         public Builder setStatus(Status builderStatus) {
             this.status = builderStatus;
@@ -173,6 +174,11 @@ public final class ODataResponse extends ODataRequestResponseBase {
             return this;
         }
 
+        public Builder setODataContent(ODataContent builderODataContent) {
+            this.oDataContent = builderODataContent;
+            return this;
+        }
+
         public Builder setBodyText(String bodyText, String charset) throws UnsupportedEncodingException {
             this.body = bodyText.getBytes(charset);
             return this;
@@ -186,7 +192,7 @@ public final class ODataResponse extends ODataRequestResponseBase {
     private final Status status;
 
     private ODataResponse(Builder builder) {
-        super(Collections.unmodifiableMap(builder.headersMap), builder.body);
+        super(Collections.unmodifiableMap(builder.headersMap), builder.body, builder.oDataContent);
 
         if (builder.status == null) {
             throw new IllegalArgumentException("Status is required");

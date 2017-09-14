@@ -19,6 +19,7 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -79,5 +80,36 @@ public class JsonValueRenderer extends AbstractJsonRenderer {
         }
 
         LOG.debug("End rendering property for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
+            throws ODataException {
+        LOG.debug("Start rendering start property for request: {}", requestContext);
+        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        ChunkedActionRenderResult renderResult = propertyWriter.getPropertyStartDocument(result.getData());
+        renderResult.setContentType(MediaType.JSON);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
+
+        return renderResult;
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderBody(ODataRequestContext requestContext, QueryResult result,
+                                                ChunkedActionRenderResult previousResult) throws ODataException {
+        LOG.debug("Start rendering body property for request: {}", requestContext);
+        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return propertyWriter.getPropertyBodyDocument(result.getData(), previousResult);
+    }
+
+    @Override
+    public String renderEnd(ODataRequestContext requestContext, QueryResult result,
+                            ChunkedActionRenderResult previousResult) throws ODataException {
+        LOG.debug("Start rendering end property for request: {}", requestContext);
+        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return propertyWriter.getPropertyEndDocument(result.getData(), previousResult);
     }
 }
