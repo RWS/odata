@@ -23,6 +23,7 @@ import com.sdl.odata.test.model.Category;
 import com.sdl.odata.test.model.Product;
 import com.sdl.odata.test.model.SingletonSample;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
@@ -33,10 +34,13 @@ import java.util.stream.Stream;
 
 import static com.sdl.odata.client.util.MarshallingTestUtilities.atomMarshall;
 import static com.sdl.odata.client.util.MarshallingTestUtilities.createODataUri;
+import static com.sdl.odata.client.util.MarshallingTestUtilities.marshalPrimitives;
 import static com.sdl.odata.test.model.Category.BOOKS;
 import static com.sdl.odata.test.model.Category.ELECTRONICS;
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -101,6 +105,20 @@ public class AtomResponseUnmarshallerTest {
 
         assertNotNull(unmarshalledSingleton);
         assertEquals(singletonSample, unmarshalledSingleton);
+    }
+
+    @Test
+    @Ignore
+    public void testCollectionPrimitives() throws ODataException, UnsupportedEncodingException, ODataClientException {
+        List<String> strings = asList("test1", "test2", "test3");
+        String marshalledStringList = marshalPrimitives(strings,
+                createODataUri("http://localhost:8080/odata.svc/Customers(1)/Phone"));
+        List<?> resultStringList = (List<?>) unmarshaller.unmarshallEntity(marshalledStringList,
+                new BasicODataClientQuery.Builder().withEntityType(List.class).build());
+
+        assertNotNull(resultStringList);
+        assertFalse(resultStringList.isEmpty());
+        assertEquals(3, resultStringList.size());
     }
 
     private Product createProduct(int id, String name, Category category) {
