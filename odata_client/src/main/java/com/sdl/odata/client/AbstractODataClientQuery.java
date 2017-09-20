@@ -20,6 +20,8 @@ import com.sdl.odata.api.edm.annotations.EdmSingleton;
 import com.sdl.odata.client.api.ODataClientQuery;
 import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 
+import java.util.List;
+
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.pluralize;
 import static java.lang.String.format;
@@ -51,6 +53,10 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
     }
 
     public String getEdmEntityName() {
+        if (entityType.getName().equals(List.class.getName())) {
+            return entityType.getSimpleName();
+        }
+
         EdmEntitySet edmEntitySet = entityType.getAnnotation(EdmEntitySet.class);
 
         if (edmEntitySet != null) {

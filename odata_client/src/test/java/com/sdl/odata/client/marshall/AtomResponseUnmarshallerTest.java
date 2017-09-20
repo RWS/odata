@@ -108,7 +108,6 @@ public class AtomResponseUnmarshallerTest {
     }
 
     @Test
-    @Ignore
     public void testCollectionPrimitives() throws ODataException, UnsupportedEncodingException, ODataClientException {
         List<String> strings = asList("test1", "test2", "test3");
         String marshalledStringList = marshalPrimitives(strings,
