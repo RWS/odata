@@ -23,7 +23,6 @@ import com.sdl.odata.test.model.Category;
 import com.sdl.odata.test.model.Product;
 import com.sdl.odata.test.model.SingletonSample;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;

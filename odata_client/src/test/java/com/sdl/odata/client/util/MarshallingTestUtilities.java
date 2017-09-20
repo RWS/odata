@@ -89,9 +89,11 @@ public final class MarshallingTestUtilities {
      * @throws UnsupportedEncodingException
      * @throws ODataException
      */
-    public static String marshalPrimitives(Object objectToMarshall, ODataUri serviceUri) throws UnsupportedEncodingException, ODataException {
+    public static String marshalPrimitives(Object objectToMarshall, ODataUri serviceUri)
+            throws UnsupportedEncodingException, ODataException {
         ODataResponse.Builder responseBuilder = new ODataResponse.Builder().setStatus(OK);
-        new XMLValueRenderer().render(buildODataContext("", XML, serviceUri), QueryResult.from(objectToMarshall), responseBuilder);
+        new XMLValueRenderer().render(buildODataContext("", XML, serviceUri),
+                QueryResult.from(objectToMarshall), responseBuilder);
 
         return responseBuilder.build().getBodyText(UTF_8.name());
     }
