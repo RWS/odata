@@ -73,20 +73,25 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
       actorContext.origin ! ServiceResponse(actorContext, responseBuilder.build())
     case Render(actorContext, result) =>
       val responseBuilder = new ODataResponse.Builder()
-      result.getQueryResult.getType match {
-        case ResultType.STREAM =>
-          getRenderer(actorContext, result.getQueryResult) match {
-            case Some(renderer) =>
-              responseBuilder.setODataContent(
-                new ODataContentStreamer(renderer, actorContext.requestContext, result.getQueryResult))
-            case None => renderError(actorContext,
-              new ODataServerException(UNKNOWN_ERROR, "No renderer available"), responseBuilder)
-          }
-        case _ =>
-          if (result.getData != null) {
+      Option(result.getQueryResult) match {
+        case Some(queryResult) => queryResult.getType match {
+          case ResultType.STREAM =>
+            getRenderer(actorContext, result.getQueryResult) match {
+              case Some(renderer) =>
+                responseBuilder.setODataContent(
+                  new ODataContentStreamer(renderer, actorContext.requestContext, result.getQueryResult))
+              case None => renderError(actorContext,
+                new ODataServerException(UNKNOWN_ERROR, "No renderer available"), responseBuilder)
+            }
+          case _ => if (result.getData != null) {
             renderResult(actorContext, result, responseBuilder)
           }
+        }
+        case None => if (result.getData != null) {
+          renderResult(actorContext, result, responseBuilder)
+        }
       }
+
       responseBuilder.setStatus(result.getStatus)
       if (result.getHeaders.size() > 0) {
         responseBuilder.setHeaders(result.getHeaders)
