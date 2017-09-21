@@ -60,6 +60,8 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
     private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
     private static final Pattern PRIMITIVE_VALUE_RESPONSE_PATTERN = Pattern.compile(
             "<metadata:value[^>]+>(.*)</metadata:value>", Pattern.DOTALL);
+    private static final Pattern COLLECTION_OF_PRIMITIVE_VALUE_RESPONSE_PATTERN = Pattern.compile(
+            "<metadata:element>(.+?)</metadata:element>", Pattern.DOTALL);
     /**
      * Types that should be unmarshalled as primitive values.
      */
@@ -91,7 +93,9 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
     public Object unmarshallEntity(String odataServiceResponse, ODataClientQuery query) throws ODataClientException {
         LOG.debug("Unmarshalling entity for query: {}", query);
         try {
-            if (PRIMITIVE_CLASSES.contains(query.getEntityType())) {
+            if (List.class.getSimpleName().equals(query.getEntityType().getSimpleName())) {
+                return unmarshallCollectionOfPrimitives(odataServiceResponse);
+            } else if (PRIMITIVE_CLASSES.contains(query.getEntityType())) {
                 return unmarshallPrimitives(odataServiceResponse);
             } else {
                 return atomUnmarshall(odataServiceResponse, odataServiceResponse, query);
@@ -104,6 +108,15 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
     private Object unmarshallPrimitives(String odataServiceResponse) {
         Matcher matcher = PRIMITIVE_VALUE_RESPONSE_PATTERN.matcher(odataServiceResponse);
         return matcher.find() ? matcher.group(1) : null;
+    }
+
+    private Object unmarshallCollectionOfPrimitives(String odataServiceResponse) {
+        List<Object> list = new ArrayList<>();
+        Matcher matcher = COLLECTION_OF_PRIMITIVE_VALUE_RESPONSE_PATTERN.matcher(odataServiceResponse);
+        while (matcher.find()) {
+            list.add(matcher.group(1));
+        }
+        return list;
     }
 
     @Override
