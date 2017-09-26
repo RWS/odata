@@ -24,21 +24,31 @@ public interface ODataClientQuery extends Serializable {
 
     /**
      * It return string representation of query.
+     *
      * @return The query
      */
     String getQuery();
 
     /**
      * Returns a string representation of EdmEntity name.
+     *
      * @return The entity name
      */
     String getEdmEntityName();
 
     /**
      * Returns result type of OData execution result.
+     *
      * @return result type of executed result
      */
     Class<?> getEntityType();
 
     String getCacheKey();
+
+    /**
+     * Returns boolean value that says whether we should use streaming for current ODataClientQuery.
+     *
+     * @return true if we expect to receive response with chunked Transfer Encoding, otherwise - false
+     */
+    boolean isStreamingSupport();
 }
