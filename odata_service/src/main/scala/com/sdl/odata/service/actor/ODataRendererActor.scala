@@ -22,9 +22,10 @@ import com.sdl.odata.api._
 import com.sdl.odata.api.processor.ProcessorResult
 import com.sdl.odata.api.processor.datasource.{ODataDataSourceException, ODataEntityNotFoundException}
 import com.sdl.odata.api.processor.query.QueryResult
+import com.sdl.odata.api.processor.query.QueryResult.ResultType
 import com.sdl.odata.api.renderer.{ODataRenderer, RendererFactory}
-import com.sdl.odata.api.service.ODataResponse
 import com.sdl.odata.api.service.ODataResponse.Status._
+import com.sdl.odata.api.service.{ODataContentStreamer, ODataResponse}
 import com.sdl.odata.service.protocol.{ErrorMessage, ODataActorContext, Render, ServiceResponse}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
@@ -72,9 +73,25 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
       actorContext.origin ! ServiceResponse(actorContext, responseBuilder.build())
     case Render(actorContext, result) =>
       val responseBuilder = new ODataResponse.Builder()
-      if (result.getData != null) {
-        renderResult(actorContext, result, responseBuilder)
+      Option(result.getQueryResult) match {
+        case Some(queryResult) => queryResult.getType match {
+          case ResultType.STREAM =>
+            getRenderer(actorContext, result.getQueryResult) match {
+              case Some(renderer) =>
+                responseBuilder.setODataContent(
+                  new ODataContentStreamer(renderer, actorContext.requestContext, result.getQueryResult))
+              case None => renderError(actorContext,
+                new ODataServerException(UNKNOWN_ERROR, "No renderer available"), responseBuilder)
+            }
+          case _ => if (result.getData != null) {
+            renderResult(actorContext, result, responseBuilder)
+          }
+        }
+        case None => if (result.getData != null) {
+          renderResult(actorContext, result, responseBuilder)
+        }
       }
+
       responseBuilder.setStatus(result.getStatus)
       if (result.getHeaders.size() > 0) {
         responseBuilder.setHeaders(result.getHeaders)
@@ -83,12 +100,13 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
   }
 
   /**
-   * Temporary solution for catching batch requests within ODataRenderActor.
-   * If it's batch request we should set OK status even if we catch an error.
-   * @param actorContext actorContext
-   * @param responseBuilder responseBuilder
-   * @param status response status
-   */
+    * Temporary solution for catching batch requests within ODataRenderActor.
+    * If it's batch request we should set OK status even if we catch an error.
+    *
+    * @param actorContext    actorContext
+    * @param responseBuilder responseBuilder
+    * @param status          response status
+    */
   def setStatus(actorContext: ODataActorContext, responseBuilder: ODataResponse.Builder, status: ODataResponse.Status) {
     if (actorContext.requestContext.getRequest.getUri.contains("$batch"))
       responseBuilder.setStatus(ODataResponse.Status.OK)
@@ -97,12 +115,12 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
   }
 
   /**
-   * Render an error.
-   *
-   * @param actorContext The actor context.
-   * @param exception The source exception to use to render the error.
-   * @param responseBuilder The response builder.
-   */
+    * Render an error.
+    *
+    * @param actorContext    The actor context.
+    * @param exception       The source exception to use to render the error.
+    * @param responseBuilder The response builder.
+    */
   def renderError(actorContext: ODataActorContext, exception: ODataException, responseBuilder: ODataResponse.Builder) {
     val exceptionResult = QueryResult.from(exception)
     getRenderer(actorContext, exceptionResult) match {
@@ -115,28 +133,27 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
   }
 
   /**
-   * Render the result from the processed operation.
-   *
-   * @param actorContext The actor context.
-   * @param result The result to render.
-   * @param responseBuilder The response builder.
-   */
+    * Render the result from the processed operation.
+    *
+    * @param actorContext    The actor context.
+    * @param result          The result to render.
+    * @param responseBuilder The response builder.
+    */
   def renderResult(actorContext: ODataActorContext, result: ProcessorResult, responseBuilder: ODataResponse.Builder) {
     getRenderer(actorContext, result.getQueryResult) match {
       case Some(renderer) =>
         renderer.render(actorContext.requestContext, result.getQueryResult, responseBuilder)
-
       case None =>
         renderError(actorContext, new ODataServerException(UNKNOWN_ERROR, "No renderer available"), responseBuilder)
     }
   }
 
   /**
-   * Render an error as plain text.
-   *
-   * @param ex The source exception to use to render the error.
-   * @param responseBuilder The response builder.
-   */
+    * Render an error as plain text.
+    *
+    * @param ex              The source exception to use to render the error.
+    * @param responseBuilder The response builder.
+    */
   def renderErrorAsText(ex: Exception, responseBuilder: ODataResponse.Builder) {
     responseBuilder.setBodyText(Option(ex.getMessage).getOrElse("Unknown error"), UTF_8.name())
     responseBuilder.setStatus(INTERNAL_SERVER_ERROR)
@@ -146,9 +163,9 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
     import scala.collection.JavaConverters._
     val r = rendererFactory.getRenderers
     r.asScala.map(renderer => (renderer.score(actorContext.requestContext, data), renderer))
-      .filter({ case (score, _) => score > 0})
-      .sortBy({ case (score, _) => -score})
-      .map({ case (_, renderer) => renderer})
+      .filter({ case (score, _) => score > 0 })
+      .sortBy({ case (score, _) => -score })
+      .map({ case (_, renderer) => renderer })
       .headOption
   }
 }

@@ -41,6 +41,7 @@ import scala.collection.JavaConverters;
 import java.util.Map;
 import java.util.Set;
 
+import static com.sdl.odata.api.service.HeaderNames.TE;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -50,6 +51,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
 
     private static final Logger LOG = getLogger(ODataFunctionProcessorImpl.class);
+
+    private static final String TRANSFER_ENCODING_CHUNKED = "chunked";
 
     @Autowired
     private DataSourceFactory dataSourceFactory;
@@ -61,7 +64,9 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
         Object result;
 
         try {
-            result = operation.doOperation(requestContext, dataSourceFactory);
+            boolean isChunkedRequest = TRANSFER_ENCODING_CHUNKED.equals(requestContext.getRequest().getHeader(TE));
+            result = isChunkedRequest ? operation.doStreamOperation(requestContext, dataSourceFactory) :
+                    operation.doOperation(requestContext, dataSourceFactory);
         } catch (Exception e) {
             LOG.error("Unexpected exception when executing a function.", e);
             throw e;

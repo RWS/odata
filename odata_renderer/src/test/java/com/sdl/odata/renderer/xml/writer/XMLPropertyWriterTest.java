@@ -15,12 +15,13 @@
  */
 package com.sdl.odata.renderer.xml.writer;
 
-import com.google.common.collect.Lists;
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.parser.ODataUriParser;
 import com.sdl.odata.renderer.WriterTest;
 import com.sdl.odata.test.model.Address;
+import com.sdl.odata.test.model.ComplexTypeSample;
 import com.sdl.odata.test.model.Customer;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,9 +36,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.VALUE;
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
@@ -51,7 +55,6 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * This is unit test for {@link XMLPropertyWriter}.
- *
  */
 public class XMLPropertyWriterTest extends WriterTest {
 
@@ -83,13 +86,13 @@ public class XMLPropertyWriterTest extends WriterTest {
     @Test(expected = ODataRenderException.class)
     public void testTypesMismatchComplexType() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
-        propertyWriter.getPropertyAsString(Lists.newArrayList(new Customer()));
+        propertyWriter.getPropertyAsString(newArrayList(new Customer()));
     }
 
     @Test
     public void testEmptyCollection() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
-        String result = propertyWriter.getPropertyAsString(Lists.newArrayList());
+        String result = propertyWriter.getPropertyAsString(newArrayList());
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
@@ -203,6 +206,196 @@ public class XMLPropertyWriterTest extends WriterTest {
         assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_PATH)), prettyPrintXml(xml));
     }
 
+    @Test
+    public void testChunkedXMLForNonNullPrimitiveProperty() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/Customers(1)/id");
+
+        Long id = 1L;
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(id);
+        ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(id, startResult);
+        String endResult = propertyWriter.getPropertyEndDocument(id, bodyResult);
+
+        String result = propertyWriter.getPropertyAsString(id);
+
+        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+
+        // Checking expected values
+        NodeList nodeList = assertNodeList(result, 1);
+        assertThat(nodeList.item(0).getTextContent(), is("1"));
+        assertAttributes(nodeList, 4, "metadata:type", "Int64");
+    }
+
+    @Test
+    public void testChunkedEmptyCollection() throws ODataException {
+        prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
+
+        ArrayList<Object> data = newArrayList();
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(data);
+        ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(data, startResult);
+        String endResult = propertyWriter.getPropertyEndDocument(data, bodyResult);
+
+        String result = propertyWriter.getPropertyAsString(data);
+
+        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+
+        // Checking expected values
+        NodeList nodeList = assertNodeList(result, 1);
+        assertAttributes(nodeList, 3, "metadata:context",
+                "http://localhost:8080/odata.svc/$metadata#Customers(1)/Phone");
+    }
+
+    @Test
+    public void testChunkedXMLForNonNullPrimitiveUnicodeProperty() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/Customers(1)/name");
+
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(UNICODE_STRING);
+        ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(UNICODE_STRING, startResult);
+        String endResult = propertyWriter.getPropertyEndDocument(UNICODE_STRING, bodyResult);
+
+        String result = propertyWriter.getPropertyAsString(UNICODE_STRING);
+
+        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+
+        // Checking expected values
+        NodeList nodeList = assertNodeList(result, 1);
+        assertThat(nodeList.item(0).getTextContent(), is(UNICODE_STRING));
+    }
+
+    @Test
+    public void testChunkedXMLForNonNullPrimitivePropertyList() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
+        List<String> testList = Arrays.asList("test1", "test2", "test3");
+
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(testList);
+        ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(testList, startResult);
+        String endResult = propertyWriter.getPropertyEndDocument(testList, bodyResult);
+
+        String result = propertyWriter.getPropertyAsString(testList);
+
+        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+
+        // Checking expected values
+        NodeList nodeList = assertNodeList(result, 1);
+
+        Node node = assertAndGetElement(nodeList, 3, 0);
+        assertThat(node.getTextContent(), is("test1"));
+
+        node = assertAndGetElement(nodeList, 3, 1);
+        assertThat(node.getTextContent(), is("test2"));
+
+        node = assertAndGetElement(nodeList, 3, 2);
+        assertThat(node.getTextContent(), is("test3"));
+
+        assertAttributes(nodeList, 3, "metadata:context",
+                "http://localhost:8080/odata.svc/$metadata#Customers(1)/Phone");
+        metaDataTypeShouldNotPresent(nodeList, 3);
+    }
+
+    @Test
+    public void testChunkedXMLForNullProperty() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
+
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(null);
+        ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(null, startResult);
+        String endResult = propertyWriter.getPropertyEndDocument(null, bodyResult);
+
+        String result = propertyWriter.getPropertyAsString(null);
+
+        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+
+        // Checking expected values
+        NodeList nodeList = assertNodeList(result, 1);
+        assertAttributes(nodeList, 3, "metadata:null", "true");
+        assertAttributes(nodeList, 3, "metadata:context",
+                "http://localhost:8080/odata.svc/$metadata#Customers(1)/address");
+    }
+
+    @Test
+    public void testChunkedXMLForComplexPropertyList() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
+
+        List<Address> addresses = createAddressList();
+
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(addresses);
+        ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(addresses, startResult);
+        String endResult = propertyWriter.getPropertyEndDocument(addresses, bodyResult);
+
+        String result = propertyWriter.getPropertyAsString(addresses);
+
+        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+
+        // Checking expected values
+        NodeList nodeList = assertNodeList(result, 1);
+        assertAttributes(nodeList, 4, "metadata:type", "#ODataDemo.Address");
+        Node firstElement = assertAndGetElement(nodeList, 2, 0);
+
+        assertThat(firstElement.getChildNodes().getLength(), is(5));
+        Node streetNode = firstElement.getChildNodes().item(0);
+        assertThat(streetNode.getNodeName(), is("Street"));
+        assertThat(streetNode.getTextContent(), is("first street"));
+
+        Node secondElement = assertAndGetElement(nodeList, 2, 1);
+        assertThat(secondElement.getChildNodes().getLength(), is(5));
+        streetNode = secondElement.getChildNodes().item(0);
+        assertThat(streetNode.getNodeName(), is("Street"));
+        assertThat(streetNode.getTextContent(), is("second street"));
+    }
+
+    @Test
+    public void testChunkedXMLForAbstractComplexPropertyList() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperties");
+
+        List<ComplexTypeSample> complexTypeListSample = createComplexTypeListSample();
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(complexTypeListSample);
+        ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(complexTypeListSample,
+                startResult);
+        String endResult = propertyWriter.getPropertyEndDocument(complexTypeListSample, bodyResult);
+
+        String result = propertyWriter.getPropertyAsString(complexTypeListSample);
+
+        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+
+        assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_LIST_PATH)), prettyPrintXml(result));
+    }
+
+    @Test
+    public void testChunkedXMLForComplexPropertyWithUnicodeCharacters() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperty");
+        ComplexTypeSample complexType = createComplexType("Prop 1", UNICODE_STRING);
+
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(complexType);
+        ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(complexType, startResult);
+        String endResult = propertyWriter.getPropertyEndDocument(complexType, bodyResult);
+
+        String result = propertyWriter.getPropertyAsString(complexType);
+
+        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+
+        assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_UTF_PATH)), prettyPrintXml(result));
+    }
+
+    @Test
+    public void testChunkedXMLForAbstractComplexProperty() throws Exception {
+        prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperty");
+        ComplexTypeSample complexType = createComplexType("Prop 1", "Inherited 1");
+
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(complexType);
+        ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(complexType, startResult);
+        String endResult = propertyWriter.getPropertyEndDocument(complexType, bodyResult);
+
+        String result = propertyWriter.getPropertyAsString(complexType);
+
+        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+
+        assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_PATH)), prettyPrintXml(result));
+    }
+
+    private String getChunkedRenderedFullResult(ChunkedActionRenderResult start, String end,
+                                                ChunkedActionRenderResult... bodyPieces) {
+        return start.getResult() + Arrays.stream(bodyPieces).map(cr -> cr.getResult()).collect(Collectors.joining())
+                + end;
+    }
+
     private void prepareForTest(String url) throws ODataRenderException {
         //Preparation
         odataUri = new ODataUriParser(entityDataModel).parseUri(url);
@@ -260,7 +453,7 @@ public class XMLPropertyWriterTest extends WriterTest {
     }
 
     private List<Address> createAddressList() {
-        return Lists.newArrayList(
+        return newArrayList(
                 new Address().setCity("first city").setCountry("first country")
                         .setHouseNumber("first hn").setPostalCode("first postal code").setStreet("first street"),
                 new Address().setCity("second city").setCountry("second country")
