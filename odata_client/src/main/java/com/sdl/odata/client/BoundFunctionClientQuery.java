@@ -29,7 +29,7 @@ public class BoundFunctionClientQuery extends AbstractODataFunctionClientQuery {
     private String functionNameSpace;
 
     public BoundFunctionClientQuery(Builder builder) {
-        super(builder.entityType, builder.functionName, builder.functionParameterMap);
+        super(builder.entityType, builder.functionName, builder.functionParameterMap, builder.streaming);
 
         checkNotNull(builder.boundEntityName, "Bound Entity Name shouldn't be null");
         this.boundEntityName = builder.boundEntityName;
@@ -93,6 +93,7 @@ public class BoundFunctionClientQuery extends AbstractODataFunctionClientQuery {
         private Map<String, String> functionParameterMap;
         private String boundEntityName;
         private String functionNameSpace;
+        private boolean streaming;
 
         public Builder withBoundEntityName(String boundEntity) {
             this.boundEntityName = boundEntity;
@@ -119,6 +120,11 @@ public class BoundFunctionClientQuery extends AbstractODataFunctionClientQuery {
 
         public Builder withFunctionName(String name) {
             this.functionName = name;
+            return this;
+        }
+
+        public Builder withStreamingSupport(boolean streamingSupport) {
+            this.streaming = streamingSupport;
             return this;
         }
 

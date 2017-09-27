@@ -39,7 +39,9 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
     private Class<?> entityType;
     private String entityKey;
     private boolean isSingletonEntity;
+    private boolean streaming = false;
 
+    @Override
     public Class<?> getEntityType() {
         return entityType;
     }
@@ -52,6 +54,7 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
         this.entityKey = entityKey;
     }
 
+    @Override
     public String getEdmEntityName() {
         if (entityType.getName().equals(List.class.getName())) {
             return entityType.getSimpleName();
@@ -104,7 +107,17 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
         return isSingletonEntity;
     }
 
+    @Override
     public String getCacheKey() {
         return getQuery();
+    }
+
+    @Override
+    public boolean isStreamingSupport() {
+        return streaming;
+    }
+
+    public void setStreamingSupport(boolean streamingSupport) {
+        this.streaming = streamingSupport;
     }
 }
