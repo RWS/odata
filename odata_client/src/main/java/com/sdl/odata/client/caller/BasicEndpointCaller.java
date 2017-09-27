@@ -65,7 +65,7 @@ public class BasicEndpointCaller implements EndpointCaller {
     private static final Logger LOG = LoggerFactory.getLogger(BasicEndpointCaller.class);
 
     private static final Pattern ODATA_CHUNKED_ERROR_MESSAGE_PATTERN = Pattern
-            .compile(ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY + ":(.+)");
+            .compile(ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY + ":(.*)");
 
     private Integer timeout;
     private int proxyServerPort;
