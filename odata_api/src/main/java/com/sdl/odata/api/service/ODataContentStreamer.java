@@ -20,11 +20,14 @@ import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderer;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.stream.Stream;
+
+import static com.sdl.odata.api.service.HeaderNames.ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY;
 
 /**
  * OData service content streamer. Streams content into {@link OutputStream}.
@@ -47,6 +50,7 @@ public class ODataContentStreamer implements ODataContent {
         boolean firstChunk = true;
         ChunkedActionRenderResult startRenderResult = null;
         ChunkedActionRenderResult bodyRenderResult = null;
+        ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
 
         try (Stream resultStream = (Stream) queryResult.getData()) {
             Iterator resultDataIterator = resultStream.iterator();
@@ -58,17 +62,22 @@ public class ODataContentStreamer implements ODataContent {
                             QueryResult.from(currentDataChunk));
                     // First set headers added within renderer before sending first chunk
                     addHeaders(startRenderResult, httpServletResponse);
-                    writeWithFlush(httpServletResponse.getOutputStream(), startRenderResult.getResult());
+                    writeWithFlush(servletOutputStream, startRenderResult.getResult());
                     firstChunk = false;
                 }
                 bodyRenderResult = oDataRenderer.renderBody(
                         oDataRequestContext, QueryResult.from(currentDataChunk), startRenderResult);
-                writeWithFlush(httpServletResponse.getOutputStream(), bodyRenderResult.getResult());
+                writeWithFlush(servletOutputStream, bodyRenderResult.getResult());
             }
 
-            writeWithFlush(httpServletResponse.getOutputStream(), oDataRenderer.renderEnd(oDataRequestContext,
+            writeWithFlush(servletOutputStream, oDataRenderer.renderEnd(oDataRequestContext,
                     QueryResult.from(currentDataChunk),
                     bodyRenderResult == null ? startRenderResult : bodyRenderResult));
+        } catch (RuntimeException e) {
+            // Writing additional line into response if some error happened while iterating over elements.
+            // We cannot modify set headers after any chunk sent already.
+            writeWithFlush(servletOutputStream,
+                    System.lineSeparator() + ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY + ":" + e.getMessage());
         }
     }
 
