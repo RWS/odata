@@ -39,6 +39,7 @@ import java.util.List;
 import static com.sdl.odata.JsonConstants.CONTEXT;
 import static com.sdl.odata.JsonConstants.VALUE;
 import static com.sdl.odata.ODataRendererUtils.getContextURL;
+import static com.sdl.odata.renderer.json.util.JsonWriterUtil.escapeQuotes;
 import static com.sdl.odata.renderer.json.util.JsonWriterUtil.writePrimitiveValue;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -82,11 +83,15 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
             switch (action) {
                 case START_DOCUMENT:
                     generator.writeStartObject();
+                    generator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(), true));
                     if (isCollection(data)) {
-                        generator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(), true));
                         generator.writeArrayFieldStart(VALUE);
+                    } else if (type.getJavaType().isAssignableFrom(String.class)) {
+                        // String primitive can be passed as Stream of String values which is not acceptable
+                        // for other primitive values so we treat it separately here
+                        generator.writeFieldName(VALUE);
+                        generator.writeRaw(":\"");
                     } else {
-                        generator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(), true));
                         generator.writeFieldName(VALUE);
                     }
                     generator.flush();
@@ -96,6 +101,8 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                         for (Object element : (List) data) {
                             generator.writeObject(element);
                         }
+                    } else if (type.getJavaType().isAssignableFrom(String.class)) {
+                        generator.writeRaw(escapeQuotes((String) data));
                     } else {
                         generator.writeObject(data);
                     }
@@ -103,6 +110,9 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                     return new ChunkedActionRenderResult(getOutputStreamContent(os).substring(initialContentLength),
                             os, generator);
                 case END_DOCUMENT:
+                    if (type.getJavaType().isAssignableFrom(String.class)) {
+                        generator.writeRaw("\"");
+                    }
                     if (isCollection(data)) {
                         generator.writeEndArray();
                     }
