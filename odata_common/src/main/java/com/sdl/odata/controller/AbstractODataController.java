@@ -35,7 +35,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Map;
 
-import static com.sdl.odata.api.service.HeaderNames.TRANSFER_ENCODING;
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -172,7 +171,6 @@ public abstract class AbstractODataController {
             out.write(oDataResponse.getBody());
             out.flush();
         } else if (oDataResponse.getStreamingContent() != null) {
-            servletResponse.setHeader(TRANSFER_ENCODING, "chunked");
             oDataResponse.getStreamingContent().write(servletResponse);
         }
     }

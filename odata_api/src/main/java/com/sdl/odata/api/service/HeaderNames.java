@@ -66,6 +66,10 @@ public final class HeaderNames {
      */
     public static final String TRANSFER_ENCODING = "Transfer-Encoding";
     /**
+     * OData chunked error message property name.
+     */
+    public static final String ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY = "ODATA_CHUNKED_ERROR_MESSAGE";
+    /**
      * ETag.
      */
     public static final String ETAG = "ETag";
