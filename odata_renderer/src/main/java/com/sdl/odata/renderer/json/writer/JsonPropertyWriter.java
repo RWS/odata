@@ -74,12 +74,10 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
             Object data, Type type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
             throws ODataException {
         try {
-            ByteArrayOutputStream os = previousResult.getOutputStream() == null ?
-                    new ByteArrayOutputStream() : previousResult.getOutputStream();
             JsonGenerator generator = previousResult.getWriter() == null ?
-                    JSON_FACTORY.createGenerator(os, JsonEncoding.UTF8).setCodec(new JsonCodecMapper()) :
+                    JSON_FACTORY.createGenerator(previousResult.getOutputStream(), JsonEncoding.UTF8)
+                            .setCodec(new JsonCodecMapper()) :
                     (JsonGenerator) previousResult.getWriter();
-            int initialContentLength = previousResult.getOutputStreamContentLength();
             switch (action) {
                 case START_DOCUMENT:
                     generator.writeStartObject();
@@ -95,7 +93,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                         generator.writeFieldName(VALUE);
                     }
                     generator.flush();
-                    return new ChunkedActionRenderResult(getOutputStreamContent(os), os, generator);
+                    return new ChunkedActionRenderResult(previousResult.getOutputStream(), generator);
                 case BODY_DOCUMENT:
                     if (isCollection(data)) {
                         for (Object element : (List) data) {
@@ -107,8 +105,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                         generator.writeObject(data);
                     }
                     generator.flush();
-                    return new ChunkedActionRenderResult(getOutputStreamContent(os).substring(initialContentLength),
-                            os, generator);
+                    return new ChunkedActionRenderResult(previousResult.getOutputStream(), generator);
                 case END_DOCUMENT:
                     if (type.getJavaType().isAssignableFrom(String.class)) {
                         generator.writeRaw("\"");
@@ -119,8 +116,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                     generator.writeEndObject();
                     generator.flush();
                     generator.close();
-                    return new ChunkedActionRenderResult(getOutputStreamContent(os).substring(initialContentLength),
-                            os, generator);
+                    return new ChunkedActionRenderResult(previousResult.getOutputStream(), generator);
                 default:
                     throw new ODataRenderException(format(
                             "Unable to render primitive type value because of wrong ChunkedStreamAction: {0}",
@@ -136,12 +132,10 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
             Object data, StructuredType type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
             throws ODataException {
         try {
-            ByteArrayOutputStream os = previousResult.getOutputStream() == null ?
-                    new ByteArrayOutputStream() : previousResult.getOutputStream();
             JsonGenerator generator = previousResult.getWriter() == null ?
-                    JSON_FACTORY.createGenerator(os, JsonEncoding.UTF8).setCodec(new JsonCodecMapper()) :
+                    JSON_FACTORY.createGenerator(previousResult.getOutputStream(),
+                            JsonEncoding.UTF8).setCodec(new JsonCodecMapper()) :
                     (JsonGenerator) previousResult.getWriter();
-            int initialContentLength = previousResult.getOutputStreamContentLength();
             switch (action) {
                 case START_DOCUMENT:
                     generator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel()));
@@ -150,7 +144,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                         generator.writeStartArray();
                     }
 
-                    return new ChunkedActionRenderResult(getOutputStreamContent(os), os, generator);
+                    return new ChunkedActionRenderResult(previousResult.getOutputStream(), generator);
                 case BODY_DOCUMENT:
                     if (isCollection(data)) {
                         for (Object obj : (List) data) {
@@ -160,18 +154,14 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                         writeAllProperties(data, type);
                     }
 
-                    return new ChunkedActionRenderResult(
-                            getOutputStreamContent(os).substring(initialContentLength), os,
-                            generator);
+                    return new ChunkedActionRenderResult(previousResult.getOutputStream(), generator);
                 case END_DOCUMENT:
                     if (isCollection(data)) {
                         generator.writeEndArray();
                     }
                     generator.writeEndObject();
 
-                    return new ChunkedActionRenderResult(
-                            getOutputStreamContent(os).substring(initialContentLength), os,
-                            generator);
+                    return new ChunkedActionRenderResult(previousResult.getOutputStream(), generator);
                 default:
                     throw new ODataRenderException(format(
                             "Unable to render complex type value because of wrong ChunkedStreamAction: {0}",

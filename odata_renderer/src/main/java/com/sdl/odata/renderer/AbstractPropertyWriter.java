@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
@@ -71,13 +73,14 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
     }
 
     @Override
-    public ChunkedActionRenderResult getPropertyStartDocument(Object data) throws ODataException {
+    public ChunkedActionRenderResult getPropertyStartDocument(Object data, OutputStream outputStream)
+            throws ODataException {
         LOG.debug("GetPropertyStartDocument invoked with {}", data);
         if (data == null) {
             // If null - return info in one piece within getPropertyBodyDocument() call and here just empty string
-            return new ChunkedActionRenderResult("");
+            return new ChunkedActionRenderResult(outputStream);
         } else {
-            return makePropertyStringChunked(data, START_DOCUMENT, new ChunkedActionRenderResult());
+            return makePropertyStringChunked(data, START_DOCUMENT, new ChunkedActionRenderResult(outputStream));
         }
     }
 
@@ -86,20 +89,22 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
             throws ODataException {
         LOG.debug("GetPropertyBodyDocument invoked with {}", data);
         if (data == null) {
-            return new ChunkedActionRenderResult(generateNullPropertyString());
+            try {
+                previousResult.getOutputStream().write(generateNullPropertyString().getBytes());
+            } catch (IOException e) {
+                throw new ODataRenderException("Unable to render property body.", e);
+            }
+            return previousResult;
         } else {
             return makePropertyStringChunked(data, BODY_DOCUMENT, previousResult);
         }
     }
 
     @Override
-    public String getPropertyEndDocument(Object data, ChunkedActionRenderResult previousResult) throws ODataException {
+    public void getPropertyEndDocument(Object data, ChunkedActionRenderResult previousResult) throws ODataException {
         LOG.debug("GetPropertyEndDocument invoked with {}", data);
-        if (data == null) {
-            // For null value we return all result within getPropertyBodyDocument() method
-            return "";
-        } else {
-            return makePropertyStringChunked(data, END_DOCUMENT, previousResult).getResult();
+        if (data != null) {
+            makePropertyStringChunked(data, END_DOCUMENT, previousResult);
         }
     }
 
@@ -191,8 +196,13 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
     private ChunkedActionRenderResult makePropertyStringChunked(Object data, ChunkedStreamAction action,
                                                                 ChunkedActionRenderResult previousResult)
             throws ODataException {
-        Type type = getTypeFromODataUri();
-        validateRequestChunk(type, data);
+        if (previousResult.getType() == null) {
+            previousResult.setType(getTypeFromODataUri());
+        }
+        Type type = previousResult.getType();
+        if (!previousResult.isTypeValidated()) {
+            validateRequestChunk(type, data);
+        }
         switch (type.getMetaType()) {
             case PRIMITIVE:
                 LOG.debug("Given property type is primitive");
@@ -218,7 +228,7 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
                 && getType(data).equals(type);
     }
 
-    private void validateRequestChunk(Type type, Object data) throws ODataRenderException,
+    public void validateRequestChunk(Type type, Object data) throws ODataRenderException,
             ODataClientException, ODataEdmException {
         if (!areValidTypesToProceedChunk(type, data)) {
             throw new ODataRenderException("ODataUri type is not matched with given 'data' type: " + type);
@@ -229,7 +239,7 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
         return isEmptyCollection(data) || getType(data).equals(type);
     }
 
-    protected Type getTypeFromODataUri() throws ODataRenderException {
+    public Type getTypeFromODataUri() throws ODataRenderException {
         return entityDataModel.getType(targetType.typeName());
     }
 

@@ -20,6 +20,8 @@ import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 
+import java.io.OutputStream;
+
 /**
  * OData renderer. A renderer converts data that is the result of a query or another operation into a response body
  * in the appropriate format.
@@ -56,10 +58,12 @@ public interface ODataRenderer {
      *
      * @param requestContext The request context.
      * @param result         The data to render.
+     * @param outputStream   OutputStream to write data in.
      * @return Response start content including OData specification metadata
      * @throws ODataException If an error occurs while rendering.
      */
-    ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result) throws ODataException;
+    ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                          OutputStream outputStream) throws ODataException;
 
     /**
      * Renders the response body.
@@ -83,6 +87,6 @@ public interface ODataRenderer {
      * @param result         The data to render.
      * @throws ODataException If an error occurs while rendering.
      */
-    String renderEnd(ODataRequestContext requestContext, QueryResult result,
-                     ChunkedActionRenderResult previousResult) throws ODataException;
+    void renderEnd(ODataRequestContext requestContext, QueryResult result,
+                   ChunkedActionRenderResult previousResult) throws ODataException;
 }

@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -88,9 +89,9 @@ public class JsonErrorResponseRenderer extends AbstractRenderer {
     }
 
     @Override
-    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
-            throws ODataException {
-        ChunkedActionRenderResult renderResult = super.renderStart(requestContext, result);
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        ChunkedActionRenderResult renderResult = super.renderStart(requestContext, result, outputStream);
         renderResult.addHeader(CONTENT_LANGUAGE, ENGLISH.getLanguage());
         renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
 

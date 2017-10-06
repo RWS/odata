@@ -25,6 +25,7 @@ import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.AbstractPropertyWriter;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.util.List;
 
 import static java.text.MessageFormat.format;
@@ -47,11 +48,16 @@ public class PrimitiveWriter extends AbstractPropertyWriter {
             throws ODataException {
         switch (action) {
             case START_DOCUMENT:
-                return new ChunkedActionRenderResult("");
+                return previousResult;
             case BODY_DOCUMENT:
-                return new ChunkedActionRenderResult(generatePrimitiveProperty(data, type));
+                try {
+                    previousResult.getOutputStream().write(generatePrimitiveProperty(data, type).getBytes());
+                } catch (IOException e) {
+                    throw new ODataRenderException("Unable to render body for primitive property", e);
+                }
+                return new ChunkedActionRenderResult();
             case END_DOCUMENT:
-                return new ChunkedActionRenderResult("");
+                return previousResult;
             default:
                 throw new ODataRenderException(format(
                         "Unable to render primitive type value because of wrong ChunkedStreamAction: {0}",
@@ -63,7 +69,12 @@ public class PrimitiveWriter extends AbstractPropertyWriter {
     protected ChunkedActionRenderResult getComplexPropertyChunked(
             Object data, StructuredType type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
             throws ODataException {
-        return new ChunkedActionRenderResult(generateComplexProperty(data, type));
+        try {
+            previousResult.getOutputStream().write(generateComplexProperty(data, type).getBytes());
+        } catch (IOException e) {
+            throw new ODataRenderException("Unable to render Complex property", e);
+        }
+        return previousResult;
     }
 
     @Override
