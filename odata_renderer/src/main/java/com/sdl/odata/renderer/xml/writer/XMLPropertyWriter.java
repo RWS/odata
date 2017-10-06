@@ -32,6 +32,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -72,7 +73,8 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
         switch (action) {
             case START_DOCUMENT:
                 String context = getContextURL(getODataUri(), getEntityDataModel(), true);
-                return getPropertyXmlForPrimitivesStartDocument(VALUE, type, data, context);
+                return getPropertyXmlForPrimitivesStartDocument(VALUE, type, data,
+                        context, previousResult.getOutputStream());
             case BODY_DOCUMENT:
                 return getPropertyXmlForPrimitivesBodyDocument(VALUE, type, data, previousResult);
             case END_DOCUMENT:
@@ -90,36 +92,28 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
             throws ODataException {
         try {
             XMLStreamWriter writer;
-            ByteArrayOutputStream outputStream;
-            int initialContentLength;
+            OutputStream outputStream = previousResult.getOutputStream();
             switch (action) {
                 case START_DOCUMENT:
-                    outputStream = new ByteArrayOutputStream();
                     String typeFullyQualifiedName = type.getFullyQualifiedName();
                     String context = getContextURL(getODataUri(), getEntityDataModel());
                     LOG.debug("Context for complex property is {}", context);
                     writer = startElement(outputStream, VALUE, HASH + typeFullyQualifiedName, context, true);
-                    return new ChunkedActionRenderResult(outputStream.toString(UTF_8.name()), outputStream, writer);
+                    return new ChunkedActionRenderResult(outputStream, writer);
                 case BODY_DOCUMENT:
                     writer = (XMLStreamWriter) previousResult.getWriter();
-                    outputStream = previousResult.getOutputStream();
-                    initialContentLength = previousResult.getOutputStreamContentLength();
                     handleCollectionAndComplexProperties(data, type, writer);
-                    return new ChunkedActionRenderResult(
-                            outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
+                    return previousResult;
                 case END_DOCUMENT:
                     writer = (XMLStreamWriter) previousResult.getWriter();
-                    outputStream = previousResult.getOutputStream();
-                    initialContentLength = previousResult.getOutputStreamContentLength();
                     endDocument(writer);
-                    String result = outputStream.toString(UTF_8.name()).substring(initialContentLength);
-                    return new ChunkedActionRenderResult(result, outputStream, writer);
+                    return previousResult;
                 default:
                     throw new ODataRenderException(format(
                             "Unable to render complex type value because of wrong ChunkedStreamAction: {0}",
                             action));
             }
-        } catch (XMLStreamException | IOException e) {
+        } catch (XMLStreamException e) {
             throw new ODataRenderException("Error while rendering complex property value", e);
         }
     }

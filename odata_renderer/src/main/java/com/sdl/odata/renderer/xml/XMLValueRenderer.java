@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
@@ -91,12 +92,13 @@ public final class XMLValueRenderer extends AbstractAtomRenderer {
     }
 
     @Override
-    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
-            throws ODataException {
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
         LOG.debug("Start rendering start property for request: {}", requestContext);
         XMLPropertyWriter propertyWriter = new XMLPropertyWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
-        ChunkedActionRenderResult renderResult = propertyWriter.getPropertyStartDocument(result.getData());
+        ChunkedActionRenderResult renderResult = propertyWriter.getPropertyStartDocument(result.getData(),
+                outputStream);
         renderResult.setContentType(XML);
         return renderResult;
     }
@@ -111,11 +113,11 @@ public final class XMLValueRenderer extends AbstractAtomRenderer {
     }
 
     @Override
-    public String renderEnd(ODataRequestContext requestContext, QueryResult result,
-                            ChunkedActionRenderResult previousResult) throws ODataException {
+    public void renderEnd(ODataRequestContext requestContext, QueryResult result,
+                          ChunkedActionRenderResult previousResult) throws ODataException {
         LOG.debug("Start rendering end property for request: {}", requestContext);
         XMLPropertyWriter propertyWriter = new XMLPropertyWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
-        return propertyWriter.getPropertyEndDocument(result.getData(), previousResult);
+        propertyWriter.getPropertyEndDocument(result.getData(), previousResult);
     }
 }

@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import static com.sdl.odata.AtomConstants.ELEMENT;
@@ -71,12 +72,13 @@ public final class XMLWriterUtil {
     }
 
     public static ChunkedActionRenderResult getPropertyXmlForPrimitivesStartDocument(
-            String rootName, Type type, Object data, String context) throws ODataRenderException {
+            String rootName, Type type, Object data, String context, OutputStream outputStream)
+            throws ODataRenderException {
         LOG.debug("PropertyXMLForPrimitivesStartDocument invoked with {}, {}, {}", rootName, type, data);
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        try {
             XMLStreamWriter writer = startElement(outputStream, rootName, type.getName(), context, false);
-            return new ChunkedActionRenderResult(outputStream.toString(UTF_8.name()), outputStream, writer);
-        } catch (XMLStreamException | IOException e) {
+            return new ChunkedActionRenderResult(outputStream, writer);
+        } catch (XMLStreamException e) {
             throw new ODataRenderException("Error while rendering start document primitive property value.", e);
         }
     }
@@ -85,8 +87,7 @@ public final class XMLWriterUtil {
             String rootName, Type type, Object data, ChunkedActionRenderResult previousResult)
             throws ODataRenderException {
         LOG.debug("PropertyXMLForPrimitivesBodyDocument invoked with {}, {}, {}", rootName, type, data);
-        try (ByteArrayOutputStream outputStream = previousResult.getOutputStream()) {
-            int initialContentLength = previousResult.getOutputStreamContentLength();
+        try {
             XMLStreamWriter writer = (XMLStreamWriter) previousResult.getWriter();
             // write values
             if (data instanceof List<?>) {
@@ -94,9 +95,8 @@ public final class XMLWriterUtil {
             } else {
                 writer.writeCharacters(data.toString());
             }
-            return new ChunkedActionRenderResult(
-                    outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
-        } catch (XMLStreamException | IOException e) {
+            return previousResult;
+        } catch (XMLStreamException e) {
             throw new ODataRenderException("Error while rendering body document primitive property value.", e);
         }
     }
@@ -105,13 +105,11 @@ public final class XMLWriterUtil {
             String rootName, Type type, Object data, ChunkedActionRenderResult previousResult)
             throws ODataRenderException {
         LOG.debug("PropertyXMLForPrimitivesEndDocument invoked with {}, {}, {}", rootName, type, data);
-        try (ByteArrayOutputStream outputStream = previousResult.getOutputStream()) {
-            int initialContentLength = previousResult.getOutputStreamContentLength();
+        try {
             XMLStreamWriter writer = (XMLStreamWriter) previousResult.getWriter();
-            endDocument(writer);
-            return new ChunkedActionRenderResult(
-                    outputStream.toString(UTF_8.name()).substring(initialContentLength), outputStream, writer);
-        } catch (XMLStreamException | IOException e) {
+            writer.writeEndElement();
+            return previousResult;
+        } catch (XMLStreamException e) {
             throw new ODataRenderException("Error while rendering end document primitive property value.", e);
         }
     }
@@ -147,7 +145,7 @@ public final class XMLWriterUtil {
         writer.close();
     }
 
-    public static XMLStreamWriter startElement(ByteArrayOutputStream outputStream, String rootName, String typeName,
+    public static XMLStreamWriter startElement(OutputStream outputStream, String rootName, String typeName,
                                                String context, boolean defaultNameSpace) throws XMLStreamException {
         XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
         writer.writeStartElement(METADATA, rootName, ODATA_METADATA_NS);

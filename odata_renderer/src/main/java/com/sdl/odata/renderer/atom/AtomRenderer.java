@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
@@ -100,19 +101,18 @@ public class AtomRenderer extends AbstractAtomRenderer {
     }
 
     @Override
-    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
-            throws ODataException {
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
         LOG.debug("Start rendering response start content including OData specification metadata " +
                 "for request: {} with result {}", requestContext, result);
 
         AtomWriter atomWriter = initAtomWriter(requestContext);
-        atomWriter.startDocument();
+        atomWriter.startDocument(outputStream);
 
         if (result.getType() == COLLECTION) {
             atomWriter.writeStartFeed(buildContextURL(requestContext, result.getData()), result.getMeta());
         }
-        ChunkedActionRenderResult renderResult = new ChunkedActionRenderResult(atomWriter.getXml(),
-                atomWriter.getOutputStream(), atomWriter);
+        ChunkedActionRenderResult renderResult = new ChunkedActionRenderResult(outputStream, atomWriter);
         renderResult.setContentType(ATOM_XML);
         renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
 
@@ -124,28 +124,23 @@ public class AtomRenderer extends AbstractAtomRenderer {
             ODataRequestContext requestContext, QueryResult result, ChunkedActionRenderResult previousResult)
             throws ODataException {
         AtomWriter atomWriter = (AtomWriter) previousResult.getWriter();
-        int previousContentLength = previousResult.getOutputStreamContentLength();
         if (result.getType() == COLLECTION) {
             atomWriter.writeBodyFeed((List<?>) result.getData());
         } else {
             atomWriter.writeEntry(result.getData(), buildContextURL(requestContext, result.getData()));
         }
 
-        return new ChunkedActionRenderResult(atomWriter.getXml().substring(previousContentLength),
-                atomWriter.getOutputStream(), atomWriter);
+        return previousResult;
     }
 
     @Override
-    public String renderEnd(ODataRequestContext requestContext, QueryResult result,
-                            ChunkedActionRenderResult previousResult) throws ODataException {
+    public void renderEnd(ODataRequestContext requestContext, QueryResult result,
+                          ChunkedActionRenderResult previousResult) throws ODataException {
         AtomWriter atomWriter = (AtomWriter) previousResult.getWriter();
-        int previousContentLength = previousResult.getOutputStreamContentLength();
         if (result.getType() == COLLECTION) {
             atomWriter.writeEndFeed();
         }
-        atomWriter.endDocument();
-
-        return atomWriter.getXml().substring(previousContentLength);
+        atomWriter.endDocument(false);
     }
 
     protected AtomWriter initAtomWriter(ODataRequestContext requestContext) {

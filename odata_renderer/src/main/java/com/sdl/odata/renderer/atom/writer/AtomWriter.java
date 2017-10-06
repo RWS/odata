@@ -30,6 +30,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
@@ -78,7 +79,7 @@ public class AtomWriter {
     private static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
 
     private XMLStreamWriter xmlWriter = null;
-    private ByteArrayOutputStream outputStream = null;
+    private OutputStream outputStream = null;
     private AtomMetadataWriter metadataWriter = null;
     private AtomDataWriter dataWriter = null;
     private final ZonedDateTime dateTime;
@@ -143,10 +144,20 @@ public class AtomWriter {
      * @throws ODataRenderException if unable to render the feed
      */
     public void startDocument() throws ODataRenderException {
+        startDocument(new ByteArrayOutputStream());
+    }
 
-        outputStream = new ByteArrayOutputStream();
+    /**
+     * Start the XML stream document by defining things like the type of encoding, and prefixes used. It needs to be
+     * used before calling any write method.
+     *
+     * @param os {@link OutputStream} to write to.
+     * @throws ODataRenderException if unable to render the feed
+     */
+    public void startDocument(OutputStream os) throws ODataRenderException {
         try {
-            xmlWriter = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
+            outputStream = os;
+            xmlWriter = XML_OUTPUT_FACTORY.createXMLStreamWriter(os, UTF_8.name());
             metadataWriter = new AtomMetadataWriter(xmlWriter, oDataUri, entityDataModel, nsConfigurationProvider);
             dataWriter = new AtomDataWriter(xmlWriter, entityDataModel, nsConfigurationProvider);
             xmlWriter.writeStartDocument(UTF_8.name(), XML_VERSION);
@@ -164,10 +175,20 @@ public class AtomWriter {
      * @throws ODataRenderException if unable to render
      */
     public void endDocument() throws ODataRenderException {
+        endDocument(true);
+    }
 
+    /**
+     * End the XML stream document.
+     *
+     * @throws ODataRenderException if unable to render
+     */
+    public void endDocument(boolean flush) throws ODataRenderException {
         try {
             xmlWriter.writeEndDocument();
-            xmlWriter.flush();
+            if (flush) {
+                xmlWriter.flush();
+            }
         } catch (XMLStreamException e) {
             LOG.error("Not possible to end stream XML");
             throw new ODataRenderException("Not possible to end stream XML: ", e);
@@ -280,7 +301,7 @@ public class AtomWriter {
      */
     public String getXml() {
         try {
-            return outputStream.toString(StandardCharsets.UTF_8.name());
+            return ((ByteArrayOutputStream) outputStream).toString(StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             return outputStream.toString();
         }
@@ -516,9 +537,5 @@ public class AtomWriter {
             return String.format("%s(%s)/%s", getEntityName(entityDataModel, entity),
                     formatEntityKey(entityDataModel, entity), property.getName());
         }
-    }
-
-    public ByteArrayOutputStream getOutputStream() {
-        return outputStream;
     }
 }
