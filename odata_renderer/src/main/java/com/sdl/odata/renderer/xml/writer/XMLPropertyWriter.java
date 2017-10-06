@@ -62,6 +62,8 @@ import static java.text.MessageFormat.format;
 public class XMLPropertyWriter extends AbstractPropertyWriter {
     private static final Logger LOG = LoggerFactory.getLogger(XMLPropertyWriter.class);
 
+    private XMLStreamWriter xmlStreamWriter;
+
     public XMLPropertyWriter(ODataUri uri, EntityDataModel entityDataModel) throws ODataRenderException {
         super(uri, entityDataModel);
     }
@@ -73,12 +75,15 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
         switch (action) {
             case START_DOCUMENT:
                 String context = getContextURL(getODataUri(), getEntityDataModel(), true);
-                return getPropertyXmlForPrimitivesStartDocument(VALUE, type, data,
-                        context, previousResult.getOutputStream());
+                xmlStreamWriter = getPropertyXmlForPrimitivesStartDocument(VALUE, type, data, context,
+                        previousResult.getOutputStream());
+                return previousResult;
             case BODY_DOCUMENT:
-                return getPropertyXmlForPrimitivesBodyDocument(VALUE, type, data, previousResult);
+                getPropertyXmlForPrimitivesBodyDocument(VALUE, type, data, xmlStreamWriter);
+                return previousResult;
             case END_DOCUMENT:
-                return getPropertyXmlForPrimitivesEndDocument(VALUE, type, data, previousResult);
+                getPropertyXmlForPrimitivesEndDocument(VALUE, type, data, xmlStreamWriter);
+                return previousResult;
             default:
                 throw new ODataRenderException(format(
                         "Unable to render primitive type value because of wrong ChunkedStreamAction: {0}",

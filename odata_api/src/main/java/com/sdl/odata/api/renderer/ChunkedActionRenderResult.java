@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.api.renderer;
 
+import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.service.HeaderNames;
 import com.sdl.odata.api.service.MediaType;
 
@@ -29,6 +30,8 @@ public class ChunkedActionRenderResult {
 
     private OutputStream outputStream;
     private Object writer;
+    private Type type;
+    private boolean typeValidated;
     private Map<String, String> headers = new HashMap<>();
 
     public ChunkedActionRenderResult() {
@@ -45,6 +48,10 @@ public class ChunkedActionRenderResult {
 
     public Object getWriter() throws ODataRenderException {
         return writer;
+    }
+
+    public void setWriter(Object writer) {
+        this.writer = writer;
     }
 
     public OutputStream getOutputStream() {
@@ -65,5 +72,21 @@ public class ChunkedActionRenderResult {
 
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public boolean isTypeValidated() {
+        return typeValidated;
+    }
+
+    public void setTypeValidated(boolean typeValidated) {
+        this.typeValidated = typeValidated;
     }
 }

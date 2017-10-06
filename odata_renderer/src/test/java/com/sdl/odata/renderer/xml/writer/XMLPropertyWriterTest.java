@@ -16,6 +16,7 @@
 package com.sdl.odata.renderer.xml.writer;
 
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.parser.ODataUriParser;
@@ -256,6 +257,9 @@ public class XMLPropertyWriterTest extends WriterTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(UNICODE_STRING, os);
+        Type type = propertyWriter.getTypeFromODataUri();
+        propertyWriter.validateRequestChunk(type, UNICODE_STRING);
+        startResult.setTypeValidated(true);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(UNICODE_STRING, startResult);
         propertyWriter.getPropertyEndDocument(UNICODE_STRING, bodyResult);
         String streamResult = os.toString(UTF_8.toString());
