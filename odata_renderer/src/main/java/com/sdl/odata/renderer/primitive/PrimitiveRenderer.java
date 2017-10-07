@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
@@ -79,11 +80,12 @@ public class PrimitiveRenderer extends AbstractRenderer {
     }
 
     @Override
-    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
-            throws ODataException {
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
         PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
-        ChunkedActionRenderResult renderResult = primitiveWriter.getPropertyStartDocument(result.getData());
+        ChunkedActionRenderResult renderResult = primitiveWriter.getPropertyStartDocument(result.getData(),
+                outputStream);
         renderResult.setContentType(TEXT);
         renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
 
@@ -99,10 +101,10 @@ public class PrimitiveRenderer extends AbstractRenderer {
     }
 
     @Override
-    public String renderEnd(ODataRequestContext requestContext, QueryResult result,
-                            ChunkedActionRenderResult previousResult) throws ODataException {
+    public void renderEnd(ODataRequestContext requestContext, QueryResult result,
+                          ChunkedActionRenderResult previousResult) throws ODataException {
         PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
-        return primitiveWriter.getPropertyEndDocument(result.getData(), previousResult);
+        primitiveWriter.getPropertyEndDocument(result.getData(), previousResult);
     }
 }

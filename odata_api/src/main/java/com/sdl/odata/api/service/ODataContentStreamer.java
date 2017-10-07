@@ -59,20 +59,20 @@ public class ODataContentStreamer implements ODataContent {
                 currentDataChunk = resultDataIterator.next();
                 if (firstChunk) {
                     startRenderResult = oDataRenderer.renderStart(oDataRequestContext,
-                            QueryResult.from(currentDataChunk));
+                            QueryResult.from(currentDataChunk), servletOutputStream);
                     // First set headers added within renderer before sending first chunk
                     addHeaders(startRenderResult, httpServletResponse);
-                    writeWithFlush(servletOutputStream, startRenderResult.getResult());
+                    servletOutputStream.flush();
                     firstChunk = false;
                 }
                 bodyRenderResult = oDataRenderer.renderBody(
                         oDataRequestContext, QueryResult.from(currentDataChunk), startRenderResult);
-                writeWithFlush(servletOutputStream, bodyRenderResult.getResult());
+                servletOutputStream.flush();
             }
 
-            writeWithFlush(servletOutputStream, oDataRenderer.renderEnd(oDataRequestContext,
-                    QueryResult.from(currentDataChunk),
-                    bodyRenderResult == null ? startRenderResult : bodyRenderResult));
+            oDataRenderer.renderEnd(oDataRequestContext, QueryResult.from(currentDataChunk),
+                    bodyRenderResult == null ? startRenderResult : bodyRenderResult);
+            servletOutputStream.flush();
         } catch (RuntimeException e) {
             // Writing additional line into response if some error happened while iterating over elements.
             // We cannot modify set headers after any chunk sent already.
