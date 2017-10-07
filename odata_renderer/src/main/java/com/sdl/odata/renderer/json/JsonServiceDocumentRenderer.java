@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.MediaType.JSON;
@@ -78,9 +79,9 @@ public class JsonServiceDocumentRenderer extends ServiceDocumentRenderer {
     }
 
     @Override
-    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result)
-            throws ODataException {
-        ChunkedActionRenderResult renderResult = super.renderStart(requestContext, result);
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        ChunkedActionRenderResult renderResult = super.renderStart(requestContext, result, outputStream);
         renderResult.setContentType(JSON);
         renderResult.addHeader("OData-Version", AbstractRenderer.ODATA_VERSION_HEADER);
 

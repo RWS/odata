@@ -15,58 +15,47 @@
  */
 package com.sdl.odata.api.renderer;
 
-import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.service.HeaderNames;
 import com.sdl.odata.api.service.MediaType;
 
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Chunked action result. Used in renderer to bind together result chunks.
  */
 public class ChunkedActionRenderResult {
 
-    private String result;
-    private ByteArrayOutputStream outputStream;
+    private OutputStream outputStream;
     private Object writer;
+    private Type type;
+    private boolean typeValidated;
     private Map<String, String> headers = new HashMap<>();
 
     public ChunkedActionRenderResult() {
     }
 
-    public ChunkedActionRenderResult(String result, ByteArrayOutputStream outputStream, Object writer) {
-        this.result = result;
+    public ChunkedActionRenderResult(OutputStream outputStream) {
+        this(outputStream, null);
+    }
+
+    public ChunkedActionRenderResult(OutputStream outputStream, Object writer) {
         this.outputStream = outputStream;
         this.writer = writer;
-    }
-
-    public ChunkedActionRenderResult(String result) {
-        this(result, null, null);
-    }
-
-    public String getResult() {
-        return result;
     }
 
     public Object getWriter() throws ODataRenderException {
         return writer;
     }
 
-    public ByteArrayOutputStream getOutputStream() {
-        return outputStream;
+    public void setWriter(Object writer) {
+        this.writer = writer;
     }
 
-    public int getOutputStreamContentLength() {
-        try {
-            return outputStream == null ? 0 : outputStream.toString(UTF_8.name()).length();
-        } catch (UnsupportedEncodingException e) {
-            throw new ODataSystemException(e);
-        }
+    public OutputStream getOutputStream() {
+        return outputStream;
     }
 
     public void addHeader(String name, String value) {
@@ -83,5 +72,21 @@ public class ChunkedActionRenderResult {
 
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public boolean isTypeValidated() {
+        return typeValidated;
+    }
+
+    public void setTypeValidated(boolean typeValidated) {
+        this.typeValidated = typeValidated;
     }
 }

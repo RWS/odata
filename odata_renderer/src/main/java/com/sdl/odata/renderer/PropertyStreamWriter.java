@@ -18,6 +18,8 @@ package com.sdl.odata.renderer;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 
+import java.io.OutputStream;
+
 /**
  * Property stream writer. Writer API needed for chunked requests handling.
  */
@@ -30,7 +32,7 @@ public interface PropertyStreamWriter {
      * @return heading info
      * @throws ODataException
      */
-    ChunkedActionRenderResult getPropertyStartDocument(Object data) throws ODataException;
+    ChunkedActionRenderResult getPropertyStartDocument(Object data, OutputStream outputStream) throws ODataException;
 
     /**
      * Get property body document. Includes serialized entities.
@@ -49,7 +51,7 @@ public interface PropertyStreamWriter {
      * @return closing info
      * @throws ODataException
      */
-    String getPropertyEndDocument(Object data, ChunkedActionRenderResult previousResult) throws ODataException;
+    void getPropertyEndDocument(Object data, ChunkedActionRenderResult previousResult) throws ODataException;
 
     /**
      * Action for chunked stream requests. Defines whether this is a start of document, body or end.

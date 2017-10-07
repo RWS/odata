@@ -16,6 +16,7 @@
 package com.sdl.odata.renderer.xml.writer;
 
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.parser.ODataUriParser;
@@ -34,18 +35,20 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.VALUE;
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -209,15 +212,17 @@ public class XMLPropertyWriterTest extends WriterTest {
     @Test
     public void testChunkedXMLForNonNullPrimitiveProperty() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/id");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         Long id = 1L;
-        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(id);
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(id, os);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(id, startResult);
-        String endResult = propertyWriter.getPropertyEndDocument(id, bodyResult);
+        propertyWriter.getPropertyEndDocument(id, bodyResult);
+        String streamResult = os.toString(UTF_8.toString());
 
         String result = propertyWriter.getPropertyAsString(id);
 
-        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+        assertEquals(result, streamResult);
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
@@ -226,17 +231,19 @@ public class XMLPropertyWriterTest extends WriterTest {
     }
 
     @Test
-    public void testChunkedEmptyCollection() throws ODataException {
+    public void testChunkedEmptyCollection() throws ODataException, UnsupportedEncodingException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         ArrayList<Object> data = newArrayList();
-        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(data);
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(data, os);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(data, startResult);
-        String endResult = propertyWriter.getPropertyEndDocument(data, bodyResult);
+        propertyWriter.getPropertyEndDocument(data, bodyResult);
+        String streamResult = os.toString(UTF_8.toString());
 
         String result = propertyWriter.getPropertyAsString(data);
 
-        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+        assertEquals(result, streamResult);
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
@@ -247,14 +254,19 @@ public class XMLPropertyWriterTest extends WriterTest {
     @Test
     public void testChunkedXMLForNonNullPrimitiveUnicodeProperty() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/name");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(UNICODE_STRING);
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(UNICODE_STRING, os);
+        Type type = propertyWriter.getTypeFromODataUri();
+        propertyWriter.validateRequestChunk(type, UNICODE_STRING);
+        startResult.setTypeValidated(true);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(UNICODE_STRING, startResult);
-        String endResult = propertyWriter.getPropertyEndDocument(UNICODE_STRING, bodyResult);
+        propertyWriter.getPropertyEndDocument(UNICODE_STRING, bodyResult);
+        String streamResult = os.toString(UTF_8.toString());
 
         String result = propertyWriter.getPropertyAsString(UNICODE_STRING);
 
-        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+        assertEquals(result, streamResult);
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
@@ -265,14 +277,17 @@ public class XMLPropertyWriterTest extends WriterTest {
     public void testChunkedXMLForNonNullPrimitivePropertyList() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
         List<String> testList = Arrays.asList("test1", "test2", "test3");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(testList);
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(testList, os);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(testList, startResult);
-        String endResult = propertyWriter.getPropertyEndDocument(testList, bodyResult);
+        propertyWriter.getPropertyEndDocument(testList, bodyResult);
+
+        String streamResult = os.toString(UTF_8.toString());
 
         String result = propertyWriter.getPropertyAsString(testList);
 
-        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+        assertEquals(result, streamResult);
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
@@ -294,14 +309,16 @@ public class XMLPropertyWriterTest extends WriterTest {
     @Test
     public void testChunkedXMLForNullProperty() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(null);
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(null, os);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(null, startResult);
-        String endResult = propertyWriter.getPropertyEndDocument(null, bodyResult);
+        propertyWriter.getPropertyEndDocument(null, bodyResult);
+        String streamResult = os.toString(UTF_8.toString());
 
         String result = propertyWriter.getPropertyAsString(null);
 
-        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+        assertEquals(result, streamResult);
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
@@ -313,16 +330,18 @@ public class XMLPropertyWriterTest extends WriterTest {
     @Test
     public void testChunkedXMLForComplexPropertyList() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         List<Address> addresses = createAddressList();
 
-        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(addresses);
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(addresses, os);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(addresses, startResult);
-        String endResult = propertyWriter.getPropertyEndDocument(addresses, bodyResult);
+        propertyWriter.getPropertyEndDocument(addresses, bodyResult);
+        String streamResult = os.toString(UTF_8.toString());
 
         String result = propertyWriter.getPropertyAsString(addresses);
 
-        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+        assertEquals(result, streamResult);
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
@@ -344,16 +363,18 @@ public class XMLPropertyWriterTest extends WriterTest {
     @Test
     public void testChunkedXMLForAbstractComplexPropertyList() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperties");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         List<ComplexTypeSample> complexTypeListSample = createComplexTypeListSample();
-        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(complexTypeListSample);
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(complexTypeListSample, os);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(complexTypeListSample,
                 startResult);
-        String endResult = propertyWriter.getPropertyEndDocument(complexTypeListSample, bodyResult);
+        propertyWriter.getPropertyEndDocument(complexTypeListSample, bodyResult);
+        String streamResult = os.toString(UTF_8.toString());
 
         String result = propertyWriter.getPropertyAsString(complexTypeListSample);
 
-        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+        assertEquals(result, streamResult);
 
         assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_LIST_PATH)), prettyPrintXml(result));
     }
@@ -362,14 +383,16 @@ public class XMLPropertyWriterTest extends WriterTest {
     public void testChunkedXMLForComplexPropertyWithUnicodeCharacters() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperty");
         ComplexTypeSample complexType = createComplexType("Prop 1", UNICODE_STRING);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(complexType);
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(complexType, os);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(complexType, startResult);
-        String endResult = propertyWriter.getPropertyEndDocument(complexType, bodyResult);
+        propertyWriter.getPropertyEndDocument(complexType, bodyResult);
+        String streamResult = os.toString(UTF_8.toString());
 
         String result = propertyWriter.getPropertyAsString(complexType);
 
-        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+        assertEquals(result, streamResult);
 
         assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_UTF_PATH)), prettyPrintXml(result));
     }
@@ -378,22 +401,18 @@ public class XMLPropertyWriterTest extends WriterTest {
     public void testChunkedXMLForAbstractComplexProperty() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/EntityTypeSamples('id.10')/ComplexTypeProperty");
         ComplexTypeSample complexType = createComplexType("Prop 1", "Inherited 1");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(complexType);
+        ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(complexType, os);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(complexType, startResult);
-        String endResult = propertyWriter.getPropertyEndDocument(complexType, bodyResult);
+        propertyWriter.getPropertyEndDocument(complexType, bodyResult);
+        String streamResult = os.toString(UTF_8.toString());
 
         String result = propertyWriter.getPropertyAsString(complexType);
 
-        assertEquals(result, getChunkedRenderedFullResult(startResult, endResult, bodyResult));
+        assertEquals(result, streamResult);
 
         assertEquals(prettyPrintXml(readContent(EXPECTED_ABSTRACT_COMPLEX_TYPE_PATH)), prettyPrintXml(result));
-    }
-
-    private String getChunkedRenderedFullResult(ChunkedActionRenderResult start, String end,
-                                                ChunkedActionRenderResult... bodyPieces) {
-        return start.getResult() + Arrays.stream(bodyPieces).map(cr -> cr.getResult()).collect(Collectors.joining())
-                + end;
     }
 
     private void prepareForTest(String url) throws ODataRenderException {
