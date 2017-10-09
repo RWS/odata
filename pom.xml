@@ -28,7 +28,7 @@
 
     <groupId>com.sdl</groupId>
     <artifactId>odata</artifactId>
-    <version>2.6</version>
+    <version>${odata.version}</version>
     <packaging>pom</packaging>
 
     <name>OData v4 Framework</name>
@@ -55,6 +55,7 @@
     </modules>
 
     <properties>
+        <odata.version>2.6.0.1</odata.version>
         <license.header.file>${project.basedir}/src/license/sdl_license/header.txt</license.header.file>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
