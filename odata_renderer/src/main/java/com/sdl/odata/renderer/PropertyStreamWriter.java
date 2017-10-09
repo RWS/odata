@@ -28,18 +28,20 @@ public interface PropertyStreamWriter {
     /**
      * Get property start document. Includes heading info like meta.
      *
-     * @param data data to serialize
+     * @param data         data to serialize
+     * @param outputStream {@link OutputStream} to write response to
      * @return heading info
-     * @throws ODataException
+     * @throws ODataException OData exception
      */
     ChunkedActionRenderResult getPropertyStartDocument(Object data, OutputStream outputStream) throws ODataException;
 
     /**
      * Get property body document. Includes serialized entities.
      *
-     * @param data data to serialize
+     * @param data           data to serialize
+     * @param previousResult previous result
      * @return serialized entities
-     * @throws ODataException
+     * @throws ODataException OData exception
      */
     ChunkedActionRenderResult getPropertyBodyDocument(Object data, ChunkedActionRenderResult previousResult)
             throws ODataException;
@@ -47,9 +49,9 @@ public interface PropertyStreamWriter {
     /**
      * Get property body document. Includes closing info to form full proper response.
      *
-     * @param data data to serialize
-     * @return closing info
-     * @throws ODataException
+     * @param data           data to serialize
+     * @param previousResult previous result
+     * @throws ODataException OData exception
      */
     void getPropertyEndDocument(Object data, ChunkedActionRenderResult previousResult) throws ODataException;
 
