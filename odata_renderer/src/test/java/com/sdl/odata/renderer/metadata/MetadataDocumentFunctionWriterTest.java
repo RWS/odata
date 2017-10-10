@@ -21,17 +21,27 @@ import com.sdl.odata.edm.model.FunctionImpl;
 import com.sdl.odata.edm.model.ParameterImpl;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
-import org.w3c.dom.*;
-
-import javax.xml.parsers.*;
-import javax.xml.xpath.*;
-import java.io.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
@@ -59,8 +69,15 @@ public class MetadataDocumentFunctionWriterTest {
     xmlWriter = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
   }
 
-  protected static void assertAttribute(String attributeName, String expectedAttributeValue, Node node) {
+  private static void assertAttribute(String attributeName, String expectedAttributeValue, Node node) {
     assertEquals(expectedAttributeValue, node.getAttributes().getNamedItem(attributeName).getNodeValue());
+  }
+
+
+  private NodeList evaluateXPath(Document metadataDocumentSnippet, String expression)
+      throws XPathExpressionException {
+
+    return (NodeList) xPath.compile(expression).evaluate(metadataDocumentSnippet, XPathConstants.NODESET);
   }
 
   public MetadataDocumentFunctionWriterTest() throws ParserConfigurationException {
@@ -94,9 +111,9 @@ public class MetadataDocumentFunctionWriterTest {
 
     Document metadataDocumentSnippet = documentBuilder.parse(new ByteArrayInputStream(outputStream.toByteArray()));
 
-    NodeList functionNodes = (NodeList) xPath.compile("/Function").evaluate(metadataDocumentSnippet, XPathConstants.NODESET);
-    NodeList parameterNodes = (NodeList) xPath.compile("/Function/Parameter").evaluate(metadataDocumentSnippet, XPathConstants.NODESET);
-    NodeList returnNodes = (NodeList) xPath.compile("/Function/ReturnType").evaluate(metadataDocumentSnippet, XPathConstants.NODESET);
+    NodeList functionNodes = evaluateXPath(metadataDocumentSnippet, "/Function");
+    NodeList parameterNodes = evaluateXPath(metadataDocumentSnippet, "/Function/Parameter");
+    NodeList returnNodes = evaluateXPath(metadataDocumentSnippet, "/Function/ReturnType");
 
     assertEquals(1, functionNodes.getLength());
     assertEquals(1, returnNodes.getLength());
