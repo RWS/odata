@@ -132,8 +132,8 @@
                 <Member Name="VERSION"/>
             </EnumType>
             <Function Name="ODataDemoFunction">
-                <Parameter Name="stringFunctionField" Type="String" Nullable="false"/>
                 <Parameter Name="intFunctionField" Type="Int16" Nullable="false"/>
+                <Parameter Name="stringFunctionField" Type="String" Nullable="false"/>
                 <ReturnType Type="Edm.String"/>
             </Function>
             <Function Name="UnboundODataDemoFunction">
