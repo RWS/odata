@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.client.api;
+package com.sdl.odata.test.model;
+
+import com.sdl.odata.api.edm.annotations.EdmFunctionImport;
 
 /**
- * OData client query to execute actions.
+ * Function with not nullable parameters import sample model.
  */
-public interface ODataActionClientQuery extends ODataClientQuery {
+@EdmFunctionImport(function = "ODataDemoFunctionNotNullable", includeInServiceDocument = true,
+        name = "ODataDemoFunctionNotNullableImport", namespace = "ODataDemo")
+public class FunctionNotNullableImportSample {
 
-    /**
-     * Returns built request body to process it within action execution.
-     *
-     * @return action request body
-     */
-    String getActionRequestBody();
 }

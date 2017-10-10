@@ -75,6 +75,12 @@ sealed trait CriteriaValue {
   def le(right: CriteriaValue): ComparisonCriteria = ComparisonCriteria(LeOperator, this, right)
   def gt(right: CriteriaValue): ComparisonCriteria = ComparisonCriteria(GtOperator, this, right)
   def ge(right: CriteriaValue): ComparisonCriteria = ComparisonCriteria(GeOperator, this, right)
+
+  // String functions and geo.intersect function added.
+  def startswith(right: CriteriaValue): StartsWithMethodCriteria = StartsWithMethodCriteria(this, right)
+  def contains(right: CriteriaValue): ContainsMethodCriteria = ContainsMethodCriteria(this, right)
+  def endswith(right: CriteriaValue): EndsWithMethodCriteria = EndsWithMethodCriteria(this, right)
+  def geointersects(right: CriteriaValue): GeoIntersectsMethodCriteria = GeoIntersectsMethodCriteria(this, right)
 }
 
 sealed trait ArithmeticOperator
@@ -151,6 +157,11 @@ case object GeOperator extends ComparisonOperator {
 }
 
 /**
+ * Trait for method criteria.
+ */
+trait MethodCriteria extends Criteria
+
+/**
  * Comparison criteria. This combines two criteria values with a `ComparisonOperator`.
  *
  * @param operator The operator.
@@ -159,3 +170,35 @@ case object GeOperator extends ComparisonOperator {
  */
 case class ComparisonCriteria(@BeanProperty operator: ComparisonOperator,
                               @BeanProperty left: CriteriaValue, @BeanProperty right: CriteriaValue) extends Criteria
+
+/**
+ * StartsWithMethodCriteria criteria.
+ *
+ * @param property The property name.
+ * @param stringLiteral The string literal as criteria value.
+ */
+case class StartsWithMethodCriteria(@BeanProperty property: CriteriaValue, @BeanProperty stringLiteral: CriteriaValue) extends MethodCriteria
+
+/**
+ * EndsWithMethodCriteria criteria.
+ *
+ * @param property The property name.
+ * @param stringLiteral The string literal as criteria value.
+ */
+case class EndsWithMethodCriteria(@BeanProperty property: CriteriaValue, @BeanProperty stringLiteral: CriteriaValue) extends MethodCriteria
+
+/**
+ * ContainsMethodCriteria criteria.
+ *
+ * @param property The property name.
+ * @param stringLiteral The string literal as criteria value.
+ */
+case class ContainsMethodCriteria(@BeanProperty property: CriteriaValue, @BeanProperty stringLiteral: CriteriaValue) extends MethodCriteria
+
+/**
+ * GeoIntersectsMethodCriteria criteria.
+ *
+ * @param property The property name.
+ * @param stringLiteral The string literal as criteria value.
+ */
+case class GeoIntersectsMethodCriteria(@BeanProperty property: CriteriaValue, @BeanProperty stringLiteral: CriteriaValue) extends MethodCriteria

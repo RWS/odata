@@ -61,7 +61,7 @@ class ODataBatchRequestParser extends RegexParsers {
   // Step1: Parse the request content which can contain Individual requests for change sets
   def parseRequestContent: Parser[List[ODataRequestComponent]] = rep(parseQueryOrChangeSet) <~ "--" + batchId + "--".r ^^ {
     res => {
-      val requestComponents = res.toList
+      val requestComponents = res
 
       if (requestComponents.isEmpty) throw new ODataBatchParseException("Batch request is empty.")
       requestComponents

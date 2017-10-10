@@ -20,6 +20,7 @@ import com.sdl.odata.api.ODataException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Result of query operation.
@@ -47,6 +48,15 @@ public final class QueryResult {
 
         if (obj instanceof List<?>) {
             return new QueryResult(obj, ResultType.COLLECTION);
+        }
+
+        // returns raw json
+        if (obj instanceof String) {
+            return new QueryResult(obj, ResultType.RAW_JSON);
+        }
+
+        if (obj instanceof Stream) {
+            return new QueryResult(obj, ResultType.STREAM);
         }
 
         return new QueryResult(obj, ResultType.OBJECT);
@@ -99,6 +109,14 @@ public final class QueryResult {
          * Query returns value object.
          * Data can simple or entity types.
          */
-        OBJECT
+        OBJECT,
+        /**
+         * Query returns raw json object.
+         */
+        RAW_JSON,
+        /**
+         * Query returns {@link java.util.stream.Stream} for chunked requests.
+         */
+        STREAM
     }
 }

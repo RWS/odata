@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.client.api;
+package com.sdl.odata.api.service;
+
+import com.sdl.odata.api.ODataException;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * OData client query to execute actions.
+ * OData content used for streaming content.
+ * Used when we want to stream response in different smaller chunks.
  */
-public interface ODataActionClientQuery extends ODataClientQuery {
+public interface ODataContent {
 
     /**
-     * Returns built request body to process it within action execution.
+     * Write the available content into the given <code>OutputStream</code>.
      *
-     * @return action request body
+     * @param outputStream {@link OutputStream} in which the content is written.
      */
-    String getActionRequestBody();
+    void write(HttpServletResponse outputStream) throws IOException, ODataException;
 }

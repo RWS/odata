@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.json;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractRenderer;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.MediaType.JSON;
@@ -34,11 +36,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * JSON Service Root Renderer
- *
+ * <p>
  * It renders the service document according to Chapter 5 of reference.
  * Reference: <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html">
  * OData Atom Format Version 4.0 specification</a>
- *
+ * <p>
  * author: Stanislav Lozenko
  */
 @Component
@@ -74,5 +76,15 @@ public class JsonServiceDocumentRenderer extends ServiceDocumentRenderer {
         }
 
         LOG.debug("End rendering entity(es) for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        ChunkedActionRenderResult renderResult = super.renderStart(requestContext, result, outputStream);
+        renderResult.setContentType(JSON);
+        renderResult.addHeader("OData-Version", AbstractRenderer.ODATA_VERSION_HEADER);
+
+        return renderResult;
     }
 }

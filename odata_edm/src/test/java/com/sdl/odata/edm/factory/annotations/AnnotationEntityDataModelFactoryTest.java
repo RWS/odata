@@ -186,7 +186,7 @@ public class AnnotationEntityDataModelFactoryTest {
 
         assertThat(entityContainer.getEntitySets().size(), is(4));
         List<String> entitySetsNames = Lists.transform(entityContainer.getEntitySets(),
-                input -> input.getName());
+                EntitySet::getName);
         assertThat(entitySetsNames, hasItems("Customers", "Products", "Orders", "OrderLines"));
 
         assertThat(entityContainer.getSingletons().isEmpty(), is(true));

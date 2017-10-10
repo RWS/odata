@@ -19,7 +19,7 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.processor.query.QueryResult;
-import com.sdl.odata.api.service.MediaType;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.metadata.ServiceDocumentRenderer;
@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
@@ -35,7 +36,6 @@ import static com.sdl.odata.api.service.MediaType.XML;
 
 /**
  * This triggers and service document generator and also gives correct score based input parameters.
- *
  */
 @Component
 public class XMLServiceDocumentRenderer extends ServiceDocumentRenderer {
@@ -64,7 +64,7 @@ public class XMLServiceDocumentRenderer extends ServiceDocumentRenderer {
 
         try {
             responseBuilder
-                    .setContentType(MediaType.XML)
+                    .setContentType(XML)
                     .setHeader("OData-Version", ODATA_VERSION_HEADER)
                     .setBodyText(serviceDocument, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
@@ -72,6 +72,16 @@ public class XMLServiceDocumentRenderer extends ServiceDocumentRenderer {
         }
 
         LOG.debug("End rendering service document for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        ChunkedActionRenderResult renderResult = super.renderStart(requestContext, result, outputStream);
+        renderResult.setContentType(XML);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
+
+        return renderResult;
     }
 
     private boolean shouldBeDefaultToXML(ODataUri uri, int score) {

@@ -26,9 +26,12 @@ import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
+import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.test.model.FunctionImportSample;
+import com.sdl.odata.test.model.FunctionNotNullableImportSample;
+import com.sdl.odata.test.model.FunctionNotNullableSample;
 import com.sdl.odata.test.model.FunctionSample;
 import com.sdl.odata.test.model.Order;
 import com.sdl.odata.test.model.UnboundFunctionSample;
@@ -65,8 +68,10 @@ public class ODataFunctionProcessorImplTest {
         entityDataModel = new AnnotationEntityDataModelFactory()
                 .addClass(Order.class)
                 .addClass(FunctionSample.class)
+                .addClass(FunctionNotNullableSample.class)
                 .addClass(UnboundFunctionSample.class)
                 .addClass(FunctionImportSample.class)
+                .addClass(FunctionNotNullableImportSample.class)
                 .addClass(FakeFunctionSample.class)
                 .addClass(NullResultFunctionSample.class)
                 .addClass(NoInitFunctionSample.class)
@@ -94,6 +99,21 @@ public class ODataFunctionProcessorImplTest {
         assertEquals("myString250", processorResult.getData());
     }
 
+    @Test(expected = ODataUnmarshallingException.class)
+    public void testAllNullParametersUsingFunctionImport() throws ODataException, UnsupportedEncodingException {
+        ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
+                "http://localhost/odata.svc/ODataDemoFunctionNotNullableImport", entityDataModel), entityDataModel);
+        functionProcessor.doFunction(requestContext);
+    }
+
+    @Test(expected = ODataUnmarshallingException.class)
+    public void testNullParameterUsingFunctionImport() throws ODataException, UnsupportedEncodingException {
+        ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
+                "http://localhost/odata.svc/ODataDemoFunctionNotNullableImport(" +
+                        "stringFunctionField='myString')", entityDataModel), entityDataModel);
+        functionProcessor.doFunction(requestContext);
+    }
+
     @Test(expected = ODataBadRequestException.class)
     public void testDoFunctionUsingEntitySet() throws ODataException, UnsupportedEncodingException {
         ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
@@ -104,7 +124,7 @@ public class ODataFunctionProcessorImplTest {
     @Test(expected = ODataEdmException.class)
     public void testDoFunctionUsingFakeFunction() throws ODataException, UnsupportedEncodingException {
         ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
-                        "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFakeFunction", entityDataModel),
+                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFakeFunction", entityDataModel),
                 entityDataModel);
         functionProcessor.doFunction(requestContext);
     }
@@ -112,7 +132,7 @@ public class ODataFunctionProcessorImplTest {
     @Test(expected = ODataEdmException.class)
     public void testDoFunctionUsingWrongInitFunction() throws ODataException, UnsupportedEncodingException {
         ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
-                        "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoNoInitFunction", entityDataModel),
+                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoNoInitFunction", entityDataModel),
                 entityDataModel);
         functionProcessor.doFunction(requestContext);
     }

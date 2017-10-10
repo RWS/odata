@@ -19,7 +19,7 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.processor.query.QueryResult;
-import com.sdl.odata.api.service.MediaType;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractRenderer;
@@ -28,8 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+
+import static com.sdl.odata.api.service.MediaType.TEXT;
 
 /**
  * Render primitive data: $count, $value.
@@ -66,7 +69,7 @@ public class PrimitiveRenderer extends AbstractRenderer {
 
         try {
             responseBuilder
-                    .setContentType(MediaType.TEXT)
+                    .setContentType(TEXT)
                     .setHeader("OData-Version", ODATA_VERSION_HEADER)
                     .setBodyText(response, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
@@ -74,5 +77,34 @@ public class PrimitiveRenderer extends AbstractRenderer {
         }
 
         LOG.debug("End rendering property for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        ChunkedActionRenderResult renderResult = primitiveWriter.getPropertyStartDocument(result.getData(),
+                outputStream);
+        renderResult.setContentType(TEXT);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
+
+        return renderResult;
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderBody(ODataRequestContext requestContext, QueryResult result,
+                                                ChunkedActionRenderResult previousResult) throws ODataException {
+        PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return primitiveWriter.getPropertyBodyDocument(result.getData(), previousResult);
+    }
+
+    @Override
+    public void renderEnd(ODataRequestContext requestContext, QueryResult result,
+                          ChunkedActionRenderResult previousResult) throws ODataException {
+        PrimitiveWriter primitiveWriter = new PrimitiveWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        primitiveWriter.getPropertyEndDocument(result.getData(), previousResult);
     }
 }

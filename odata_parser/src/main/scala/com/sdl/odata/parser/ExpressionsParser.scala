@@ -284,6 +284,24 @@ trait ExpressionsParser extends RegexParsers {
     "totaloffsetminutes" | "mindatetime" | "maxdatetime" | "now" | "round" | "floor" | "ceiling" |"geo.distance" |
     "geo.length" withFailureMessage "Expected a method name"
 
+  def applyExpr(contextTypeName: String): Parser[ApplyExpr] =
+  (applyMethodName <~ """\s*\(""".r) ~ ("""\(\s*""".r ~> applyMethodCallArgs(contextTypeName) <~ """\s*\)""".r) ^^ { case methodName ~ args => 
+  ApplyExpr(methodName, args) }
+
+  def applyFunctionCallExpr(contextTypeName: String): Parser[ApplyFunctionExpr] =
+  		applyFunctionName ~ applyfunctionParams ^^ { case methodName ~ args => ApplyFunctionExpr(methodName, args) }
+
+  def applyfunctionParams: Parser[String] = """\(\s*""".r ~> """[\$\w\s*]+""".r <~ """\s*\)""".r withFailureMessage "Expected words"
+
+  def applyMethodName: Parser[String] = "groupby" withFailureMessage "Expected a method name"
+
+  def applyFunctionName: Parser[String] = "aggregate" withFailureMessage "Expected a method name"
+  
+  def applyMethodCallArgs(contextTypeName: String): Parser[ApplyMethodCallExpr] =
+  (repsep(memberExpr(contextTypeName), """\s*,\s*""".r) <~ """\s*\)\s*""".r) ~ (""",\s*""".r ~>applyFunctionCallExpr(contextTypeName)) ^^ {
+  case properties ~ function => ApplyMethodCallExpr(ApplyPropertyExpr(properties), function);
+	}
+
   def methodCallArgs(contextTypeName: String): Parser[List[Expression]] =
     """\(\s*""".r ~> repsep(commonExpr(contextTypeName), """\s*,\s*""".r) <~ """\s*\)""".r withFailureMessage "Invalid method call arguments"
 

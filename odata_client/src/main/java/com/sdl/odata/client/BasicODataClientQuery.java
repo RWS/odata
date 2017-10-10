@@ -112,7 +112,7 @@ public class BasicODataClientQuery extends AbstractODataClientQuery {
             return false;
         }
 
-        if (filterMap == null ? that.expandParameters != null : !filterMap.equals(that.filterMap)) {
+        if (filterMap == null ? that.filterMap != null : !filterMap.equals(that.filterMap)) {
             return false;
         }
 

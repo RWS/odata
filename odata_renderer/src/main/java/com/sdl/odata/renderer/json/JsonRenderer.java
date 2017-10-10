@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.json;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -27,11 +28,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.sdl.odata.api.processor.query.QueryResult.ResultType.COLLECTION;
+import static com.sdl.odata.api.processor.query.QueryResult.ResultType.RAW_JSON;
 
 /**
  * Renderer which renders data in OData JSON format.
@@ -69,6 +72,8 @@ public final class JsonRenderer extends AbstractJsonRenderer {
         String json;
         if (result.getType() == COLLECTION) {
             json = writer.writeFeed((List<?>) result.getData(), contextUrl, result.getMeta());
+        } else if (result.getType() == RAW_JSON) {
+            json = writer.writeRawJson(result.getData().toString(), contextUrl);
         } else {
             json = writer.writeEntry(result.getData(), contextUrl);
         }
@@ -84,5 +89,15 @@ public final class JsonRenderer extends AbstractJsonRenderer {
         }
 
         LOG.debug("End rendering entity(es) for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        ChunkedActionRenderResult renderResult = super.renderStart(requestContext, result, outputStream);
+        renderResult.setContentType(MediaType.JSON);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
+
+        return renderResult;
     }
 }

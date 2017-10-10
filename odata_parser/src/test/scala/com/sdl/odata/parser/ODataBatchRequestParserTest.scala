@@ -470,7 +470,7 @@ class ODataBatchRequestParserTest extends FunSuite {
     val changesetRequestComponent = parsedContent.requestComponents(0).asInstanceOf[ChangeSetRequestComponent]
 
     assert(changesetRequestComponent.getHeaders() != null)
-    assert(changesetRequestComponent.getHeaders().headers.size == 0)
+    assert(changesetRequestComponent.getHeaders().headers.isEmpty)
 
     assert(changesetRequestComponent.changesetRequests != null)
 
