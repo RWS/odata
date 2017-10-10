@@ -137,8 +137,8 @@
                 <ReturnType Type="Edm.String"/>
             </Function>
             <Function Name="UnboundODataDemoFunction">
-                <Parameter Name="stringFunctionField" Type="String" Nullable="true"/>
                 <Parameter Name="intFunctionField" Type="Int16" Nullable="true"/>
+                <Parameter Name="stringFunctionField" Type="String" Nullable="true"/>
                 <ReturnType Type="Edm.String"/>
             </Function>
             <EntityContainer Name="ODataDemoContainer">
