@@ -37,10 +37,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -99,11 +96,14 @@ public class MetadataDocumentFunctionWriterTest {
         .setNullable(false)
         .build();
 
-    Parameter parameters[] = {parameterOne, parameterTwo};
+    Set<Parameter> parameterSet = new HashSet<>();
+
+    parameterSet.add(parameterOne);
+    parameterSet.add(parameterTwo);
 
     Function function = new FunctionImpl.Builder()
         .setName("TestFunction")
-        .setParameters(new HashSet<>(Arrays.asList(parameters)))
+        .setParameters(parameterSet)
         .setReturnType("String")
         .build();
 
@@ -127,7 +127,7 @@ public class MetadataDocumentFunctionWriterTest {
 
     Map<String, Parameter> parameterMap = new HashMap<String, Parameter>();
 
-    for (Parameter parameter : parameters) {
+    for (Parameter parameter : parameterSet) {
       parameterMap.put(parameter.getName(), parameter);
     }
 
