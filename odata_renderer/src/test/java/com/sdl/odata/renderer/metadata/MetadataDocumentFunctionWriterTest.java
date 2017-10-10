@@ -37,8 +37,10 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.*;
-
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
