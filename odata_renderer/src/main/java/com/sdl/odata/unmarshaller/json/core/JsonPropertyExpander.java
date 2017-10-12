@@ -170,16 +170,20 @@ public class JsonPropertyExpander {
                                        String node, Map<String, Object> map) throws ODataException {
         for (String target : keySet) {
             if (node.equalsIgnoreCase(target)) {
-                    Iterable subValues = (Iterable) map.get(target);
-                List<Object> valueList = new ArrayList<>();
-                for (Object subValue : subValues) {
-                    Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);
-
-                    if (value != null) {
-                        valueList.add(value);
+                Iterable subValues = (Iterable) map.get(target);
+                if (subValues != null) {
+                    List<Object> valueList = new ArrayList<>();
+                    for (Object subValue : subValues) {
+                        Object value = getFieldValueByType(property.getElementTypeName(), subValue,
+                            map, true);
+                        if (value != null) {
+                            valueList.add(value);
+                        }
                     }
+                    setFieldValue(field, entity, valueList);
+                } else {
+                    setFieldValue(field, entity, null);
                 }
-                setFieldValue(field, entity, valueList);
                 break;
             }
         }
