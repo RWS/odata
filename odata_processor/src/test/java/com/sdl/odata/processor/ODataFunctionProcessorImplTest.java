@@ -22,6 +22,7 @@ import com.sdl.odata.api.edm.annotations.EdmFunction;
 import com.sdl.odata.api.edm.annotations.EdmReturnType;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.Operation;
+import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -44,9 +45,13 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.GET;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
@@ -87,6 +92,38 @@ public class ODataFunctionProcessorImplTest {
         ProcessorResult processorResult = functionProcessor.doFunction(requestContext);
         assertEquals(ODataResponse.Status.OK, processorResult.getStatus());
         assertEquals("myString10", processorResult.getData());
+    }
+
+    @Test
+    public void testDoFunctionWithDefaultTransportHeaders() throws ODataException, UnsupportedEncodingException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("te", "chunked");
+
+        ODataUri uri = new ODataParserImpl().parseUri(
+                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFunction(" +
+                        "stringFunctionField='myString',intFunctionField=12)", entityDataModel);
+
+        ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, uri, entityDataModel, headers);
+
+        ProcessorResult processorResult = functionProcessor.doFunction(requestContext);
+        assertEquals(ODataResponse.Status.OK, processorResult.getStatus());
+        assertTrue(Stream.class.isAssignableFrom(processorResult.getData().getClass()));
+    }
+
+    @Test
+    public void testDoFunctionWithCustomTransportHeaders() throws ODataException, UnsupportedEncodingException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-odata-te", "chunked");
+
+        ODataUri uri = new ODataParserImpl().parseUri(
+                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFunction(" +
+                        "stringFunctionField='myString',intFunctionField=24)", entityDataModel);
+
+        ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, uri, entityDataModel, headers);
+
+        ProcessorResult processorResult = functionProcessor.doFunction(requestContext);
+        assertEquals(ODataResponse.Status.OK, processorResult.getStatus());
+        assertTrue(Stream.class.isAssignableFrom(processorResult.getData().getClass()));
     }
 
     @Test
