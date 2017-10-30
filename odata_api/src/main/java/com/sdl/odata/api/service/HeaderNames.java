@@ -61,6 +61,12 @@ public final class HeaderNames {
      */
     public static final String TE = "TE";
     /**
+     * X-Odata-TE.
+     * The duplicate of {@link HeaderNames#TE} header. Represents the transfer encodings the user agent
+     * is willing to accept.
+     */
+    public static final String X_ODATA_TE = "X-Odata-TE";
+    /**
      * Transfer encoding.
      * The form of encoding used to safely transfer the entity to the user.
      */
