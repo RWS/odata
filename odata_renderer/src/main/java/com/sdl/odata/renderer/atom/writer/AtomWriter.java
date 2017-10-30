@@ -181,6 +181,7 @@ public class AtomWriter {
     /**
      * End the XML stream document.
      *
+     * @param flush flush result flag
      * @throws ODataRenderException if unable to render
      */
     public void endDocument(boolean flush) throws ODataRenderException {

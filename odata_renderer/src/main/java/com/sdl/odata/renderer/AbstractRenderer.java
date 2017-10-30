@@ -197,8 +197,9 @@ public abstract class AbstractRenderer implements ODataRenderer {
     /**
      * Build the 'Context URL' from a given OData request context.
      *
-     * @param requestContext The given OData request context.
-     * @return The built 'Context URL'.
+     * @param requestContext The given OData request context
+     * @param data           Result data
+     * @return The built 'Context URL'
      * @throws ODataRenderException If unable to build context url
      */
     protected String buildContextURL(ODataRequestContext requestContext, Object data) throws ODataRenderException {

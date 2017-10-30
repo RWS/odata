@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.sdl.odata.api.service.HeaderNames.TE;
+import static com.sdl.odata.api.service.HeaderNames.X_ODATA_TE;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -64,9 +65,18 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
         Object result;
 
         try {
-            boolean isChunkedRequest = TRANSFER_ENCODING_CHUNKED.equals(requestContext.getRequest().getHeader(TE));
-            result = isChunkedRequest ? operation.doStreamOperation(requestContext, dataSourceFactory) :
-                    operation.doOperation(requestContext, dataSourceFactory);
+            // get the default http1.1 te header value
+            String te = requestContext.getRequest().getHeader(TE);
+            // get custom te header value that comes unchanged in http2 env
+            String xte = requestContext.getRequest().getHeader(X_ODATA_TE);
+
+            boolean isChunkedRequest = TRANSFER_ENCODING_CHUNKED.equals(te) || TRANSFER_ENCODING_CHUNKED.equals(xte);
+
+            if (isChunkedRequest) {
+                result = operation.doStreamOperation(requestContext, dataSourceFactory);
+            } else {
+                result = operation.doOperation(requestContext, dataSourceFactory);
+            }
         } catch (Exception e) {
             LOG.error("Unexpected exception when executing a function.", e);
             throw e;
