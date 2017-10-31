@@ -55,7 +55,7 @@ final class AnnotationEntitySetFactory extends AnnotationNavigationPropertyBindi
         }
 
         String entityTypeName = entityType.getFullyQualifiedName();
-        LOG.debug("Creating EntitySet named: {} for entity type: {}", entitySetName, entityTypeName);
+        LOG.trace("Creating EntitySet named: {} for entity type: {}", entitySetName, entityTypeName);
 
         builders.put(entityTypeName, new EntitySetImpl.Builder()
                 .setName(entitySetName)
