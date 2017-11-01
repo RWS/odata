@@ -125,14 +125,14 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
 
     @Override
     protected String generateNullPropertyString() throws ODataRenderException {
-        LOG.debug("Given property value is null!!");
+        LOG.trace("Given property value is null!!");
         return getNullPropertyXML(VALUE, getContextURL(getODataUri(), getEntityDataModel()));
     }
 
     @Override
     protected String generatePrimitiveProperty(Object data, Type type) throws ODataRenderException {
         String context = getContextURL(getODataUri(), getEntityDataModel(), true);
-        LOG.debug("Given data context is {}", context);
+        LOG.trace("Given data context is {}", context);
         return getPropertyXmlForPrimitives(VALUE, type, data, context);
     }
 
@@ -142,11 +142,11 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
     }
 
     private String generateXMLForComplexProperty(Object entity, StructuredType type) throws ODataException {
-        LOG.debug("Complex property rendering started");
+        LOG.trace("Complex property rendering started");
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             String typeFullyQualifiedName = type.getFullyQualifiedName();
             String context = getContextURL(getODataUri(), getEntityDataModel());
-            LOG.debug("Context for complex property is {}", context);
+            LOG.trace("Context for complex property is {}", context);
             XMLStreamWriter writer = startElement(outputStream, VALUE, HASH + typeFullyQualifiedName, context, true);
             handleCollectionAndComplexProperties(entity, type, writer);
             endElement(writer);
@@ -159,14 +159,14 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
     private void handleCollectionAndComplexProperties(Object entity, StructuredType type, XMLStreamWriter writer)
             throws XMLStreamException, ODataRenderException {
         if (isCollection(entity)) {
-            LOG.debug("Given property is collection of complex values");
+            LOG.trace("Given property is collection of complex values");
             for (Object obj : (List) entity) {
                 writer.writeStartElement(ODATA_METADATA_NS, ELEMENT);
                 writeAllProperties(obj, type, writer);
                 writer.writeEndElement();
             }
         } else {
-            LOG.debug("Given property is single complex value");
+            LOG.trace("Given property is single complex value");
             writeAllProperties(entity, type, writer);
         }
     }
