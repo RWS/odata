@@ -64,7 +64,7 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
      * @throws ODataException if an error occurs.
      */
     public String getPropertyAsString(Object data) throws ODataException {
-        LOG.debug("GetPropertyAsString invoked with {}", data);
+        LOG.trace("GetPropertyAsString invoked with {}", data);
         if (data != null) {
             return makePropertyString(data);
         } else {
@@ -178,12 +178,12 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
         validateRequest(type, data);
         switch (type.getMetaType()) {
             case PRIMITIVE:
-                LOG.debug("Given property type is primitive");
+                LOG.trace("Given property type is primitive");
                 propertyXML = generatePrimitiveProperty(data, type);
                 break;
 
             case COMPLEX:
-                LOG.debug("Given property type is complex");
+                LOG.trace("Given property type is complex");
                 propertyXML = generateComplexProperty(data, (StructuredType) type);
                 break;
 
@@ -254,7 +254,7 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
     protected Type getType(Object data) throws ODataEdmException {
         Type type;
         if (isCollection(data)) {
-            LOG.debug("Given property is collection");
+            LOG.trace("Given property is collection");
             type = getAndCheckType(entityDataModel, ((List<?>) data).get(0).getClass());
         } else {
             type = getAndCheckType(entityDataModel, data.getClass());
