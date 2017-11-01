@@ -221,7 +221,7 @@ public class JsonWriter {
     }
 
     private void marshallPrimitive(Object value, PrimitiveType primitiveType) throws IOException {
-        LOG.debug("Primitive value: {} of type: {}", value, primitiveType);
+        LOG.trace("Primitive value: {} of type: {}", value, primitiveType);
         if (value != null) {
             JsonWriterUtil.writePrimitiveValue(value, jsonGenerator);
         } else {
@@ -232,14 +232,14 @@ public class JsonWriter {
     private void marshallStructured(final Object object, StructuredType structuredType)
             throws ODataRenderException, IOException, NoSuchFieldException, IllegalAccessException {
 
-        LOG.debug("Start structured value of type: {}", structuredType);
+        LOG.trace("Start structured value of type: {}", structuredType);
         if (object != null) {
             writeODataType(structuredType);
 
             visitProperties(entityDataModel, structuredType, property -> {
                 try {
                     if (property instanceof NavigationProperty) {
-                        LOG.debug("Start marshalling navigation property: {}", property.getName());
+                        LOG.trace("Start marshalling navigation property: {}", property.getName());
                         NavigationProperty navProperty = (NavigationProperty) property;
                         if (forceExpand || isExpandedProperty(navProperty)) {
                             final Object value = getValueFromProperty(object, navProperty);
@@ -259,11 +259,11 @@ public class JsonWriter {
                                 }
                             }
                         }
-                        LOG.debug("Navigation property: {} marshalled", property.getName());
+                        LOG.trace("Navigation property: {} marshalled", property.getName());
                     } else {
-                        LOG.debug("Started marshalling property: {}", property.getName());
+                        LOG.trace("Started marshalling property: {}", property.getName());
                         marshallStructuralProperty(object, property);
-                        LOG.debug("Property: {} marshalled", property.getName());
+                        LOG.trace("Property: {} marshalled", property.getName());
                     }
                 } catch (IOException | IllegalAccessException | NoSuchFieldException e) {
                     throw new ODataRenderException("Error while writing property: " + property.getName(), e);
@@ -271,9 +271,9 @@ public class JsonWriter {
             });
         } else {
                 jsonGenerator.writeNull();
-            LOG.debug("Structured value is null");
+            LOG.trace("Structured value is null");
         }
-        LOG.debug("End structured value of type: {}", structuredType);
+        LOG.trace("End structured value of type: {}", structuredType);
     }
 
     /**
@@ -291,7 +291,7 @@ public class JsonWriter {
                 jsonGenerator.writeStringField(TYPE, String.format("#%s.%s",
                         structuredType.getNamespace(), structuredType.getName()));
             } else {
-                LOG.debug("{} has root level. {} won't be written here", entitySet.getName(), TYPE);
+                LOG.trace("{} has root level. {} won't be written here", entitySet.getName(), TYPE);
             }
         }
     }
@@ -339,7 +339,7 @@ public class JsonWriter {
                 throw new ODataRenderException("OData type not found for elements of property: " + property);
             }
 
-            LOG.debug("Start collection property: {}", propertyName);
+            LOG.trace("Start collection property: {}", propertyName);
             if (((Collection) propertyValue).isEmpty()) {
                 jsonGenerator.writeArrayFieldStart(propertyName);
                 jsonGenerator.writeEndArray();
@@ -353,10 +353,10 @@ public class JsonWriter {
                     }
                 }
             }
-            LOG.debug("End collection property: {}", propertyName);
+            LOG.trace("End collection property: {}", propertyName);
         } else {
             // Single value (non-collection) property
-            LOG.debug("Start property: {}", propertyName);
+            LOG.trace("Start property: {}", propertyName);
 
             // Get the OData type of the property
             Type propertyType = entityDataModel.getType(property.getTypeName());
@@ -372,7 +372,7 @@ public class JsonWriter {
             if (propertyType.getMetaType().equals(COMPLEX) && propertyValue != null) {
                 jsonGenerator.writeEndObject();
             }
-            LOG.debug("End property: {}", propertyName);
+            LOG.trace("End property: {}", propertyName);
         }
     }
 
@@ -408,7 +408,7 @@ public class JsonWriter {
      * @param enumType The OData enum type.
      */
     private void marshallEnum(Object value, EnumType enumType) throws IOException {
-        LOG.debug("Enum value: {} of type: {}", value, enumType);
+        LOG.trace("Enum value: {} of type: {}", value, enumType);
         jsonGenerator.writeString(value.toString());
     }
 
