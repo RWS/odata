@@ -117,14 +117,14 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
     private void processData(Object data, StructuredType type, JsonGenerator generator)
             throws IllegalAccessException, IOException, ODataException {
         if (isCollection(data)) {
-            LOG.debug("Given property is collection of complex values");
+            LOG.trace("Given property is collection of complex values");
             generator.writeStartArray();
             for (Object obj : (List) data) {
                 writeAllProperties(obj, type, generator);
             }
             generator.writeEndArray();
         } else {
-            LOG.debug("Given property is single complex value");
+            LOG.trace("Given property is single complex value");
             writeAllProperties(data, type, generator);
         }
 
@@ -175,7 +175,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
 
     private void writePrimitive(Object element, JsonGenerator generator) throws IOException, ODataRenderException {
         if (isCollection(element)) {
-            LOG.debug("element is collection {}", element);
+            LOG.trace("element is collection {}", element);
             generator.writeStartArray();
             for (Object obj : (List<?>) element) {
                 writePrimitiveValue(obj, generator);
