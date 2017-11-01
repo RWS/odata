@@ -142,7 +142,7 @@ public class AtomDataWriter {
      */
     private void marshallPrimitive(Object value, PrimitiveType primitiveType) throws XMLStreamException {
 
-        LOG.debug("Primitive value: {} of type: {}", value, primitiveType);
+        LOG.trace("Primitive value: {} of type: {}", value, primitiveType);
         if (value != null) {
             xmlWriter.writeCharacters(value.toString());
         }
@@ -159,7 +159,7 @@ public class AtomDataWriter {
     private void marshallStructured(final Object object, StructuredType structuredType)
             throws ODataRenderException, XMLStreamException {
 
-        LOG.debug("Start structured value of type: {}", structuredType);
+        LOG.trace("Start structured value of type: {}", structuredType);
 
         if (object != null) {
             visitProperties(entityDataModel, structuredType, property -> {
@@ -172,10 +172,10 @@ public class AtomDataWriter {
                 }
             });
         } else {
-            LOG.debug("Structured value is null");
+            LOG.trace("Structured value is null");
         }
 
-        LOG.debug("End structured value of type: {}", structuredType);
+        LOG.trace("End structured value of type: {}", structuredType);
     }
 
     /**
@@ -231,7 +231,7 @@ public class AtomDataWriter {
                 throw new ODataRenderException("OData type not found for elements of property: " + property);
             }
 
-            LOG.debug("Start collection property: {}", propertyName);
+            LOG.trace("Start collection property: {}", propertyName);
             xmlWriter.writeStartElement(ODATA_DATA, propertyName, odataDataNS);
             if (elementType.getMetaType().equals(MetaType.PRIMITIVE)) {
                 xmlWriter.writeAttribute(METADATA, odataMetadataNs, TYPE, HASH + COLLECTION
@@ -248,10 +248,10 @@ public class AtomDataWriter {
                 xmlWriter.writeEndElement();
             }
             xmlWriter.writeEndElement();
-            LOG.debug("End collection property: {}", propertyName);
+            LOG.trace("End collection property: {}", propertyName);
         } else {
             // Single value (non-collection) property
-            LOG.debug("Start property: {}", propertyName);
+            LOG.trace("Start property: {}", propertyName);
 
             // Get the OData type of the property
             Type propertyType = entityDataModel.getType(property.getTypeName());
@@ -285,7 +285,7 @@ public class AtomDataWriter {
 
             marshall(propertyValue, propertyType);
             xmlWriter.writeEndElement();
-            LOG.debug("End property: {}", propertyName);
+            LOG.trace("End property: {}", propertyName);
         }
     }
 
@@ -296,8 +296,7 @@ public class AtomDataWriter {
      * @param enumType The OData enum type.
      */
     private void marshallEnum(Object value, EnumType enumType) throws XMLStreamException {
-
-        LOG.debug("Enum value: {} of type: {}", value, enumType);
+        LOG.trace("Enum value: {} of type: {}", value, enumType);
         xmlWriter.writeCharacters(value.toString());
     }
 }
