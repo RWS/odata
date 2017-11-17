@@ -67,7 +67,7 @@ public class JsonValueRenderer extends AbstractJsonRenderer {
         JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());
         String json = propertyWriter.getPropertyAsString(data);
-        LOG.debug("Response property json is {}", json);
+        LOG.trace("Response property json is {}", json);
         try {
             responseBuilder
                     .setContentType(MediaType.JSON)
