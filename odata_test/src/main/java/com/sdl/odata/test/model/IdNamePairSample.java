@@ -17,6 +17,7 @@ package com.sdl.odata.test.model;
 
 import com.sdl.odata.api.edm.annotations.EdmEntity;
 import com.sdl.odata.api.edm.annotations.EdmEntitySet;
+import com.sdl.odata.api.edm.annotations.EdmNavigationProperty;
 import com.sdl.odata.api.edm.annotations.EdmProperty;
 
 /**
@@ -36,6 +37,9 @@ public class IdNamePairSample {
     @EdmProperty(name = "Name", nullable = false, maxLength = EDM_MAX_LENGTH)
     private String name;
 
+    @EdmNavigationProperty(name = "innerExpandedProperty", nullable = false)
+    private ExpandedPropertiesSample innerExpandedProperty;
+
     public long getId() {
         return id;
     }
@@ -50,5 +54,13 @@ public class IdNamePairSample {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ExpandedPropertiesSample getInnerExpandedProperty() {
+        return innerExpandedProperty;
+    }
+
+    public void setInnerExpandedProperty(ExpandedPropertiesSample innerExpandedPropery) {
+        this.innerExpandedProperty = innerExpandedPropery;
     }
 }

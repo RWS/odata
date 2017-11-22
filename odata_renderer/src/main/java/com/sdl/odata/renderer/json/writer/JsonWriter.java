@@ -29,6 +29,7 @@ import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.edm.model.TypeDefinition;
+import com.sdl.odata.api.parser.AllExpandItem;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.json.util.JsonWriterUtil;
@@ -56,6 +57,7 @@ import static com.sdl.odata.ODataRendererUtils.isForceExpandParamSet;
 import static com.sdl.odata.api.edm.model.MetaType.COMPLEX;
 import static com.sdl.odata.api.edm.model.MetaType.ENTITY;
 import static com.sdl.odata.api.parser.ODataUriUtil.asJavaList;
+import static com.sdl.odata.api.parser.ODataUriUtil.getExpandItems;
 import static com.sdl.odata.api.parser.ODataUriUtil.getSimpleExpandPropertyNames;
 import static com.sdl.odata.api.parser.ODataUriUtil.hasCountOption;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.formatEntityKey;
@@ -89,7 +91,7 @@ public class JsonWriter {
         this.odataUri = checkNotNull(oDataUri);
         this.entityDataModel = checkNotNull(entityDataModel);
         expandedProperties.addAll(asJavaList(getSimpleExpandPropertyNames(oDataUri)));
-        forceExpand = isForceExpandParamSet(odataUri);
+        forceExpand = checkExpandAllParam(oDataUri) || isForceExpandParamSet(odataUri);
     }
 
     /**
@@ -481,5 +483,9 @@ public class JsonWriter {
             throw new UnsupportedOperationException("Unsupported type: " + type);
         }
         return (EntityType) type;
+    }
+
+    private boolean checkExpandAllParam(ODataUri oDataUri) {
+        return asJavaList(getExpandItems(oDataUri)).stream().anyMatch(i->i instanceof AllExpandItem);
     }
 }
