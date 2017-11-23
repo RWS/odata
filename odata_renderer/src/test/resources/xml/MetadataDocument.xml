@@ -145,7 +145,9 @@
                 <EntitySet Name="BankAccounts" EntityType="ODataDemo.BankAccount"/>
                 <EntitySet Name="PrimitiveTypesSamples" EntityType="ODataSample.PrimitiveTypesSample"/>
                 <EntitySet Name="CollectionsSamples" EntityType="ODataSample.CollectionsSample"/>
-                <EntitySet Name="IdNamePairSamples" EntityType="ODataSample.IdNamePairSample"/>
+                <EntitySet Name="IdNamePairSamples" EntityType="ODataSample.IdNamePairSample">
+                    <NavigationPropertyBinding Path="innerExpandedProperty" Target="ExpandedPropertiesSamples"/>
+                </EntitySet>
                 <EntitySet Name="ExpandedPropertiesSamples" EntityType="ODataSample.ExpandedPropertiesSample">
                     <NavigationPropertyBinding Path="ExpandedEntry" Target="IdNamePairSamples"/>
                     <NavigationPropertyBinding Path="ExpandedFeed" Target="IdNamePairSamples"/>
@@ -196,6 +198,7 @@
                 </Key>
                 <Property Name="ID" Type="Edm.Int64" Nullable="false"/>
                 <Property Name="Name" Type="Edm.String" Nullable="false"/>
+                <NavigationProperty Name="innerExpandedProperty" Type="ODataSample.ExpandedPropertiesSample" Nullable="false"/>
             </EntityType>
             <EntityType Name="ExpandedPropertiesSample">
                 <Key>
