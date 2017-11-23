@@ -481,6 +481,6 @@ public class JsonWriter {
     }
 
     private boolean checkExpandAllParam(ODataUri oDataUri) {
-        return asJavaList(getExpandItems(oDataUri)).stream().anyMatch(i->i instanceof AllExpandItem);
+        return asJavaList(getExpandItems(oDataUri)).stream().anyMatch(i -> i instanceof AllExpandItem);
     }
 }

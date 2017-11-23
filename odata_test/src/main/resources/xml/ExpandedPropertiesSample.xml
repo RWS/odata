@@ -23,6 +23,8 @@
                     <name>SDL OData v4 framework</name>
                 </author>
                 <link rel="edit" title="IdNamePairSample" href="IdNamePairSamples(10)"/>
+                <link rel="http://docs.oasis-open.org/odata/ns/related/innerExpandedProperty" type="application/atom+xml;type=entry" title="innerExpandedProperty" href="IdNamePairSamples(10)/innerExpandedProperty"/>
+                <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/innerExpandedProperty" type="application/xml" title="innerExpandedProperty" href="IdNamePairSamples(10)/innerExpandedProperty/$ref"/>
                 <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#ODataSample.IdNamePairSample"/>
                 <content type="application/xml">
                     <metadata:properties>
@@ -52,6 +54,8 @@
                         <name>SDL OData v4 framework</name>
                     </author>
                     <link rel="edit" title="IdNamePairSample" href="IdNamePairSamples(10)"/>
+                    <link rel="http://docs.oasis-open.org/odata/ns/related/innerExpandedProperty" type="application/atom+xml;type=entry" title="innerExpandedProperty" href="IdNamePairSamples(10)/innerExpandedProperty"/>
+                    <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/innerExpandedProperty" type="application/xml" title="innerExpandedProperty" href="IdNamePairSamples(10)/innerExpandedProperty/$ref"/>
                     <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#ODataSample.IdNamePairSample"/>
                     <content type="application/xml">
                         <metadata:properties>
@@ -69,6 +73,8 @@
                         <name>SDL OData v4 framework</name>
                     </author>
                     <link rel="edit" title="IdNamePairSample" href="IdNamePairSamples(20)"/>
+                    <link rel="http://docs.oasis-open.org/odata/ns/related/innerExpandedProperty" type="application/atom+xml;type=entry" title="innerExpandedProperty" href="IdNamePairSamples(20)/innerExpandedProperty"/>
+                    <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/innerExpandedProperty" type="application/xml" title="innerExpandedProperty" href="IdNamePairSamples(20)/innerExpandedProperty/$ref"/>
                     <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#ODataSample.IdNamePairSample"/>
                     <content type="application/xml">
                         <metadata:properties>
