@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.json.writer;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.WriterTest;
+import com.sdl.odata.test.model.ExpandedPropertiesSample;
 import com.sdl.odata.test.model.SingletonSample;
 import org.junit.Test;
 
@@ -46,6 +47,7 @@ public class JsonWriterTest extends WriterTest {
     private static final String EXPECTED_CUSTOMER_FEED_PATH = "/json/Customers.json";
     private static final String EXPECTED_CUSTOMER_FEED_WITH_COUNT_PATH = "/json/CustomersWithCount.json";
     private static final String EXPECTED_EXPANDED_PROPERTIES_ENTITY_PATH = "/json/ExpandedPropertiesSample.json";
+    private static final String EXPECTED_EXPANDED_ALL_PROPERTIES_ENTITY_PATH = "/json/ExpandedPropertiesExpandAll.json";
     private static final String EXPANDED_PROPERTIES_NO_LINKS_ENTITY_PATH = "/json/ExpandedPropertiesNoLinksSample.json";
     private static final String EXPECTED_COMPLEX_KEY_ENTITY_PATH = "/json/ComplexKeySample.json";
     private static final String EXPECTED_EMPTY_LIST_PATH = "/json/EmptyList.json";
@@ -117,6 +119,23 @@ public class JsonWriterTest extends WriterTest {
                 entityDataModel);
         checkWrittenJsonStream(createExpandedPropertiesSample(),
                 EXPANDED_PROPERTIES_SAMPLE_URL, EXPECTED_EXPANDED_PROPERTIES_ENTITY_PATH);
+    }
+
+    @Test
+    public void testExpandedPropertiesAll() throws Exception {
+
+        odataUri = new ODataParserImpl().parseUri(
+            "http://localhost:8080/odata.svc/ExpandedPropertiesSamples(1)?$expand=*",
+            entityDataModel);
+        final ExpandedPropertiesSample expandedPropertiesSample = createExpandedPropertiesSample();
+
+        final ExpandedPropertiesSample level2 = new ExpandedPropertiesSample();
+        level2.setId(1);
+        level2.setName("Inner expanded property");
+
+        expandedPropertiesSample.getExpandedEntry().setInnerExpandedProperty(level2);
+        checkWrittenJsonStream(expandedPropertiesSample,
+            EXPANDED_PROPERTIES_SAMPLE_URL, EXPECTED_EXPANDED_ALL_PROPERTIES_ENTITY_PATH);
     }
 
     @Test
