@@ -75,6 +75,11 @@ public class JsonPropertyExpander {
     private void fillEntryFeed(Object entity, Object currentNode, StructuralProperty property, Field field,
                                String node, Map<String, Object> map) throws ODataException {
         Map<String, Object> entryMap = (Map<String, Object>) map.get(currentNode);
+
+        if (entryMap == null) {
+            return;
+        }
+
         for (Map.Entry<String, Object> entry : entryMap.entrySet()) {
             if (findAppropriateElement(entity, property, field, node, entryMap, entry)) {
                 break;
