@@ -21,6 +21,7 @@ import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.EntitySet;
 import com.sdl.odata.api.edm.model.EntityType;
 import com.sdl.odata.api.edm.model.EnumType;
+import com.sdl.odata.api.edm.model.Function;
 import com.sdl.odata.api.edm.model.Schema;
 import com.sdl.odata.api.edm.model.Singleton;
 import com.sdl.odata.api.edm.model.Type;
@@ -33,18 +34,19 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 
-import static com.sdl.odata.MetadataDocumentConstants.EDMX;
-import static com.sdl.odata.MetadataDocumentConstants.EDMX_DATA_SERVICES;
 import static com.sdl.odata.MetadataDocumentConstants.EDMX_NS;
 import static com.sdl.odata.MetadataDocumentConstants.EDMX_PREFIX;
+import static com.sdl.odata.MetadataDocumentConstants.XML_VERSION;
+import static com.sdl.odata.MetadataDocumentConstants.EDMX;
+import static com.sdl.odata.MetadataDocumentConstants.VERSION;
+import static com.sdl.odata.MetadataDocumentConstants.ODATA_VERSION;
+import static com.sdl.odata.MetadataDocumentConstants.EDMX_DATA_SERVICES;
 import static com.sdl.odata.MetadataDocumentConstants.EDM_NS;
+import static com.sdl.odata.MetadataDocumentConstants.SCHEMA;
+import static com.sdl.odata.MetadataDocumentConstants.NAMESPACE;
 import static com.sdl.odata.MetadataDocumentConstants.ENTITY_CONTAINER;
 import static com.sdl.odata.MetadataDocumentConstants.NAME;
-import static com.sdl.odata.MetadataDocumentConstants.NAMESPACE;
-import static com.sdl.odata.MetadataDocumentConstants.ODATA_VERSION;
-import static com.sdl.odata.MetadataDocumentConstants.SCHEMA;
-import static com.sdl.odata.MetadataDocumentConstants.VERSION;
-import static com.sdl.odata.MetadataDocumentConstants.XML_VERSION;
+
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -63,6 +65,7 @@ public class MetadataDocumentWriter {
     private MetadataDocumentEnumTypeWriter enumTypeWriter = null;
     private MetadataDocumentEntitySetWriter entitySetWriter = null;
     private MetadataDocumentSingletonWriter singletonWriter = null;
+    private MetadataDocumentFunctionWriter functionWriter = null;
     private final EntityDataModel entityDataModel;
 
     /**
@@ -90,6 +93,8 @@ public class MetadataDocumentWriter {
             enumTypeWriter = new MetadataDocumentEnumTypeWriter(xmlWriter);
             entitySetWriter = new MetadataDocumentEntitySetWriter(xmlWriter);
             singletonWriter = new MetadataDocumentSingletonWriter(xmlWriter);
+            functionWriter = new MetadataDocumentFunctionWriter(xmlWriter);
+
             xmlWriter.writeStartDocument(UTF_8.name(), XML_VERSION);
             xmlWriter.setPrefix(EDMX_PREFIX, EDMX_NS);
         } catch (XMLStreamException e) {
@@ -133,6 +138,7 @@ public class MetadataDocumentWriter {
                 xmlWriter.writeStartElement(SCHEMA);
                 xmlWriter.writeDefaultNamespace(EDM_NS);
                 xmlWriter.writeAttribute(NAMESPACE, schema.getNamespace());
+
                 for (Type type : schema.getTypes()) {
                     switch (type.getMetaType()) {
                         case ENTITY:
@@ -149,6 +155,11 @@ public class MetadataDocumentWriter {
                             throw new ODataRenderException("Unexpected type: " + type.getFullyQualifiedName());
                     }
                 }
+
+                for (Function function : schema.getFunctions()) {
+                    functionWriter.write(function);
+                }
+
                 if (!entityContinerWritten) {
                     writeEntityContainer(entityDataModel.getEntityContainer());
                     entityContinerWritten = true;

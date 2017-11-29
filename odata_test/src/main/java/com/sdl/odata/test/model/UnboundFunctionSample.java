@@ -29,10 +29,10 @@ import com.sdl.odata.api.service.ODataRequestContext;
 @EdmReturnType(type = "Edm.String")
 public class UnboundFunctionSample implements Operation<String> {
 
-    @EdmParameter
+    @EdmParameter(name = "stringFunctionField", type = "String")
     private String stringFunctionField;
 
-    @EdmParameter
+    @EdmParameter(name = "intFunctionField", type = "Int16")
     private int intFunctionField;
 
     public String getStringFunctionField() {

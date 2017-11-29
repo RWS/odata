@@ -152,4 +152,16 @@ public final class MetadataDocumentConstants {
      * Nullable.
      */
     public static final String NULLABLE = "Nullable";
+    /**
+     * Function.
+     */
+    public static final String FUNCTION = "Function";
+    /**
+     * Parameter.
+     */
+    public static final String PARAMETER = "Parameter";
+    /**
+     * ReturnType.
+     */
+    public static final String RETURN_TYPE = "ReturnType";
 }
