@@ -55,7 +55,7 @@
     </modules>
 
     <properties>
-        <odata.version>2.6.0.4</odata.version>
+        <odata.version>2.6.0.5</odata.version>
         <license.header.file>${project.basedir}/src/license/sdl_license/header.txt</license.header.file>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
