@@ -19,7 +19,6 @@ import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.EntityType;
 import com.sdl.odata.api.edm.model.NavigationProperty;
-import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.renderer.ODataRenderException;
@@ -338,23 +337,6 @@ public class AtomWriter {
         metadataWriter.writeUpdate(dateTime);
         metadataWriter.writeAuthor();
         metadataWriter.writeEntryEntityLink(entity);
-
-        for (StructuralProperty property : entityType.getStructuralProperties()) {
-            if (property instanceof NavigationProperty) {
-                // Nullable navigation properties that have null values should not be included in the output of writes
-                if (isWriteOperation) {
-                    final Object value = getPropertyValue(property, entity);
-                    if (value != null) {
-                        NavigationProperty navigationProperty = (NavigationProperty) property;
-                        writeEntryPropertyLink(entity, navigationProperty);
-                    }
-                } else {
-                    NavigationProperty navigationProperty = (NavigationProperty) property;
-                    writeEntryPropertyLink(entity, navigationProperty);
-                }
-            }
-        }
-
         metadataWriter.writeEntryCategory(entity);
 
         // Note Iterate through all the entity properties in order to write elements of type <data:Property>
