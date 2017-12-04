@@ -52,6 +52,8 @@ public class ODataJsonParserTest extends UnmarshallerTest {
     private static final String ODATA_DEMO_SAMPLE = "/json/ODataDemoSample.json";
     private static final String EXPANDED_PROPERTIES_PATH = "/json/ExpandedPropertiesSample.json";
     private static final String ABSTRACT_ENTITY_PATH = "/json/AbstractEntitySample.json";
+    private static final String ABSTRACT_ENTITY_PATH_WITH_NULL_COLLECTION =
+        "/json/AbstractEntitySampleWithNullCollection.json";
 
     private ODataJsonParser jsonParser;
     private ODataParser uriParser;
@@ -207,12 +209,22 @@ public class ODataJsonParserTest extends UnmarshallerTest {
 
     @Test
     public void testAbstractEntitySample() throws Exception {
-
-        createODataUri(SERVICE_ROOT, "EntityTypeSamples");
-        preparePostRequestContext(ABSTRACT_ENTITY_PATH);
-        jsonParser = new ODataJsonParser(context, uriParser);
-
-        entityTypeSample = jsonParser.getODataEntity();
-        assertAbstractEntityTypeSample();
+        abstractEntitySampleWithCustomJson(ABSTRACT_ENTITY_PATH);
     }
+
+    @Test
+    public void testAbstractEntitySampleWithNullCollection() throws Exception {
+        abstractEntitySampleWithCustomJson(ABSTRACT_ENTITY_PATH_WITH_NULL_COLLECTION);
+    }
+
+  private void abstractEntitySampleWithCustomJson(String jsonWithNullCollection) throws Exception {
+      createODataUri(SERVICE_ROOT, "EntityTypeSamples");
+      preparePostRequestContext(jsonWithNullCollection);
+
+      jsonParser = new ODataJsonParser(context, uriParser);
+
+      entityTypeSample = jsonParser.getODataEntity();
+      assertAbstractEntityTypeSample();
+      assertAbstractEntityTypeSampleWithEmptyCollection();
+  }
 }

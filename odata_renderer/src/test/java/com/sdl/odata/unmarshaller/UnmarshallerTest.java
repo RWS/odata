@@ -261,4 +261,9 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
         assertThat(entityTypeSampleTyped.getComplexTypeProperty().getSimpleProperty(), is("Simple value"));
         assertThat(entityTypeSampleTyped.getComplexTypeProperty().getInheritedProperty(), is("Inherited value"));
     }
+
+    public void assertAbstractEntityTypeSampleWithEmptyCollection() {
+        EntityTypeSample entityTypeSampleTyped = (EntityTypeSample) entityTypeSample;
+        assertThat(entityTypeSampleTyped.getComplexTypeProperties(), is(new ArrayList<>()));
+    }
 }

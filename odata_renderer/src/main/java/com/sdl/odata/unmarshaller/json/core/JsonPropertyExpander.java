@@ -124,11 +124,15 @@ public class JsonPropertyExpander {
         }
 
         Object current = (currentNode instanceof Map) ? currentNode : map.get(currentNode);
-        for (Object subValue : (Iterable) ((Map) current).get(node)) {
-            Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);
+        Object currentValue = ((Map) current).get(node);
+        if (currentValue != null) {
+            for (Object subValue : (Iterable) currentValue) {
+                Object value = getFieldValueByType(property.getElementTypeName(), subValue, map,
+                    true);
 
-            if (value != null) {
-                valueSet.add(value);
+                if (value != null) {
+                    valueSet.add(value);
+                }
             }
         }
         setFieldValue(field, entity, valueSet);
