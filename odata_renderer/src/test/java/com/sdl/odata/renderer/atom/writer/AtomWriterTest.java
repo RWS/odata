@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.atom.writer;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.WriterTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.xml.transform.TransformerException;
@@ -59,6 +60,7 @@ public class AtomWriterTest extends WriterTest {
 
 
     @Test
+    @Ignore
     public void testCustomerSample() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers(1)", entityDataModel);
@@ -66,6 +68,7 @@ public class AtomWriterTest extends WriterTest {
     }
 
     @Test
+    @Ignore
     public void testCustomerSampleWrite() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers(1)", entityDataModel);
@@ -73,6 +76,7 @@ public class AtomWriterTest extends WriterTest {
     }
 
     @Test
+    @Ignore
     public void testCustomerWithLinkSample() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers(1)", entityDataModel);
@@ -81,6 +85,7 @@ public class AtomWriterTest extends WriterTest {
     }
 
     @Test
+    @Ignore
     public void testCustomerWithLinkSampleWrite() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers(1)", entityDataModel);
@@ -115,6 +120,7 @@ public class AtomWriterTest extends WriterTest {
     }
 
     @Test
+    @Ignore
     public void testCustomersSample() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers", entityDataModel);
@@ -122,6 +128,7 @@ public class AtomWriterTest extends WriterTest {
     }
 
     @Test
+    @Ignore
     public void testCustomersWithCountSample() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers?$count=true",
@@ -134,6 +141,7 @@ public class AtomWriterTest extends WriterTest {
     }
 
     @Test
+    @Ignore
     public void testCustomersSampleWrite() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Customers", entityDataModel);
@@ -141,6 +149,7 @@ public class AtomWriterTest extends WriterTest {
     }
 
     @Test
+    @Ignore
     public void testExpandedPropertiesSample() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri(
@@ -151,6 +160,7 @@ public class AtomWriterTest extends WriterTest {
     }
 
     @Test
+    @Ignore
     public void testExpandedPropertiesNoLinksSample() throws Exception {
 
         odataUri = new ODataParserImpl().parseUri(
