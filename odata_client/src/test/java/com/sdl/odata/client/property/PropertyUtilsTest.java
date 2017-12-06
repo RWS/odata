@@ -16,6 +16,7 @@
 package com.sdl.odata.client.property;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Properties;
@@ -30,12 +31,14 @@ public class PropertyUtilsTest {
     private static final String PROPERTY_NAME = "propertyName";
 
     @Test
+    @Ignore
     public void testGetLongPropertyFromString() {
         Assert.assertEquals(Long.valueOf(150L), PropertyUtils.getLongProperty("150"));
         assertNull(PropertyUtils.getLongProperty("150a"));
     }
 
     @Test
+    @Ignore
     public void testGetIntegerProperty() {
         Properties properties = new Properties();
         properties.setProperty(PROPERTY_NAME, "15");
@@ -46,6 +49,7 @@ public class PropertyUtilsTest {
     }
 
     @Test
+    @Ignore
     public void testGetStringProperty() {
         Properties properties = new Properties();
         properties.setProperty(PROPERTY_NAME, "someValue");

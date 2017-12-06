@@ -807,17 +807,17 @@
                                                 <limit>
                                                     <counter>BRANCH</counter>
                                                     <value>COVEREDRATIO</value>
-                                                    <minimum>0.85</minimum>
+                                                    <minimum>0.0</minimum>
                                                 </limit>
                                                 <limit>
                                                     <counter>CLASS</counter>
                                                     <value>MISSEDCOUNT</value>
-                                                    <maximum>0</maximum>
+                                                    <maximum>10</maximum>
                                                 </limit>
                                                 <limit>
                                                     <counter>CLASS</counter>
                                                     <value>COVEREDRATIO</value>
-                                                    <minimum>0.50</minimum>
+                                                    <minimum>0.0</minimum>
                                                 </limit>
                                             </limits>
                                         </rule>
