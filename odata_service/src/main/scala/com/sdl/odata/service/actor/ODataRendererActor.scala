@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 import com.sdl.odata.api.ODataErrorCode.UNKNOWN_ERROR
 import com.sdl.odata.api._
 import com.sdl.odata.api.processor.ProcessorResult
-import com.sdl.odata.api.processor.datasource.{ODataDataSourceException, ODataEntityNotFoundException}
+import com.sdl.odata.api.processor.datasource.{ODataDataSourceException, ODataDuplicateKeyException, ODataEntityNotFoundException}
 import com.sdl.odata.api.processor.query.QueryResult
 import com.sdl.odata.api.processor.query.QueryResult.ResultType
 import com.sdl.odata.api.renderer.{ODataRenderer, RendererFactory}
@@ -48,6 +48,10 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
           logger.error(s"Entity not found: '${e.getMessage}'", e)
           renderError(actorContext, clientException, responseBuilder)
           setStatus(actorContext, responseBuilder, NOT_FOUND)
+        case clientException: ODataDuplicateKeyException =>
+          logger.error(s"Entity already exist - ${e.getClass.getName}: '${e.getMessage}'", e)
+          renderError(actorContext, clientException, responseBuilder)
+          setStatus(actorContext, responseBuilder, CONFLICT)
         case clientException: ODataClientException =>
           logger.error(s"Invalid request - ${e.getClass.getName}: '${e.getMessage}'", e)
           renderError(actorContext, clientException, responseBuilder)

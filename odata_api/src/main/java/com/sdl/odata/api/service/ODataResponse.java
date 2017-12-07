@@ -77,6 +77,10 @@ public final class ODataResponse extends ODataRequestResponseBase {
          */
         NOT_ACCEPTABLE(406),
         /**
+         * Conflict status.
+         */
+        CONFLICT(409),
+        /**
          * Gone Status.
          */
         GONE(410),
