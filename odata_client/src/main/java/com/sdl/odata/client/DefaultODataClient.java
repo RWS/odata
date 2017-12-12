@@ -49,8 +49,8 @@ public class DefaultODataClient implements ODataClient {
 
     private static final Logger LOG = getLogger(DefaultODataClient.class);
 
-    private ODataClientComponentsProvider componentsProvider;
-    private boolean encodeURL = true;
+    protected ODataClientComponentsProvider componentsProvider;
+    protected boolean encodeURL = true;
 
 
     @Override
@@ -117,7 +117,7 @@ public class DefaultODataClient implements ODataClient {
         }
     }
 
-    private URL buildURL(ODataClientQuery query) {
+    protected URL buildURL(ODataClientQuery query) {
         String builtQuery = query.getQuery();
         try {
             // encoding can be an issue due to tomcat's validation
@@ -136,7 +136,7 @@ public class DefaultODataClient implements ODataClient {
         }
     }
 
-    private String getODataResponse(Map<String, String> requestProperties, ODataClientQuery query) {
+    protected String getODataResponse(Map<String, String> requestProperties, ODataClientQuery query) {
         try {
             return componentsProvider.getEndpointCaller().callEndpoint(requestProperties, buildURL(query));
         } catch (ODataClientException e) {
@@ -217,26 +217,26 @@ public class DefaultODataClient implements ODataClient {
         return componentsProvider.getEndpointCaller().getInputStream(requestProperties, url);
     }
 
-    private String getUrlToCall(String entitySetName, boolean includeId, String id) throws
+    protected String getUrlToCall(String entitySetName, boolean includeId, String id) throws
             UnsupportedEncodingException {
         return componentsProvider.getWebServiceUrl().toString() + "/" +
                 URLEncoder.encode(entitySetName, "UTF-8") + (includeId ? "('" + id + "')" : "");
     }
 
-    private BasicODataClientQuery buildQueryForEntity(Object entity) {
+    protected BasicODataClientQuery buildQueryForEntity(Object entity) {
         return new BasicODataClientQuery.Builder()
                 .withEntityType(entity.getClass())
                 .build();
     }
 
-    private ODataClientRuntimeException formFailedRequestException(Throwable e, String entitySetName) {
+    protected ODataClientRuntimeException formFailedRequestException(Throwable e, String entitySetName) {
         return new ODataClientRuntimeException(
                 format("Unable to make POST request to OData service for \"{0}\" URL and service query \"/{1}\"",
                         componentsProvider.getWebServiceUrl().toString(), entitySetName),
                 e);
     }
 
-    private ODataClientRuntimeException formFailedUrlFormingException(Throwable e, String entitySetName) {
+    protected ODataClientRuntimeException formFailedUrlFormingException(Throwable e, String entitySetName) {
         return new ODataClientRuntimeException(
                 format("Unable to form POST URL for OData service with \"{0}\" URL and service query \"/{1}\"",
                         componentsProvider.getWebServiceUrl().toString(), entitySetName),
