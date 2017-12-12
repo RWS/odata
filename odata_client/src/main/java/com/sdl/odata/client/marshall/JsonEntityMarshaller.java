@@ -78,7 +78,7 @@ public class JsonEntityMarshaller implements ODataEntityMarshaller {
                 .setStatus(OK);
         try {
             String encodedServiceQueryUrl = url + "/" +
-                    URLEncoder.encode(query.getEdmEntityName(), StandardCharsets.UTF_8.name());
+                        URLEncoder.encode(query.getQuery(), StandardCharsets.UTF_8.name());
             ODataUri oDataServiceUri = new ODataParserImpl().parseUri(encodedServiceQueryUrl, entityDataModel);
             // marshall the entity Atom XML into the response
             jsonRenderer.render(buildODataPostContext(oDataServiceUri), QueryResult.from(oDataEntity), builder);
