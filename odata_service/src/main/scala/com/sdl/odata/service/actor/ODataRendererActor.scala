@@ -52,6 +52,10 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
           logger.error(s"Entity already exist - ${e.getClass.getName}: '${e.getMessage}'", e)
           renderError(actorContext, clientException, responseBuilder)
           setStatus(actorContext, responseBuilder, CONFLICT)
+        case clientException: ODataUnprocessableEntityException =>
+          logger.error(s"Unprocessable Entity - ${e.getClass.getName}: '${e.getMessage}'", e)
+          renderError(actorContext, clientException, responseBuilder)
+          setStatus(actorContext, responseBuilder, UNPROCESSABLE_ENTITY)
         case clientException: ODataClientException =>
           logger.error(s"Invalid request - ${e.getClass.getName}: '${e.getMessage}'", e)
           renderError(actorContext, clientException, responseBuilder)

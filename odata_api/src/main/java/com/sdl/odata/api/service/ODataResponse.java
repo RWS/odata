@@ -93,6 +93,10 @@ public final class ODataResponse extends ODataRequestResponseBase {
          */
         UNSUPPORTED_MEDIA_TYPE(415),
         /**
+         * Unprocessable Entity Status.
+         */
+        UNPROCESSABLE_ENTITY(422),
+        /**
          * Internal Server Error Status.
          */
         INTERNAL_SERVER_ERROR(500),

@@ -15,9 +15,9 @@
  */
 package com.sdl.odata.processor.write.util;
 
-import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataClientException;
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.ODataUnprocessableEntityException;
 import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.EntityType;
@@ -121,14 +121,14 @@ public final class WriteMethodUtil {
         final Map<String, Object> keyValues = getKeyValues(entity, type);
 
         if (oDataUriKeyValues.size() != keyValues.size()) {
-            throw new ODataClientException(PROCESSOR_ERROR, "Number of keys don't match");
+            throw new ODataUnprocessableEntityException("Number of keys don't match");
         }
 
         for (Map.Entry<String, Object> oDataUriEntry : oDataUriKeyValues.entrySet()) {
             String oDataUriKey = oDataUriEntry.getKey();
             Object value = keyValues.get(oDataUriKey);
             if (value == null || !normalize(value).equals(normalize(oDataUriEntry.getValue()))) {
-                throw new ODataClientException(PROCESSOR_ERROR, "Key/Values in OData URI and the entity don't match");
+                throw new ODataUnprocessableEntityException("Key/Values in OData URI and the entity don't match");
             }
         }
     }
@@ -204,7 +204,7 @@ public final class WriteMethodUtil {
             Object value = getPropertyValue(property, entity);
             if (value == null) {
                 if (!property.isNullable()) {
-                    throw new ODataBadRequestException("The property '" + property.getName() +
+                    throw new ODataUnprocessableEntityException("The property '" + property.getName() +
                             "' is required to be non-empty in an entity of type: " + type.getFullyQualifiedName());
                 }
             } else if (!(property instanceof NavigationProperty)) {
