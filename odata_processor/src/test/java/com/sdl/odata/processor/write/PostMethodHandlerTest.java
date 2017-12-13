@@ -17,6 +17,7 @@ package com.sdl.odata.processor.write;
 
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.ODataUnprocessableEntityException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -98,7 +99,7 @@ public class PostMethodHandlerTest extends MethodHandlerTest {
         writeMethodHandler.validateProperties(getEntityForNamedKey(), getEntityDataModelForNamedKey());
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test(expected = ODataUnprocessableEntityException.class)
     public void testValidatePropertiesMissingEntity() throws Exception {
         Object entity = getEntity();
         ((ODataPerson) entity).setPrimaryPhone(null);
@@ -107,7 +108,7 @@ public class PostMethodHandlerTest extends MethodHandlerTest {
         // Should fail with an exception because 'primaryPhone' is not nullable
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test(expected = ODataUnprocessableEntityException.class)
     public void testValidatePropertiesMissingComplex() throws Exception {
         Object entity = getEntity();
         ((ODataPerson) entity).setPrimaryAddress(null);
