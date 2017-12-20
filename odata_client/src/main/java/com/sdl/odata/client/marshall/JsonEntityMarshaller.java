@@ -58,6 +58,12 @@ public class JsonEntityMarshaller implements ODataEntityMarshaller {
         this(edmEntityClasses, url, new JsonRenderer());
     }
 
+    public JsonEntityMarshaller(EntityDataModel entityDataModel, String url) {
+        this.url = url;
+        this.jsonRenderer = new JsonRenderer();
+        this.entityDataModel = entityDataModel;
+    }
+
     protected JsonEntityMarshaller(Iterable<Class<?>> edmEntityClasses, String url, AbstractJsonRenderer jsonRenderer) {
         this.url = url;
         this.jsonRenderer = jsonRenderer;

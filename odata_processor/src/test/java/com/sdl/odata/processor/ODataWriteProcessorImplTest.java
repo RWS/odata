@@ -15,6 +15,8 @@
  */
 package com.sdl.odata.processor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
@@ -25,6 +27,8 @@ import com.sdl.odata.api.parser.StringLiteral;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.processor.query.strategy.QueryOperationStrategy;
 import com.sdl.odata.api.service.HeaderNames;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -35,35 +39,27 @@ import com.sdl.odata.processor.model.ODataMobilePhone;
 import com.sdl.odata.processor.model.ODataPerson;
 import com.sdl.odata.test.util.TestUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.Map;
 
-import static com.sdl.odata.api.service.ODataRequest.Method.DELETE;
-import static com.sdl.odata.api.service.ODataRequest.Method.GET;
-import static com.sdl.odata.api.service.ODataRequest.Method.PATCH;
-import static com.sdl.odata.api.service.ODataRequest.Method.POST;
-import static com.sdl.odata.api.service.ODataRequest.Method.PUT;
-import static com.sdl.odata.api.service.ODataResponse.Status.CREATED;
-import static com.sdl.odata.api.service.ODataResponse.Status.METHOD_NOT_ALLOWED;
-import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
-import static com.sdl.odata.api.service.ODataResponse.Status.OK;
-import static com.sdl.odata.test.util.TestUtils.SERVICE_ROOT;
-import static com.sdl.odata.test.util.TestUtils.createODataRequestContext;
-import static com.sdl.odata.test.util.TestUtils.createODataUriEntityKeys;
+import static com.sdl.odata.api.service.ODataRequest.Method.*;
+import static com.sdl.odata.api.service.ODataResponse.Status.*;
+import static com.sdl.odata.test.util.TestUtils.*;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
@@ -104,6 +100,9 @@ public class ODataWriteProcessorImplTest {
         }
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
+        Field uriParserField = ReflectionUtils.findField(ODataWriteProcessorImpl.class, "uriParser");
+        uriParserField.setAccessible(true);
+        ReflectionUtils.setField(uriParserField, oDataWriteProcessor, new ODataParserImpl());
     }
 
     @Test
@@ -222,14 +221,15 @@ public class ODataWriteProcessorImplTest {
 
     @Test
     public void testWriteWithPatch() throws Exception {
+        prepareStrategy();
         requestContext = createContextWithEntity(PATCH, false);
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
-        when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
+        when(dataSource.update(eq(requestContext.getUri()), any(), eq(entityDataModel))).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
         assertThat(result.getStatus(), is(OK));
-        assertThat(result.getData(), is(entity));
+        assertThat(result.getData(), notNullValue());
         Map<String, String> headers = result.getHeaders();
         assertThat(headers.size(), is(1));
         assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
@@ -237,10 +237,11 @@ public class ODataWriteProcessorImplTest {
 
     @Test
     public void testWriteWithPatchReturnMinimal() throws Exception {
+        prepareStrategy();
         requestContext = createContextWithEntity(PATCH, true);
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
-        when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
+        when(dataSource.update(eq(requestContext.getUri()), any(), eq(entityDataModel))).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
         assertThat(result.getStatus(), is(NO_CONTENT));
@@ -268,8 +269,10 @@ public class ODataWriteProcessorImplTest {
     }
 
     private ODataRequestContext createContextWithEntity(ODataRequest.Method method, boolean withPrefer)
-            throws UnsupportedEncodingException, ODataException {
-        ODataRequest.Builder builder = new ODataRequest.Builder().setBodyText("test", "UTF-8")
+            throws UnsupportedEncodingException, ODataException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ODataRequest.Builder builder = new ODataRequest.Builder().setBodyText(objectMapper.writeValueAsString(entity),
+                "UTF-8")
                 .setUri(SERVICE_ROOT).setMethod(method);
         if (withPrefer) {
             builder.setHeader(HeaderNames.PREFER, "return=minimal");
@@ -311,5 +314,12 @@ public class ODataWriteProcessorImplTest {
         this.entity = person;
         this.entityKey = person.getId();
 
+    }
+
+    private void prepareStrategy() throws ODataException {
+        QueryOperationStrategy queryOperationStrategy = mock(QueryOperationStrategy.class);
+        QueryResult queryResult1 = QueryResult.from(entity);
+        when(queryOperationStrategy.execute()).thenReturn(queryResult1);
+        when(dataSourceFactory.getStrategy(any(), any(), any())).thenReturn(queryOperationStrategy);
     }
 }

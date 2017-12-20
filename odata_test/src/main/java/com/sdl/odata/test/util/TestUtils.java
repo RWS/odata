@@ -394,7 +394,21 @@ public final class TestUtils {
      */
     public static ODataRequest createODataRequest(ODataRequest.Method method, MediaType... mediaTypes)
             throws UnsupportedEncodingException {
-        return new ODataRequest.Builder().setBodyText("test", "UTF-8")
+        return createODataRequest( method, "test", mediaTypes);
+    }
+
+    /**
+     * Create an OData request with the given HTTP method, and list of media types in the 'Accept-header'.
+     *
+     * @param method     The given HTTP method.
+     * @param mediaTypes The given list of media types.
+     * @return The created OData request.
+     * @throws UnsupportedEncodingException
+     */
+    public static ODataRequest createODataRequest(ODataRequest.Method method, String bodyText,
+                                                  MediaType... mediaTypes)
+            throws UnsupportedEncodingException {
+        return new ODataRequest.Builder().setBodyText(bodyText, "UTF-8")
                 .setUri(SERVICE_ROOT)
                 .setAccept(mediaTypes)
                 .setMethod(method).build();
@@ -458,6 +472,21 @@ public final class TestUtils {
                                                                 EntityDataModel entityDataModel)
             throws UnsupportedEncodingException {
         return new ODataRequestContext(createODataRequest(method), oDataUri, entityDataModel);
+    }
+
+    /**
+     * Create an OData Request Context with the given HTTP method, OData URI and Entity Data Model.
+     *
+     * @param method          The given HTTP method.
+     * @param oDataUri        The given OData URI.
+     * @param entityDataModel The given Entity Data Model.
+     * @return The created OData request context.
+     * @throws UnsupportedEncodingException
+     */
+    public static ODataRequestContext createODataRequestContext(ODataRequest.Method method, ODataUri oDataUri,
+                                                                EntityDataModel entityDataModel, String bodyText)
+            throws UnsupportedEncodingException {
+        return new ODataRequestContext(createODataRequest(method, bodyText), oDataUri, entityDataModel);
     }
 
     /**
