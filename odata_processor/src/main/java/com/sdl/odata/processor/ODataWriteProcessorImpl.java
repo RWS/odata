@@ -31,7 +31,6 @@ import com.sdl.odata.processor.write.PatchMethodHandler;
 import com.sdl.odata.processor.write.PostMethodHandler;
 import com.sdl.odata.processor.write.PutMethodHandler;
 import com.sdl.odata.processor.write.WriteMethodHandler;
-import com.sdl.odata.unmarshaller.json.ODataJsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

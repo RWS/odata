@@ -48,12 +48,15 @@ import org.slf4j.LoggerFactory;
 import scala.collection.immutable.Nil$;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.sdl.odata.api.parser.ODataUriUtil.getEntityKeyMap;
 import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -135,7 +138,7 @@ public class PatchMethodHandler extends WriteMethodHandler {
     }
 
     private String getEntitySetNameFromUri() {
-        return ((EntitySetPath)((ResourcePathUri)
+        return ((EntitySetPath) ((ResourcePathUri)
                 this.getODataRequestContext().getUri().relativeUri()).resourcePath()).entitySetName();
     }
 

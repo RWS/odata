@@ -20,6 +20,9 @@ import com.sdl.odata.api.parser.ODataParser;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.unmarshaller.json.ODataJsonParser;
 
+/**
+ * Class to parse JSON string to OData entity.
+ */
 public class ProcessorODataJsonParser extends ODataJsonParser {
 
     public ProcessorODataJsonParser(ODataRequestContext request, ODataParser uriParser) {
