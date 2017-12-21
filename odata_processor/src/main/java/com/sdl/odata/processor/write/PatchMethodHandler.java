@@ -15,34 +15,63 @@
  */
 package com.sdl.odata.processor.write;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.edm.model.EntitySet;
 import com.sdl.odata.api.edm.model.EntityType;
 import com.sdl.odata.api.edm.model.MetaType;
+import com.sdl.odata.api.edm.model.NavigationPropertyBinding;
 import com.sdl.odata.api.edm.model.Type;
+import com.sdl.odata.api.parser.EntitySetPath;
+import com.sdl.odata.api.parser.ODataParser;
 import com.sdl.odata.api.parser.ODataUriUtil;
+import com.sdl.odata.api.parser.ResourcePathUri;
 import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.processor.query.ExpandOperation;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.processor.query.SelectByKeyOperation;
+import com.sdl.odata.api.processor.query.SelectOperation;
+import com.sdl.odata.api.processor.query.strategy.QueryOperationStrategy;
 import com.sdl.odata.api.service.ODataRequestContext;
+import com.sdl.odata.client.BasicODataClientQuery;
+import com.sdl.odata.client.api.exception.ODataClientException;
+import com.sdl.odata.client.marshall.JsonEntityMarshaller;
+import com.sdl.odata.processor.parser.ProcessorODataJsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.collection.immutable.Nil$;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static com.sdl.odata.api.parser.ODataUriUtil.getEntityKeyMap;
 import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Patch Method Handler is specific to 'PATCH' operation.
  */
 public class PatchMethodHandler extends WriteMethodHandler {
     private static Logger log = LoggerFactory.getLogger(PatchMethodHandler.class);
+    private final ObjectMapper objectMapper;
+    private final ProcessorODataJsonParser parser;
 
-    public PatchMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory) {
+    public PatchMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory,
+                              ObjectMapper objectMapper, ODataParser uriParser) {
         super(requestContext, dataSourceFactory);
+        this.objectMapper = objectMapper;
+        this.parser = new ProcessorODataJsonParser(requestContext, uriParser);
     }
 
     @Override
@@ -55,17 +84,38 @@ public class PatchMethodHandler extends WriteMethodHandler {
             throw new ODataBadRequestException("The body of a PATCH request must contain a valid entity.");
         }
 
-        return processRequest(entity);
+        return processRequest();
     }
 
-    private ProcessorResult processRequest(Object entity) throws ODataException {
-
+    private ProcessorResult processRequest() throws ODataException {
         TargetType targetType = getTargetType();
         if (!targetType.isCollection()) {
             Type type = getEntityDataModel().getType(targetType.typeName());
             if (!MetaType.ENTITY.equals(type.getMetaType())) {
                 throw new ODataBadRequestException("The body of a PATCH request must contain a valid entity.");
             }
+            Object entity;
+            try {
+                final String bodyText = this.getRequest().getBodyText("UTF-8");
+                Map<String, Object> bodyFromJson = convertToMap(bodyText);
+                SelectOperation selectOperation = new SelectOperation(getEntitySetNameFromUri(),
+                        true);
+                final QueryOperationStrategy strategy = this.getDataSourceFactory()
+                        .getStrategy(this.getODataRequestContext(),
+                                new SelectByKeyOperation(new ExpandOperation(selectOperation,
+                                        Nil$.MODULE$.$colon$colon("*")),
+                                        getEntityKeyMap(getoDataUri(), getEntityDataModel())),
+                                targetType);
+                final QueryResult queryResult = strategy.execute();
+                Object data = queryResult.getData();
+                Map<String, Object> bodyFromDB = convertObjectToMap(data);
+                mergeJsonToDB(bodyFromJson, bodyFromDB);
+                entity = toOdataEntity(bodyFromDB);
+            } catch (IOException e) {
+                throw new ODataSystemException(e);
+            }
+
+
             validateProperties(entity, getEntityDataModel());
 
             DataSource dataSource = getDataSource(type.getFullyQualifiedName());
@@ -84,6 +134,65 @@ public class PatchMethodHandler extends WriteMethodHandler {
         } else {
             throw new ODataBadRequestException("The URI for a PATCH request should refer to the single entity " +
                     "to be updated, not to a collection of entities.");
+        }
+    }
+
+    private String getEntitySetNameFromUri() {
+        return ((EntitySetPath) ((ResourcePathUri)
+                this.getODataRequestContext().getUri().relativeUri()).resourcePath()).entitySetName();
+    }
+
+    private Object toOdataEntity(Map<String, Object> bodyFromDB) throws ODataException {
+        try {
+            return parser.processEntity(objectMapper.writeValueAsString(bodyFromDB));
+        } catch (IOException e) {
+            throw new ODataSystemException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void mergeJsonToDB(Map<String, Object> bodyFromJson, Map<String, Object> bodyFromDB) {
+        EntitySet entitySet =
+                getODataRequestContext().getEntityDataModel()
+                        .getEntityContainer().getEntitySet(getEntitySetNameFromUri());
+        Set<String> navigationProperties = entitySet.getNavigationPropertyBindings().stream()
+                .map(NavigationPropertyBinding::getPath)
+                .collect(toSet());
+        for (Map.Entry<String, Object> bodyEntry : bodyFromJson.entrySet()) {
+            if (isNotNullCollectionNavigationProperty(bodyFromDB, navigationProperties, bodyEntry)) {
+                ((List) bodyFromDB.get(bodyEntry.getKey())).addAll((Collection) bodyEntry.getValue());
+            } else {
+                bodyFromDB.put(bodyEntry.getKey(), bodyEntry.getValue());
+            }
+        }
+    }
+
+    private boolean isNotNullCollectionNavigationProperty(Map<String, Object> bodyFromDB,
+                                                          Set<String> navigationProperties,
+                                                          Map.Entry<String, Object> bodyEntry) {
+        return navigationProperties.contains(bodyEntry.getKey())
+                && !(bodyEntry.getValue() == null)
+                && bodyFromDB.get(bodyEntry.getKey()) instanceof List;
+    }
+
+    private Map<String, Object> convertObjectToMap(Object data) throws ODataException {
+        try {
+            JsonEntityMarshaller marshaller = new JsonEntityMarshaller(getEntityDataModel(),
+                    getoDataUri().serviceRoot());
+            return convertToMap(marshaller.marshallEntity(data,
+                    new BasicODataClientQuery(new BasicODataClientQuery.Builder().withEntityType(data.getClass())
+                            .withExpandParameters("*"))));
+        } catch (ODataClientException e) {
+            throw new ODataSystemException(e);
+        }
+    }
+
+    private Map<String, Object> convertToMap(String bodyText) throws ODataException {
+        try {
+            return objectMapper.readValue(bodyText, new TypeReference<HashMap<String, Object>>() {
+            });
+        } catch (IOException e) {
+            throw new ODataBadRequestException(e.getMessage());
         }
     }
 }
