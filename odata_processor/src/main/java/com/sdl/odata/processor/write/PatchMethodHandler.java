@@ -33,6 +33,7 @@ import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.processor.query.ExpandOperation;
 import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.processor.query.SelectByKeyOperation;
 import com.sdl.odata.api.processor.query.SelectOperation;
@@ -44,6 +45,7 @@ import com.sdl.odata.client.marshall.JsonEntityMarshaller;
 import com.sdl.odata.processor.parser.ProcessorODataJsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.collection.immutable.Nil$;
 
 import java.io.IOException;
 import java.util.*;
@@ -51,6 +53,7 @@ import java.util.*;
 import static com.sdl.odata.api.parser.ODataUriUtil.getEntityKeyMap;
 import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -92,10 +95,13 @@ public class PatchMethodHandler extends WriteMethodHandler {
             try {
                 final String bodyText = this.getRequest().getBodyText("UTF-8");
                 Map<String, Object> bodyFromJson = convertToMap(bodyText);
+                SelectOperation selectOperation = new SelectOperation(getEntitySetNameFromUri(),
+                        true);
                 final QueryOperationStrategy strategy = this.getDataSourceFactory()
                         .getStrategy(this.getODataRequestContext(),
-                                new SelectByKeyOperation(new SelectOperation(getEntitySetNameFromUri(),
-                                        true), getEntityKeyMap(getoDataUri(), getEntityDataModel())),
+                                new SelectByKeyOperation(new ExpandOperation(selectOperation,
+                                        Nil$.MODULE$.$colon$colon("*")),
+                                        getEntityKeyMap(getoDataUri(), getEntityDataModel())),
                                 targetType);
                 final QueryResult queryResult = strategy.execute();
                 Object data = queryResult.getData();

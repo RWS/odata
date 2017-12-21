@@ -394,7 +394,7 @@ public final class TestUtils {
      */
     public static ODataRequest createODataRequest(ODataRequest.Method method, MediaType... mediaTypes)
             throws UnsupportedEncodingException {
-        return createODataRequest( method, "test", mediaTypes);
+        return createODataRequest(method, "test", mediaTypes);
     }
 
     /**
