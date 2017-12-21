@@ -28,12 +28,11 @@ import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.processor.model.ODataPerson;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.PUT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
@@ -61,7 +60,13 @@ public class PatchMethodHandlerTest extends MethodHandlerTest {
 
     private WriteMethodHandler getPatchMethodHandler(EntityDataModel entityDataModel, boolean isEntitySetUri)
             throws UnsupportedEncodingException {
-        ODataRequestContext requestContext = createRequestContext(PUT, isEntitySetUri, entityDataModel);
+        return getPatchMethodHandler(entityDataModel, isEntitySetUri, getEntity());
+    }
+
+    private WriteMethodHandler getPatchMethodHandler(EntityDataModel entityDataModel, boolean isEntitySetUri,
+                                                     Object entity)
+            throws UnsupportedEncodingException {
+        ODataRequestContext requestContext = createRequestContext(PUT, isEntitySetUri, entityDataModel, entity);
         return new PatchMethodHandler(requestContext, dataSourceFactoryMock, new ObjectMapper(), new ODataParserImpl());
     }
 
@@ -82,7 +87,7 @@ public class PatchMethodHandlerTest extends MethodHandlerTest {
 
     public void doWrite(Object entity, EntityDataModel entityDataModel) throws Exception {
         stubForTesting(entity, entityDataModel);
-        ProcessorResult result = getPatchMethodHandler(entityDataModel, false).handleWrite(entity);
+        ProcessorResult result = getPatchMethodHandler(entityDataModel, false, entity).handleWrite(entity);
         assertThat(result.getStatus(), is(OK));
         assertNull(result.getData());
         verify(dataSourceMock, times(1)).update(eq(entityOdataURI), any(), eq(entityDataModel));
@@ -91,29 +96,69 @@ public class PatchMethodHandlerTest extends MethodHandlerTest {
     @Test
     public void testWrite() throws Exception {
         QueryOperationStrategy queryOperationStrategy = mock(QueryOperationStrategy.class);
-        QueryResult queryResult1 = QueryResult.from(getEntity());
+        QueryResult queryResult1 = QueryResult.from(getPerson());
         QueryResult queryResult2 = QueryResult.from(getEntityForNamedKey());
         when(queryOperationStrategy.execute()).thenReturn(queryResult1).thenReturn(queryResult2);
         when(dataSourceFactoryMock.getStrategy(any(), any(), any())).thenReturn(queryOperationStrategy);
 
         // With ODataPerson
-        doWrite(getEntity(), getEntityDataModel());
+        EntityDataModel entityDataModel = getEntityDataModel();
+        doWrite(getPerson(), entityDataModel);
+        ArgumentCaptor<ODataPerson> personCaptor = ArgumentCaptor.forClass(ODataPerson.class);
+        verify(dataSourceMock, times(1)).update(eq(entityOdataURI), personCaptor.capture(),
+                eq(entityDataModel));
+        ODataPerson person = personCaptor.getValue();
+        assertThat(person.getMobilePhones().size(), is(2));
 
         // With ODataPersonNamedKey
         doWrite(getEntityForNamedKey(), getEntityDataModelForNamedKey());
+    }
+
+
+    @Test
+    public void testWriteValueToNullCollectionNavigationProperty() throws Exception {
+        QueryOperationStrategy queryOperationStrategy = mock(QueryOperationStrategy.class);
+        ODataPerson person = (ODataPerson) getEntity();
+        person.setMobilePhones(null);
+        QueryResult queryResult1 = QueryResult.from(person);
+        QueryResult queryResult2 = QueryResult.from(getEntityForNamedKey());
+        when(queryOperationStrategy.execute()).thenReturn(queryResult1).thenReturn(queryResult2);
+        when(dataSourceFactoryMock.getStrategy(any(), any(), any())).thenReturn(queryOperationStrategy);
+
+        // With ODataPerson
+        EntityDataModel entityDataModel = getEntityDataModel();
+        doWrite(getPerson(), entityDataModel);
+        ArgumentCaptor<ODataPerson> personCaptor = ArgumentCaptor.forClass(ODataPerson.class);
+        verify(dataSourceMock, times(1)).update(eq(entityOdataURI), personCaptor.capture(),
+                eq(entityDataModel));
+        ODataPerson caughtPerson = personCaptor.getValue();
+        assertThat(caughtPerson.getMobilePhones().size(), is(1));
     }
 
     @Override
     protected ODataRequestContext createRequestContext(ODataRequest.Method method, boolean isEntitySetUri,
                                                        EntityDataModel entityDataModel)
             throws UnsupportedEncodingException {
+        return createRequestContext(method, isEntitySetUri, entityDataModel, getEntity());
+    }
+
+    private ODataPerson getPerson() {
+        ODataPerson entity = (ODataPerson) getEntity();
+        entity.setMobilePhones(Collections.singletonList(entity.getPrimaryPhone()));
+        return entity;
+    }
+
+    private ODataRequestContext createRequestContext(ODataRequest.Method method, boolean isEntitySetUri,
+                                                     EntityDataModel entityDataModel, Object entity)
+            throws UnsupportedEncodingException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             if (isEntitySetUri) {
                 return createODataRequestContext(method,
-                        entitySetOdataURI, entityDataModel, objectMapper.writeValueAsString(getEntity()));
+                        entitySetOdataURI, entityDataModel, objectMapper.writeValueAsString(entity));
             }
-            return createODataRequestContext(method, entityOdataURI, entityDataModel, objectMapper.writeValueAsString(getEntity()));
+            return createODataRequestContext(method, entityOdataURI, entityDataModel,
+                    objectMapper.writeValueAsString(entity));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

@@ -20,13 +20,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.edm.model.EntitySet;
 import com.sdl.odata.api.edm.model.EntityType;
 import com.sdl.odata.api.edm.model.MetaType;
+import com.sdl.odata.api.edm.model.NavigationPropertyBinding;
 import com.sdl.odata.api.edm.model.Type;
-import com.sdl.odata.api.parser.*;
+import com.sdl.odata.api.parser.EntitySetPath;
+import com.sdl.odata.api.parser.ODataParser;
+import com.sdl.odata.api.parser.ODataUriUtil;
+import com.sdl.odata.api.parser.ResourcePathUri;
+import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.DataSource;
-import com.sdl.odata.api.processor.datasource.ODataEntityNotFoundException;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.processor.query.SelectByKeyOperation;
@@ -41,12 +46,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.sdl.odata.api.parser.ODataUriUtil.getEntityKeyMap;
 import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Patch Method Handler is specific to 'PATCH' operation.
@@ -73,16 +78,17 @@ public class PatchMethodHandler extends WriteMethodHandler {
             throw new ODataBadRequestException("The body of a PATCH request must contain a valid entity.");
         }
 
-        return processRequest(entity);
+        return processRequest();
     }
 
-    private ProcessorResult processRequest(Object entity) throws ODataException {
+    private ProcessorResult processRequest() throws ODataException {
         TargetType targetType = getTargetType();
         if (!targetType.isCollection()) {
             Type type = getEntityDataModel().getType(targetType.typeName());
             if (!MetaType.ENTITY.equals(type.getMetaType())) {
                 throw new ODataBadRequestException("The body of a PATCH request must contain a valid entity.");
             }
+            Object entity;
             try {
                 final String bodyText = this.getRequest().getBodyText("UTF-8");
                 Map<String, Object> bodyFromJson = convertToMap(bodyText);
@@ -135,10 +141,29 @@ public class PatchMethodHandler extends WriteMethodHandler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void mergeJsonToDB(Map<String, Object> bodyFromJson, Map<String, Object> bodyFromDB) {
+        EntitySet entitySet =
+                getODataRequestContext().getEntityDataModel()
+                        .getEntityContainer().getEntitySet(getEntitySetNameFromUri());
+        Set<String> navigationProperties = entitySet.getNavigationPropertyBindings().stream()
+                .map(NavigationPropertyBinding::getPath)
+                .collect(toSet());
         for (Map.Entry<String, Object> bodyEntry : bodyFromJson.entrySet()) {
-            bodyFromDB.put(bodyEntry.getKey(), bodyEntry.getValue());
+            if (isNotNullCollectionNavigationProperty(bodyFromDB, navigationProperties, bodyEntry)) {
+                ((List) bodyFromDB.get(bodyEntry.getKey())).addAll((Collection) bodyEntry.getValue());
+            } else {
+                bodyFromDB.put(bodyEntry.getKey(), bodyEntry.getValue());
+            }
         }
+    }
+
+    private boolean isNotNullCollectionNavigationProperty(Map<String, Object> bodyFromDB,
+                                                          Set<String> navigationProperties,
+                                                          Map.Entry<String, Object> bodyEntry) {
+        return navigationProperties.contains(bodyEntry.getKey())
+                && !(bodyEntry.getValue() == null)
+                && bodyFromDB.get(bodyEntry.getKey()) instanceof List;
     }
 
     private Map<String, Object> convertObjectToMap(Object data) throws ODataException {
@@ -146,7 +171,8 @@ public class PatchMethodHandler extends WriteMethodHandler {
             JsonEntityMarshaller marshaller = new JsonEntityMarshaller(getEntityDataModel(),
                     getoDataUri().serviceRoot());
             return convertToMap(marshaller.marshallEntity(data,
-                    new BasicODataClientQuery(new BasicODataClientQuery.Builder().withEntityType(data.getClass()))));
+                    new BasicODataClientQuery(new BasicODataClientQuery.Builder().withEntityType(data.getClass())
+                            .withExpandParameters("*"))));
         } catch (ODataClientException e) {
             throw new ODataSystemException(e);
         }
