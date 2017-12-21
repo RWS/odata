@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 
 
 /**
- * The PUT Method Handler Test.
+ * The PATCH Method Handler Test.
  */
 public class PatchMethodHandlerTest extends MethodHandlerTest {
 
