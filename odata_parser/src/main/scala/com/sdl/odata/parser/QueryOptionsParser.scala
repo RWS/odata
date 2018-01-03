@@ -167,7 +167,7 @@ trait QueryOptionsParser extends RegexParsers {
     "$levels=" ~> ("\\d+".r ^^ { case s => LevelsQueryOption(s.toInt) } | "max" ^^^ LevelsQueryOption(Int.MaxValue))
 
   def filter(contextTypeName: String): Parser[FilterOption] =
-    ("$filter=" ~> boolCommonExpr(contextTypeName) ^^ FilterOption)
+    ("$filter=" ~> (boolCommonExpr(contextTypeName) | firstMemberExpr(contextTypeName)) ^^ FilterOption)
       .withFailureMessage("The URI contains an incorrectly specified $filter option")
 
   // $apply option parsing

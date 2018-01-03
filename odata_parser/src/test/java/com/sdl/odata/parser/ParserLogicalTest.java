@@ -16,6 +16,8 @@
 package com.sdl.odata.parser;
 
 import com.sdl.odata.api.ODataException;
+import com.sdl.odata.api.parser.AllPathExpr;
+import com.sdl.odata.api.parser.AnyPathExpr;
 import com.sdl.odata.api.parser.AndExpr;
 import com.sdl.odata.api.parser.BooleanMethodCallExpr;
 import com.sdl.odata.api.parser.ComparisonExpr;
@@ -24,6 +26,8 @@ import com.sdl.odata.api.parser.EntityPathExpr;
 import com.sdl.odata.api.parser.EqExpr;
 import com.sdl.odata.api.parser.Expression;
 import com.sdl.odata.api.parser.FilterOption;
+import com.sdl.odata.api.parser.LambdaVariableAndPredicate;
+import com.sdl.odata.api.parser.LambdaVariableExpr;
 import com.sdl.odata.api.parser.LeExpr;
 import com.sdl.odata.api.parser.LiteralExpr;
 import com.sdl.odata.api.parser.NumberLiteral;
@@ -74,6 +78,59 @@ public class ParserLogicalTest extends ParserTestSuite {
         assertTrue(option.expression() instanceof OrExpr);
         OrExpr expr = (OrExpr) option.expression();
         processExpr(expr);
+    }
+
+    @Test
+    public void testAnyLambdaExpression() throws ODataException {
+        ODataUri uri = parser.parseUri(SERVICE_ROOT +
+            "Customers?$filter=Phone/any(p:p eq '111-222-333')", model);
+
+        FilterOption option = getSingleOption(uri);
+        assertTrue(option.expression() instanceof EntityPathExpr);
+        EntityPathExpr expr = (EntityPathExpr) option.expression();
+        PropertyPathExpr path = (PropertyPathExpr) expr.subPath().get();
+        assertThat(path.propertyName(), is("Phone"));
+        AnyPathExpr anyPathExpr = (AnyPathExpr) path.subPath().get();
+        LambdaVariableAndPredicate lambda = anyPathExpr.lambda().get();
+        assertThat(lambda.variableName(), is("p"));
+        EqExpr predicate = (EqExpr) lambda.predicate();
+        LambdaVariableExpr lambdaVariableExpr = (LambdaVariableExpr) predicate.left();
+        assertThat(lambdaVariableExpr.variableName(), is("p"));
+        LiteralExpr literalExpr = (LiteralExpr) predicate.right();
+        StringLiteral stringLiteral = (StringLiteral) literalExpr.value();
+        assertThat(stringLiteral.value(), is("111-222-333"));
+    }
+
+    @Test
+    public void testAllLambdaExpression() throws ODataException {
+        ODataUri uri = parser.parseUri(SERVICE_ROOT +
+            "Customers?$filter=Phone/all(p: contains(p,'111-222-333'))", model);
+
+        FilterOption option = getSingleOption(uri);
+        assertTrue(option.expression() instanceof EntityPathExpr);
+        EntityPathExpr expr = (EntityPathExpr) option.expression();
+        PropertyPathExpr path = (PropertyPathExpr) expr.subPath().get();
+        assertThat(path.propertyName(), is("Phone"));
+        AllPathExpr allPathExpr = (AllPathExpr) path.subPath().get();
+        LambdaVariableAndPredicate lambda = allPathExpr.lambda();
+        assertThat(lambda.variableName(), is("p"));
+        BooleanMethodCallExpr methodCallExpr = (BooleanMethodCallExpr) lambda.predicate();
+        assertThat(methodCallExpr.methodName(), is("contains"));
+
+        List<Expression> args = methodCallExpr.args();
+        Iterator iterator = args.iterator();
+        while (iterator.hasNext()) {
+            Object cursor = iterator.next();
+            if (cursor instanceof EntityPathExpr) {
+                EntityPathExpr pathExpr = (EntityPathExpr) cursor;
+                PropertyPathExpr propertyPathExpr = (PropertyPathExpr) pathExpr.subPath().get();
+                assertThat(propertyPathExpr.propertyName(), is("p"));
+            } else if (cursor instanceof LiteralExpr) {
+                LiteralExpr literalExpr = (LiteralExpr) cursor;
+                StringLiteral stringLiteral = (StringLiteral) literalExpr.value();
+                assertThat(stringLiteral.value(), is("111-222-333"));
+            }
+        }
     }
 
     private void testWithStringFunctions(String boolMethod) throws ODataException {

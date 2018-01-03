@@ -148,19 +148,19 @@ trait ExpressionsParser extends RegexParsers {
   def streamPropertyPathExpr(contextTypeName: String): Parser[PropertyPathExpr] =
     streamProperty(contextTypeName) ^^ { case propertyName => PropertyPathExpr(propertyName, None) }
 
-  // Note: Lambda variable expressions are not supported for now
-  def inscopeVariableExpr: Parser[PathExpr] = implicitVariableExpr // | lambdaVariableExpr
+  def inscopeVariableExpr: Parser[PathExpr] = implicitVariableExpr  | lambdaVariableExpr
 
   // Note: What type name to pass to singleNavigationExpr? Need to know to what type '$it' refers.
   def implicitVariableExpr: Parser[ImplicitVariableExpr] =
     "$it" ~> opt(singleNavigationExpr("TODO.TODO")) ^^ { case subPath => ImplicitVariableExpr(subPath) }
 
+  // TODO: see notes
   // Note: What type name to pass to singleNavigationExpr? Need to know to what type the lambda variable refers.
   // Note: Somehow check that the identifier is the name of a lambda variable.
-//  def lambdaVariableExpr: Parser[LambdaVariableExpr] =
-//    odataIdentifier ~ opt(singleNavigationExpr("TODO.TODO")) ^^ {
-//      case variableName ~ subPath => LambdaVariableExpr(variableName, subPath)
-//    }
+  def lambdaVariableExpr: Parser[LambdaVariableExpr] =
+    odataIdentifier ~ opt(singleNavigationExpr("Edm.String")) ^^ {
+      case variableName ~ subPath => LambdaVariableExpr(variableName, subPath)
+    }
 
   def collectionNavigationExpr(contextTypeName: String): Parser[EntityCollectionPathExpr] =
     opt("/" ~> qualifiedEntityTypeName) into {
@@ -285,7 +285,7 @@ trait ExpressionsParser extends RegexParsers {
     "geo.length" withFailureMessage "Expected a method name"
 
   def applyExpr(contextTypeName: String): Parser[ApplyExpr] =
-  (applyMethodName <~ """\s*\(""".r) ~ ("""\(\s*""".r ~> applyMethodCallArgs(contextTypeName) <~ """\s*\)""".r) ^^ { case methodName ~ args => 
+  (applyMethodName <~ """\s*\(""".r) ~ ("""\(\s*""".r ~> applyMethodCallArgs(contextTypeName) <~ """\s*\)""".r) ^^ { case methodName ~ args =>
   ApplyExpr(methodName, args) }
 
   def applyFunctionCallExpr(contextTypeName: String): Parser[ApplyFunctionExpr] =

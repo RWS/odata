@@ -71,7 +71,7 @@ case class NavigationPropertyExpandPathSegment(propertyName: String, derivedType
 
 case class LevelsQueryOption(value: Int) extends SystemQueryOption
 
-case class FilterOption(expression: BooleanExpr) extends SystemQueryOption
+case class FilterOption(expression: Expression) extends SystemQueryOption
 
 case class FormatOption(mediaType: MediaType) extends SystemQueryOption
 
