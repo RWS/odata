@@ -16,6 +16,7 @@
 package com.sdl.odata.renderer.json.writer;
 
 import com.sdl.odata.api.renderer.ODataRenderException;
+import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.WriterTest;
 import com.sdl.odata.test.model.ExpandedPropertiesSample;
@@ -42,6 +43,8 @@ public class JsonWriterTest extends WriterTest {
     /* Expected results in JSON */
     private static final String EXPECTED_CUSTOMER_ENTITY_PATH = "/json/Customer.json";
     private static final String EXPECTED_PRODUCT_ENTITY_PATH = "/json/Product.json";
+    private static final String EXPECTED_PRODUCT_WITH_METADATA_ENTITY_PATH = "/json/ProductWithMetadata.json";
+    private static final String EXPECTED_PRODUCT_NO_METADATA_ENTITY_PATH = "/json/ProductNoMetadata.json";
     private static final String EXPECTED_PRIMITIVE_TYPES_ENTITY_PATH = "/json/PrimitiveTypesSample.json";
     private static final String EXPECTED_COLLECTIONS_ENTITY_PATH = "/json/CollectionsSample.json";
     private static final String EXPECTED_CUSTOMER_FEED_PATH = "/json/Customers.json";
@@ -74,6 +77,22 @@ public class JsonWriterTest extends WriterTest {
 
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Products(1)", entityDataModel);
         checkWrittenJsonStream(createProductSample(), PRODUCT_URL, EXPECTED_PRODUCT_ENTITY_PATH);
+    }
+
+    @Test
+    public void testProductWithMetadataSample() throws Exception {
+
+        odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Products(1)", entityDataModel);
+        checkWrittenJsonStream(createProductSample(), null, PRODUCT_URL, EXPECTED_PRODUCT_WITH_METADATA_ENTITY_PATH,
+            MediaType.METADATA_FULL);
+    }
+
+    @Test
+    public void testProductNoMetadataSample() throws Exception {
+
+        odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc/Products(1)", entityDataModel);
+        checkWrittenJsonStream(createProductSample(), null, PRODUCT_URL, EXPECTED_PRODUCT_NO_METADATA_ENTITY_PATH,
+            MediaType.METADATA_NONE);
     }
 
     @Test
@@ -201,7 +220,25 @@ public class JsonWriterTest extends WriterTest {
                                         String expectedEntityPath)
             throws IOException, ODataRenderException {
 
-        JsonWriter writer = new JsonWriter(odataUri, entityDataModel);
+        checkWrittenJsonStream(data, meta, contextURL, expectedEntityPath, null);
+    }
+
+    /**
+     * Checks output json with expected result.
+     *
+     * @param data               Object(s) to write.
+     * @param meta               Additional metadata to write.
+     * @param contextURL         The 'Context URL' to write.
+     * @param expectedEntityPath Path to the file with the expected XML stream.
+     * @param metadataRequest    odata.medatada request parameter.
+     * @throws IOException
+     * @throws ODataRenderException if unable to render
+     */
+    private void checkWrittenJsonStream(Object data, Map<String, Object> meta, String contextURL,
+        String expectedEntityPath, String metadataRequest)
+        throws IOException, ODataRenderException {
+
+        JsonWriter writer = new JsonWriter(odataUri, entityDataModel, metadataRequest);
 
         String jsonStream;
         if (data instanceof List) {

@@ -15,15 +15,27 @@
  */
 package com.sdl.odata.client.caller;
 
+import static com.sdl.odata.api.service.HeaderNames.ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY;
+import static com.sdl.odata.api.service.HeaderNames.TRANSFER_ENCODING;
+import static com.sdl.odata.api.service.MediaType.ATOM_XML;
+import static com.sdl.odata.api.service.MediaType.JSON_FULL_METADATA;
+import static com.sdl.odata.client.ODataClientConstants.DefaultValues.CLIENT_PROXY_PORT_DEFAULT;
+import static com.sdl.odata.client.ODataClientConstants.DefaultValues.CLIENT_TIMEOUT_DEFAULT;
+import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_CONNECTION_TIMEOUT;
+import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_HOST_NAME;
+import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_PORT;
+import static com.sdl.odata.client.property.PropertyUtils.getIntegerProperty;
+import static com.sdl.odata.client.property.PropertyUtils.getStringProperty;
+import static com.sdl.odata.client.util.ODataClientUtils.buildException;
+import static com.sdl.odata.client.util.ODataClientUtils.closeIfNecessary;
+import static com.sdl.odata.client.util.ODataClientUtils.populateRequestProperties;
+
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.client.api.caller.EndpointCaller;
 import com.sdl.odata.client.api.exception.ODataClientException;
 import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.odata.client.api.exception.ODataClientSocketException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -41,21 +53,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.sdl.odata.api.service.HeaderNames.ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY;
-import static com.sdl.odata.api.service.HeaderNames.TRANSFER_ENCODING;
-import static com.sdl.odata.api.service.MediaType.ATOM_XML;
-import static com.sdl.odata.api.service.MediaType.XML;
-import static com.sdl.odata.client.ODataClientConstants.DefaultValues.CLIENT_PROXY_PORT_DEFAULT;
-import static com.sdl.odata.client.ODataClientConstants.DefaultValues.CLIENT_TIMEOUT_DEFAULT;
-import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_CONNECTION_TIMEOUT;
-import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_HOST_NAME;
-import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_PORT;
-import static com.sdl.odata.client.property.PropertyUtils.getIntegerProperty;
-import static com.sdl.odata.client.property.PropertyUtils.getStringProperty;
-import static com.sdl.odata.client.util.ODataClientUtils.buildException;
-import static com.sdl.odata.client.util.ODataClientUtils.closeIfNecessary;
-import static com.sdl.odata.client.util.ODataClientUtils.populateRequestProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The basic implementation of Endpoint Caller.
@@ -85,7 +84,8 @@ public class BasicEndpointCaller implements EndpointCaller {
     @Override
     public String callEndpoint(Map<String, String> requestProperties, URL urlToCall) throws ODataClientException {
         LOG.debug("Preparing the call endpoint for given url: {}", urlToCall);
-        HttpURLConnection conn = getConnection(populateRequestProperties(requestProperties, -1, null, XML), urlToCall);
+        HttpURLConnection conn = getConnection(populateRequestProperties(requestProperties,
+            -1, null, JSON_FULL_METADATA), urlToCall);
         return getResponse(conn);
     }
 

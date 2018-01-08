@@ -21,7 +21,6 @@ import com.sdl.odata.test.model.Customer;
 import com.sdl.odata.test.model.SingletonSample;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -86,7 +85,6 @@ public class AtomDataWriterTest extends WriterTest {
     }
 
     @Test
-    @Ignore
     public void testWriteODataContent() throws Exception {
 
         startDocument();
