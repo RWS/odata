@@ -217,6 +217,8 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
       case OrExpr(left, right) => createCriteria(left).or(createCriteria(right))
       case BooleanMethodCallExpr(methodName, args) => createMethodCriteria(methodName, args)
 
+      case EntityPathExpr(_, subPath) => EntityCriteria(expr)
+
       case _ =>
         throw new ODataNotImplementedException("Unsupported expression type for 'filter': " + expr)
     }
