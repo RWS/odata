@@ -136,6 +136,29 @@ class QueryModelBuilderTest extends FunSuite {
     assert(op2.entitySetName === "Persons")
   }
 
+  test("/Persons?$filter=mobilePhones/any(m:m eq 'Test'") {
+    val uri = ODataUri("", ResourcePathUri(EntitySetPath("Persons", None),
+      List(FilterOption(EntityPathExpr(None, Some(PropertyPathExpr("mobilePhones",
+        Some(AnyPathExpr(Some(LambdaVariableAndPredicate("m", EqExpr(LambdaVariableExpr("m", None), LiteralExpr(StringLiteral("Test"))))))))))))))
+
+    val query = new QueryModelBuilder(entityDataModel).build(new ODataRequestContext(null, uri, entityDataModel))
+
+    assert(query.operation.isInstanceOf[CriteriaFilterOperation])
+    val op1 = query.operation.asInstanceOf[CriteriaFilterOperation]
+
+    assert(op1.criteria.isInstanceOf[EntityCriteria])
+    val cr1 = op1.criteria.asInstanceOf[EntityCriteria]
+
+    val expr = cr1.expr.asInstanceOf[EntityPathExpr].subPath.get.asInstanceOf[PropertyPathExpr]
+    assert(expr.propertyName === "mobilePhones")
+    val anyPathExpr = expr.subPath.get.asInstanceOf[AnyPathExpr]
+    val lambdaVarAndPredicate = anyPathExpr.lambda.get
+    assert(lambdaVarAndPredicate.variableName === "m")
+
+    val literalExpr = lambdaVarAndPredicate.predicate.asInstanceOf[EqExpr].right.asInstanceOf[LiteralExpr]
+    assert(literalExpr.value.asInstanceOf[StringLiteral].value === "Test")
+  }
+
   test("/Persons?$top=10") {
     val uri = ODataUri("", ResourcePathUri(EntitySetPath("Persons", None), List(TopOption(10))))
 

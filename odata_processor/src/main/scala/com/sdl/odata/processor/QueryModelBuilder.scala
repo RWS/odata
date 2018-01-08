@@ -181,7 +181,7 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
     source.select(selectField :_*)
   }
 
-  private def applyFilterOption(source: QueryOperation, expression: BooleanExpr): QueryOperation = {
+  private def applyFilterOption(source: QueryOperation, expression: Expression): QueryOperation = {
     def getFilterPropertyPath(expr: Expression): String = getPropertyPath(expr) match {
       case Some(propertyPath) => propertyPath
       case None =>
@@ -216,6 +216,8 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
       case AndExpr(left, right) => createCriteria(left).and(createCriteria(right))
       case OrExpr(left, right) => createCriteria(left).or(createCriteria(right))
       case BooleanMethodCallExpr(methodName, args) => createMethodCriteria(methodName, args)
+
+      case EntityPathExpr(_, subPath) => EntityCriteria(expr)
 
       case _ =>
         throw new ODataNotImplementedException("Unsupported expression type for 'filter': " + expr)

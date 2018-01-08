@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.api.processor.query
 
+import com.sdl.odata.api.parser.Expression
 import scala.beans.BeanProperty
 
 /**
@@ -170,6 +171,14 @@ trait MethodCriteria extends Criteria
  */
 case class ComparisonCriteria(@BeanProperty operator: ComparisonOperator,
                               @BeanProperty left: CriteriaValue, @BeanProperty right: CriteriaValue) extends Criteria
+
+/**
+ * Entity criteria. This criteria used for LambdaVariableAndPredicate in Entity.
+ * You need to implement this criteria externally.
+ *
+ * @param expr The EntityPathExpr to implement.
+ */
+case class EntityCriteria(expr: Expression) extends Criteria
 
 /**
  * StartsWithMethodCriteria criteria.
