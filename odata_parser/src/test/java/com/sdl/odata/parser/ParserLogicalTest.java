@@ -108,7 +108,11 @@ public class ParserLogicalTest extends ParserTestSuite {
 
         FilterOption option = getSingleOption(uri);
         assertTrue(option.expression() instanceof EntityPathExpr);
-        EntityPathExpr expr = (EntityPathExpr) option.expression();
+        testAllLambda((EntityPathExpr) option.expression());
+    }
+
+    private void testAllLambda(EntityPathExpr expression) {
+        EntityPathExpr expr = expression;
         PropertyPathExpr path = (PropertyPathExpr) expr.subPath().get();
         assertThat(path.propertyName(), is("Phone"));
         AllPathExpr allPathExpr = (AllPathExpr) path.subPath().get();
@@ -131,6 +135,17 @@ public class ParserLogicalTest extends ParserTestSuite {
                 assertThat(stringLiteral.value(), is("111-222-333"));
             }
         }
+    }
+
+    @Test
+    public void testAllLambdaComplexExpression() throws ODataException {
+        ODataUri uri = parser.parseUri(SERVICE_ROOT + "Customers?$filter=Phone/all(p: contains(p,'111-222-333'))"
+            + " and name eq 'John'", model);
+
+        FilterOption option = getSingleOption(uri);
+        assertTrue(option.expression() instanceof AndExpr);
+        AndExpr andExpr = (AndExpr) option.expression();
+        testAllLambda((EntityPathExpr) andExpr.left());
     }
 
     private void testWithStringFunctions(String boolMethod) throws ODataException {

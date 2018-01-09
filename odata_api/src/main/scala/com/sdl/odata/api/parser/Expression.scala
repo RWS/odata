@@ -71,6 +71,9 @@ case class ModExpr(left: Expression, right: Expression) extends ArithmeticExpr
 // Path expression - allows navigation into (collections of) entities, complex objects and primitive values
 sealed trait PathExpr extends Expression
 
+// BooleanPath expression - allows navigation into (collections of) entities and filters by lambda expression
+sealed trait BooleanPathExpr extends BooleanExpr with PathExpr
+
 trait SubPathExpr {
   def subPath: Option[PathExpr]
 }
@@ -82,9 +85,9 @@ case class SingletonRootExpr(singletonName: String, subPath: Option[EntityPathEx
 
 // '$it', which refers to an element of the collection of entities identified by the resource path
 // See OData Version 4.0 Part 2: URL Conventions paragraph 5.1.1.6.4
-case class ImplicitVariableExpr(subPath: Option[EntityPathExpr]) extends PathExpr with SubPathExpr
+case class ImplicitVariableExpr(subPath: Option[EntityPathExpr]) extends BooleanPathExpr with SubPathExpr
 
-case class LambdaVariableExpr(variableName: String, subPath: Option[EntityPathExpr]) extends PathExpr with SubPathExpr
+case class LambdaVariableExpr(variableName: String, subPath: Option[EntityPathExpr]) extends BooleanPathExpr with SubPathExpr
 
 // collectionNavigationExpr
 // nested path can be: KeyPredicatePathExpr, CountPathExpr, BoundFunctionCallPathExpr, AnyPathExpr, AllPathExpr
@@ -95,7 +98,7 @@ case class KeyPredicatePathExpr(keyPredicate: KeyPredicate, subPath: Option[Enti
 
 // singleNavigationExpr
 // nested path can be: PropertyPathExpr, BoundFunctionCallPathExpr
-case class EntityPathExpr(derivedTypeName: Option[String], subPath: Option[PathExpr]) extends PathExpr with SubPathExpr
+case class EntityPathExpr(derivedTypeName: Option[String], subPath: Option[PathExpr]) extends BooleanPathExpr with SubPathExpr
 
 // collectionPathExpr = count / boundFunctionExpr / anyExpr / allExpr
 // covered by: CountPathExpr, BoundFunctionCallPathExpr, AnyPathExpr, AllPathExpr
