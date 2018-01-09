@@ -66,7 +66,7 @@ trait ExpressionsParser extends RegexParsers {
 
   def boolCommonExprPart2(contextTypeName: String): Parser[BooleanExpr] =
     isofExpr(contextTypeName) | boolMethodCallExpr(contextTypeName) | notExpr(contextTypeName) |
-    (commonExpr(contextTypeName) into comparisonExpr(contextTypeName)) | boolParenExpr(contextTypeName)
+    (commonExpr(contextTypeName) into comparisonExpr(contextTypeName)) | boolParenExpr(contextTypeName) | firstMemberExpr(contextTypeName)
 
   def rootExpr: Parser[RootExpr] = "$root/" ~> (entitySetRootExpr | singletonRootExpr)
 
@@ -86,7 +86,7 @@ trait ExpressionsParser extends RegexParsers {
       }
     }
 
-  def firstMemberExpr(contextTypeName: String): Parser[PathExpr] = memberExpr(contextTypeName) | inscopeVariableExpr
+  def firstMemberExpr(contextTypeName: String): Parser[BooleanPathExpr] = memberExpr(contextTypeName) | inscopeVariableExpr
 
   def memberExpr(contextTypeName: String): Parser[EntityPathExpr] =
     opt(qualifiedEntityTypeName <~ "/") into {
@@ -148,7 +148,7 @@ trait ExpressionsParser extends RegexParsers {
   def streamPropertyPathExpr(contextTypeName: String): Parser[PropertyPathExpr] =
     streamProperty(contextTypeName) ^^ { case propertyName => PropertyPathExpr(propertyName, None) }
 
-  def inscopeVariableExpr: Parser[PathExpr] = implicitVariableExpr  | lambdaVariableExpr
+  def inscopeVariableExpr: Parser[BooleanPathExpr] = implicitVariableExpr  | lambdaVariableExpr
 
   // Note: What type name to pass to singleNavigationExpr? Need to know to what type '$it' refers.
   def implicitVariableExpr: Parser[ImplicitVariableExpr] =
