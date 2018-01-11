@@ -18,6 +18,7 @@ package com.sdl.odata.unmarshaller.atom;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataNotImplementedException;
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.edm.model.ComplexType;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.EntityType;
 import com.sdl.odata.api.edm.model.EnumType;
@@ -397,9 +398,8 @@ public class ODataAtomParser extends AbstractParser {
             case ENUM:
                 return parsePropertyValueEnum(propertyElement, (EnumType) type);
 
-            case ENTITY:
             case COMPLEX:
-                return parsePropertyValueComplex(propertyElement, (StructuredType) type);
+                return parsePropertyValueComplex(propertyElement, (ComplexType) type);
 
             default:
                 throw new ODataUnmarshallingException("The property '" + propertyElement.getLocalName() + "' must be " +
@@ -424,8 +424,7 @@ public class ODataAtomParser extends AbstractParser {
         return ParserUtil.parseEnumValue(values[0].trim(), enumType);
     }
 
-    private Object parsePropertyValueComplex(Element propertyElement, StructuredType complexType)
-        throws ODataException {
+    private Object parsePropertyValueComplex(Element propertyElement, ComplexType complexType) throws ODataException {
         Object instance;
         try {
             instance = complexType.getJavaType().newInstance();

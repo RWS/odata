@@ -19,6 +19,7 @@ import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.EntityType;
 import com.sdl.odata.api.edm.model.EnumType;
 import com.sdl.odata.api.edm.model.MetaType;
+import com.sdl.odata.api.edm.model.NavigationProperty;
 import com.sdl.odata.api.edm.model.PrimitiveType;
 import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
@@ -163,7 +164,9 @@ public class AtomDataWriter {
         if (object != null) {
             visitProperties(entityDataModel, structuredType, property -> {
                 try {
-                    marshallStructuralProperty(object, property);
+                    if (!(property instanceof NavigationProperty)) {
+                        marshallStructuralProperty(object, property);
+                    }
                 } catch (XMLStreamException e) {
                     throw new ODataRenderException("Error while writing property: " + property.getName(), e);
                 }

@@ -15,10 +15,12 @@
  */
 package com.sdl.odata.client;
 
-import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.MediaType.JSON;
+import static com.sdl.odata.client.marshall.JsonEntityUnmarshaller.PRIMITIVE_CLASSES;
 
+import com.sdl.odata.client.api.ODataActionClientQuery;
 import com.sdl.odata.client.api.exception.ODataClientException;
+import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,7 +40,7 @@ public class ODataClientConv extends DefaultODataClient {
       URL endpointUrl = new URL(super.getUrlToCall(entitySetName, false, null));
       String marshalledEntity = componentsProvider.getMarshaller().marshallEntity(entity, query);
       String createdEntity = componentsProvider.getEndpointCaller()
-          .doPostEntity(requestProperties, endpointUrl, marshalledEntity, JSON, ATOM_XML);
+          .doPostEntity(requestProperties, endpointUrl, marshalledEntity, JSON, JSON);
       return componentsProvider.getUnmarshaller().unmarshallEntity(createdEntity, query);
     } catch (ODataClientException e) {
       throw formFailedRequestException(e, entitySetName);
@@ -55,5 +57,21 @@ public class ODataClientConv extends DefaultODataClient {
         .build();
   }
 
+  @Override
+  public Object performAction(Map<String, String> properties, ODataActionClientQuery actionQuery) {
+    try {
+      String oDataResponse = getComponentsProvider().getEndpointCaller()
+          .doPostEntity(properties, buildURL(actionQuery), actionQuery.getActionRequestBody(),
+              JSON, JSON);
+      return oDataResponse.isEmpty() ? null :
+          (PRIMITIVE_CLASSES.contains(actionQuery.getEntityType()) ?
+              componentsProvider.getUnmarshaller().unmarshallEntity(oDataResponse, actionQuery) :
+              componentsProvider.getUnmarshaller().unmarshall(oDataResponse,
+                  new BasicODataClientQuery.Builder().withEntityType(actionQuery.getEntityType())
+                      .build()));
+    } catch (ODataClientException e) {
+      throw new ODataClientRuntimeException("Unable to perform action", e);
+    }
+  }
 
 }

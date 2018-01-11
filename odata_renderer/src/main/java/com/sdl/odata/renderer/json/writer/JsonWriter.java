@@ -32,6 +32,7 @@ import com.sdl.odata.api.edm.model.TypeDefinition;
 import com.sdl.odata.api.parser.AllExpandItem;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.renderer.ODataRenderException;
+import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.renderer.json.util.JsonWriterUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,7 @@ public class JsonWriter {
     private List<String> expandedProperties = new ArrayList<>();
     private String contextURL = null;
     private final boolean forceExpand;
+    private final String metadataRequest;
 
     /**
      * Create an OData JSON Writer.
@@ -87,9 +89,10 @@ public class JsonWriter {
      * @param oDataUri        The OData parsed URI. It can not be {@code null}.
      * @param entityDataModel The <i>Entity Data Model (EDM)</i>. It can not be {@code null}.
      */
-    public JsonWriter(ODataUri oDataUri, EntityDataModel entityDataModel) {
+    public JsonWriter(ODataUri oDataUri, EntityDataModel entityDataModel, String metadataRequest) {
         this.odataUri = checkNotNull(oDataUri);
         this.entityDataModel = checkNotNull(entityDataModel);
+        this.metadataRequest = metadataRequest;
         expandedProperties.addAll(asJavaList(getSimpleExpandPropertyNames(oDataUri)));
         forceExpand = checkExpandAllParam(oDataUri) || isForceExpandParamSet(odataUri);
     }
@@ -172,8 +175,9 @@ public class JsonWriter {
 
         // Write @odata constants
         entitySet = (data instanceof List) ? getEntitySet((List<?>) data) : getEntitySet(data);
-
-        jsonGenerator.writeStringField(CONTEXT, contextURL);
+        if (!MediaType.METADATA_NONE.equals(metadataRequest)) {
+            jsonGenerator.writeStringField(CONTEXT, contextURL);
+        }
 
         // Write @odata.count if requested and provided.
         if (hasCountOption(odataUri) && data instanceof List &&
@@ -189,7 +193,7 @@ public class JsonWriter {
             jsonGenerator.writeNumberField(COUNT, count);
         }
 
-        if (!(data instanceof List)) {
+        if (!(data instanceof List) && !MediaType.METADATA_NONE.equals(metadataRequest)) {
             if (entitySet != null) {
                 jsonGenerator.writeStringField(ID, String.format("%s(%s)", getEntityName(entityDataModel, data),
                         formatEntityKey(entityDataModel, data)));
@@ -216,8 +220,11 @@ public class JsonWriter {
         jsonGenerator.writeArrayFieldStart(VALUE);
         for (Object entity : entities) {
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField(ID, String.format("%s(%s)", getEntityName(entityDataModel, entity),
-                    formatEntityKey(entityDataModel, entity)));
+            if (!MediaType.METADATA_NONE.equals(metadataRequest)) {
+                jsonGenerator.writeStringField(ID,
+                    String.format("%s(%s)", getEntityName(entityDataModel, entity),
+                        formatEntityKey(entityDataModel, entity)));
+            }
             marshall(entity, entityDataModel.getType(entity.getClass()));
             jsonGenerator.writeEndObject();
         }
@@ -320,7 +327,7 @@ public class JsonWriter {
             String typeName = entitySet.getTypeName();
             String type = typeName.substring(typeName.lastIndexOf(".") + 1, typeName.length());
 
-            if (!type.equals(structuredType.getName())) {
+            if (MediaType.METADATA_FULL.equals(metadataRequest) || !type.equals(structuredType.getName())) {
                 jsonGenerator.writeStringField(TYPE, String.format("#%s.%s",
                         structuredType.getNamespace(), structuredType.getName()));
             } else {

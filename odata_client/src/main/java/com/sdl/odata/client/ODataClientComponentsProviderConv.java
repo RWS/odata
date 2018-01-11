@@ -17,8 +17,8 @@ package com.sdl.odata.client;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-import com.sdl.odata.client.marshall.AtomEntityUnmarshaller;
 import com.sdl.odata.client.marshall.JsonEntityMarshaller;
+import com.sdl.odata.client.marshall.JsonEntityUnmarshaller;
 import java.util.Properties;
 import org.slf4j.Logger;
 
@@ -36,7 +36,7 @@ public class ODataClientComponentsProviderConv extends AbstractODataClientCompon
    }
 
     protected void initComponentsProvider(Iterable<String> edmEntityClasses) {
-        setEntityUnmarshaller(new AtomEntityUnmarshaller(
+        setEntityUnmarshaller(new JsonEntityUnmarshaller(
                 getClassesForNames(edmEntityClasses), getWebServiceUrl().toString()));
         setEntityMarshaller(new JsonEntityMarshaller(getClassesForNames(edmEntityClasses),
                 getWebServiceUrl().toString()));

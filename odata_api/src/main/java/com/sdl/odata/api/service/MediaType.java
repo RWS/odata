@@ -50,6 +50,12 @@ public final class MediaType {
      */
     public static final MediaType JSON = new MediaType("application", "json");
     /**
+     * Media Type JSON with full metadata.
+     */
+    public static final MediaType JSON_FULL_METADATA = new MediaType("application", "json",
+        new HashMap<String, String>() {{
+            put(METADATA_PPARAMETER, METADATA_FULL); }});
+    /**
      * Media Type Text/Plain.
      */
     public static final MediaType TEXT = new MediaType("text", "plain");
@@ -82,6 +88,22 @@ public final class MediaType {
     private static final Pattern MEDIA_TYPE_PATTERN = Pattern.compile("(([^/]+)/([^/;]+)|(\\*))(.*)");
     private static final Pattern PARAMETER_PATTERN = Pattern.compile(";\\s*([^;=]+)=([^;=]+)");
 
+    /**
+     * Metadata parameter.
+     */
+    public static final String METADATA_PPARAMETER = "odata.metadata";
+    /**
+     * Metadata full.
+     */
+    public static final String METADATA_FULL = "full";
+    /**
+     * Metadata minimal.
+     */
+    public static final String METADATA_MINIMAL = "minimal";
+    /**
+     * Metadata none.
+     */
+    public static final String METADATA_NONE = "none";
 
     private final String type;
     private final String subType;

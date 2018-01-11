@@ -204,7 +204,7 @@ trait QueryOptionsParser extends RegexParsers {
   def formatXML: Parser[MediaType] = "(?i)xml".r ^^^ MediaType.XML
 
   def mediaType: Parser[MediaType] = mediaTypePart ~ ("/" ~> mediaTypePart) ^^ {
-    case mediaType ~ mediaSubType => new MediaType(mediaType, mediaSubType)
+    case mediaType ~ mediaSubType => MediaType.fromString(mediaType+"/"+mediaSubType)
   }
 
   // String consisting of one or more pchar
