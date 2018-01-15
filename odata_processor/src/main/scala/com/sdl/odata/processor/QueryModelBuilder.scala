@@ -181,7 +181,7 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
     source.select(selectField :_*)
   }
 
-  private def applyFilterOption(source: QueryOperation, expression: Expression): QueryOperation = {
+  private def applyFilterOption(source: QueryOperation, expression: BooleanExpr): QueryOperation = {
     def getFilterPropertyPath(expr: Expression): String = getPropertyPath(expr) match {
       case Some(propertyPath) => propertyPath
       case None =>

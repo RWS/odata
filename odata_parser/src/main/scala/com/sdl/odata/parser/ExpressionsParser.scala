@@ -86,7 +86,7 @@ trait ExpressionsParser extends RegexParsers {
       }
     }
 
-  def firstMemberExpr(contextTypeName: String): Parser[BooleanPathExpr] = memberExpr(contextTypeName) | inscopeVariableExpr
+  def firstMemberExpr(contextTypeName: String): Parser[BooleanPathExpr] = memberExpr(contextTypeName) | inscopeVariableExpr(contextTypeName)
 
   def memberExpr(contextTypeName: String): Parser[EntityPathExpr] =
     opt(qualifiedEntityTypeName <~ "/") into {
@@ -148,17 +148,15 @@ trait ExpressionsParser extends RegexParsers {
   def streamPropertyPathExpr(contextTypeName: String): Parser[PropertyPathExpr] =
     streamProperty(contextTypeName) ^^ { case propertyName => PropertyPathExpr(propertyName, None) }
 
-  def inscopeVariableExpr: Parser[BooleanPathExpr] = implicitVariableExpr  | lambdaVariableExpr
+  def inscopeVariableExpr(contextTypeName: String): Parser[BooleanPathExpr] = implicitVariableExpr  | lambdaVariableExpr(contextTypeName: String)
 
   // Note: What type name to pass to singleNavigationExpr? Need to know to what type '$it' refers.
   def implicitVariableExpr: Parser[ImplicitVariableExpr] =
     "$it" ~> opt(singleNavigationExpr("TODO.TODO")) ^^ { case subPath => ImplicitVariableExpr(subPath) }
 
-  // TODO: see notes
-  // Note: What type name to pass to singleNavigationExpr? Need to know to what type the lambda variable refers.
   // Note: Somehow check that the identifier is the name of a lambda variable.
-  def lambdaVariableExpr: Parser[LambdaVariableExpr] =
-    odataIdentifier ~ opt(singleNavigationExpr("Edm.String")) ^^ {
+  def lambdaVariableExpr(contextTypeName: String): Parser[LambdaVariableExpr] =
+    odataIdentifier ~ opt(singleNavigationExpr(contextTypeName)) ^^ {
       case variableName ~ subPath => LambdaVariableExpr(variableName, subPath)
     }
 
