@@ -15,9 +15,7 @@
  */
 package com.sdl.odata.processor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.odata.api.ODataException;
-import com.sdl.odata.api.parser.ODataParser;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.processor.ODataWriteProcessor;
 import com.sdl.odata.api.processor.ProcessorResult;
@@ -48,11 +46,6 @@ public class ODataWriteProcessorImpl implements ODataWriteProcessor {
 
     @Autowired
     private DataSourceFactory dataSourceFactory;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
-
-    @Autowired
-    private ODataParser uriParser;
 
     @Override
     public ProcessorResult write(ODataRequestContext requestContext, Object entity) throws ODataException {
@@ -85,7 +78,7 @@ public class ODataWriteProcessorImpl implements ODataWriteProcessor {
             case PUT:
                 return new PutMethodHandler(requestContext, dataSourceFactory);
             case PATCH:
-                return new PatchMethodHandler(requestContext, dataSourceFactory, objectMapper, uriParser);
+                return new PatchMethodHandler(requestContext, dataSourceFactory);
             case DELETE:
                 return new DeleteMethodHandler(requestContext, dataSourceFactory);
             default:

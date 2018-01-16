@@ -55,12 +55,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public abstract class AbstractParser {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractParser.class);
 
+    protected final ODataRequestContext context;
     private final EntityDataModel entityDataModel;
     private final ODataRequest request;
     private final ODataUri oDataUri;
     private final ODataParser uriParser;
 
     public AbstractParser(ODataRequestContext context, ODataParser oDataParser) {
+        this.context = checkNotNull(context);
         this.entityDataModel = checkNotNull(context.getEntityDataModel());
         this.request = checkNotNull(context.getRequest());
         this.oDataUri = checkNotNull(context.getUri());

@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.unmarshaller.json;
 
+import com.sdl.odata.api.parser.ODataPatchInfo;
 import com.sdl.odata.unmarshaller.AbstractParser;
 import com.sdl.odata.unmarshaller.json.core.JsonNullableValidator;
 import com.sdl.odata.unmarshaller.json.core.JsonParserUtils;
@@ -66,6 +67,8 @@ public class ODataJsonParser extends AbstractParser {
         fields = processor.getValues();
         odataValues = processor.getODataValues();
         links = processor.getLinks();
+
+        context.setProperty(new ODataPatchInfo(fields, odataValues, links));
     }
 
     @Override

@@ -17,6 +17,8 @@ package com.sdl.odata.api.service;
 
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.parser.ODataUri;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The OData Request Context.
@@ -26,6 +28,7 @@ public final class ODataRequestContext {
     private final ODataRequest request;
     private final ODataUri uri;
     private final EntityDataModel entityDataModel;
+    private Map<Class, Object> properties = new HashMap<>();
 
     public ODataRequestContext(ODataRequest request, ODataUri uri, EntityDataModel entityDataModel) {
         this.request = request;
@@ -56,5 +59,13 @@ public final class ODataRequestContext {
     @Override
     public String toString() {
         return request.toString();
+    }
+
+    public void setProperty(Object value) {
+        properties.put(value.getClass(), value);
+    }
+
+    public <T> T getProperty(Class<T> cls) {
+        return (T) properties.get(cls);
     }
 }
