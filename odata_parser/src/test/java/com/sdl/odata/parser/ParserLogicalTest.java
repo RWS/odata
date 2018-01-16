@@ -148,6 +148,33 @@ public class ParserLogicalTest extends ParserTestSuite {
         testAllLambda((EntityPathExpr) andExpr.left());
     }
 
+  @Test
+  public void testAllLambdaComplexObjectExpression() throws ODataException {
+    ODataUri uri = parser
+        .parseUri(SERVICE_ROOT + "Customers?$filter=address/all(a: a/city eq 'MSK')", model);
+
+    FilterOption option = getSingleOption(uri);
+    assertTrue(option.expression() instanceof EntityPathExpr);
+
+    EntityPathExpr expr = (EntityPathExpr) option.expression();
+    PropertyPathExpr path = (PropertyPathExpr) expr.subPath().get();
+    assertThat(path.propertyName(), is("address"));
+    AllPathExpr allPathExpr = (AllPathExpr) path.subPath().get();
+    LambdaVariableAndPredicate lambda = allPathExpr.lambda();
+    assertThat(lambda.variableName(), is("a"));
+    EqExpr predicate = (EqExpr) lambda.predicate();
+    LambdaVariableExpr lambdaVariableExpr = (LambdaVariableExpr) predicate.left();
+
+    EntityPathExpr entityPathExpr = lambdaVariableExpr.subPath().get();
+    PropertyPathExpr pathExpr = (PropertyPathExpr) entityPathExpr.subPath().get();
+    assertThat(pathExpr.propertyName(), is("city"));
+
+    assertThat(lambdaVariableExpr.variableName(), is("a"));
+    LiteralExpr literalExpr = (LiteralExpr) predicate.right();
+    StringLiteral stringLiteral = (StringLiteral) literalExpr.value();
+    assertThat(stringLiteral.value(), is("MSK"));
+  }
+
     private void testWithStringFunctions(String boolMethod) throws ODataException {
         ODataUri uri = parser.parseUri(SERVICE_ROOT + String.format(QUERY_URI, boolMethod), model);
         processQueryFunction(getSingleOption(uri), boolMethod);
