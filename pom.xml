@@ -93,24 +93,24 @@
         <java.version>1.8</java.version>
 
         <!-- Third party dependency versions, sorted alphabetically -->
-        <akka.version>2.5.1</akka.version>
+        <akka.version>2.5.15</akka.version>
         <apache-procrun.version>1.0</apache-procrun.version>
         <brave.version>4.2.0</brave.version>
-        <guava.version>18.0</guava.version>
-        <httpcomponents.version>4.5.3</httpcomponents.version>
-        <jackson.version>2.9.4</jackson.version>
-        <jacoco.version>0.7.9</jacoco.version>
+        <guava.version>26.0-jre</guava.version>
+        <httpcomponents.version>4.5.6</httpcomponents.version>
+        <jackson.version>2.9.6</jackson.version>
+        <jacoco.version>0.8.2</jacoco.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.2.3</logback.version>
         <mockito.version>1.10.19</mockito.version>
-        <scala.version>2.12.2</scala.version>
-        <scala-parser-combinators.version>1.0.6</scala-parser-combinators.version>
-        <scalatest.version>3.0.3</scalatest.version>
-        <servlet-api.version>3.0.1</servlet-api.version>
+        <scala.version>2.12.6</scala.version>
+        <scala-parser-combinators.version>1.1.1</scala-parser-combinators.version>
+        <scalatest.version>3.0.5</scalatest.version>
+        <servlet-api.version>3.1.0</servlet-api.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <spring.version>4.3.16.RELEASE</spring.version>
-        <spring-boot.version>1.5.12.RELEASE</spring-boot.version>
-        <tomcat.version>8.5.30</tomcat.version>
+        <spring.version>4.3.19.RELEASE</spring.version>
+        <spring-boot.version>1.5.16.RELEASE</spring-boot.version>
+        <tomcat.version>8.5.34</tomcat.version>
         <typesafe-config.version>1.3.1</typesafe-config.version>
         <zipkin-sender.version>0.8.0</zipkin-sender.version>
     </properties>
@@ -448,12 +448,12 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.0.0</version>
+                    <version>1.0.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.3</version>
+                    <version>2.5</version>
                     <configuration>
                         <includes>
                             <include>com.sdl:*</include>
@@ -463,7 +463,7 @@
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.4.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -473,14 +473,14 @@
                         <dependency>
                             <groupId>org.apache.ant</groupId>
                             <artifactId>ant</artifactId>
-                            <version>1.10.1</version>
+                            <version>1.10.5</version>
                         </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.6.1</version>
+                    <version>3.7.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -490,7 +490,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.1.0</version>
                     <configuration>
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
@@ -512,12 +512,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.scalatest</groupId>
                     <artifactId>scalatest-maven-plugin</artifactId>
-                    <version>1.0</version>
+                    <version>2.0.0</version>
                     <configuration>
                         <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                         <junitxml>.</junitxml>
@@ -535,24 +535,24 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>2.17</version>
+                    <version>3.0.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>7.7</version>
+                            <version>8.12</version>
                         </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.9</version>
+                    <version>${jacoco.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.20</version>
+                    <version>2.22.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
