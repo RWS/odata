@@ -8,7 +8,7 @@ implementation of the OData Service and also provides Java Client Libraries. The
 The OData service comes with a set of prepared shell scripts to allow running and install the OData service. In order to start the OData service
 simply run `bin/start.sh`for Linux/OSX or `.\bin\start.ps1` for Windows. 
  
-This can be done from a prebuild distribution or using the output artefacts in the odata_assembly maven module.
+This can be done from a prebuild distribution or using the output artifacts in the odata_assembly maven module.
 
 [Full Documentation](odata_assembly/src/main/resources/readme.md)
 
@@ -40,7 +40,7 @@ In order to build and run the OData framework on your pc the following is requir
 
 If above pre-requisites are met building is as simple as running the following command `mvn clean install`
 
-# Maven Artefacts
+# Maven Artifacts
 ```
 <depedencies>
    <dependency>
