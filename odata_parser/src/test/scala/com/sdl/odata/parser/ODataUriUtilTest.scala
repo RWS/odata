@@ -15,7 +15,7 @@
  */
 package com.sdl.odata.parser
 
-import java.time.{LocalDate, ZonedDateTime, LocalTime, ZoneId, Period}
+import java.time.{LocalDate, LocalTime, Period, ZoneId, ZonedDateTime}
 import java.util.UUID
 
 import com.sdl.odata.api.edm.model.EntityDataModel
@@ -27,11 +27,9 @@ import com.sdl.odata.test.model._
 import org.scalatest.FunSuite
 
 /**
- * This unit test for ODataUriUtil.scala (which is in OData_api module)
- * This test should know about entity data model that is why as of know I am keeping here
- *
- *
- */
+  * This unit test for ODataUriUtil.scala (which is in OData_api module)
+  * This test should know about entity data model that is why as of know I am keeping here
+  */
 class ODataUriUtilTest extends FunSuite with ParserTestHelpers {
   val entityDataModel: EntityDataModel = {
     val factory = new AnnotationEntityDataModelFactory()
@@ -501,5 +499,13 @@ class ODataUriUtilTest extends FunSuite with ParserTestHelpers {
   test("getOperationReturnType -> function import call") {
     assert(getOperationReturnType(parser.parseUri("http://localhost:8080/odata.svc/ODataDemoFunctionImport"), entityDataModel) ===
       "Edm.String")
+  }
+
+  test("host containing '.svc' part") {
+    val host = "https://my-host.local-dev.svc:8080/odata.svc"
+    val uri = s"$host/Customers(1)"
+    assert(parser.parseUri(uri) ===
+      ODataUri(host, ResourcePathUri(EntitySetPath("Customers", Some(EntityCollectionPath(None, Some(KeyPredicatePath(SimpleKeyPredicate(NumberLiteral(1)), None))))), List()))
+    )
   }
 }
