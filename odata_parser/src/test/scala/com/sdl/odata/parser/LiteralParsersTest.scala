@@ -62,7 +62,8 @@ class LiteralParsersTest extends FunSuite with ParserTestHelpers {
     testSuccess("'test''s'", StringLiteral("test's"))
     testSuccess("'''tests'", StringLiteral("'tests"))
     testSuccess("'tests'''", StringLiteral("tests'"))
-    testNoSuccess("'test's'")
+    testSuccess("'test's'", StringLiteral("test's"))
+    testSuccess("''tests''", StringLiteral("'tests'"))
   }
 
   test("enumLiteral") {
