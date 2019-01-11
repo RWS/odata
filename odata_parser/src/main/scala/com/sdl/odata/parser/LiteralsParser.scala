@@ -45,8 +45,7 @@ trait LiteralsParser extends RegexParsers {
 
   def stringLiteral: Parser[StringLiteral] = stringValue ^^ StringLiteral
 
-  def stringValue: Parser[String] =
-    "'" ~> ("""[\d\D]*(?='$)""".r | """[^']*(?:''[^']*)*""".r) <~ "'" ^^ (s => s.replaceAll("''", "'"))
+  def stringValue: Parser[String] = "'" ~> """[^']*(?:''[^']*)*""".r <~ "'" ^^ { case s => s.replaceAll("''", "'")}
 
   def enumLiteral: Parser[EnumLiteral] = qualifiedEnumTypeName into {
     enumTypeName =>
