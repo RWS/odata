@@ -39,7 +39,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
@@ -60,6 +60,7 @@ import static com.sdl.odata.test.util.TestUtils.createODataUriEntityKeys;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -102,7 +103,7 @@ public class ODataWriteProcessorImplTest {
         if (annotation != null) {
             entityType = annotation.namespace() + "." + entity.getClass().getSimpleName();
         }
-        when(dataSourceFactory.getDataSource(requestContext,
+        lenient().when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
     }
 
@@ -254,7 +255,7 @@ public class ODataWriteProcessorImplTest {
     public void testWriteWithUnSupportedHttpMethod() throws ODataException, UnsupportedEncodingException {
 
         requestContext = createODataRequestContext(ODataRequest.Method.GET, entityDataModel);
-        when(dataSourceFactory.getDataSource(requestContext,
+        lenient().when(dataSourceFactory.getDataSource(requestContext,
                 entity.getClass().getSimpleName())).thenReturn(dataSource);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
