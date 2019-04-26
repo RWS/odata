@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
@@ -69,6 +70,14 @@ public final class ParserUtil {
             case DATE:
                 try {
                     return LocalDate.parse(value);
+                } catch (IllegalArgumentException e) {
+                    throwParseException(value, primitiveType, e);
+                }
+                break;
+
+            case DATE_TIME_OFFSET2:
+                try {
+                    return OffsetDateTime.parse(value);
                 } catch (IllegalArgumentException e) {
                     throwParseException(value, primitiveType, e);
                 }

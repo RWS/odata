@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
@@ -58,8 +59,11 @@ public class PrimitiveTypesSample {
     @EdmProperty(name = "DateProperty")
     private LocalDate dateProperty;
 
+    @EdmProperty(name = "DateTimeZoneProperty")
+    private ZonedDateTime datetimeZoneProperty;
+
     @EdmProperty(name = "DateTimeOffsetProperty")
-    private ZonedDateTime dateTimeOffsetProperty;
+    private OffsetDateTime dateTimeOffsetProperty;
 
     @EdmProperty(name = "DurationProperty")
     private Period durationProperty;
@@ -144,12 +148,20 @@ public class PrimitiveTypesSample {
         this.dateProperty = dateProperty;
     }
 
-    public ZonedDateTime getDateTimeOffsetProperty() {
+    public OffsetDateTime getDateTimeOffsetProperty() {
         return dateTimeOffsetProperty;
     }
 
-    public void setDateTimeOffsetProperty(ZonedDateTime dateTimeOffsetProperty) {
+    public void setDateTimeOffsetProperty(OffsetDateTime dateTimeOffsetProperty) {
         this.dateTimeOffsetProperty = dateTimeOffsetProperty;
+    }
+
+    public ZonedDateTime getDatetimeZoneProperty() {
+        return datetimeZoneProperty;
+    }
+
+    public void setDatetimeZoneProperty(ZonedDateTime datetimeZoneProperty) {
+        this.datetimeZoneProperty = datetimeZoneProperty;
     }
 
     public Period getDurationProperty() {

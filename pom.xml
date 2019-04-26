@@ -24,6 +24,9 @@
         <artifactId>oss-parent</artifactId>
         <version>0.1.0</version>
     </parent>
+    <prerequisites>
+        <maven>3.3.9</maven>
+    </prerequisites>
 
     <groupId>com.sdl</groupId>
     <artifactId>odata</artifactId>

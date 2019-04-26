@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import static com.sdl.odata.api.parser.util.ParserUtil.parsePrimitiveValue;
@@ -119,7 +120,10 @@ public class ParserUtilTest {
                 is(LocalDate.parse("2014-07-31")));
 
         assertThat(parsePrimitiveValue("2014-07-31T12:34:03.023Z", PrimitiveType.DATE_TIME_OFFSET),
-                is(ZonedDateTime.parse("2014-07-31T12:34:03.023Z")));
+                   is(ZonedDateTime.parse("2014-07-31T12:34:03.023Z")));
+
+        assertThat(parsePrimitiveValue("2014-07-31T12:34:03.023Z", PrimitiveType.DATE_TIME_OFFSET2),
+                   is(OffsetDateTime.parse("2014-07-31T12:34:03.023Z")));
 
         assertThat(parsePrimitiveValue("P3Y30M30D", PrimitiveType.DURATION),
                 is(Period.parse("P3Y30M30D")));

@@ -169,7 +169,8 @@
                 <Property Name="BooleanProperty" Type="Edm.Boolean" Nullable="false"/>
                 <Property Name="ByteProperty" Type="Edm.Byte" Nullable="true"/>
                 <Property Name="DateProperty" Type="Edm.Date" Nullable="true"/>
-                <Property Name="DateTimeOffsetProperty" Type="Edm.DateTimeOffset" Nullable="true"/>
+                <Property Name="DateTimeZoneProperty" Type="Edm.DateTimeOffset" Nullable="true"/>
+                <Property Name="DateTimeOffsetProperty" Type="Edm.DateTimeOffset2" Nullable="true"/>
                 <Property Name="DurationProperty" Type="Edm.Duration" Nullable="true"/>
                 <Property Name="TimeOfDayProperty" Type="Edm.TimeOfDay" Nullable="true"/>
                 <Property Name="DecimalValueProperty" Type="Edm.Decimal" Nullable="true"/>

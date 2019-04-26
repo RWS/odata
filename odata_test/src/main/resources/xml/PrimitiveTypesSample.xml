@@ -20,7 +20,8 @@
             <data:BooleanProperty metadata:type="Boolean">true</data:BooleanProperty>
             <data:ByteProperty metadata:type="Byte">0</data:ByteProperty>
             <data:DateProperty metadata:type="Date">2014-05-07</data:DateProperty>
-            <data:DateTimeOffsetProperty metadata:type="DateTimeOffset">2014-05-07T10:00Z</data:DateTimeOffsetProperty>
+            <data:DateTimeZoneProperty metadata:null="true" metadata:type="DateTimeOffset"/>
+            <data:DateTimeOffsetProperty metadata:type="DateTimeOffset2">2014-05-07T10:00Z</data:DateTimeOffsetProperty>
             <data:DurationProperty metadata:type="Duration">P0D</data:DurationProperty>
             <data:TimeOfDayProperty metadata:type="TimeOfDay">12:00</data:TimeOfDayProperty>
             <data:DecimalValueProperty metadata:type="Decimal">21</data:DecimalValueProperty>

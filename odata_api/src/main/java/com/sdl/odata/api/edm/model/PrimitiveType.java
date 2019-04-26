@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,9 +50,13 @@ public enum PrimitiveType implements Type {
      */
     DATE("Date", LocalDate.class),
     /**
-     * Date Time Offser.
+     * Date Time Offset.
      */
     DATE_TIME_OFFSET("DateTimeOffset", ZonedDateTime.class),
+    /**
+     * Date Time Proper Offset (Zoned can have named zones).
+     */
+    DATE_TIME_OFFSET2("DateTimeOffset2", OffsetDateTime.class),
     /**
      * Duration.
      */

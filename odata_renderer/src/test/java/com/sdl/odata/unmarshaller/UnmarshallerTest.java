@@ -36,6 +36,7 @@ import com.sdl.odata.test.model.complex.ODataVersion;
 import org.junit.Before;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +128,7 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
         expectedAddresses.add(createAddress("Diagon Alley", "Behind Leaky Couldron", "10127", "London", "UK"));
 
         Customer expectedCustomer = createCustomer(10L, "Harry", new ArrayList<String>(), expectedAddresses,
-                ZonedDateTime.parse("2014-05-02T12:00:00.000Z"), new ArrayList<Order>());
+                                                   ZonedDateTime.parse("2014-05-02T12:00:00.000Z"), new ArrayList<Order>());
 
         assertCustomer((Customer) singleCustomer, expectedCustomer);
     }
@@ -140,13 +141,13 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
         final List<Address> expectedAddresses = new ArrayList<>();
         expectedAddresses.add(createAddress("Diagon Alley", "Behind Leaky Couldron", "10127", "London", "UK"));
         Customer expectedCustomer = createCustomer(10L, "Harry", new ArrayList<String>(), expectedAddresses,
-                ZonedDateTime.parse("2014-05-02T12:00:00.000Z"), new ArrayList<Order>());
+                                                   ZonedDateTime.parse("2014-05-02T12:00:00.000Z"), new ArrayList<Order>());
         assertCustomer((Customer) customersFeed.get(0), expectedCustomer);
 
         expectedAddresses.clear();
         expectedAddresses.add(createAddress("The Burrow", "102", "11001", "Ottery St. Catchpole", "UK"));
         expectedCustomer = createCustomer(20L, "Ron", new ArrayList<String>(), expectedAddresses,
-                ZonedDateTime.parse("2014-05-02T12:00:00.000Z"), new ArrayList<Order>());
+                                          ZonedDateTime.parse("2014-05-02T12:00:00.000Z"), new ArrayList<Order>());
         assertCustomer((Customer) customersFeed.get(1), expectedCustomer);
     }
 
@@ -162,7 +163,7 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
         orders.add(createOrder(2));
 
         Customer expectedCustomer = createCustomer(10L, "Harry", new ArrayList<String>(), expectedAddresses,
-                ZonedDateTime.parse("2014-05-02T12:00:00.000Z"), orders);
+                                                   ZonedDateTime.parse("2014-05-02T12:00:00.000Z"), orders);
         expectedCustomer.setBankAccount(new BankAccount().setIban("iban-111"));
 
         assertCustomer((Customer) singleCustomer, expectedCustomer);

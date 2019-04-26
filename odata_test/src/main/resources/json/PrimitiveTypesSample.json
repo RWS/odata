@@ -8,6 +8,7 @@
     "BooleanProperty" : true,
     "ByteProperty" : 0,
     "DateProperty" : "2014-05-07",
+    "DateTimeZoneProperty" : null,
     "DateTimeOffsetProperty" : "2014-05-07T10:00Z",
     "DurationProperty" : "P0D",
     "TimeOfDayProperty" : "12:00",

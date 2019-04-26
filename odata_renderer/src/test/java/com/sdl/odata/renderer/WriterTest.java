@@ -34,8 +34,9 @@ import com.sdl.odata.test.model.SingletonSample;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,7 +74,7 @@ public abstract class WriterTest extends WriterUnmarshallerTest {
      */
     protected Customer createCustomerSample() throws Exception {
 
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(2014, 5, 2, 12, 0, 0, 0, ZoneId.of("UTC").normalized());
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(2014, 5, 2, 12, 0, 0, 0, ZoneOffset.UTC);
 
         return createCustomer(10, "Harry", zonedDateTime,
                 "Diagon Alley", "Behind Leaky Couldron", "10127", "London", "UK");
@@ -120,9 +121,9 @@ public abstract class WriterTest extends WriterUnmarshallerTest {
 
         final PrimitiveTypesSample primitiveTypes = new PrimitiveTypesSample();
 
-        ZonedDateTime firstDateTime = ZonedDateTime.of(2014, 5, 7, 10, 0, 0, 0, ZoneId.of("UTC").normalized());
+        OffsetDateTime firstDateTime = OffsetDateTime.of(2014, 5, 7, 10, 0, 0, 0, ZoneOffset.UTC);
 
-        ZonedDateTime secondDateTime = ZonedDateTime.of(2014, 5, 7, 11, 0, 0, 0, ZoneId.of("UTC").normalized());
+        OffsetDateTime secondDateTime = OffsetDateTime.of(2014, 5, 7, 11, 0, 0, 0, ZoneOffset.UTC);
 
         primitiveTypes.setId(20);
         primitiveTypes.setName("John");
@@ -177,7 +178,7 @@ public abstract class WriterTest extends WriterUnmarshallerTest {
      */
     protected List<Customer> createCustomersSample() throws Exception {
 
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(2014, 5, 2, 12, 0, 0, 0, ZoneId.of("UTC").normalized());
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(2014, 5, 2, 12, 0, 0, 0, ZoneOffset.UTC);
         zonedDateTime.format(DateTimeFormatter.ISO_INSTANT);
 
         final Customer customer1 = createCustomer(10, "Harry",
