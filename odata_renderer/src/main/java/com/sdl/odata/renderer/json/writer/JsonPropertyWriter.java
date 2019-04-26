@@ -28,6 +28,7 @@ import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.AbstractPropertyWriter;
+import com.sdl.odata.util.edm.EntityDataModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -253,13 +254,11 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
 
     private void handleProperty(Object data, StructuralProperty property, JsonGenerator generator)
             throws IllegalAccessException, IOException, ODataException {
-        Field field = property.getJavaField();
-        field.setAccessible(true);
-        Object value = field.get(data);
+        Object value = EntityDataModelUtil.getPropertyValue(property, data);
         LOG.trace("Property name is '{}' and its value is '{}'", property.getName(), value);
         Type type = getType(value);
         if (type == null) {
-            String msg = String.format("Field type %s is not found in entity data model", field.getType());
+            String msg = String.format("Field type %s is not found in entity data model", EntityDataModelUtil.getPropertyJavaType(property));
             LOG.error(msg);
             throw new ODataRenderException(msg);
         }

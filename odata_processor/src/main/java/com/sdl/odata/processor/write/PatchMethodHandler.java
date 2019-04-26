@@ -66,7 +66,8 @@ public class PatchMethodHandler extends WriteMethodHandler {
             if (!MetaType.ENTITY.equals(type.getMetaType())) {
                 throw new ODataBadRequestException("The body of a PATCH request must contain a valid entity.");
             }
-            validateProperties(entity, getEntityDataModel());
+            //Patch method supports partial updates, therefore all properties are nullable
+            //validateProperties(entity, getEntityDataModel());
 
             DataSource dataSource = getDataSource(type.getFullyQualifiedName());
             log.debug("Data source found for type '{}'", type.getFullyQualifiedName());

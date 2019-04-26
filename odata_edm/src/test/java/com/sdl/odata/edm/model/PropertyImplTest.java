@@ -19,7 +19,9 @@ import com.sdl.odata.api.edm.model.Facets;
 import com.sdl.odata.api.edm.model.PrimitiveType;
 import com.sdl.odata.api.edm.model.Property;
 import org.junit.Test;
+import org.springframework.beans.BeanUtils;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -96,13 +98,14 @@ public class PropertyImplTest {
     @Test
     public void testSetTypeNameFromJavaField() throws NoSuchFieldException {
         Field field = PropertyImplTest.class.getDeclaredField("testStringField");
+        PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(PropertyImplTest.class, "testStringField");
 
         TypeNameResolver typeNameResolver = mock(TypeNameResolver.class);
         when(typeNameResolver.resolveTypeName(String.class)).thenReturn(PrimitiveType.STRING.getFullyQualifiedName());
 
         Property property = new PropertyImpl.Builder()
                 .setName("propname")
-                .setTypeFromJavaField(field, typeNameResolver)
+                .setTypeFromJavaFieldOrDescriptor(field, propertyDescriptor, typeNameResolver)
                 .setJavaField(field)
                 .build();
 
@@ -119,13 +122,14 @@ public class PropertyImplTest {
     @Test
     public void testSetTypeNameFromJavaFieldWithArray() throws NoSuchFieldException {
         Field field = PropertyImplTest.class.getDeclaredField("testLongArrayField");
+        PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(PropertyImplTest.class, "testLongArrayField");
 
         TypeNameResolver typeNameResolver = mock(TypeNameResolver.class);
         when(typeNameResolver.resolveTypeName(long.class)).thenReturn(PrimitiveType.INT64.getFullyQualifiedName());
 
         Property property = new PropertyImpl.Builder()
                 .setName("propname")
-                .setTypeFromJavaField(field, typeNameResolver)
+                .setTypeFromJavaFieldOrDescriptor(field, propertyDescriptor, typeNameResolver)
                 .setJavaField(field)
                 .build();
 
@@ -142,13 +146,14 @@ public class PropertyImplTest {
     @Test
     public void testSetTypeNameFromJavaFieldWithCollection() throws NoSuchFieldException {
         Field field = PropertyImplTest.class.getDeclaredField("testIntegerListField");
+        PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(PropertyImplTest.class, "testIntegerListField");
 
         TypeNameResolver typeNameResolver = mock(TypeNameResolver.class);
         when(typeNameResolver.resolveTypeName(Integer.class)).thenReturn(PrimitiveType.INT32.getFullyQualifiedName());
 
         Property property = new PropertyImpl.Builder()
                 .setName("propname")
-                .setTypeFromJavaField(field, typeNameResolver)
+                .setTypeFromJavaFieldOrDescriptor(field, propertyDescriptor, typeNameResolver)
                 .setJavaField(field)
                 .build();
 
@@ -185,4 +190,5 @@ public class PropertyImplTest {
         assertThat(property.getSRID(), is(Facets.SRID_UNSPECIFIED));
         assertTrue("isUnicode should be true by default", property.isUnicode());
     }
+
 }

@@ -30,17 +30,15 @@ import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
+import com.sdl.odata.util.edm.EntityDataModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 import scala.collection.immutable.List$;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
 import static com.sdl.odata.api.parser.ODataUriUtil.extractEntityWithKeys;
@@ -191,15 +189,13 @@ public abstract class AbstractParser {
     protected void saveReferencedEntity(Object entity, String propertyName, StructuralProperty property,
                                         Object referencedEntity) throws ODataUnmarshallingException {
         // Save the referenced entity in the entity we are unmarshalling
-        Field field = property.getJavaField();
-        field.setAccessible(true);
+        Class<?> type =  EntityDataModelUtil.getPropertyJavaType(property);
+
         try {
-            if (List.class.isAssignableFrom(field.getType())) {
-                saveReferencedEntityListField(entity, referencedEntity, field);
-            } else if (Set.class.isAssignableFrom(field.getType())) {
-                saveReferencedEntitySetField(entity, referencedEntity, field);
+            if (Collection.class.isAssignableFrom(type)) {
+                saveReferencedEntityCollectionField(entity, referencedEntity, property);
             } else {
-                field.set(entity, referencedEntity);
+                EntityDataModelUtil.setPropertyValue(property, entity, referencedEntity);
             }
         } catch (IllegalAccessException e) {
             throw new ODataUnmarshallingException("Error while getting or setting navigation property field " +
@@ -210,31 +206,15 @@ public abstract class AbstractParser {
         // for this, see 11.4.2.2 Create Related Entities When Creating an Entity
     }
 
-    private void saveReferencedEntitySetField(Object entity, Object referencedEntity,
-                                              Field field) throws IllegalAccessException {
-        @SuppressWarnings("unchecked")
-        Set<Object> set = (Set<Object>) field.get(entity);
-
-        if (set == null) {
-            set = new HashSet<>();
-            field.set(entity, set);
+    private void saveReferencedEntityCollectionField(Object entity, Object referencedEntity,
+                                              StructuralProperty property) throws IllegalAccessException {
+        Collection container = (Collection) EntityDataModelUtil.getPropertyValue(property, entity);
+        if(container == null)
+        {
+            container = EntityDataModelUtil.createPropertyCollection(property);
+            EntityDataModelUtil.setPropertyValue(property, entity, container);
         }
-
-        set.add(referencedEntity);
-    }
-
-    private void saveReferencedEntityListField(Object entity, Object referencedEntity,
-                                               Field field) throws IllegalAccessException {
-
-        @SuppressWarnings("unchecked")
-        List<Object> list = (List<Object>) field.get(entity);
-
-        if (list == null) {
-            list = new ArrayList<>();
-            field.set(entity, list);
-        }
-
-        list.add(referencedEntity);
+        container.add(referencedEntity);
     }
 
     public EntityDataModel getEntityDataModel() {

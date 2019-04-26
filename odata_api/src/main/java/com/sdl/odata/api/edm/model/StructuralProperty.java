@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.api.edm.model;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
 /**
@@ -68,4 +69,11 @@ public interface StructuralProperty {
      * @return The Java field which is associated with this property.
      */
     Field getJavaField();
+
+    /**
+     *
+     *
+     * @return The Java property descriptor.
+     */
+    PropertyDescriptor getPropertyDescriptor();
 }

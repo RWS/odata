@@ -35,6 +35,7 @@ import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.unmarshaller.AbstractParser;
 import com.sdl.odata.unmarshaller.PropertyType;
+import com.sdl.odata.util.edm.EntityDataModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -291,7 +292,7 @@ public class ODataAtomParser extends AbstractParser {
         Object propertyValue;
         if (propertyTypeFromXML.isCollection()) {
             foundCollectionProperties.add(propertyName);
-            Class<?> fieldType = property.getJavaField().getType();
+            Class<?> fieldType = EntityDataModelUtil.getPropertyJavaType(property);
             propertyValue = parsePropertyValueCollection(propertyElement, propertyTypeFromXML.getType(), fieldType);
         } else {
             propertyValue = parsePropertyValueSingle(propertyElement, propertyTypeFromXML.getType());

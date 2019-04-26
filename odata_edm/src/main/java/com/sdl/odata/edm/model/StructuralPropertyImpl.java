@@ -18,7 +18,10 @@ package com.sdl.odata.edm.model;
 import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.Type;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 
@@ -46,6 +49,7 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
         private boolean isCollection;
         private boolean isNullable = true;
         private Field javaField;
+        private PropertyDescriptor propertyDescriptor;
 
         protected Builder() {
             this.self = (B) this;
@@ -73,15 +77,17 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
             return self;
         }
 
-        public B setTypeFromJavaField(Field field, TypeNameResolver resolver) {
+        public B setTypeFromJavaFieldOrDescriptor(Field field, PropertyDescriptor propertyDescriptor, TypeNameResolver resolver) {
             // Find out if the field is an array or collection; get the element type if that is the case
-            Class<?> cls = field.getType();
+            Member member = propertyDescriptor == null ? field : propertyDescriptor.getReadMethod();
+            Class<?> cls = member instanceof Field ? ((Field) member).getType() : ((Method)member).getReturnType();
+            java.lang.reflect.Type genericCls = member instanceof Field ? ((Field) member).getGenericType() : ((Method)member).getGenericReturnType();
             if (cls.isArray()) {
                 this.isCollection = true;
                 cls = cls.getComponentType();
             } else if (Collection.class.isAssignableFrom(cls)) {
                 this.isCollection = true;
-                cls = getCollectionElementType(field);
+                cls = getCollectionElementType(member);
             } else {
                 this.isCollection = false;
             }
@@ -89,15 +95,22 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
             this.typeName = resolver.resolveTypeName(cls);
             if (isNullOrEmpty(this.typeName)) {
                 throw new IllegalArgumentException("The OData type of this field cannot be determined from " +
-                        "the Java type: " + field.toGenericString());
+                        "the Java type: " + genericCls);
             }
 
             return self;
         }
 
-        private Class<?> getCollectionElementType(Field field) {
+        private Class<?> getCollectionElementType(Member member) {
             // Reflection magic to determine the element type of a collection type
-            java.lang.reflect.Type genericType = field.getGenericType();
+            java.lang.reflect.Type genericType;
+            if(member instanceof Field)
+                genericType = ((Field)member).getGenericType();
+            else if(member instanceof Method)
+                genericType = ((Method)member).getGenericReturnType();
+            else
+                throw new IllegalArgumentException("The element type of this collection type cannot be determined: "
+                                                   + member);
             if (genericType instanceof ParameterizedType) {
                 java.lang.reflect.Type[] actualTypeArguments =
                         ((ParameterizedType) genericType).getActualTypeArguments();
@@ -119,6 +132,11 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
             this.javaField = field;
             return self;
         }
+
+        public B setPropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+            this.propertyDescriptor = propertyDescriptor;
+            return self;
+        }
     }
 
     private final String name;
@@ -126,6 +144,7 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
     private final boolean isCollection;
     private final boolean isNullable;
     private final Field javaField;
+    private final PropertyDescriptor propertyDescriptor;
 
     protected StructuralPropertyImpl(Builder builder) {
         this.name = builder.name;
@@ -133,6 +152,7 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
         this.isCollection = builder.isCollection;
         this.isNullable = builder.isNullable;
         this.javaField = builder.javaField;
+        this.propertyDescriptor = builder.propertyDescriptor;
     }
 
     public String getName() {
@@ -157,6 +177,10 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
 
     public Field getJavaField() {
         return javaField;
+    }
+
+    public PropertyDescriptor getPropertyDescriptor() {
+        return propertyDescriptor;
     }
 
     @Override

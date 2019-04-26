@@ -21,6 +21,7 @@ import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
+import com.sdl.odata.util.edm.EntityDataModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,38 +58,37 @@ public class JsonPropertyExpander {
      * @param entity      the entity
      * @param currentNode the current node to to process
      * @param property    the embedded object property
-     * @param field       the Java field
      * @param node        the node
      * @param map         the map of field values
      * @throws ODataException If unable to fill object properties
      */
-    public void fillUpdatedObjectProperty(Object entity, Object currentNode, StructuralProperty property, Field field,
+    public void fillUpdatedObjectProperty(Object entity, Object currentNode, StructuralProperty property,
                                           String node, Map<String, Object> map) throws ODataException {
         for (Map.Entry<String, Object> entry : ((Map<String, Object>) currentNode).entrySet()) {
-            if (findAppropriateElement(entity, property, field, node, map, entry)) {
+            if (findAppropriateElement(entity, property, node, map, entry)) {
                 break;
             }
         }
     }
 
 
-    private void fillEntryFeed(Object entity, Object currentNode, StructuralProperty property, Field field,
+    private void fillEntryFeed(Object entity, Object currentNode, StructuralProperty property,
                                String node, Map<String, Object> map) throws ODataException {
         Map<String, Object> entryMap = (Map<String, Object>) map.get(currentNode);
         for (Map.Entry<String, Object> entry : entryMap.entrySet()) {
-            if (findAppropriateElement(entity, property, field, node, entryMap, entry)) {
+            if (findAppropriateElement(entity, property, node, entryMap, entry)) {
                 break;
             }
         }
     }
 
-    private boolean findAppropriateElement(Object entity, StructuralProperty property, Field field, String node,
+    private boolean findAppropriateElement(Object entity, StructuralProperty property, String node,
                                            Map<String, Object> map, Map.Entry<String, Object> entry)
             throws ODataException {
         if (node.equalsIgnoreCase(entry.getKey()) && entry.getValue() != null) {
             Object value = getFieldValueByType(property.getTypeName(), entry.getValue(), map, true);
             if (value != null) {
-                setFieldValue(field, entity, value);
+                EntityDataModelUtil.setPropertyValue(property, entity, value);
                 return true;
             } else {
                 LOG.warn("There is no element with name '{}'", node);
@@ -103,30 +103,24 @@ public class JsonPropertyExpander {
      * @param entity      the entity
      * @param currentNode the current node to to process
      * @param property    the embedded collection
-     * @param field       the Java field
      * @param node        the node
      * @param map         the map of field values
      * @throws ODataException If unable to update collection properties
      */
     public void fillUpdatedCollectionProperty(Object entity, Object currentNode, StructuralProperty property,
-                                              Field field, String node, Map<String, Object> map) throws ODataException {
+                                              String node, Map<String, Object> map) throws ODataException {
 
-        Collection<Object> valueSet;
-        if (field.getType().isAssignableFrom(Set.class)) {
-            valueSet = new HashSet<>();
-        } else {
-            valueSet = new ArrayList<>();
-        }
+        Collection<Object> values = EntityDataModelUtil.createPropertyCollection(property);
 
         Object current = (currentNode instanceof Map) ? currentNode : map.get(currentNode);
         for (Object subValue : (Iterable) ((Map) current).get(node)) {
             Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);
 
             if (value != null) {
-                valueSet.add(value);
+                values.add(value);
             }
         }
-        setFieldValue(field, entity, valueSet);
+        EntityDataModelUtil.setPropertyValue(property, entity, values);
     }
 
     /**
@@ -135,18 +129,17 @@ public class JsonPropertyExpander {
      * @param entity   the entity
      * @param keySet   the set of entity properties
      * @param property the primitive property
-     * @param field    the Java field
      * @param node     the current node
      * @param map      the map of field values
      * @throws ODataException If unable to fill primitive properties
      */
-    public void fillPrimitiveProperty(Object entity, Set<String> keySet, StructuralProperty property, Field field,
+    public void fillPrimitiveProperty(Object entity, Set<String> keySet, StructuralProperty property,
                                       String node, Map<String, Object> map) throws ODataException {
         for (String target : keySet) {
             if (node.equalsIgnoreCase(target)) {
                 Object value = getFieldValueByType(property.getTypeName(), target, map, false);
                 if (value != null) {
-                    setFieldValue(field, entity, value);
+                    EntityDataModelUtil.setPropertyValue(property, entity, value);
                     break;
                 } else {
                     LOG.warn("There is no element with name '{}'", node);
@@ -161,25 +154,24 @@ public class JsonPropertyExpander {
      * @param entity   the entity
      * @param keySet   the set of entity properties
      * @param property the collection property
-     * @param field    the Java field
      * @param node     the current node
      * @param map      the map of field values
      * @throws ODataException If unable to fill collection properties
      */
-    public void fillCollectionProperty(Object entity, Set<String> keySet, StructuralProperty property, Field field,
+    public void fillCollectionProperty(Object entity, Set<String> keySet, StructuralProperty property,
                                        String node, Map<String, Object> map) throws ODataException {
         for (String target : keySet) {
             if (node.equalsIgnoreCase(target)) {
                     Iterable subValues = (Iterable) map.get(target);
-                List<Object> valueList = new ArrayList<>();
+                List<Object> values = new ArrayList<>();
                 for (Object subValue : subValues) {
                     Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);
 
                     if (value != null) {
-                        valueList.add(value);
+                        values.add(value);
                     }
                 }
-                setFieldValue(field, entity, valueList);
+                EntityDataModelUtil.setPropertyValue(property, entity, values);
                 break;
             }
         }
@@ -297,18 +289,18 @@ public class JsonPropertyExpander {
 
             if (property.isCollection()) {
                 if (currentNode == null) {
-                    fillCollectionProperty(entity, keySet, property, field, node, map);
+                    fillCollectionProperty(entity, keySet, property, node, map);
                 } else {
-                    fillUpdatedCollectionProperty(entity, currentNode, property, field, node, map);
+                    fillUpdatedCollectionProperty(entity, currentNode, property,  node, map);
                 }
             } else {
                 if (currentNode == null) {
-                    fillPrimitiveProperty(entity, keySet, property, field, node, map);
+                    fillPrimitiveProperty(entity, keySet, property, node, map);
                 } else {
                     if (currentNode instanceof String) {
-                        fillEntryFeed(entity, currentNode, property, field, node, map);
+                        fillEntryFeed(entity, currentNode, property, node, map);
                     } else {
-                        fillUpdatedObjectProperty(entity, currentNode, property, field, node, map);
+                        fillUpdatedObjectProperty(entity, currentNode, property, node, map);
                     }
                 }
             }

@@ -27,12 +27,22 @@ import com.sdl.odata.edm.model.NavigationPropertyImpl;
 import com.sdl.odata.edm.model.PropertyImpl;
 import com.sdl.odata.edm.model.ReferentialConstraintImpl;
 import com.sdl.odata.edm.model.TypeNameResolver;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.StringUtils;
 
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
+import java.util.Arrays;
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 
 /**
@@ -50,34 +60,83 @@ abstract class AnnotationStructuredTypeFactory<T extends StructuredType> {
     public abstract T build(Class<?> cls);
 
     protected List<StructuralProperty> buildStructuralProperties(Class<?> cls) {
-        List<StructuralProperty> properties = new ArrayList<>();
+        Map<String, Annotation> annotations = new LinkedHashMap<>();
+        Map<String, PropertyDescriptor> props = new HashMap<>();
+        Map<String, Field> fields = new HashMap<>();
+        //PropertyDescriptors override field
         for (Field field : cls.getDeclaredFields()) {
-            EdmProperty propertyAnno = field.getAnnotation(EdmProperty.class);
-            EdmNavigationProperty navigationPropertyAnno = field.getAnnotation(EdmNavigationProperty.class);
-
-            if (propertyAnno != null) {
-                if (navigationPropertyAnno != null) {
-                    throw new IllegalArgumentException("Field has both an EdmProperty and an EdmNavigationProperty " +
-                            "annotation. Only one of the two is allowed: " + field.toGenericString());
-                }
-                properties.add(buildProperty(propertyAnno, field));
-            } else if (navigationPropertyAnno != null) {
-                properties.add(buildNavigationProperty(navigationPropertyAnno, field));
+            if(Modifier.isStatic(field.getModifiers())) continue;
+            Map.Entry<String, Annotation> annotatedName = getAnnotatedName(field);
+            if(annotatedName != null) {
+                fields.put(annotatedName.getKey(), field);
+                annotations.put(annotatedName.getKey(), annotatedName.getValue());
+            }
+            else {
+                fields.put(field.getName(), field);
             }
         }
+        for(PropertyDescriptor propertyDescriptor: BeanUtils.getPropertyDescriptors(cls))
+        {
+            Map.Entry<String, Annotation> annotatedName = getAnnotatedName(propertyDescriptor.getReadMethod() != null ?
+                                                                                   propertyDescriptor.getReadMethod() :
+                                                                                   propertyDescriptor.getWriteMethod());
+            if(annotatedName != null) {
+                props.put(annotatedName.getKey(), propertyDescriptor);
+                annotations.put(annotatedName.getKey(), annotatedName.getValue());
+            }
+            else {
+                props.put(propertyDescriptor.getName(), propertyDescriptor);
+            }
+        }
+        List<StructuralProperty> properties = new ArrayList<>();
+        for(Map.Entry<String, Annotation> annotationEntry: annotations.entrySet())
+        {
+            String propertyName = annotationEntry.getKey();
+            Annotation annotation = annotationEntry.getValue();
+            Field field = fields.get(propertyName);
+            PropertyDescriptor propertyDescriptor = props.get(propertyName);
+            if(annotation instanceof EdmProperty)
+            {
+                properties.add(buildProperty((EdmProperty)annotation, field, propertyDescriptor, propertyName));
+            }
+            else
+            {
+                properties.add(buildNavigationProperty((EdmNavigationProperty) annotation, field, propertyDescriptor, propertyName));
+            }
+        }
+
         return properties;
     }
 
-    private Property buildProperty(EdmProperty propertyAnno, Field field) {
-        PropertyImpl.Builder builder = new PropertyImpl.Builder();
 
-        // Name
-        String name = propertyAnno.name();
-        if (isNullOrEmpty(name)) {
-            // Use field name if name is not specified in the EdmProperty annotation
-            name = field.getName();
+    //Return computed name along with EdmAnnotation (Pair) or null
+    private Map.Entry<String, Annotation> getAnnotatedName(AnnotatedElement member)
+    {
+        EdmProperty propertyAnno = member.getAnnotation(EdmProperty.class);
+        EdmNavigationProperty navigationPropertyAnno = member.getAnnotation(EdmNavigationProperty.class);
+        String memberName = member instanceof Field ? ((Field) member).getName() : ((Method)member).getName();
+        if(propertyAnno != null && navigationPropertyAnno != null)
+            throw new IllegalArgumentException("Field has both an EdmProperty and an EdmNavigationProperty " +
+                                               "annotation. Only one of the two is allowed: " + member);
+        if(propertyAnno != null)
+        {
+            if(StringUtils.isEmpty(propertyAnno.name()))
+                return new AbstractMap.SimpleImmutableEntry<>(memberName, propertyAnno);
+            else
+                return new AbstractMap.SimpleImmutableEntry<>(propertyAnno.name(), propertyAnno);
         }
-        builder.setName(name);
+        else if(navigationPropertyAnno != null)
+        {
+            if(StringUtils.isEmpty(navigationPropertyAnno.name()))
+                return new AbstractMap.SimpleImmutableEntry<>(memberName, navigationPropertyAnno);
+            else
+                return new AbstractMap.SimpleImmutableEntry<>(navigationPropertyAnno.name(), navigationPropertyAnno);
+        }
+        return null;
+    }
+
+    private Property buildProperty(EdmProperty propertyAnno, Field field, PropertyDescriptor propertyDescriptor, String name) {
+        PropertyImpl.Builder builder = new PropertyImpl.Builder();
 
         // Type
         String typeName = propertyAnno.type();
@@ -85,12 +144,14 @@ abstract class AnnotationStructuredTypeFactory<T extends StructuredType> {
             builder.setTypeName(typeName);
         } else {
             // Derive OData type from Java field type
-            builder.setTypeFromJavaField(field, typeNameResolver);
+            builder.setTypeFromJavaFieldOrDescriptor(field, propertyDescriptor, typeNameResolver);
         }
 
         return builder
+                .setName(name)
                 .setIsNullable(propertyAnno.nullable())
                 .setJavaField(field)
+                .setPropertyDescriptor(propertyDescriptor)
                 .setDefaultValue(isNullOrEmpty(propertyAnno.defaultValue()) ? null : propertyAnno.defaultValue())
                 .setMaxLength(propertyAnno.maxLength())
                 .setPrecision(propertyAnno.precision())
@@ -100,15 +161,9 @@ abstract class AnnotationStructuredTypeFactory<T extends StructuredType> {
                 .build();
     }
 
-    private NavigationProperty buildNavigationProperty(EdmNavigationProperty navigationPropertyAnno, Field field) {
+    private NavigationProperty buildNavigationProperty(EdmNavigationProperty navigationPropertyAnno, Field field, PropertyDescriptor propertyDescriptor, String name) {
         NavigationPropertyImpl.Builder builder = new NavigationPropertyImpl.Builder();
 
-        // Name
-        String name = navigationPropertyAnno.name();
-        if (isNullOrEmpty(name)) {
-            // Use field name if name is not specified in the EdmProperty annotation
-            name = field.getName();
-        }
         builder.setName(name);
 
         // Type
@@ -117,7 +172,7 @@ abstract class AnnotationStructuredTypeFactory<T extends StructuredType> {
             builder.setTypeName(typeName);
         } else {
             // Derive OData type from Java field type
-            builder.setTypeFromJavaField(field, typeNameResolver);
+            builder.setTypeFromJavaFieldOrDescriptor(field, propertyDescriptor, typeNameResolver);
         }
 
         // Referential constraints
@@ -128,8 +183,10 @@ abstract class AnnotationStructuredTypeFactory<T extends StructuredType> {
         }
 
         return builder
+                .setName(name)
                 .setIsNullable(navigationPropertyAnno.nullable())
                 .setJavaField(field)
+                .setPropertyDescriptor(propertyDescriptor)
                 .setPartnerName(
                         isNullOrEmpty(navigationPropertyAnno.partner()) ? null : navigationPropertyAnno.partner())
                 .setContainsTarget(navigationPropertyAnno.containsTarget())

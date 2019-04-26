@@ -32,6 +32,7 @@ import com.sdl.odata.api.edm.model.TypeDefinition;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.json.util.JsonWriterUtil;
+import com.sdl.odata.util.edm.EntityDataModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -337,15 +338,7 @@ public class JsonWriter {
         String propertyName = property.getName();
 
         // Get the property value through reflection
-        Object propertyValue;
-        Field field = property.getJavaField();
-        try {
-            field.setAccessible(true);
-            propertyValue = field.get(object);
-        } catch (IllegalAccessException e) {
-            LOG.error("Error getting field value of field: " + field.toGenericString());
-            throw new ODataRenderException("Error getting field value of field: " + field.toGenericString());
-        }
+        Object propertyValue = EntityDataModelUtil.getPropertyValue(property, object);
 
         // Collection properties and non-nullable properties should not be null
         if (propertyValue == null) {
@@ -454,11 +447,7 @@ public class JsonWriter {
 
     private Object getValueFromProperty(Object entity, NavigationProperty property)
             throws NoSuchFieldException, IllegalAccessException {
-
-        Field propertyField = property.getJavaField();
-        propertyField.setAccessible(true);
-
-        return propertyField.get(entity);
+        return EntityDataModelUtil.getPropertyValue(property, entity);
     }
 
     private EntitySet getEntitySet(Object entity) {
