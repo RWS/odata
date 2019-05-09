@@ -35,12 +35,15 @@ import com.sdl.odata.api.edm.model.Singleton;
 import com.sdl.odata.api.edm.model.StructuralProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.edm.model.Type;
+import com.sdl.odata.util.PrimitiveUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -364,13 +367,33 @@ public final class EntityDataModelUtil {
         PropertyDescriptor prop = property.getPropertyDescriptor();
         Field field = property.getJavaField();
         try {
+            Class fieldType = PrimitiveUtil.wrap(getPropertyJavaType(property));
+            if(value instanceof BigDecimal || value instanceof scala.math.BigDecimal)
+            {
+                BigDecimal decimal = value instanceof BigDecimal ? (BigDecimal)value : ((scala.math.BigDecimal)value).underlying();
+                if(Long.class.isAssignableFrom(fieldType))
+                    value = decimal.longValueExact();
+                else if(Integer.class.isAssignableFrom(fieldType))
+                    value = decimal.intValueExact();
+                else if(Short.class.isAssignableFrom(fieldType))
+                    value = decimal.shortValueExact();
+                else if(Double.class.isAssignableFrom(fieldType))
+                    value = decimal.doubleValue();
+                else if(Float.class.isAssignableFrom(fieldType))
+                    value = decimal.floatValue();
+                else if(Byte.class.isAssignableFrom(fieldType))
+                    value = decimal.byteValueExact();
+                else if(BigInteger.class.isAssignableFrom(fieldType))
+                    value = decimal.toBigIntegerExact();
+            }
             if (prop != null && prop.getWriteMethod() != null) {
                 prop.getWriteMethod().invoke(object, value);
                 return;
             }
             field.setAccessible(true);
             field.set(object, value);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
+            LOG.error("Unable to set property {} with type {} to value {}", property, getPropertyJavaType(property), value, e);
             throw new ODataSystemException("Cannot write property: " + property + " of object: " + object, e);
         }
     }

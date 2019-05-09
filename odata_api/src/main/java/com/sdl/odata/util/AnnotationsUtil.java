@@ -19,6 +19,7 @@ import com.sdl.odata.api.ODataSystemException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
 
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 
@@ -42,7 +43,18 @@ public final class AnnotationsUtil {
      */
     public static <T extends Annotation> T checkAnnotationPresent(AnnotatedElement annotatedType,
                                                                   Class<T> annotationClass) {
-        return getAnnotation(annotatedType, annotationClass);
+        return getAnnotation(annotationClass, annotatedType);
+    }
+
+    /***
+     * Var args version of {@link #checkAnnotationPresent(AnnotatedElement, Class)} where the first match is returned.
+     * @param annotationClass
+     * @param annotatedTypes
+     * @param <T>
+     * @return
+     */
+    public static <T extends Annotation> T checkAnnotationPresent(Class<T> annotationClass, AnnotatedElement... annotatedTypes) {
+        return getAnnotation(annotationClass, annotatedTypes);
     }
 
     /**
@@ -58,6 +70,18 @@ public final class AnnotationsUtil {
         return getAnnotation(annotatedType, annotationClass, null);
     }
 
+    /***
+     * Var args version of {@link #getAnnotation(AnnotatedElement, Class)} where the first match is returned.
+     *
+     * @param annotationClass
+     * @param annotatedTypes
+     * @param <T>
+     * @return
+     */
+    public static <T extends Annotation> T getAnnotation(Class<T> annotationClass, AnnotatedElement... annotatedTypes) {
+        return getAnnotation(annotationClass, null, annotatedTypes);
+    }
+
     /**
      * Small utility to easily get an annotation and will throw an exception if not provided.
      *
@@ -70,19 +94,39 @@ public final class AnnotationsUtil {
      */
     public static <T extends Annotation> T getAnnotation(AnnotatedElement annotatedType, Class<T> annotationClass,
                                                          String error) {
-        if (annotatedType == null) {
-            throw new IllegalArgumentException(error);
-        }
+        return getAnnotation(annotationClass,error, annotatedType);
+    }
 
-        if (annotatedType.isAnnotationPresent(annotationClass)) {
-            return annotatedType.getAnnotation(annotationClass);
-        } else {
+    /***
+     *  Var args version of {@link #getAnnotation(AnnotatedElement, Class, String)} where the first match is returned.
+     * @param annotationClass
+     * @param error
+     * @param annotatedTypes
+     * @param <T>
+     * @return
+     */
+    public static <T extends Annotation> T getAnnotation(Class<T> annotationClass,
+                                                         String error,
+                                                         AnnotatedElement... annotatedTypes)  {
+        if(annotatedTypes == null || annotatedTypes.length == 0)
+            throw new IllegalArgumentException(error);
+        T result = null;
+        for(AnnotatedElement annotatedType : annotatedTypes)
+        {
+            if(annotatedType.isAnnotationPresent(annotationClass))
+            {
+                result = annotatedType.getAnnotation(annotationClass);
+                break;
+            }
+        }
+        if(result == null) {
             if (isNullOrEmpty(error)) {
                 throw new ODataSystemException("Could not load annotation: " + annotationClass
-                        + " on source: " + annotatedType);
+                                               + " on source: " + (annotatedTypes.length == 1 ? annotatedTypes[0] : Arrays.asList(annotatedTypes)));
             } else {
                 throw new ODataSystemException(error);
             }
         }
+        return result;
     }
 }

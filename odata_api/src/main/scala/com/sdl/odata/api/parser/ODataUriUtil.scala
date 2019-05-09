@@ -658,7 +658,7 @@ object ODataUriUtil {
             None
           else {
             for ((key, value) <- entityKeyMap) {
-              setFieldValue(key, value, entity)
+              EntityDataModelUtil.setPropertyValue(entityType.getStructuralProperty(key), entity, value)
             }
           }
         }
@@ -670,26 +670,6 @@ object ODataUriUtil {
 
   def hasSameNumberOfFields(keyMap: Map[String, Any], entityType: EntityType): Boolean =
     keyMap.size == entityType.getKey.getPropertyRefs.size()
-
-  def setFieldValue[T](field: String, fieldValue: Any, entity: T) = {
-    val keyField = entity.getClass.getDeclaredField(field)
-    keyField.setAccessible(true)
-
-    val fieldType = PrimitiveUtil.wrap(keyField.getType)
-    if (fieldValue.isInstanceOf[BigDecimal]) {
-      if (fieldType.isAssignableFrom(classOf[java.lang.Long])) {
-        keyField.set(entity, fieldValue.asInstanceOf[BigDecimal].longValue())
-      } else if (fieldType.isAssignableFrom(classOf[java.lang.Integer])) {
-        keyField.set(entity, fieldValue.asInstanceOf[BigDecimal].intValue())
-      } else if (fieldType.isAssignableFrom(classOf[java.lang.Short])) {
-        keyField.set(entity, fieldValue.asInstanceOf[BigDecimal].shortValue())
-      } else {
-        keyField.set(entity, fieldValue)
-      }
-    } else {
-      keyField.set(entity, fieldValue)
-    }
-  }
 
   /**
    * Get a map containing the entity key value(s) for the entity type specified in the OData URI.
