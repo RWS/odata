@@ -182,7 +182,7 @@ public class ODataWriteProcessorImplTest {
         requestContext = createContextWithEntity(PUT, false);
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
-        when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
+        when(dataSource.update(requestContext.getUri(), entity, entityDataModel, false)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
         assertThat(result.getStatus(), is(OK));
@@ -210,7 +210,7 @@ public class ODataWriteProcessorImplTest {
         requestContext = createContextWithEntity(PUT, true);
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
-        when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
+        when(dataSource.update(requestContext.getUri(), entity, entityDataModel, false)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
         assertThat(result.getStatus(), is(NO_CONTENT));
@@ -226,7 +226,7 @@ public class ODataWriteProcessorImplTest {
         requestContext = createContextWithEntity(PATCH, false);
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
-        when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
+        when(dataSource.update(requestContext.getUri(), entity, entityDataModel, true)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
         assertThat(result.getStatus(), is(OK));
@@ -241,7 +241,7 @@ public class ODataWriteProcessorImplTest {
         requestContext = createContextWithEntity(PATCH, true);
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
-        when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
+        when(dataSource.update(requestContext.getUri(), entity, entityDataModel, true)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
         assertThat(result.getStatus(), is(NO_CONTENT));

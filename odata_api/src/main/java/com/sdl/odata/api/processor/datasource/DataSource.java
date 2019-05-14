@@ -47,10 +47,11 @@ public interface DataSource {
      * @param uri             The OData URI.
      * @param entity          The entity to update.
      * @param entityDataModel The entity data model.
+     * @param partialUpdate Whether this is partial or full update
      * @return The updated entity.
      * @throws ODataException If the operation fails.
      */
-    Object update(ODataUri uri, Object entity, EntityDataModel entityDataModel) throws ODataException;
+    Object update(ODataUri uri, Object entity, EntityDataModel entityDataModel, boolean partialUpdate) throws ODataException;
 
     /**
      * Deletes an entity in the data storage.

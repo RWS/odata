@@ -22,6 +22,7 @@ import com.sdl.odata.api.parser.ODataUriParseException;
 import com.sdl.odata.api.parser.ResourcePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,10 +32,17 @@ import org.springframework.stereotype.Component;
 public class ODataParserImpl implements ODataParser {
     private static final Logger LOG = LoggerFactory.getLogger(ODataParserImpl.class);
 
+    private ParserConfiguration parserConfiguration;
+
+    public ODataParserImpl(){this.parserConfiguration = new ParserConfiguration();}
+
+    @Autowired
+    public ODataParserImpl(ParserConfiguration parserConfiguration){this.parserConfiguration = parserConfiguration;}
+
     @Override
     public ODataUri parseUri(String uri, EntityDataModel entityDataModel) throws ODataUriParseException {
         LOG.debug("Parsing URI: {}", uri);
-        ODataUri parsedUri = new ODataUriParser(entityDataModel).parseUri(uri);
+        ODataUri parsedUri = new ODataUriParser(entityDataModel, parserConfiguration.getBasePath()).parseUri(uri);
         LOG.debug("Parse result: {}", parsedUri);
         return parsedUri;
     }
@@ -43,7 +51,7 @@ public class ODataParserImpl implements ODataParser {
     public ResourcePath parseResourcePath(String resourcePath, EntityDataModel entityDataModel)
             throws ODataUriParseException {
         LOG.debug("Parsing resource path: {}", resourcePath);
-        ResourcePath parsedResourcePath = new ODataUriParser(entityDataModel).parseResourcePath(resourcePath);
+        ResourcePath parsedResourcePath = new ODataUriParser(entityDataModel, parserConfiguration.getBasePath()).parseResourcePath(resourcePath);
         LOG.debug("Parse result: {}", parsedResourcePath);
         return parsedResourcePath;
     }

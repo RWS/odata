@@ -47,7 +47,7 @@ public class PutMethodHandlerTest extends MethodHandlerTest {
 
     private void stubForTesting(Object entity, EntityDataModel entityDataModel) throws ODataException {
         super.stubForTesting(entity);
-        when(dataSourceMock.update(entitySetOdataURI, entity, entityDataModel)).thenReturn(entity);
+        when(dataSourceMock.update(entitySetOdataURI, entity, entityDataModel, false)).thenReturn(entity);
     }
 
     private WriteMethodHandler getPutMethodHandler(EntityDataModel entityDataModel, boolean isEntitySetUri)
@@ -76,7 +76,7 @@ public class PutMethodHandlerTest extends MethodHandlerTest {
         ProcessorResult result = getPutMethodHandler(entityDataModel, false).handleWrite(entity);
         assertThat(result.getStatus(), is(OK));
         assertNull(result.getData());
-        verify(dataSourceMock, times(1)).update(entityOdataURI, entity,  entityDataModel);
+        verify(dataSourceMock, times(1)).update(entityOdataURI, entity,  entityDataModel, false);
     }
 
     @Test

@@ -15,6 +15,12 @@
  */
 package com.sdl.odata.parser;
 
+import java.lang.invoke.MethodHandles;
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,4 +31,24 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("com.sdl.odata.parser")
 public class ParserConfiguration {
 
+    private Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    public static final String DEFAULT_BASE_PATH = "(?i)^.*?\\.svc";
+
+    @Value("${odata.base-path:(?i)^.*?\\.svc}")
+    private String basePath = DEFAULT_BASE_PATH;
+
+    public String getBasePath() {
+        return basePath;
+    }
+
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+
+    @PostConstruct
+    public void logIt()
+    {
+        LOG.info("{}: [{}]", this.getClass(), this.getBasePath());
+    }
 }

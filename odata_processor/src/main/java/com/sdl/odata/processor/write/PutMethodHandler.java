@@ -76,7 +76,7 @@ public class PutMethodHandler extends WriteMethodHandler {
             validateTargetType(entity);
             validateKeys(entity, (EntityType) type);
 
-            Object updatedEntity = dataSource.update(getoDataUri(), entity, getEntityDataModel());
+            Object updatedEntity = dataSource.update(getoDataUri(), entity, getEntityDataModel(), false);
             if (isMinimalReturnPreferred()) {
                 return new ProcessorResult(NO_CONTENT, headers);
             }

@@ -20,7 +20,9 @@ import com.sdl.odata.api.edm.model.EntityDataModel
 import com.sdl.odata.api.parser._
 import java.net.URLDecoder
 
-class ODataUriParser(val entityDataModel: EntityDataModel) extends RegexParsers
+import org.springframework.stereotype.Controller
+
+class ODataUriParser(val entityDataModel: EntityDataModel, val basepath: String = """(?i)^.*?\.svc""") extends RegexParsers
   with ResourcePathParser
   with QueryOptionsParser
   with ContextFragmentParser
@@ -28,6 +30,8 @@ class ODataUriParser(val entityDataModel: EntityDataModel) extends RegexParsers
   with NamesAndIdentifiersParser
   with LiteralsParser
   with EntityDataModelHelpers {
+
+  def this(entityDataModel: EntityDataModel) = this(entityDataModel, """(?i)^.*?\.svc""");
 
   def parseUri(input: String): ODataUri = parseAll(odataUri, URLDecoder.decode(input, "UTF-8")) match {
     case Success(result, _) => result
@@ -52,7 +56,7 @@ class ODataUriParser(val entityDataModel: EntityDataModel) extends RegexParsers
   }
 
   // Everything up to ".svc" (case-insensitive) is considered to be part of the service root
-  def serviceRoot: Parser[String] = """(?i)^(?:.*?\.svc)+""".r <~ opt("/")
+  def serviceRoot: Parser[String] = basepath.r <~ opt("/")
 
   def odataRelativeUri: Parser[RelativeUri] = batchUri | entityUri | metadataUri | resourcePathUri
 

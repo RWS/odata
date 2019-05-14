@@ -162,7 +162,7 @@ public class BatchMethodHandler {
         WriteMethodUtil.validateKeys(entityData, (EntityType) type, requestUri, entityDataModel);
 
         DataSource dataSource = getTransactionalDataSource(odataRequestContext, type);
-        Object updatedEntity = dataSource.update(requestUri, entityData, entityDataModel);
+        Object updatedEntity = dataSource.update(requestUri, entityData, entityDataModel, odataRequestContext.getRequest().getMethod() == ODataRequest.Method.PATCH);
 
         // add additional headers
         headers.putAll(oDataRequest.getHeaders());
