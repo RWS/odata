@@ -30,6 +30,7 @@ import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
+import com.sdl.odata.model.ReferencableEntity;
 import com.sdl.odata.util.edm.EntityDataModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,8 +174,14 @@ public abstract class AbstractParser {
             throw new ODataUnmarshallingException("Cannot determine referenced entity for navigation link " +
                     "for property: " + propertyName + ", href=\"" + entityIdResourcePath + "\"");
         }
+        Object result = opt.get();
+        if(result instanceof ReferencableEntity)
+        {
+            ReferencableEntity referencedEntity = ((ReferencableEntity)result);
+            referencedEntity.setReferenceString(entityIdResourcePath);
+        }
 
-        return opt.get();
+        return result;
     }
 
     /**

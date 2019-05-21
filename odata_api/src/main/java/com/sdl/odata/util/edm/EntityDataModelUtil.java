@@ -386,6 +386,15 @@ public final class EntityDataModelUtil {
                 else if(BigInteger.class.isAssignableFrom(fieldType))
                     value = decimal.toBigIntegerExact();
             }
+//            else if(value instanceof Collection)
+//            {
+//                Collection existing = (Collection) getPropertyValue(property, object);
+//                if(existing == null)
+//                    existing = createPropertyCollection(property);
+//                existing.clear();
+//                existing.addAll((Collection)value);
+//                value = existing;
+//            }
             if (prop != null && prop.getWriteMethod() != null) {
                 prop.getWriteMethod().invoke(object, value);
                 return;

@@ -17,9 +17,7 @@ package com.sdl.odata.processor.write;
 
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
-import com.sdl.odata.api.edm.model.EntityType;
-import com.sdl.odata.api.edm.model.MetaType;
-import com.sdl.odata.api.edm.model.Type;
+import com.sdl.odata.api.edm.model.*;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.processor.ProcessorResult;
@@ -27,13 +25,18 @@ import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
+import com.sdl.odata.model.ReferencableEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.Map;
 
 import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
+import static com.sdl.odata.util.edm.EntityDataModelUtil.getPropertyValue;
+import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
 
 /**
  * Patch Method Handler is specific to 'PATCH' operation.
@@ -67,7 +70,7 @@ public class PatchMethodHandler extends WriteMethodHandler {
                 throw new ODataBadRequestException("The body of a PATCH request must contain a valid entity.");
             }
             //Patch method supports partial updates, therefore all properties are nullable
-            //validateProperties(entity, getEntityDataModel());
+            validateProperties(entity, getEntityDataModel());
 
             DataSource dataSource = getDataSource(type.getFullyQualifiedName());
             log.debug("Data source found for type '{}'", type.getFullyQualifiedName());
@@ -86,5 +89,44 @@ public class PatchMethodHandler extends WriteMethodHandler {
             throw new ODataBadRequestException("The URI for a PATCH request should refer to the single entity " +
                     "to be updated, not to a collection of entities.");
         }
+    }
+
+    /**
+     * Checks if no inline properties are present (11.4.3 Update an Entity)
+     *
+     * @param entity The entity to check.
+     * @throws ODataBadRequestException If any of the inline (non-reference) properties of the entity are present.
+     */
+    protected void validateProperties(final Object entity, final EntityDataModel edm)
+            throws ODataException {
+        final Type type = edm.getType(entity.getClass());
+        // No validation needed if it is not a structured type
+        if (!(type instanceof StructuredType)) {
+            return;
+        }
+
+        visitProperties(edm, (StructuredType) type, property -> {
+            Object value = getPropertyValue(property, entity);
+            if (property instanceof NavigationProperty) {
+                boolean isReference = true;
+                if(value != null) {
+                    isReference = property.isCollection() ? ((Collection) value).stream().allMatch(e -> isReference(e)) : isReference(
+                            value);
+                }
+                if(!isReference)
+                {
+                    throw new ODataBadRequestException("The property '" + property.getName() +
+                                                       "' is required to be can either be null or reference");
+                }
+            }
+        });
+    }
+
+    public boolean isReference(Object o)
+    {
+        if(o instanceof ReferencableEntity)
+            return ((ReferencableEntity)o).isReference();
+        else
+            return true;
     }
 }
