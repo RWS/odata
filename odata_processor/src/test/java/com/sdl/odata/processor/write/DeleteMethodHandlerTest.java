@@ -45,7 +45,7 @@ public class DeleteMethodHandlerTest extends MethodHandlerTest {
     private WriteMethodHandler getDeleteMethodHandler(EntityDataModel entityDataModel, boolean isEntitySetUri)
             throws UnsupportedEncodingException {
         ODataRequestContext requestContext = super.createRequestContext(DELETE, isEntitySetUri, entityDataModel);
-        return new DeleteMethodHandler(requestContext, dataSourceFactoryMock);
+        return new DeleteMethodHandler(requestContext, dataSourceFactoryMock, processorConfiguration);
     }
 
     @Test(expected = ODataBadRequestException.class)

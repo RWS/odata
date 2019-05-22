@@ -23,6 +23,7 @@ import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
+import com.sdl.odata.processor.ProcessorConfiguration;
 
 /**
  * The hander for action and action import invocation request.
@@ -35,8 +36,8 @@ public class ActionPostMethodHandler extends WriteMethodHandler {
      * @param requestContext    The ODataRequestContext.
      * @param dataSourceFactory The DataSourceFactory.
      */
-    public ActionPostMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory) {
-        super(requestContext, dataSourceFactory);
+    public ActionPostMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory, ProcessorConfiguration configuration) {
+        super(requestContext, dataSourceFactory, configuration);
     }
 
     /**

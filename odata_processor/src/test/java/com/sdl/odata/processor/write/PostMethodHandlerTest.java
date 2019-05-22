@@ -52,7 +52,7 @@ public class PostMethodHandlerTest extends MethodHandlerTest {
     private WriteMethodHandler getPostMethodHandler(EntityDataModel entityDataModel, boolean isEntitySetUri)
             throws UnsupportedEncodingException {
         ODataRequestContext requestContext = super.createRequestContext(POST, isEntitySetUri, entityDataModel);
-        return new PostMethodHandler(requestContext, dataSourceFactoryMock);
+        return new PostMethodHandler(requestContext, dataSourceFactoryMock, processorConfiguration);
     }
 
     @Test(expected = ODataBadRequestException.class)

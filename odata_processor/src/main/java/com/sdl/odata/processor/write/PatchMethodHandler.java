@@ -26,6 +26,7 @@ import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.model.ReferencableEntity;
+import com.sdl.odata.processor.ProcessorConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -44,8 +45,8 @@ import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
 public class PatchMethodHandler extends WriteMethodHandler {
     private static Logger log = LoggerFactory.getLogger(PatchMethodHandler.class);
 
-    public PatchMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory) {
-        super(requestContext, dataSourceFactory);
+    public PatchMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory, ProcessorConfiguration configuration) {
+        super(requestContext, dataSourceFactory, configuration);
     }
 
     @Override

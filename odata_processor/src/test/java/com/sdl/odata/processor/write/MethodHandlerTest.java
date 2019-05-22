@@ -38,6 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import com.sdl.odata.api.service.ODataRequest.Method;
+import com.sdl.odata.processor.ProcessorConfiguration;
 import com.sdl.odata.processor.model.ODataAddress;
 import com.sdl.odata.processor.model.ODataMobilePhone;
 import com.sdl.odata.processor.model.ODataPerson;
@@ -51,12 +52,14 @@ public abstract class MethodHandlerTest {
     protected DataSourceFactory dataSourceFactoryMock = mock(DataSourceFactory.class);
     protected ODataUri entitySetOdataURI;
     protected ODataUri entityOdataURI;
+    protected ProcessorConfiguration processorConfiguration;
 
 
     protected void setup(String entitySetName) throws Exception {
         entitySetOdataURI = createODataUri(SERVICE_ROOT, entitySetName);
         entityOdataURI = createODataUriWithSimpleKeyPredicate(entitySetName);
         initMocks(ODataWriteProcessorImpl.class);
+        processorConfiguration = new ProcessorConfiguration();
     }
 
     protected void stubForTesting(Object entity) throws ODataException {

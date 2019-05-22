@@ -15,6 +15,12 @@
  */
 package com.sdl.odata.processor;
 
+import java.lang.invoke.MethodHandles;
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,4 +30,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan("com.sdl.odata.processor")
 public class ProcessorConfiguration {
+
+    private Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    @Value("${odata.update.require-id:true}")
+    private Boolean updateRequireId = true;
+
+    public Boolean getUpdateRequireId() {
+        return updateRequireId;
+    }
+
+    public void setUpdateRequireId(Boolean updateRequireId) {
+        this.updateRequireId = updateRequireId;
+    }
+
+    @PostConstruct
+    public void logIt()
+    {
+        LOG.info("{}: [{}]", this.getClass(), this.updateRequireId);
+    }
 }

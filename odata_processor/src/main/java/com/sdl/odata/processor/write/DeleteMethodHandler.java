@@ -26,6 +26,7 @@ import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.processor.link.ODataLink;
 import com.sdl.odata.api.service.ODataRequestContext;
+import com.sdl.odata.processor.ProcessorConfiguration;
 import com.sdl.odata.util.edm.EntityDataModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +41,8 @@ import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 public class DeleteMethodHandler extends WriteMethodHandler {
     private static Logger log = LoggerFactory.getLogger(DeleteMethodHandler.class);
 
-    public DeleteMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory) {
-        super(requestContext, dataSourceFactory);
+    public DeleteMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory, ProcessorConfiguration configuration) {
+        super(requestContext, dataSourceFactory, configuration);
     }
 
     /**

@@ -53,7 +53,7 @@ public class PutMethodHandlerTest extends MethodHandlerTest {
     private WriteMethodHandler getPutMethodHandler(EntityDataModel entityDataModel, boolean isEntitySetUri)
             throws UnsupportedEncodingException {
         ODataRequestContext requestContext = super.createRequestContext(PUT, isEntitySetUri, entityDataModel);
-        return new PutMethodHandler(requestContext, dataSourceFactoryMock);
+        return new PutMethodHandler(requestContext, dataSourceFactoryMock, processorConfiguration);
     }
 
     @Test(expected = ODataBadRequestException.class)

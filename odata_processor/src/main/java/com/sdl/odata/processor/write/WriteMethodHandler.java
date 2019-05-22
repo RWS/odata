@@ -36,7 +36,9 @@ import com.sdl.odata.api.processor.datasource.ODataTargetTypeException;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
+import com.sdl.odata.processor.ProcessorConfiguration;
 import com.sdl.odata.processor.write.util.WriteMethodUtil;
+import com.sdl.odata.util.edm.EntityDataModelUtil;
 import scala.Option;
 
 import java.lang.reflect.Field;
@@ -64,13 +66,15 @@ public abstract class WriteMethodHandler {
     private final ODataUri oDataUri;
     private final DataSourceFactory dataSourceFactory;
     private final ODataRequestContext requestContext;
+    private final ProcessorConfiguration configuration;
 
-    public WriteMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory) {
+    public WriteMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory, ProcessorConfiguration configuration) {
         this.oDataUri = checkNotNull(requestContext.getUri());
         this.request = checkNotNull(requestContext.getRequest());
         this.entityDataModel = checkNotNull(requestContext.getEntityDataModel());
         this.dataSourceFactory = checkNotNull(dataSourceFactory);
         this.requestContext = requestContext;
+        this.configuration = checkNotNull(configuration);
     }
 
     public abstract ProcessorResult handleWrite(Object entity) throws ODataException;
@@ -125,6 +129,15 @@ public abstract class WriteMethodHandler {
     protected void validateKeys(Object entity, EntityType type) throws ODataClientException, ODataProcessorException {
 
         final Map<String, Object> oDataUriKeyValues = asJavaMap(getEntityKeyMap(getoDataUri(), getEntityDataModel()));
+        if(!Boolean.TRUE.equals(configuration.getUpdateRequireId())) {
+            for(Map.Entry<String, Object> keyEntry: oDataUriKeyValues.entrySet())
+            {
+                EntityDataModelUtil.setPropertyValue(type.getStructuralProperty(keyEntry.getKey()), entity, keyEntry.getValue());
+            }
+            return;
+        }
+
+
         final Map<String, Object> keyValues = getKeyValues(entity, type);
 
         if (oDataUriKeyValues.size() != keyValues.size()) {

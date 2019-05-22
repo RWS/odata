@@ -83,6 +83,8 @@ public class ODataWriteProcessorImplTest {
     @Mock
     private DataSourceFactory dataSourceFactory;
 
+    @Mock ProcessorConfiguration configuration;
+
     @InjectMocks
     private ODataWriteProcessorImpl oDataWriteProcessor;
 
