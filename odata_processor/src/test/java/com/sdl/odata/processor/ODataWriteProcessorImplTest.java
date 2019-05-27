@@ -218,7 +218,7 @@ public class ODataWriteProcessorImplTest {
         assertThat(result.getStatus(), is(NO_CONTENT));
         assertThat(result.getData(), is(nullValue()));
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
+        assertThat(headers.size(), is(3));
         assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
 
     }
@@ -249,7 +249,7 @@ public class ODataWriteProcessorImplTest {
         assertThat(result.getStatus(), is(NO_CONTENT));
         assertThat(result.getData(), is(nullValue()));
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
+        assertThat(headers.size(), is(3));
         assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
     }
 

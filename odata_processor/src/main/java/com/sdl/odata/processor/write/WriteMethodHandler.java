@@ -49,7 +49,7 @@ import java.util.Map;
 import static com.sdl.odata.api.ODataErrorCode.PROCESSOR_ERROR;
 import static com.sdl.odata.api.parser.ODataUriUtil.asJavaMap;
 import static com.sdl.odata.api.parser.ODataUriUtil.getEntityKeyMap;
-import static com.sdl.odata.api.service.HeaderNames.LOCATION;
+import static com.sdl.odata.api.service.HeaderNames.*;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.formatEntityKey;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.getEntitySetByEntity;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.getPropertyValue;
@@ -114,6 +114,11 @@ public abstract class WriteMethodHandler {
         headers.put(LOCATION, String.format("%s/%s(%s)", getoDataUri().serviceRoot(),
                 getEntitySetByEntity(getEntityDataModel(), entity).getName(),
                 formatEntityKey(getEntityDataModel(), entity)));
+        if(isMinimalReturnPreferred())
+        {
+            headers.put(ODATA_ENTITY_ID, EntityDataModelUtil.getKeyPropertyValues(((EntityType) getEntityDataModel().getType(entity.getClass())), entity).values().iterator().next().toString());
+            headers.put(PREFERENCE_APPLIED, WriteMethodUtil.RETURN_MINIMAL);
+        }
         return headers;
     }
 

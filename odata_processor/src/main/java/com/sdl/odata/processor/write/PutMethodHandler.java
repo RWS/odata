@@ -71,13 +71,12 @@ public class PutMethodHandler extends WriteMethodHandler {
             DataSource dataSource = getDataSource(type.getFullyQualifiedName());
             log.debug("Data source found for type '{}'", type.getFullyQualifiedName());
 
-            // Get the location header before trying to create the entity
-            Map<String, String> headers = getResponseHeaders(entity);
-
             validateTargetType(entity);
             validateKeys(entity, (EntityType) type);
 
             Object updatedEntity = dataSource.update(getoDataUri(), entity, getEntityDataModel(), false);
+            // Location header needs to be determined after due to ID generation
+            Map<String, String> headers = getResponseHeaders(updatedEntity);
             if (isMinimalReturnPreferred()) {
                 return new ProcessorResult(NO_CONTENT, headers);
             }

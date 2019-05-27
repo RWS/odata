@@ -36,6 +36,10 @@ public final class HeaderNames {
      */
     public static final String PREFER = "Prefer";
     /**
+     * Preference Applied.
+     */
+    public static final String PREFERENCE_APPLIED = "Preference-Applied";
+    /**
      * Location.
      */
     public static final String LOCATION = "Location";

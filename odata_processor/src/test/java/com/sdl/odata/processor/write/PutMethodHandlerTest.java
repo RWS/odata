@@ -27,9 +27,12 @@ import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.PUT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
+import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -75,17 +78,26 @@ public class PutMethodHandlerTest extends MethodHandlerTest {
         stubForTesting(entity,  entityDataModel);
         ProcessorResult result = getPutMethodHandler(entityDataModel, false).handleWrite(entity);
         assertThat(result.getStatus(), is(OK));
-        assertNull(result.getData());
+        assertNotNull(result.getData());
         verify(dataSourceMock, times(1)).update(entityOdataURI, entity,  entityDataModel, false);
     }
 
     @Test
     public void testWrite() throws Exception {
+        Object entity = getEntity();
+        EntityDataModel entityDataModel = getEntityDataModel();
+
+        when(dataSourceMock.update(any(), eq(entity), eq(entityDataModel), eq(false))).thenReturn(entity);
         // With ODataPerson
-        doWrite(getEntity(), getEntityDataModel());
+        doWrite(entity, entityDataModel);
+
+        entity = getEntityForNamedKey();
+        entityDataModel = getEntityDataModelForNamedKey();
+
+        when(dataSourceMock.update(any(), eq(entity), eq(entityDataModel), eq(false))).thenReturn(entity);
 
         // With ODataPersonNamedKey
-        doWrite(getEntityForNamedKey(), getEntityDataModelForNamedKey());
+        doWrite(entity, entityDataModel);
     }
 
 }
