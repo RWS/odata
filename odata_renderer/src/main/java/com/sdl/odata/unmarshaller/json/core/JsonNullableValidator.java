@@ -19,6 +19,7 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.NavigationProperty;
 import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
+import com.sdl.odata.unmarshaller.json.ODataJsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +36,10 @@ import java.util.StringJoiner;
 public class JsonNullableValidator {
     private static final Logger LOG = LoggerFactory.getLogger(JsonNullableValidator.class);
 
-    private final Map<String, Object> fields;
-    private final Map<String, Object> links;
+    private final Map<String, Object> jsonObject;
 
-    public JsonNullableValidator(Map<String, Object> fields, Map<String, Object> links) {
-        this.fields = fields;
-        this.links = links;
+    public JsonNullableValidator(Map<String, Object> jsonObject) {
+        this.jsonObject = jsonObject;
     }
 
     /**
@@ -51,6 +50,7 @@ public class JsonNullableValidator {
      */
     public void ensureCollection(StructuredType entityType) throws ODataException {
         List<String> missingCollectionPropertyName = new ArrayList<>();
+        Map<String, Object> fields = ODataJsonParser.objectProperties(jsonObject);
 
         entityType.getStructuralProperties().stream()
                 .filter(property -> (property.isCollection())
@@ -77,6 +77,7 @@ public class JsonNullableValidator {
      */
     public void ensureNavigationProperties(StructuredType entityType) throws ODataException {
         List<String> missingNavigationPropertyNames = new ArrayList<>();
+        Map<String, Object> links = ODataJsonParser.links(jsonObject);
 
         entityType.getStructuralProperties().stream().filter(property -> (property instanceof NavigationProperty)
                 && !property.isNullable()).forEach(property -> {

@@ -113,11 +113,14 @@ public class JsonPropertyExpander {
         Collection<Object> values = EntityDataModelUtil.createPropertyCollection(property);
 
         Object current = (currentNode instanceof Map) ? currentNode : map.get(currentNode);
-        for (Object subValue : (Iterable) ((Map) current).get(node)) {
-            Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);
+        Iterable currentIt = (Iterable)((Map) current).get(node);
+        if(currentIt != null) {
+            for (Object subValue : currentIt) {
+                Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);
 
-            if (value != null) {
-                values.add(value);
+                if (value != null) {
+                    values.add(value);
+                }
             }
         }
         EntityDataModelUtil.setPropertyValue(property, entity, values);
@@ -163,7 +166,7 @@ public class JsonPropertyExpander {
         for (String target : keySet) {
             if (node.equalsIgnoreCase(target)) {
                     Iterable subValues = (Iterable) map.get(target);
-                List<Object> values = new ArrayList<>();
+                Collection<Object> values = EntityDataModelUtil.createPropertyCollection(property);
                 for (Object subValue : subValues) {
                     Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);
 
