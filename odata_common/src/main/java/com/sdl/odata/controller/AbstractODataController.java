@@ -21,6 +21,7 @@ import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.api.service.ODataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -118,6 +119,8 @@ public abstract class AbstractODataController {
         }
         builder.setBody(out.toByteArray());
 
+        builder.addAdditionalData(new MapMDCAdapter(MDC.getCopyOfContextMap()));
+
         return builder.build();
     }
 
@@ -187,4 +190,5 @@ public abstract class AbstractODataController {
             LOG.trace("BODY: {}", request.getBodyText(UTF_8.name()));
         }
     }
+
 }
