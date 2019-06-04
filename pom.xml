@@ -96,7 +96,7 @@
         <akka.version>2.5.17</akka.version>
         <apache-procrun.version>1.0</apache-procrun.version>
         <brave.version>4.2.0</brave.version>
-        <guava.version>18.0</guava.version>
+        <guava.version>27.1-jre</guava.version>
         <httpcomponents.version>4.5.6</httpcomponents.version>
         <jackson.version>2.9.6</jackson.version>
         <jacoco.version>0.8.2</jacoco.version>
