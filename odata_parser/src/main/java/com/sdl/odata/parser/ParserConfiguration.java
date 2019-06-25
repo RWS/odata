@@ -31,8 +31,11 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("com.sdl.odata.parser")
 public class ParserConfiguration {
 
-    private Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    /**
+     * Default base path which anything that ends with .svc .
+     */
     public static final String DEFAULT_BASE_PATH = "(?i)^.*?\\.svc";
 
     @Value("${odata.base-path:(?i)^.*?\\.svc}")
@@ -47,8 +50,7 @@ public class ParserConfiguration {
     }
 
     @PostConstruct
-    public void logIt()
-    {
-        LOG.info("{}: [{}]", this.getClass(), this.getBasePath());
+    public void logIt() {
+        logger.info("{}: [{}]", this.getClass(), this.getBasePath());
     }
 }

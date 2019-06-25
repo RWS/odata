@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.List;
 
 import static com.sdl.odata.JsonConstants.CONTEXT;
@@ -258,7 +257,8 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
         LOG.trace("Property name is '{}' and its value is '{}'", property.getName(), value);
         Type type = getType(value);
         if (type == null) {
-            String msg = String.format("Field type %s is not found in entity data model", EntityDataModelUtil.getPropertyJavaType(property));
+            String msg = String.format("Field type %s is not found in entity data model",
+                                       EntityDataModelUtil.getPropertyJavaType(property));
             LOG.error(msg);
             throw new ODataRenderException(msg);
         }

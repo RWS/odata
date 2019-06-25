@@ -15,6 +15,11 @@
  */
 package com.sdl.odata.processor.write;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
@@ -37,11 +42,6 @@ import com.sdl.odata.processor.write.util.WriteMethodUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static com.sdl.odata.api.processor.query.QueryResult.from;
 
@@ -162,7 +162,9 @@ public class BatchMethodHandler {
         WriteMethodUtil.validateKeys(entityData, (EntityType) type, requestUri, entityDataModel);
 
         DataSource dataSource = getTransactionalDataSource(odataRequestContext, type);
-        Object updatedEntity = dataSource.update(requestUri, entityData, entityDataModel, odataRequestContext.getRequest().getMethod() == ODataRequest.Method.PATCH);
+        Object updatedEntity = dataSource.update(requestUri, entityData,
+                                         entityDataModel,
+                                         odataRequestContext.getRequest().getMethod() == ODataRequest.Method.PATCH);
 
         // add additional headers
         headers.putAll(oDataRequest.getHeaders());

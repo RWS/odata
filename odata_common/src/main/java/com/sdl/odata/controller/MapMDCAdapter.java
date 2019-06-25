@@ -20,11 +20,13 @@ import java.util.Map;
 
 import org.slf4j.spi.MDCAdapter;
 
-public class MapMDCAdapter implements MDCAdapter
-{
+/**
+ * Non ThreadLocal MDC Adapter that can be used to store current MDC context.
+ */
+public class MapMDCAdapter implements MDCAdapter {
     private Map<String, String> contextMap;
-    public MapMDCAdapter(Map<String, String> contextMap)
-    {
+
+    public MapMDCAdapter(Map<String, String> contextMap) {
         setContextMap(contextMap);
     }
 

@@ -29,7 +29,6 @@ import com.sdl.odata.test.model.ComplexTypeSampleList;
 import com.sdl.odata.test.util.TestUtils;
 import org.junit.Before;
 
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;

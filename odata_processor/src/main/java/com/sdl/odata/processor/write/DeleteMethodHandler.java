@@ -41,7 +41,8 @@ import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 public class DeleteMethodHandler extends WriteMethodHandler {
     private static Logger log = LoggerFactory.getLogger(DeleteMethodHandler.class);
 
-    public DeleteMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory, ProcessorConfiguration configuration) {
+    public DeleteMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory,
+                               ProcessorConfiguration configuration) {
         super(requestContext, dataSourceFactory, configuration);
     }
 

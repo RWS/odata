@@ -15,6 +15,10 @@
  */
 package com.sdl.odata.unmarshaller;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Collection;
+import java.util.List;
+
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
@@ -36,10 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 import scala.collection.immutable.List$;
-
-import java.io.UnsupportedEncodingException;
-import java.util.Collection;
-import java.util.List;
 
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
 import static com.sdl.odata.api.parser.ODataUriUtil.extractEntityWithKeys;
@@ -167,17 +167,17 @@ public abstract class AbstractParser {
 
         ResourcePath resourcePath = uriParser.parseResourcePath(entityIdResourcePath, entityDataModel);
         ODataUri referencedEntityUri = new ODataUri("", new ResourcePathUri(resourcePath,
-                List$.MODULE$.<QueryOption>empty()));
+                                                                            List$.MODULE$.<QueryOption>empty()));
 
         Option<Object> opt = extractEntityWithKeys(referencedEntityUri, entityDataModel);
         if (!opt.isDefined()) {
             throw new ODataUnmarshallingException("Cannot determine referenced entity for navigation link " +
-                    "for property: " + propertyName + ", href=\"" + entityIdResourcePath + "\"");
+                                                  "for property: " + propertyName +
+                                                  ", href=\"" + entityIdResourcePath + "\"");
         }
         Object result = opt.get();
-        if(result instanceof ReferencableEntity)
-        {
-            ReferencableEntity referencedEntity = ((ReferencableEntity)result);
+        if (result instanceof ReferencableEntity) {
+            ReferencableEntity referencedEntity = ((ReferencableEntity) result);
             referencedEntity.setReferenceString(entityIdResourcePath);
         }
 
@@ -196,7 +196,7 @@ public abstract class AbstractParser {
     protected void saveReferencedEntity(Object entity, String propertyName, StructuralProperty property,
                                         Object referencedEntity) throws ODataUnmarshallingException {
         // Save the referenced entity in the entity we are unmarshalling
-        Class<?> type =  EntityDataModelUtil.getPropertyJavaType(property);
+        Class<?> type = EntityDataModelUtil.getPropertyJavaType(property);
 
         try {
             if (Collection.class.isAssignableFrom(type)) {
@@ -206,7 +206,7 @@ public abstract class AbstractParser {
             }
         } catch (IllegalAccessException e) {
             throw new ODataUnmarshallingException("Error while getting or setting navigation property field " +
-                    propertyName, e);
+                                                  propertyName, e);
         }
 
         // NOTE: Check if the element has a <metadata:inline> element (expanded navigation property)
@@ -214,10 +214,9 @@ public abstract class AbstractParser {
     }
 
     private void saveReferencedEntityCollectionField(Object entity, Object referencedEntity,
-                                              StructuralProperty property) throws IllegalAccessException {
+                                                     StructuralProperty property) throws IllegalAccessException {
         Collection container = (Collection) EntityDataModelUtil.getPropertyValue(property, entity);
-        if(container == null)
-        {
+        if (container == null) {
             container = EntityDataModelUtil.createPropertyCollection(property);
             EntityDataModelUtil.setPropertyValue(property, entity, container);
         }

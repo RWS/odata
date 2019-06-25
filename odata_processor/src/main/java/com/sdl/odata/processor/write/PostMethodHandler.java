@@ -15,6 +15,8 @@
  */
 package com.sdl.odata.processor.write;
 
+import java.util.Map;
+
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.MetaType;
@@ -30,8 +32,6 @@ import com.sdl.odata.processor.ProcessorConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 import static com.sdl.odata.api.service.ODataResponse.Status.CREATED;
 import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 
@@ -41,7 +41,8 @@ import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 public class PostMethodHandler extends WriteMethodHandler {
     private static Logger log = LoggerFactory.getLogger(PostMethodHandler.class);
 
-    public PostMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory, ProcessorConfiguration configuration) {
+    public PostMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory,
+                             ProcessorConfiguration configuration) {
         super(requestContext, dataSourceFactory, configuration);
     }
 

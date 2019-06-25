@@ -15,30 +15,34 @@
  */
 package com.sdl.odata.unmarshaller.json;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdl.odata.api.edm.model.*;
-import com.sdl.odata.api.renderer.ODataRenderException;
-import com.sdl.odata.unmarshaller.AbstractParser;
-import com.sdl.odata.unmarshaller.json.core.JsonNullableValidator;
-import com.sdl.odata.unmarshaller.json.core.JsonParserUtils;
-import com.sdl.odata.unmarshaller.json.core.JsonProcessor;
 import com.sdl.odata.JsonConstants;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataNotImplementedException;
+import com.sdl.odata.api.edm.model.EntityType;
+import com.sdl.odata.api.edm.model.NavigationProperty;
+import com.sdl.odata.api.edm.model.StructuralProperty;
+import com.sdl.odata.api.edm.model.StructuredType;
 import com.sdl.odata.api.parser.ODataParser;
 import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
+import com.sdl.odata.unmarshaller.AbstractParser;
+import com.sdl.odata.unmarshaller.json.core.JsonNullableValidator;
+import com.sdl.odata.unmarshaller.json.core.JsonParserUtils;
 import com.sdl.odata.unmarshaller.json.core.JsonPropertyExpander;
 import com.sdl.odata.util.edm.EntityDataModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 
@@ -48,7 +52,16 @@ import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 public class ODataJsonParser extends AbstractParser {
     private static final Logger LOG = LoggerFactory.getLogger(ODataJsonParser.class);
 
-    private Map<String, Object> jsonObject;
+    /**
+     * OData.
+     */
+    public static final String ODATA = "@odata";
+    /**
+     * OData Bind.
+     */
+    public static final String ODATA_BIND = "@odata.bind";
+
+    private Map<String, Object> rootJsonObject;
 
     public ODataJsonParser(ODataRequestContext request, ODataParser uriParser) {
         super(request, uriParser);
@@ -58,31 +71,30 @@ public class ODataJsonParser extends AbstractParser {
     protected Object processEntity(String bodyText) throws ODataException {
 
         try {
-            jsonObject = new ObjectMapper().readValue(bodyText, Map.class);
-        }
-        catch (IOException e)
-        {
+            rootJsonObject = new ObjectMapper().readValue(bodyText, Map.class);
+        } catch (IOException e) {
             LOG.error("Error while deserialising JSON payload", e);
             throw new ODataUnmarshallingException("Error while deserialising JSON payload", e);
         }
-        Map<String, Object> fields = objectProperties(jsonObject);
+        Map<String, Object> fields = objectProperties(rootJsonObject);
 
         JsonPropertyExpander expander = new JsonPropertyExpander(getEntityDataModel());
 
-        String entityName = getEntityName(jsonObject);
+        String entityName = getEntityName(rootJsonObject);
         Object entity = expander.loadEntity(entityName);
 
 
         StructuredType entityType = JsonParserUtils.getStructuredType(entityName, getEntityDataModel());
 
         if (getRequest().getMethod() == ODataRequest.Method.POST) {
-            JsonNullableValidator validator = new JsonNullableValidator(jsonObject);
+            JsonNullableValidator validator = new JsonNullableValidator(rootJsonObject);
             validator.ensureCollection(entityType);
             validator.ensureNavigationProperties(entityType);
         }
 
-        expander.setEntityProperties(entity, entityType, jsonObject, null);
-        setEntityNavigationProperties(entity, jsonObject, JsonParserUtils.getStructuredType(entityName, getEntityDataModel()));
+        expander.setEntityProperties(entity, entityType, rootJsonObject, null);
+        setEntityNavigationProperties(entity, rootJsonObject,
+                                      JsonParserUtils.getStructuredType(entityName, getEntityDataModel()));
 
         return entity;
     }
@@ -130,7 +142,9 @@ public class ODataJsonParser extends AbstractParser {
      * @param entityType the entity type
      * @throws ODataException If unable to set navigation properties
      */
-    protected void setEntityNavigationProperties(Object entity, Map<String, Object> jsonObject, StructuredType entityType) throws ODataException {
+    protected void setEntityNavigationProperties(Object entity,
+                                                 Map<String, Object> jsonObject, StructuredType entityType)
+            throws ODataException {
         Map<String, Object> links = links(jsonObject);
         for (Map.Entry<String, Object> linkEntry : links.entrySet()) {
             String propertyName = linkEntry.getKey();
@@ -140,8 +154,9 @@ public class ODataJsonParser extends AbstractParser {
             StructuralProperty property = entityType.getStructuralProperty(propertyName);
             if (!(property instanceof NavigationProperty)) {
                 throw new ODataUnmarshallingException("The request contains a navigation link '" + propertyName +
-                        "' but the entity type '" + entityType + "' does not contain a navigation property " +
-                        "with this name.");
+                                                      "' but the entity type '" +
+                                                      entityType + "' does not contain a navigation property " +
+                                                      "with this name.");
             }
 
             // Note: The links are processed a bit differently depending on whether we are parsing in the context
@@ -150,7 +165,7 @@ public class ODataJsonParser extends AbstractParser {
             if (isWriteOperation()) {
                 // Get the referenced entity(es), but only with the key fields filled in
                 if (entryLinks instanceof Iterable) {
-                    for (String link : (Iterable<String>)entryLinks) {
+                    for (String link : (Iterable<String>) entryLinks) {
                         Object referencedEntity = getReferencedEntity(link, propertyName);
                         LOG.debug("Referenced entity item: {}", referencedEntity);
                         saveReferencedEntity(entity, propertyName, property, referencedEntity);
@@ -167,23 +182,20 @@ public class ODataJsonParser extends AbstractParser {
             String propertyName = fieldEntry.getKey();
             StructuralProperty property = entityType.getStructuralProperty(propertyName);
             if (property instanceof NavigationProperty) {
-                if(property.isCollection())
-                {
+                if (property.isCollection()) {
                     Collection subEntities = (Collection) EntityDataModelUtil.getPropertyValue(property, entity);
-                    List<Map<String, Object>> subJsonObjects = (List<Map<String, Object>>)jsonObject.get(propertyName);
+                    List<Map<String, Object>> subJsonObjects = (List<Map<String, Object>>) jsonObject.get(propertyName);
                     EntityType subEntityType = (EntityType) getEntityDataModel().getType(property.getElementTypeName());
 
-                    int i =0;
-                    for(Object subEntity: subEntities)
-                    {
+                    int i = 0;
+                    for (Object subEntity : subEntities) {
                         Map<String, Object> subJsonObject = subJsonObjects.get(i);
                         setEntityNavigationProperties(subEntity, subJsonObject, subEntityType);
                         i++;
                     }
-                }
-                else {
+                } else {
                     Object subEntity = EntityDataModelUtil.getPropertyValue(property, entity);
-                    Map<String, Object> subJsonObject = (Map<String, Object>)jsonObject.get(propertyName);
+                    Map<String, Object> subJsonObject = (Map<String, Object>) jsonObject.get(propertyName);
                     EntityType subEntityType = (EntityType) getEntityDataModel().getType(property.getTypeName());
                     setEntityNavigationProperties(subEntity, subJsonObject, subEntityType);
                 }
@@ -191,68 +203,59 @@ public class ODataJsonParser extends AbstractParser {
         }
     }
 
-    public static <K, V> Map<K, V> subMap(Map<K, V> jsonObject, Function<K, Boolean> keyPredicate)
-    {
-        if(jsonObject == null)
+    public static <K, V> Map<K, V> subMap(Map<K, V> jsonObject, Function<K, Boolean> keyPredicate) {
+        if (jsonObject == null) {
             return null;
+        }
 
         Map<K, V> subMap = new HashMap<>();
-        for(Map.Entry<K, V> entry: jsonObject.entrySet())
-        {
-            if(keyPredicate.apply(entry.getKey()))
-            {
+        for (Map.Entry<K, V> entry : jsonObject.entrySet()) {
+            if (keyPredicate.apply(entry.getKey())) {
                 subMap.put(entry.getKey(), entry.getValue());
             }
         }
         return subMap;
     }
 
-    public static Map<String, Object> objectProperties(Map<String, Object> jsonObject)
-    {
-        return subMap(jsonObject, (k -> k == null || (!k.startsWith(JsonProcessor.ODATA) && !k.endsWith(JsonProcessor.ODATA_BIND))));
+    public static Map<String, Object> objectProperties(Map<String, Object> jsonObject) {
+        return subMap(jsonObject, (k -> k == null ||
+                                        (!k.startsWith(ODATA) && !k.endsWith(ODATA_BIND))));
     }
 
-    public static Map<String, Object> odataProperties(Map<String, Object> jsonObject)
-    {
-        return subMap(jsonObject, (k -> k != null && k.startsWith(JsonProcessor.ODATA)));
+    public static Map<String, Object> odataProperties(Map<String, Object> jsonObject) {
+        return subMap(jsonObject, (k -> k != null && k.startsWith(ODATA)));
     }
 
-    public static Map<String, Object> links(Map<String, Object> jsonObject)
-    {
-        Map<String, Object> subMap = subMap(jsonObject, (k -> k != null && k.endsWith(JsonProcessor.ODATA_BIND)));
-        for(String key: new ArrayList<>(subMap.keySet()))
-        {
+    public static Map<String, Object> links(Map<String, Object> jsonObject) {
+        Map<String, Object> subMap = subMap(jsonObject, (k -> k != null && k.endsWith(ODATA_BIND)));
+        for (String key : new ArrayList<>(subMap.keySet())) {
             Object value = subMap.get(key);
-            if(value instanceof String)
-            {
+            if (value instanceof String) {
                 value = processLink((String) value);
-                String valueS = (String)value;
-                if(valueS.contains("/"))
+                String valueS = (String) value;
+                if (valueS.contains("/")) {
                     value = valueS.substring(valueS.lastIndexOf("/") + 1);
-            }
-            else if(value instanceof Collection)
-            {
-                Collection values = (Collection)value;
-                for(Object val : new ArrayList<>(values))
-                {
-                    if(val instanceof String)
-                    {
+                }
+            } else if (value instanceof Collection) {
+                Collection values = (Collection) value;
+                for (Object val : new ArrayList<>(values)) {
+                    if (val instanceof String) {
                         values.remove(val);
-                        values.add(processLink((String)val));
+                        values.add(processLink((String) val));
                     }
 
                 }
             }
             subMap.remove(key);
-            subMap.put(key.substring(0, key.indexOf(JsonProcessor.ODATA_BIND)), value);
+            subMap.put(key.substring(0, key.indexOf(ODATA_BIND)), value);
         }
         return subMap;
     }
 
-    public static String processLink(String link)
-    {
-        if(link != null && link.contains("/"))
+    public static String processLink(String link) {
+        if (link != null && link.contains("/")) {
             return link.substring(link.lastIndexOf("/") + 1);
+        }
         return link;
     }
 }

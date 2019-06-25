@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("com.sdl.odata.processor")
 public class ProcessorConfiguration {
 
-    private Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Value("${odata.update.require-id:true}")
     private Boolean updateRequireId = true;
@@ -45,8 +45,7 @@ public class ProcessorConfiguration {
     }
 
     @PostConstruct
-    public void logIt()
-    {
-        LOG.info("{}: [{}]", this.getClass(), this.updateRequireId);
+    public void logIt() {
+        logger.info("{}: [{}]", this.getClass(), this.updateRequireId);
     }
 }

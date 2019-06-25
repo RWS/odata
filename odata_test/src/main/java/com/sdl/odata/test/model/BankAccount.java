@@ -18,13 +18,14 @@ package com.sdl.odata.test.model;
 import com.sdl.odata.api.edm.annotations.EdmEntity;
 import com.sdl.odata.api.edm.annotations.EdmEntitySet;
 import com.sdl.odata.api.edm.annotations.EdmProperty;
+import com.sdl.odata.model.ReferencableEntity;
 
 /**
  * The Bank Account.
  */
 @EdmEntity(namespace = "ODataDemo", key = {"iban" })
 @EdmEntitySet("BankAccounts")
-public class BankAccount {
+public class BankAccount extends ReferencableEntity {
     /**
      * EDM Entity Max Length.
      */

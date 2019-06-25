@@ -19,6 +19,7 @@ import com.sdl.odata.api.edm.annotations.EdmEntity;
 import com.sdl.odata.api.edm.annotations.EdmEntitySet;
 import com.sdl.odata.api.edm.annotations.EdmNavigationProperty;
 import com.sdl.odata.api.edm.annotations.EdmProperty;
+import com.sdl.odata.model.ReferencableEntity;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ import java.util.List;
  */
 @EdmEntity(namespace = "ODataDemo", key = {"id" })
 @EdmEntitySet("Orders")
-public class Order {
+public class Order extends ReferencableEntity {
 
     @EdmProperty(nullable = false)
     private long id;

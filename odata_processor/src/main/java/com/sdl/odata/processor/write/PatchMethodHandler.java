@@ -15,9 +15,17 @@
  */
 package com.sdl.odata.processor.write;
 
+import java.util.Collection;
+import java.util.Map;
+
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
-import com.sdl.odata.api.edm.model.*;
+import com.sdl.odata.api.edm.model.EntityDataModel;
+import com.sdl.odata.api.edm.model.EntityType;
+import com.sdl.odata.api.edm.model.MetaType;
+import com.sdl.odata.api.edm.model.NavigationProperty;
+import com.sdl.odata.api.edm.model.StructuredType;
+import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.parser.TargetType;
 import com.sdl.odata.api.processor.ProcessorResult;
@@ -29,10 +37,6 @@ import com.sdl.odata.model.ReferencableEntity;
 import com.sdl.odata.processor.ProcessorConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
-
-import java.util.Collection;
-import java.util.Map;
 
 import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
@@ -45,7 +49,8 @@ import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
 public class PatchMethodHandler extends WriteMethodHandler {
     private static Logger log = LoggerFactory.getLogger(PatchMethodHandler.class);
 
-    public PatchMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory, ProcessorConfiguration configuration) {
+    public PatchMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory,
+                              ProcessorConfiguration configuration) {
         super(requestContext, dataSourceFactory, configuration);
     }
 
@@ -92,7 +97,7 @@ public class PatchMethodHandler extends WriteMethodHandler {
     }
 
     /**
-     * Checks if no inline properties are present (11.4.3 Update an Entity)
+     * Checks if no inline properties are present (11.4.3 Update an Entity).
      *
      * @param entity The entity to check.
      * @throws ODataBadRequestException If any of the inline (non-reference) properties of the entity are present.
@@ -109,12 +114,11 @@ public class PatchMethodHandler extends WriteMethodHandler {
             Object value = getPropertyValue(property, entity);
             if (property instanceof NavigationProperty) {
                 boolean isReference = true;
-                if(value != null) {
-                    isReference = property.isCollection() ? ((Collection) value).stream().allMatch(e -> isReference(e)) : isReference(
-                            value);
+                if (value != null) {
+                    isReference = property.isCollection() ? ((Collection) value)
+                      .stream().allMatch(e -> isReference(e)) : isReference(value);
                 }
-                if(!isReference)
-                {
+                if (!isReference) {
                     throw new ODataBadRequestException("The property '" + property.getName() +
                                                        "' is required to be can either be null or reference");
                 }
@@ -122,11 +126,11 @@ public class PatchMethodHandler extends WriteMethodHandler {
         });
     }
 
-    public boolean isReference(Object o)
-    {
-        if(o instanceof ReferencableEntity)
-            return ((ReferencableEntity)o).isReference();
-        else
+    public boolean isReference(Object o) {
+        if (o instanceof ReferencableEntity) {
+            return ((ReferencableEntity) o).isReference();
+        } else {
             return true;
+        }
     }
 }

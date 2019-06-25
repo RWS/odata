@@ -15,15 +15,15 @@
  */
 package com.sdl.odata.edm.model;
 
-import com.sdl.odata.api.edm.model.StructuralProperty;
-import com.sdl.odata.api.edm.model.Type;
-
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
+
+import com.sdl.odata.api.edm.model.StructuralProperty;
+import com.sdl.odata.api.edm.model.Type;
 
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 
@@ -77,11 +77,14 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
             return self;
         }
 
-        public B setTypeFromJavaFieldOrDescriptor(Field field, PropertyDescriptor propertyDescriptor, TypeNameResolver resolver) {
+        public B setTypeFromJavaFieldOrDescriptor(Field field, PropertyDescriptor propDescriptor,
+                                                  TypeNameResolver resolver) {
             // Find out if the field is an array or collection; get the element type if that is the case
-            Member member = propertyDescriptor == null ? field : propertyDescriptor.getReadMethod();
-            Class<?> cls = member instanceof Field ? ((Field) member).getType() : ((Method)member).getReturnType();
-            java.lang.reflect.Type genericCls = member instanceof Field ? ((Field) member).getGenericType() : ((Method)member).getGenericReturnType();
+            Member member = propDescriptor == null ? field : propDescriptor.getReadMethod();
+            Class<?> cls = member instanceof Field ? ((Field) member).getType() : ((Method) member).getReturnType();
+            java.lang.reflect.Type genericCls = member instanceof Field ?
+                    ((Field) member).getGenericType() : ((Method) member)
+                    .getGenericReturnType();
             if (cls.isArray()) {
                 this.isCollection = true;
                 cls = cls.getComponentType();
@@ -95,7 +98,7 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
             this.typeName = resolver.resolveTypeName(cls);
             if (isNullOrEmpty(this.typeName)) {
                 throw new IllegalArgumentException("The OData type of this field cannot be determined from " +
-                        "the Java type: " + genericCls);
+                                                   "the Java type: " + genericCls);
             }
 
             return self;
@@ -104,13 +107,14 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
         private Class<?> getCollectionElementType(Member member) {
             // Reflection magic to determine the element type of a collection type
             java.lang.reflect.Type genericType;
-            if(member instanceof Field)
-                genericType = ((Field)member).getGenericType();
-            else if(member instanceof Method)
-                genericType = ((Method)member).getGenericReturnType();
-            else
+            if (member instanceof Field) {
+                genericType = ((Field) member).getGenericType();
+            } else if (member instanceof Method) {
+                genericType = ((Method) member).getGenericReturnType();
+            } else {
                 throw new IllegalArgumentException("The element type of this collection type cannot be determined: "
                                                    + member);
+            }
             if (genericType instanceof ParameterizedType) {
                 java.lang.reflect.Type[] actualTypeArguments =
                         ((ParameterizedType) genericType).getActualTypeArguments();
@@ -120,7 +124,7 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
             }
 
             throw new IllegalArgumentException("The element type of this collection type cannot be determined: "
-                    + genericType);
+                                               + genericType);
         }
 
         public B setIsNullable(boolean isNull) {
@@ -133,8 +137,8 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
             return self;
         }
 
-        public B setPropertyDescriptor(PropertyDescriptor propertyDescriptor) {
-            this.propertyDescriptor = propertyDescriptor;
+        public B setPropertyDescriptor(PropertyDescriptor propDescriptor) {
+            this.propertyDescriptor = propDescriptor;
             return self;
         }
     }

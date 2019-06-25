@@ -15,6 +15,11 @@
  */
 package com.sdl.odata.unmarshaller.json.core;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.StructuralProperty;
@@ -25,17 +30,8 @@ import com.sdl.odata.util.edm.EntityDataModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import static com.sdl.odata.unmarshaller.json.core.JsonParserUtils.getAllProperties;
 import static com.sdl.odata.unmarshaller.json.core.JsonParserUtils.getAppropriateFieldValue;
-import static com.sdl.odata.unmarshaller.json.core.JsonParserUtils.setFieldValue;
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 
 /**
@@ -113,8 +109,8 @@ public class JsonPropertyExpander {
         Collection<Object> values = EntityDataModelUtil.createPropertyCollection(property);
 
         Object current = (currentNode instanceof Map) ? currentNode : map.get(currentNode);
-        Iterable currentIt = (Iterable)((Map) current).get(node);
-        if(currentIt != null) {
+        Iterable currentIt = (Iterable) ((Map) current).get(node);
+        if (currentIt != null) {
             for (Object subValue : currentIt) {
                 Object value = getFieldValueByType(property.getElementTypeName(), subValue, map, true);
 

@@ -15,11 +15,11 @@
  */
 package com.sdl.odata.util;
 
-import com.sdl.odata.api.ODataSystemException;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
+
+import com.sdl.odata.api.ODataSystemException;
 
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 
@@ -53,7 +53,8 @@ public final class AnnotationsUtil {
      * @param <T>
      * @return
      */
-    public static <T extends Annotation> T checkAnnotationPresent(Class<T> annotationClass, AnnotatedElement... annotatedTypes) {
+    public static <T extends Annotation> T checkAnnotationPresent(Class<T> annotationClass,
+                                                                  AnnotatedElement... annotatedTypes) {
         return getAnnotation(annotationClass, annotatedTypes);
     }
 
@@ -94,7 +95,7 @@ public final class AnnotationsUtil {
      */
     public static <T extends Annotation> T getAnnotation(AnnotatedElement annotatedType, Class<T> annotationClass,
                                                          String error) {
-        return getAnnotation(annotationClass,error, annotatedType);
+        return getAnnotation(annotationClass, error, annotatedType);
     }
 
     /***
@@ -108,21 +109,22 @@ public final class AnnotationsUtil {
     public static <T extends Annotation> T getAnnotation(Class<T> annotationClass,
                                                          String error,
                                                          AnnotatedElement... annotatedTypes)  {
-        if(annotatedTypes == null || annotatedTypes.length == 0)
+        if (annotatedTypes == null || annotatedTypes.length == 0) {
             throw new IllegalArgumentException(error);
+        }
         T result = null;
-        for(AnnotatedElement annotatedType : annotatedTypes)
-        {
-            if(annotatedType.isAnnotationPresent(annotationClass))
-            {
+        for (AnnotatedElement annotatedType : annotatedTypes) {
+            if (annotatedType.isAnnotationPresent(annotationClass)) {
                 result = annotatedType.getAnnotation(annotationClass);
                 break;
             }
         }
-        if(result == null) {
+        if (result == null) {
             if (isNullOrEmpty(error)) {
                 throw new ODataSystemException("Could not load annotation: " + annotationClass
-                                               + " on source: " + (annotatedTypes.length == 1 ? annotatedTypes[0] : Arrays.asList(annotatedTypes)));
+                                               + " on source: " +
+                                               (annotatedTypes.length == 1 ? annotatedTypes[0] :
+                                                        Arrays.asList(annotatedTypes)));
             } else {
                 throw new ODataSystemException(error);
             }

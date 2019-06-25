@@ -51,7 +51,8 @@ public interface DataSource {
      * @return The updated entity.
      * @throws ODataException If the operation fails.
      */
-    Object update(ODataUri uri, Object entity, EntityDataModel entityDataModel, boolean partialUpdate) throws ODataException;
+    Object update(ODataUri uri, Object entity, EntityDataModel entityDataModel,
+                  boolean partialUpdate) throws ODataException;
 
     /**
      * Deletes an entity in the data storage.

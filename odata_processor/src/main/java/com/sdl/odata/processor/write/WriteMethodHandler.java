@@ -15,6 +15,11 @@
  */
 package com.sdl.odata.processor.write;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataClientException;
 import com.sdl.odata.api.ODataException;
@@ -34,6 +39,7 @@ import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.ODataDataSourceException;
 import com.sdl.odata.api.processor.datasource.ODataTargetTypeException;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.service.HeaderNames;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.processor.ProcessorConfiguration;
@@ -41,19 +47,9 @@ import com.sdl.odata.processor.write.util.WriteMethodUtil;
 import com.sdl.odata.util.edm.EntityDataModelUtil;
 import scala.Option;
 
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.sdl.odata.api.ODataErrorCode.PROCESSOR_ERROR;
 import static com.sdl.odata.api.parser.ODataUriUtil.asJavaMap;
 import static com.sdl.odata.api.parser.ODataUriUtil.getEntityKeyMap;
-import static com.sdl.odata.api.service.HeaderNames.*;
-import static com.sdl.odata.util.edm.EntityDataModelUtil.formatEntityKey;
-import static com.sdl.odata.util.edm.EntityDataModelUtil.getEntitySetByEntity;
-import static com.sdl.odata.util.edm.EntityDataModelUtil.getPropertyValue;
-import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
 
 /**
  * This is abstract method handler for write operation which is PUT, POST, PATCH and DELETE.
@@ -68,7 +64,8 @@ public abstract class WriteMethodHandler {
     private final ODataRequestContext requestContext;
     private final ProcessorConfiguration configuration;
 
-    public WriteMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory, ProcessorConfiguration configuration) {
+    public WriteMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory,
+                              ProcessorConfiguration configuration) {
         this.oDataUri = checkNotNull(requestContext.getUri());
         this.request = checkNotNull(requestContext.getRequest());
         this.entityDataModel = checkNotNull(requestContext.getEntityDataModel());
@@ -111,13 +108,14 @@ public abstract class WriteMethodHandler {
     protected Map<String, String> getResponseHeaders(Object entity) throws ODataEdmException {
 
         final Map<String, String> headers = new HashMap<>();
-        headers.put(LOCATION, String.format("%s/%s(%s)", getoDataUri().serviceRoot(),
-                getEntitySetByEntity(getEntityDataModel(), entity).getName(),
-                formatEntityKey(getEntityDataModel(), entity)));
-        if(isMinimalReturnPreferred())
-        {
-            headers.put(ODATA_ENTITY_ID, EntityDataModelUtil.getKeyPropertyValues(((EntityType) getEntityDataModel().getType(entity.getClass())), entity).values().iterator().next().toString());
-            headers.put(PREFERENCE_APPLIED, WriteMethodUtil.RETURN_MINIMAL);
+        headers.put(HeaderNames.LOCATION, String.format("%s/%s(%s)", getoDataUri().serviceRoot(),
+                                    EntityDataModelUtil.getEntitySetByEntity(getEntityDataModel(), entity).getName(),
+                                    EntityDataModelUtil.formatEntityKey(getEntityDataModel(), entity)));
+        if (isMinimalReturnPreferred()) {
+            headers.put(HeaderNames.ODATA_ENTITY_ID, EntityDataModelUtil.getKeyPropertyValues(
+                    ((EntityType) getEntityDataModel()
+                            .getType(entity.getClass())), entity).values().iterator().next().toString());
+            headers.put(HeaderNames.PREFERENCE_APPLIED, WriteMethodUtil.RETURN_MINIMAL);
         }
         return headers;
     }
@@ -134,10 +132,10 @@ public abstract class WriteMethodHandler {
     protected void validateKeys(Object entity, EntityType type) throws ODataClientException, ODataProcessorException {
 
         final Map<String, Object> oDataUriKeyValues = asJavaMap(getEntityKeyMap(getoDataUri(), getEntityDataModel()));
-        if(!Boolean.TRUE.equals(configuration.getUpdateRequireId())) {
-            for(Map.Entry<String, Object> keyEntry: oDataUriKeyValues.entrySet())
-            {
-                EntityDataModelUtil.setPropertyValue(type.getStructuralProperty(keyEntry.getKey()), entity, keyEntry.getValue());
+        if (!Boolean.TRUE.equals(configuration.getUpdateRequireId())) {
+            for (Map.Entry<String, Object> keyEntry : oDataUriKeyValues.entrySet()) {
+                EntityDataModelUtil.setPropertyValue(type.getStructuralProperty(keyEntry.getKey()),
+                                                     entity, keyEntry.getValue());
             }
             return;
         }
@@ -222,8 +220,8 @@ public abstract class WriteMethodHandler {
             return;
         }
 
-        visitProperties(edm, (StructuredType) type, property -> {
-            Object value = getPropertyValue(property, entity);
+        EntityDataModelUtil.visitProperties(edm, (StructuredType) type, property -> {
+            Object value = EntityDataModelUtil.getPropertyValue(property, entity);
             if (value == null) {
                 if (!property.isNullable()) {
                     throw new ODataBadRequestException("The property '" + property.getName() +

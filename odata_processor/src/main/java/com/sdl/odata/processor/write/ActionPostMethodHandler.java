@@ -36,7 +36,8 @@ public class ActionPostMethodHandler extends WriteMethodHandler {
      * @param requestContext    The ODataRequestContext.
      * @param dataSourceFactory The DataSourceFactory.
      */
-    public ActionPostMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory, ProcessorConfiguration configuration) {
+    public ActionPostMethodHandler(ODataRequestContext requestContext, DataSourceFactory dataSourceFactory,
+                                   ProcessorConfiguration configuration) {
         super(requestContext, dataSourceFactory, configuration);
     }
 

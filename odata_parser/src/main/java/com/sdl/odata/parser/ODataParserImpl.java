@@ -34,10 +34,14 @@ public class ODataParserImpl implements ODataParser {
 
     private ParserConfiguration parserConfiguration;
 
-    public ODataParserImpl(){this.parserConfiguration = new ParserConfiguration();}
+    public ODataParserImpl() {
+        this.parserConfiguration = new ParserConfiguration();
+    }
 
     @Autowired
-    public ODataParserImpl(ParserConfiguration parserConfiguration){this.parserConfiguration = parserConfiguration;}
+    public ODataParserImpl(ParserConfiguration parserConfiguration) {
+        this.parserConfiguration = parserConfiguration;
+    }
 
     @Override
     public ODataUri parseUri(String uri, EntityDataModel entityDataModel) throws ODataUriParseException {
@@ -51,7 +55,8 @@ public class ODataParserImpl implements ODataParser {
     public ResourcePath parseResourcePath(String resourcePath, EntityDataModel entityDataModel)
             throws ODataUriParseException {
         LOG.debug("Parsing resource path: {}", resourcePath);
-        ResourcePath parsedResourcePath = new ODataUriParser(entityDataModel, parserConfiguration.getBasePath()).parseResourcePath(resourcePath);
+        ResourcePath parsedResourcePath = new ODataUriParser(entityDataModel,
+          parserConfiguration.getBasePath()).parseResourcePath(resourcePath);
         LOG.debug("Parse result: {}", parsedResourcePath);
         return parsedResourcePath;
     }

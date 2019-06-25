@@ -16,14 +16,14 @@
 package com.sdl.odata.model;
 
 /**
- * Extension of this class marks the OData entity as either reference or not i.e. in case of @odata.bind this marks it as a reference to an entity, not an entity itself.
+ * Extension of this class marks the OData entity as either reference or not i.e.
+ * in case of @odata.bind this marks it as a reference to an entity, not an entity itself.
  */
 public class ReferencableEntity {
 
     private String referenceString;
 
-    public boolean isReference()
-    {
+    public boolean isReference() {
         return referenceString != null && !referenceString.isEmpty();
     }
 
