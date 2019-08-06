@@ -147,7 +147,7 @@
             <dependency>
                 <groupId>org.apache.deamon</groupId>
                 <artifactId>apache-procrun</artifactId>
-                <classifier>procrun</classifier>
+                <!--<classifier>procrun</classifier>-->
                 <version>${apache-procrun.version}</version>
                 <type>exe</type>
             </dependency>
