@@ -273,7 +273,7 @@ public class AnnotationEntityDataModelFactoryTest {
         assertThat(customerType.getMetaType(), is(MetaType.ENTITY));
         assertNull(customerType.getBaseTypeName());
         assertFalse(customerType.isAbstract());
-        assertThat(customerType.getStructuralProperties().size(), is(7));
+        assertThat(customerType.getStructuralProperties().size(), is(8));
 
         Property idProp = (Property) customerType.getStructuralProperty("id");
         assertThat(idProp.getName(), is("id"));
