@@ -6,6 +6,7 @@
         <metadata:properties>
             <data:id metadata:type="Int64">10</data:id>
             <data:name>Harry</data:name>
+            <data:enumSample metadata:null="true" metadata:type="#ODataSample.EnumSample"/>
             <data:Phone metadata:type="#Collection(String)"/>
             <data:address metadata:type="#Collection(ODataDemo.Address)">
                 <metadata:element>

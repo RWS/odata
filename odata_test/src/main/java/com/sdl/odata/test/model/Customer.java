@@ -51,6 +51,9 @@ public class Customer {
     @EdmProperty(nullable = false, maxLength = EDM_MAX_LENGTH)
     private String name;
 
+    @EdmProperty(nullable = true)
+    private EnumSample enumSample;
+
     @EdmProperty(nullable = true, name = PHONE)
     private List<String> phoneNumbers = new ArrayList<>();
 
@@ -201,6 +204,15 @@ public class Customer {
 
     public Customer setBankAccount(BankAccount account) {
         this.bankAccount = account;
+        return this;
+    }
+
+    public EnumSample getEnumSample() {
+        return enumSample;
+    }
+
+    public Customer setEnumSample(EnumSample enumSample) {
+        this.enumSample = enumSample;
         return this;
     }
 }

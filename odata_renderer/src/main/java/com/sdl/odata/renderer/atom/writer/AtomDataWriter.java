@@ -296,7 +296,11 @@ public class AtomDataWriter {
      * @param enumType The OData enum type.
      */
     private void marshallEnum(Object value, EnumType enumType) throws XMLStreamException {
-        LOG.trace("Enum value: {} of type: {}", value, enumType);
-        xmlWriter.writeCharacters(value.toString());
+        if(value != null) {
+            LOG.trace("Enum value: {} of type: {}", value, enumType);
+            xmlWriter.writeCharacters(value.toString());
+        } else{
+            LOG.trace("Enum value is null");
+        }
     }
 }
