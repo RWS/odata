@@ -47,6 +47,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -57,11 +59,27 @@ import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
  */
 public final class EntityDataModelUtil {
     private static final Logger LOG = LoggerFactory.getLogger(EntityDataModelUtil.class);
+    private static final ConcurrentMap<String, Holder> classes = new ConcurrentHashMap<>();
 
     /**
      * Collection pattern.
      */
     public static final Pattern COLLECTION_PATTERN = Pattern.compile("Collection\\((.+)\\)");
+
+    private static class Holder {
+        private final String typeName;
+        private final boolean collection;
+
+        public Holder(String typeName, Class clazz) {
+            this.typeName = typeName;
+            this.collection = Collection.class.isAssignableFrom(clazz) ||
+                              COLLECTION_PATTERN.matcher(typeName).matches();
+        }
+
+        public boolean isCollection() {
+            return collection;
+        }
+    }
 
     private EntityDataModelUtil() {
     }
@@ -674,12 +692,18 @@ public final class EntityDataModelUtil {
             return true;
         }
         try {
-            if (Collection.class.isAssignableFrom(Class.forName(typeName))
-                    || COLLECTION_PATTERN.matcher(typeName).matches()) {
+            Holder holder = classes.get(typeName);
+            if (holder != null) {
+                return holder.isCollection();
+            }
+            Class clazz = Class.forName(typeName);
+            holder = new Holder(typeName, clazz);
+            classes.putIfAbsent(typeName, holder);
+            if (holder.isCollection()) {
                 return true;
             }
         } catch (ClassNotFoundException e) {
-            LOG.debug("Not possible to find class for type name: {}", typeName);
+            LOG.warn("Not possible to find class for type name: {}", typeName, e);
         }
 
         return false;
@@ -712,7 +736,7 @@ public final class EntityDataModelUtil {
                 throw new ODataEdmException("Entity key is not found for " + entity);
             }
         } catch (IllegalAccessException e) {
-            LOG.error("Not possible to retrieve entity key for entity " + entity);
+            LOG.error("Not possible to retrieve entity key for entity " + entity, e);
             throw new ODataEdmException("Not possible to retrieve entity key for entity " + entity, e);
         }
     }
