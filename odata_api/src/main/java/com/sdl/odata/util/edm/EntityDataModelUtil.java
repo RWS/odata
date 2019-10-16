@@ -59,7 +59,7 @@ import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
  */
 public final class EntityDataModelUtil {
     private static final Logger LOG = LoggerFactory.getLogger(EntityDataModelUtil.class);
-    private static final ConcurrentMap<String, Holder> classes = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Holder> CACHED_CLASSES = new ConcurrentHashMap<>();
 
     /**
      * Collection pattern.
@@ -70,7 +70,7 @@ public final class EntityDataModelUtil {
         private final String typeName;
         private final boolean collection;
 
-        public Holder(String typeName, Class clazz) {
+        Holder(String typeName, Class clazz) {
             this.typeName = typeName;
             this.collection = Collection.class.isAssignableFrom(clazz) ||
                               COLLECTION_PATTERN.matcher(typeName).matches();
@@ -692,13 +692,13 @@ public final class EntityDataModelUtil {
             return true;
         }
         try {
-            Holder holder = classes.get(typeName);
+            Holder holder = CACHED_CLASSES.get(typeName);
             if (holder != null) {
                 return holder.isCollection();
             }
             Class clazz = Class.forName(typeName);
             holder = new Holder(typeName, clazz);
-            classes.putIfAbsent(typeName, holder);
+            CACHED_CLASSES.putIfAbsent(typeName, holder);
             if (holder.isCollection()) {
                 return true;
             }
