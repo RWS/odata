@@ -13,15 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.service
+package com.sdl.odata.api.service;
 
-import org.scalatest.{Suite, BeforeAndAfterAll}
-import akka.testkit.TestKit
+import com.sdl.odata.api.ODataException;
 
-trait StopSystemAfterAll extends BeforeAndAfterAll {
-  this: TestKit with Suite =>
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
-  override protected def afterAll() {
-    super.afterAll()
-  }
+/**
+ * OData content used for streaming content.
+ * Used when we want to stream response in different smaller chunks.
+ */
+public interface ODataContent {
+
+    /**
+     * Write the available content into the given <code>OutputStream</code>.
+     *
+     * @param outputStream {@link OutputStream} in which the content is written.
+     */
+    void write(HttpServletResponse outputStream) throws IOException, ODataException;
 }

@@ -22,6 +22,7 @@ import com.sdl.odata.api.parser.ODataBatchException;
 import com.sdl.odata.api.parser.ODataBatchRendererException;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -187,6 +189,16 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
         }
 
         LOG.debug("Finishing rendering batch request entities for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        ChunkedActionRenderResult renderResult = super.renderStart(requestContext, result, outputStream);
+        renderResult.setContentType(MediaType.MULTIPART);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
+
+        return renderResult;
     }
 
     private void buildHTTPandBinary(StringBuilder sb) {

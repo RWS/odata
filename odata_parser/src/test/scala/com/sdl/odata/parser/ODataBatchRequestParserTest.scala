@@ -470,7 +470,7 @@ class ODataBatchRequestParserTest extends FunSuite {
     val changesetRequestComponent = parsedContent.requestComponents(0).asInstanceOf[ChangeSetRequestComponent]
 
     assert(changesetRequestComponent.getHeaders() != null)
-    assert(changesetRequestComponent.getHeaders().headers.size == 0)
+    assert(changesetRequestComponent.getHeaders().headers.isEmpty)
 
     assert(changesetRequestComponent.changesetRequests != null)
 
@@ -492,5 +492,4 @@ class ODataBatchRequestParserTest extends FunSuite {
     assert(changeSetOperation1.requestDetails.get("RequestHost").get == "https://secure-host")
     assert(changeSetOperation1.requestDetails.get("RequestBody").get == "{ \"some\" : \"content\" }")
   }
-
 }

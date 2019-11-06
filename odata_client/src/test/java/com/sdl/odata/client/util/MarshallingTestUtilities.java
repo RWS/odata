@@ -34,15 +34,16 @@ import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.atom.AtomRenderer;
+import com.sdl.odata.renderer.xml.XMLValueRenderer;
 import com.sdl.odata.unmarshaller.atom.ODataAtomParser;
 import scala.Option;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
+import static com.sdl.odata.api.service.MediaType.XML;
 import static com.sdl.odata.api.service.ODataRequest.Method.GET;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
@@ -69,14 +70,32 @@ public final class MarshallingTestUtilities {
      */
     public static String atomMarshall(Object entityDto, ODataUri serviceUri)
             throws ODataException, UnsupportedEncodingException {
-        // build a duumy OData response
+        // build a dummy OData response
         ODataResponse.Builder builder = new ODataResponse.Builder().setStatus(OK);
 
         // marshall the entity Atom XML into the response
         new AtomRenderer().render(buildODataContext("", ATOM_XML, serviceUri), QueryResult.from(entityDto), builder);
 
         // return the text content of the response
-        return builder.build().getBodyText(StandardCharsets.UTF_8.name());
+        return builder.build().getBodyText(UTF_8.name());
+    }
+
+    /**
+     * Returns Collection of primitives or primitive in XML format.
+     *
+     * @param objectToMarshall object to marshall
+     * @param serviceUri       service Uri
+     * @return marshalled XML object
+     * @throws UnsupportedEncodingException
+     * @throws ODataException
+     */
+    public static String marshalPrimitives(Object objectToMarshall, ODataUri serviceUri)
+            throws UnsupportedEncodingException, ODataException {
+        ODataResponse.Builder responseBuilder = new ODataResponse.Builder().setStatus(OK);
+        new XMLValueRenderer().render(buildODataContext("", XML, serviceUri),
+                QueryResult.from(objectToMarshall), responseBuilder);
+
+        return responseBuilder.build().getBodyText(UTF_8.name());
     }
 
     /**

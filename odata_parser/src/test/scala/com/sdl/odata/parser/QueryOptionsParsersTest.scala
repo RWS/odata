@@ -15,9 +15,9 @@
  */
 package com.sdl.odata.parser
 
-import org.scalatest.FunSuite
 import com.sdl.odata.api.parser._
 import com.sdl.odata.api.service.MediaType
+import org.scalatest.FunSuite
 
 class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
 
@@ -192,9 +192,9 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
     val relativeUri = "/Customers?$expand=Orders($levels=10)"
 
     testSuccess(serviceRoot + relativeUri, ODataUri(serviceRoot,
-      ResourcePathUri(EntitySetPath("Customers",None),
+      ResourcePathUri(EntitySetPath("Customers", None),
         List(ExpandOption(List(PathExpandItem(None,
-          NavigationPropertyExpandPathSegment("Orders",None),List(
+          NavigationPropertyExpandPathSegment("Orders", None), List(
             LevelsQueryOption(10)))))))))
   }
 
@@ -241,10 +241,10 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
 
     testSuccess(serviceRoot + relativeUri, ODataUri(
       serviceRoot,
-      ResourcePathUri(EntitySetPath("Customers",None),
+      ResourcePathUri(EntitySetPath("Customers", None),
         List(ExpandOption(
           List(PathExpandItem(None,
-            NavigationPropertyExpandPathSegment("Orders",None),List()))),
+            NavigationPropertyExpandPathSegment("Orders", None), List()))),
           SkipOption(1),
           OrderByOption(List(
             AscendingOrderByItem(ImplicitVariableExpr(None)))),
@@ -349,6 +349,37 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
     implicit val p = parser.keyValuePair("ODataDemo.Customer")
 
     testSuccess("id=1", ("id", NumberLiteral(1)))
+  }
+
+  // apply option test
+  test("apply option") {
+    implicit val p = parser.odataUri
+
+    val serviceRoot = "http://localhost:8080/odata.svc"
+    val relativeUri = "/Products?$apply=groupby((id, name), aggregate($count as ProductCount))"
+
+    testSuccess(serviceRoot + relativeUri,
+      ODataUri(serviceRoot, ResourcePathUri(
+        EntitySetPath("Products", None),
+        List(ApplyOption(
+          ApplyExpr("groupby",
+            ApplyMethodCallExpr(ApplyPropertyExpr(
+              List(EntityPathExpr(None, Some(PropertyPathExpr("id", None))),
+                EntityPathExpr(None, Some(PropertyPathExpr("name", None))))),
+              ApplyFunctionExpr("aggregate", "$count as ProductCount"))))))))
+  }
+
+  // count option test
+  test("count option") {
+    implicit val p = parser.odataUri
+
+    val serviceRoot = "http://localhost:8080/odata.svc"
+    val relativeUri = "/Products?$count=true"
+
+    testSuccess(serviceRoot + relativeUri,
+      ODataUri(serviceRoot, ResourcePathUri(
+        EntitySetPath("Products", None),
+        List(CountOption(true)))))
   }
 
 }

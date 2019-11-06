@@ -36,11 +36,13 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import scala.Option;
-import scala.collection.JavaConversions;
+import scala.collection.JavaConverters;
 
 import java.util.Map;
 import java.util.Set;
 
+import static com.sdl.odata.api.service.HeaderNames.TE;
+import static com.sdl.odata.api.service.HeaderNames.X_ODATA_TE;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -50,6 +52,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
 
     private static final Logger LOG = getLogger(ODataFunctionProcessorImpl.class);
+
+    private static final String TRANSFER_ENCODING_CHUNKED = "chunked";
 
     @Autowired
     private DataSourceFactory dataSourceFactory;
@@ -61,7 +65,18 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
         Object result;
 
         try {
-            result = operation.doOperation(requestContext, dataSourceFactory);
+            // get the default http1.1 te header value
+            String te = requestContext.getRequest().getHeader(TE);
+            // get custom te header value that comes unchanged in http2 env
+            String xte = requestContext.getRequest().getHeader(X_ODATA_TE);
+
+            boolean isChunkedRequest = TRANSFER_ENCODING_CHUNKED.equals(te) || TRANSFER_ENCODING_CHUNKED.equals(xte);
+
+            if (isChunkedRequest) {
+                result = operation.doStreamOperation(requestContext, dataSourceFactory);
+            } else {
+                result = operation.doOperation(requestContext, dataSourceFactory);
+            }
         } catch (Exception e) {
             LOG.error("Unexpected exception when executing a function.", e);
             throw e;
@@ -125,12 +140,44 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
                                          Option<scala.collection.immutable.Map<String, String>> functionCallParameters,
                                          Set<Parameter> parameters)
             throws ODataUnmarshallingException {
+        StringBuilder validationMessage = new StringBuilder();
         if (functionCallParameters.isDefined() && !functionCallParameters.get().isEmpty()) {
-            Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(functionCallParameters.get());
+            Map<String, String> parametersMap = JavaConverters.mapAsJavaMap(functionCallParameters.get());
+            validateAndSetParameters(functionOperationObject, parameters, parametersMap, validationMessage);
+        } else {
+            validateAndSetParameters(functionOperationObject, parameters, null, validationMessage);
+        }
+        if (!"".equals(validationMessage.toString())) {
+            throwValidationException(validationMessage);
+        }
+    }
+
+    private void validateAndSetParameters(Object functionOperationObject, Set<Parameter> parameters,
+                                          Map<String, String> parametersMap, StringBuilder validationMessage)
+            throws ODataUnmarshallingException {
+        if (parametersMap == null) {
+            parameters.stream().filter(parameter -> !parameter.isNullable()).
+                    forEach(parameter -> validationMessage.append(parameter.getName() + ", "));
+        } else {
             for (Parameter parameter : parameters) {
-                ParameterTypeUtil.setParameter(functionOperationObject, parameter.getJavaField(),
-                        parametersMap.get(parameter.getName()));
+                String parameterName = parameter.getName();
+                String parameterValue = parametersMap.get(parameterName);
+                if (!parameter.isNullable() && parameterValue == null) {
+                    validationMessage.append(parameterName + ", ");
+                }
+                if (parameterValue != null) {
+                    ParameterTypeUtil.setParameter(functionOperationObject, parameter.getJavaField(),
+                            parameterValue);
+                }
             }
         }
     }
+
+    private void throwValidationException(StringBuilder validationMessage)
+            throws ODataUnmarshallingException {
+        validationMessage.insert(0, "Cannot send null value for not nullable field(s) ");
+        throw new ODataUnmarshallingException(validationMessage.delete(validationMessage.
+                lastIndexOf(", "), validationMessage.length()).toString());
+    }
+
 }

@@ -20,7 +20,6 @@ import com.sdl.odata.api.processor.query._
 import com.sdl.odata.api.service.{MediaType, ODataRequestContext}
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory
 import com.sdl.odata.processor.model.{ODataMobilePhone, ODataPerson}
-import com.sdl.odata.processor.model.ODataMobilePhone
 import org.scalatest.FunSuite
 
 class QueryModelBuilderTest extends FunSuite {
@@ -249,7 +248,7 @@ class QueryModelBuilderTest extends FunSuite {
     val uri = ODataUri("", ResourcePathUri(EntitySetPath("Persons",
       Some(EntityCollectionPath(None, Some(KeyPredicatePath(SimpleKeyPredicate(StringLiteral(id)),
         Some(EntityPath(None, Some(PropertyPath("mobilePhones", None))))))))),
-        List(SkipOption(10), OrderByOption(List(AscendingOrderByItem(PropertyPathExpr("phoneNumber", None)))))))
+      List(SkipOption(10), OrderByOption(List(AscendingOrderByItem(PropertyPathExpr("phoneNumber", None)))))))
 
     val query = new QueryModelBuilder(entityDataModel).build(new ODataRequestContext(null, uri, entityDataModel))
 
@@ -271,6 +270,28 @@ class QueryModelBuilderTest extends FunSuite {
       )
     )
 
+    assert(query === expected)
+  }
+
+  // groupby test
+  test("groupby") {
+    val uri = ODataUri("", ResourcePathUri(
+      EntitySetPath("Persons", None),
+      List(ApplyOption(ApplyExpr("groupby", ApplyMethodCallExpr(ApplyPropertyExpr(
+        List(EntityPathExpr(None, Some(PropertyPathExpr("id", None))))),
+        ApplyFunctionExpr("aggregate", "$count as PersonCount")))))))
+    val query = new QueryModelBuilder(entityDataModel).build(new ODataRequestContext(null, uri, entityDataModel))
+    val expected = ODataQuery(ApplyOperation(SelectOperation("Persons", true), "groupby", List("id"), ApplyFunction("aggregate", "$count as PersonCount")))
+    assert(query === expected)
+  }
+
+  // $count test
+  test("$count") {
+    val uri = ODataUri("", ResourcePathUri(
+      EntitySetPath("Persons", None),
+      List(CountOption(true))))
+    val query = new QueryModelBuilder(entityDataModel).build(new ODataRequestContext(null, uri, entityDataModel))
+    val expected = ODataQuery(CountOperation(SelectOperation("Persons", true), true))
     assert(query === expected)
   }
 }

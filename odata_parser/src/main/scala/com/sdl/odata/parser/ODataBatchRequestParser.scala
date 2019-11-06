@@ -61,7 +61,7 @@ class ODataBatchRequestParser extends RegexParsers {
   // Step1: Parse the request content which can contain Individual requests for change sets
   def parseRequestContent: Parser[List[ODataRequestComponent]] = rep(parseQueryOrChangeSet) <~ "--" + batchId + "--".r ^^ {
     res => {
-      val requestComponents = res.toList
+      val requestComponents = res
 
       if (requestComponents.isEmpty) throw new ODataBatchParseException("Batch request is empty.")
       requestComponents
@@ -167,9 +167,9 @@ class ODataBatchRequestParser extends RegexParsers {
     }
   }
 
-  def getRequestURI: Parser[Map[String, String]] = opt("^(http|https):\\/\\/[^\\/]*[:\\d{0,5}]?".r) ~ opt("\\/.+\\/(?=[a-zA-Z])".r) ~ opt("\\$.d{0,5}\\/".r) ~
+def getRequestURI: Parser[Map[String, String]] = opt("^(http|https):\\/\\/[^\\/]*[:\\d{0,5}]?".r) ~ opt("\\/.+\\/(?=[a-zA-Z])".r) ~ opt("\\$.d{0,5}\\/".r) ~
     ("[^\\s]+".r <~ opt(" HTTP/\\d\\.\\d".r)) <~ lineSeparator ^^ {
-    case hostComponent ~ relativePath ~ contentId ~ reqUri => {
+  case hostComponent ~ relativePath ~ contentId ~ reqUri => {
       var components = Map("RequestEntity" -> reqUri)
       relativePath match {
         case Some(relPath) => components += ("RelativePath" -> relPath)
@@ -179,10 +179,12 @@ class ODataBatchRequestParser extends RegexParsers {
         case Some(host) => components += ("RequestHost" -> host)
         case None =>
       }
+
       contentId match {
         case Some(id) => components += ("ContentId" -> id)
         case None =>
       }
+
       components
     }
 

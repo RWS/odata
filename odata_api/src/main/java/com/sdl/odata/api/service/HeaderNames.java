@@ -48,13 +48,33 @@ public final class HeaderNames {
      */
     public static final String CONTENT_LANGUAGE = "Content-Language";
     /**
-     * Contnet Encoding.
+     * Content Encoding.
      */
     public static final String CONTENT_ENCODING = "Content-Encoding";
     /**
      * Content Length.
      */
     public static final String CONTENT_LENGTH = "Content-Length";
+    /**
+     * TE.
+     * The transfer encodings the user agent is willing to accept.
+     */
+    public static final String TE = "TE";
+    /**
+     * X-Odata-TE.
+     * The duplicate of {@link HeaderNames#TE} header. Represents the transfer encodings the user agent
+     * is willing to accept.
+     */
+    public static final String X_ODATA_TE = "X-Odata-TE";
+    /**
+     * Transfer encoding.
+     * The form of encoding used to safely transfer the entity to the user.
+     */
+    public static final String TRANSFER_ENCODING = "Transfer-Encoding";
+    /**
+     * OData chunked error message property name.
+     */
+    public static final String ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY = "ODATA_CHUNKED_ERROR_MESSAGE";
     /**
      * ETag.
      */

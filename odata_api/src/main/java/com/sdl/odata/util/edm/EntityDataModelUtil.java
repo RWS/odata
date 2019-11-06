@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
@@ -56,6 +57,11 @@ import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
  */
 public final class EntityDataModelUtil {
     private static final Logger LOG = LoggerFactory.getLogger(EntityDataModelUtil.class);
+
+    /**
+     * Collection pattern.
+     */
+    public static final Pattern COLLECTION_PATTERN = Pattern.compile("Collection\\((.+)\\)");
 
     private EntityDataModelUtil() {
     }
@@ -331,7 +337,7 @@ public final class EntityDataModelUtil {
 
     /**
      * Creates a new instance of a collection that is compatible with the specified property.
-     *
+     * <p>
      * At the moment, only List and Set are supported. If the property is of a type that is not compatible with List
      * or Set, an exception is thrown.
      *
@@ -668,7 +674,8 @@ public final class EntityDataModelUtil {
             return true;
         }
         try {
-            if (Collection.class.isAssignableFrom(Class.forName(typeName))) {
+            if (Collection.class.isAssignableFrom(Class.forName(typeName))
+                    || COLLECTION_PATTERN.matcher(typeName).matches()) {
                 return true;
             }
         } catch (ClassNotFoundException e) {

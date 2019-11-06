@@ -36,7 +36,7 @@ import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
  */
 final class AnnotationEntityTypeFactory extends AnnotationStructuredTypeFactory<EntityType> {
 
-    public AnnotationEntityTypeFactory(TypeNameResolver typeNameResolver) {
+    AnnotationEntityTypeFactory(TypeNameResolver typeNameResolver) {
         super(typeNameResolver);
     }
 

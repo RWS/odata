@@ -17,8 +17,10 @@ package com.sdl.odata.renderer.xml;
 
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
+import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.renderer.AbstractAtomRenderer;
@@ -27,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
@@ -34,11 +37,11 @@ import static com.sdl.odata.api.service.MediaType.XML;
 
 /**
  * Renderer which renders an OData XML value.
- *
+ * <p>
  * This renderer generates an XML response body with an &lt;metadata:value&gt; root element. This should for example be
  * used when the result of a query consists of a single primitive or complex value, or a collection of primitive or
  * complex values.
- *
+ * <p>
  * Reference: OData Atom Format Version 4.0 specification
  */
 @Component
@@ -87,5 +90,38 @@ public final class XMLValueRenderer extends AbstractAtomRenderer {
         }
 
         LOG.debug("End rendering property for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        LOG.debug("Start rendering start property for request: {}", requestContext);
+        XMLPropertyWriter propertyWriter = new XMLPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        Type type = propertyWriter.getTypeFromODataUri();
+        propertyWriter.validateRequestChunk(type, result.getData());
+
+        ChunkedActionRenderResult renderResult = propertyWriter.getPropertyStartDocument(result.getData(),
+                outputStream);
+        renderResult.setType(type);
+        renderResult.setTypeValidated(true);
+        renderResult.setWriter(propertyWriter);
+        renderResult.setContentType(XML);
+        return renderResult;
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderBody(ODataRequestContext requestContext, QueryResult result,
+                                                ChunkedActionRenderResult previousResult) throws ODataException {
+        LOG.debug("Start rendering body property for request: {}", requestContext);
+        return ((XMLPropertyWriter) previousResult.getWriter())
+                .getPropertyBodyDocument(result.getData(), previousResult);
+    }
+
+    @Override
+    public void renderEnd(ODataRequestContext requestContext, QueryResult result,
+                          ChunkedActionRenderResult previousResult) throws ODataException {
+        LOG.debug("Start rendering end property for request: {}", requestContext);
+        ((XMLPropertyWriter) previousResult.getWriter()).getPropertyEndDocument(result.getData(), previousResult);
     }
 }
