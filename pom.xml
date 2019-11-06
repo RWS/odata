@@ -104,7 +104,7 @@
         <brave.version>3.8.0</brave.version>
         <guava.version>18.0</guava.version>
         <httpcomponents.version>4.5.2</httpcomponents.version>
-        <jackson.version>2.9.4</jackson.version>
+        <jackson.version>2.10.0</jackson.version>
         <jacoco.version>0.7.7.201606060606</jacoco.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.1.7</logback.version>
