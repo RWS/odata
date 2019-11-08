@@ -41,7 +41,7 @@ public enum OnDeleteAction {
 
     private final String name;
 
-    private OnDeleteAction(String name) {
+    OnDeleteAction(String name) {
         this.name = name;
     }
 
