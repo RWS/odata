@@ -4,4 +4,7 @@
 
 commonBuild {
     dependencyCheck = false
+    mavenPhases = [
+            default: 'install',
+    ]
 }
