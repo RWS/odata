@@ -98,8 +98,8 @@
         <brave.version>4.2.0</brave.version>
         <guava.version>27.1-jre</guava.version>
         <httpcomponents.version>4.5.9</httpcomponents.version>
-        <jackson.version>2.9.9</jackson.version>
-        <jacoco.version>0.8.4</jacoco.version>
+        <jackson.version>2.10.0</jackson.version>
+        <jacoco.version>0.8.5</jacoco.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.2.3</logback.version>
         <mockito.version>2.24.0</mockito.version>
@@ -490,7 +490,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.2.0</version>
                     <configuration>
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
@@ -512,7 +512,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.2.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.scalatest</groupId>
@@ -540,7 +540,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>8.20</version>
+                            <version>8.21</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -754,7 +754,6 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <!--suppress MavenModelInspection -->
-                    <version>${jacoco.version}</version>
                 </dependency>
             </dependencies>
             <build>
