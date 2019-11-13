@@ -17,8 +17,8 @@
 
 -->
 <!DOCTYPE module PUBLIC
-    "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
-    "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
 <!--
 
@@ -63,7 +63,7 @@
     <!-- Checks whether files end with a new line.                        -->
     <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
     <module name="NewlineAtEndOfFile">
-        <property name="lineSeparator" value="lf" />
+        <property name="lineSeparator" value="lf"/>
     </module>
     <!-- Checks that property files contain the same keys.         -->
     <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
@@ -141,8 +141,6 @@
         </module>
 
 
-
-
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
         <module name="EmptyForIteratorPad"/>
@@ -190,6 +188,7 @@
         <module name="HiddenField">
             <property name="ignoreConstructorParameter" value="true"/>
             <property name="ignoreSetter" value="true"/>
+            <property name="setterCanReturnItsClass" value="true"/>
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
@@ -202,8 +201,8 @@
         <!-- See http://checkstyle.sf.net/config_design.html -->
         <!-- We do not want DesignForExtension checkstyle rule - see TCWD-397 - IHO 21/07/2013 -->
         <!--module name="DesignForExtension"/-->
-        <module name="FinalClass"/>
-        <module name="HideUtilityClassConstructor"/>
+        <!--<module name="FinalClass"/>-->
+        <!--<module name="HideUtilityClassConstructor"/>-->
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>
 
@@ -222,18 +221,14 @@
             -->
         <!--module name="Indentation"/-->
 
-        <module name="SuppressWarningsHolder" />
-
-        <module name="RegexpSinglelineJava">
-            <property name="format" value="@author"/>
-            <property name="ignoreComments" value="false"/>
-            <property name="message" value="@author tag is not allowed"/>
-        </module>
+        <module name="SuppressWarningsHolder"/>
+        <module name="SuppressionCommentFilter"/>
     </module>
 
     <module name="SuppressionFilter">
         <property name="file" value="odata_checkstyle/src/main/resources/checkstyle-suppressions.xml"/>
     </module>
 
-    <module name="SuppressWarningsFilter" />
+    <module name="SuppressWarningsFilter"/>
+
 </module>
