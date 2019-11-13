@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk8
 install:
   export CUSTOM_MVN_VERSION=3.5.4;
   echo "Updating Maven to ${CUSTOM_MVN_VERSION}...";
