@@ -1,7 +1,10 @@
 #!groovy
 
-@Library('delivery')
-def dummy
-commonBuild {
+@Library('delivery') _
 
+commonBuild {
+    dependencyCheck = false
+    mavenPhases = [
+            default: 'install',
+    ]
 }
