@@ -52,7 +52,7 @@ class ODataUriParser(val entityDataModel: EntityDataModel) extends RegexParsers
   }
 
   // Everything up to ".svc" (case-insensitive) is considered to be part of the service root
-  def serviceRoot: Parser[String] = """(?i)^.*?\.svc""".r <~ opt("/")
+  def serviceRoot: Parser[String] = """(?i)^(?:.*?\.svc)+""".r <~ opt("/")
 
   def odataRelativeUri: Parser[RelativeUri] = batchUri | entityUri | metadataUri | resourcePathUri
 
