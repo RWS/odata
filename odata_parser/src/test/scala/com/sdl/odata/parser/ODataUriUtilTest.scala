@@ -502,7 +502,7 @@ class ODataUriUtilTest extends FunSuite with ParserTestHelpers {
   }
 
   test("host containing '.svc' part") {
-    val host = "https://my-host.local-dev.svc:8080/odata.svc"
+    val host = "http://localhost:8080/odata.svc"
     val uri = s"$host/Customers(1)"
     assert(parser.parseUri(uri) ===
       ODataUri(host, ResourcePathUri(EntitySetPath("Customers", Some(EntityCollectionPath(None, Some(KeyPredicatePath(SimpleKeyPredicate(NumberLiteral(1)), None))))), List()))

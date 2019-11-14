@@ -134,16 +134,17 @@ public class JsonPropertyExpander {
      */
     public void fillPrimitiveProperty(Object entity, Set<String> keySet, StructuralProperty property,
                                       String node, Map<String, Object> map) throws ODataException {
+        boolean isPropertyFound = false;
         for (String target : keySet) {
             if (node.equalsIgnoreCase(target)) {
+                isPropertyFound = true;
                 Object value = getFieldValueByType(property.getTypeName(), target, map, false);
-                if (value != null) {
-                    EntityDataModelUtil.setPropertyValue(property, entity, value);
-                    break;
-                } else {
-                    LOG.warn("There is no element with name '{}'", node);
-                }
+                EntityDataModelUtil.setPropertyValue(property, entity, value);
+                break;
             }
+        }
+        if (!isPropertyFound) {
+            LOG.warn("There is no element with name '{}'", node);
         }
     }
 
