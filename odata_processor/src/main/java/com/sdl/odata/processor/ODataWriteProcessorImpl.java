@@ -19,7 +19,6 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.processor.ODataWriteProcessor;
 import com.sdl.odata.api.processor.ProcessorResult;
-import com.sdl.odata.api.processor.datasource.ODataDataSourceException;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
