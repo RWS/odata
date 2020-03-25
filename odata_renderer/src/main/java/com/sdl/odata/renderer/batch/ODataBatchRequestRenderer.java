@@ -16,7 +16,6 @@
 package com.sdl.odata.renderer.batch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdl.odata.api.ODataErrorCode;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataBatchException;
@@ -24,7 +23,6 @@ import com.sdl.odata.api.parser.ODataBatchRendererException;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.query.QueryResult;
 import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
-import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
