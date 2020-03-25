@@ -90,14 +90,20 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
     private Operation getFunctionOrFunctionImportOperation(ODataRequestContext context)
             throws ODataException {
         Operation functionOperation = processFunctionCall(context);
-        if (functionOperation != null) return functionOperation;
+        if (functionOperation != null) {
+            return functionOperation;
+        }
         Operation functionImportOperation = processImportCall(context);
-        if (functionImportOperation != null) return functionImportOperation;
+        if (functionImportOperation != null) {
+            return functionImportOperation;
+        }
 
-        throw new ODataBadRequestException("Neither target function nor import can be determined from URI " + context.getUri());
+        throw new ODataBadRequestException("Neither target function nor import " +
+                "can be determined from URI " + context.getUri());
     }
 
-    private Operation processImportCall(ODataRequestContext requestContext) throws ODataEdmException, ODataUnmarshallingException {
+    private Operation processImportCall(ODataRequestContext requestContext)
+            throws ODataEdmException, ODataUnmarshallingException {
         Option<String> functionImportCallName = ODataUriUtil.getFunctionImportCallName(requestContext.getUri());
         if (!functionImportCallName.isDefined()) {
             return null;
@@ -114,7 +120,8 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
         return functionImportOperation;
     }
 
-    private Operation processFunctionCall(ODataRequestContext context) throws ODataEdmException, ODataUnmarshallingException {
+    private Operation processFunctionCall(ODataRequestContext context)
+            throws ODataEdmException, ODataUnmarshallingException {
         Option<String> functionCallName = ODataUriUtil.getFunctionCallName(context.getUri());
         if (!functionCallName.isDefined()) {
             return null;
