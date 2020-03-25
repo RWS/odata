@@ -48,7 +48,6 @@ import java.util.stream.Stream;
 
 import static com.sdl.odata.api.parser.ODataUriUtil.asScalaList;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.text.MessageFormat.format;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -79,13 +78,10 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
     public AtomEntityUnmarshaller(Iterable<Class<?>> edmEntityClasses, String url) {
         this.url = url;
         try {
-            LOG.debug("Building entity data model...");
+            LOG.trace("Building entity data model...");
             this.entityDataModel = buildEntityDataModel(edmEntityClasses);
         } catch (ODataEdmException | RuntimeException e) {
-            throw new ODataClientRuntimeException(
-                    format("Caught exception {0}: {1} when building OData entity model",
-                            e.getClass().getSimpleName(), e.getMessage()),
-                    e);
+            throw new ODataClientRuntimeException("Cannot build OData entity model", e);
         }
     }
 
@@ -156,10 +152,8 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
         try {
             unmarshalledEntity = getODataAtomParser(requestContext).getODataEntity();
         } catch (ODataException | RuntimeException e) {
-            throw new ODataClientParserException(
-                    format("Caught exception {0}: {1} when parsing response received from OData service",
-                            e.getClass().getSimpleName(), e.getMessage()),
-                    e, oDataEntityXml, fullResponse);
+            throw new ODataClientParserException("Cannot parse response " +
+                    "from OData service", e, oDataEntityXml, fullResponse);
         }
         return unmarshalledEntity;
     }

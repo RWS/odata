@@ -109,11 +109,13 @@ public final class ActionImportClientQuery
             return this;
         }
 
-        public Builder withActionParameter(String actionParameterName, String actionParameterValue) {
+        public Builder withActionParameter(String actionParameterName,
+                                           String actionParameterValue) {
             return withActionParameter(actionParameterName, actionParameterValue, false);
         }
 
-        public Builder withActionParameter(String actionParameterName, String actionParameterValue,
+        public Builder withActionParameter(String actionParameterName,
+                                           String actionParameterValue,
                                            boolean excludeInCache) {
             if (actionParameterMap == null) {
                 actionParameterMap = new LinkedHashMap<>();
@@ -145,6 +147,7 @@ public final class ActionImportClientQuery
                 ? ""
                 : builder.actionParameterMap.entrySet()
                     .stream()
+
                 .filter(entry -> builder.omitCacheProperties.stream()
                         .noneMatch(propertyToOmit -> entry.getKey().contains(propertyToOmit)))
                 .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
