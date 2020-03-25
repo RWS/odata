@@ -735,7 +735,7 @@ public final class EntityDataModelUtil {
                 LOG.error("Not possible to retrieve entity key for entity " + entity);
                 throw new ODataEdmException("Entity key is not found for " + entity);
             }
-        } catch (IllegalAccessException e) {
+        } catch (ReflectiveOperationException e) {
             LOG.error("Not possible to retrieve entity key for entity " + entity, e);
             throw new ODataEdmException("Not possible to retrieve entity key for entity " + entity, e);
         }
