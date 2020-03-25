@@ -16,6 +16,7 @@
 package com.sdl.odata.renderer.batch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdl.odata.api.ODataErrorCode;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataBatchException;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
+import static com.sdl.odata.api.ODataErrorCode.UNKNOWN_ERROR;
 import static com.sdl.odata.api.service.HeaderNames.CONTENT_LENGTH;
 import static com.sdl.odata.api.service.HeaderNames.CONTENT_TYPE;
 import static com.sdl.odata.api.service.HeaderNames.LOCATION;
@@ -101,7 +103,7 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
     @Override
     public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
-        LOG.debug("Starting rendering batch request entities for request: {} with data {}", requestContext, data);
+        LOG.trace("Starting rendering batch request entities for request: {} with data {}", requestContext, data);
         checkNotNull(data);
         checkNotNull(data.getData());
 
@@ -188,7 +190,7 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
             throw new ODataSystemException(e);
         }
 
-        LOG.debug("Finishing rendering batch request entities for request: {}", requestContext);
+        LOG.trace("Finishing rendering batch request entities for request: {}", requestContext);
     }
 
     @Override
@@ -283,12 +285,13 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
                     Object.class);
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
         } catch (IOException ex) {
-            throw new ODataBatchRendererException("Unable to pretty print following json data");
+            throw new ODataBatchException(UNKNOWN_ERROR,
+                    "Unable to pretty print following json data", ex);
         }
     }
 
     private String getRenderedXML(ProcessorResult result) throws ODataException {
-        LOG.debug("Content Type not specified. Atom Renderer will be used to render the result data");
+        LOG.trace("Content Type not specified. Atom Renderer will be used to render the result data");
         AbstractRenderer atomRenderer = new AtomRenderer();
         ODataResponse.Builder builder = new ODataResponse.Builder()
                 .setStatus(result.getStatus());
@@ -298,7 +301,7 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
         try {
             return builder.build().getBodyText(StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
-            throw new ODataRenderException("Unsupported encoding", e.getMessage());
+            throw new ODataSystemException(e);
         }
     }
 

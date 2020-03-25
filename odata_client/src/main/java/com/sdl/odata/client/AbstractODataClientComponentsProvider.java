@@ -64,16 +64,16 @@ public abstract class AbstractODataClientComponentsProvider implements ODataClie
     public static EndpointCaller initializeEndpointCaller(Properties properties) {
         EndpointCaller ec;
         try {
-            LOG.debug("Initializing endpoint caller. Checking whether '{}' is in classpath.",
+            LOG.trace("Initializing endpoint caller. Checking whether '{}' is in classpath.",
                     TRACING_ENDPOINT_CALLER_CLASSNAME);
             Class<?> tracingEndpointCallerClass = Class.forName(TRACING_ENDPOINT_CALLER_CLASSNAME);
             Constructor<?> tracingEndpointCallerConstructor = tracingEndpointCallerClass
                     .getConstructor(Properties.class);
             ec = (EndpointCaller) tracingEndpointCallerConstructor.newInstance(properties);
-            LOG.debug("Using '{}' instance as endpoint caller object.", TRACING_ENDPOINT_CALLER_CLASSNAME);
+            LOG.trace("Using '{}' instance as endpoint caller object.", TRACING_ENDPOINT_CALLER_CLASSNAME);
         } catch (Exception e) {
             ec = new BasicEndpointCaller(properties);
-            LOG.debug("Using '{}' instance as endpoint caller object.", BasicEndpointCaller.class.getName());
+            LOG.warn("Using '{}' instance as endpoint caller object.", BasicEndpointCaller.class.getName(), e);
         }
         return ec;
     }
@@ -141,7 +141,7 @@ public abstract class AbstractODataClientComponentsProvider implements ODataClie
             try {
                 edmEntityClasses.add(Class.forName(className));
             } catch (ClassNotFoundException e) {
-                LOG.debug("Provided class not found", e);
+                LOG.error("Provided class {} not found", className, e);
             }
         }
         return edmEntityClasses;
