@@ -48,7 +48,6 @@ import java.util.stream.Stream;
 
 import static com.sdl.odata.api.parser.ODataUriUtil.asScalaList;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.text.MessageFormat.format;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**

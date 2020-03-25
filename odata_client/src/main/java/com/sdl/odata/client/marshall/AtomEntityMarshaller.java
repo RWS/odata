@@ -42,7 +42,6 @@ import java.util.List;
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
-import static java.text.MessageFormat.format;
 
 /**
  * Atom marshaller implementation of {@link ODataEntityMarshaller}.
