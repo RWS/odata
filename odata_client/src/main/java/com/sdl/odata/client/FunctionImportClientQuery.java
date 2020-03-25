@@ -17,6 +17,7 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataClientQuery;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,7 +25,11 @@ import java.util.Map;
 /**
  * Client Query for function import call to the OData service.
  */
-public class FunctionImportClientQuery extends AbstractODataFunctionClientQuery {
+public class FunctionImportClientQuery
+        extends AbstractODataFunctionClientQuery
+        implements Serializable {
+
+    private static final long serialVersionUID = 7148567522038582230L;
 
     public FunctionImportClientQuery(Builder builder) {
         super(builder.entityType, builder.functionName, builder.functionParameterMap, builder.streaming);
@@ -53,11 +58,11 @@ public class FunctionImportClientQuery extends AbstractODataFunctionClientQuery 
         if (!getFunctionName().equals(that.getFunctionName())) {
             return false;
         }
-        if (getFunctionParameterMap() != null ? !getFunctionParameterMap().equals(that.getFunctionParameterMap())
-                : that.getFunctionParameterMap() != null) {
+        if (getFunctionParameterMap() != null
+            ? !getFunctionParameterMap().equals(that.getFunctionParameterMap())
+            : that.getFunctionParameterMap() != null) {
             return false;
         }
-
         return true;
     }
 

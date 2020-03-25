@@ -17,6 +17,7 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataActionClientQuery;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,24 +27,29 @@ import java.util.stream.Collectors;
 /**
  * Client query to execute unbound function imports.
  */
-public final class ActionImportClientQuery extends AbstractODataClientQuery implements ODataActionClientQuery {
+public final class ActionImportClientQuery
+        extends AbstractODataClientQuery
+        implements ODataActionClientQuery, Serializable {
 
-    private String actionName;
-    private String actionRequestBody;
-    private Builder builder;
+    private static final long serialVersionUID = -6244730437873248702L;
+    private final String actionName;
+    private final String actionRequestBody;
+    private final String cacheKey;
 
-    private ActionImportClientQuery(Builder initBuilder) {
-        checkNotNull(initBuilder.returnType, "Action return type should not be null");
-        checkNotNull(initBuilder.actionName, "Action name should not be null");
+    private ActionImportClientQuery(Builder builder) {
+        checkNotNull(builder.returnType, "Action return type should not be null");
+        checkNotNull(builder.actionName, "Action name should not be null");
 
-        this.builder = initBuilder;
-        setEntityType(initBuilder.returnType);
-        this.actionName = initBuilder.actionName;
-        actionRequestBody = initBuilder.actionParameterMap == null || initBuilder.actionParameterMap.isEmpty() ?
-                "" : ("{" + initBuilder.actionParameterMap.entrySet().stream()
-                .map(entry -> String.format("\"%s\":%s", entry.getKey(), entry.getValue()))
-                .collect(Collectors.joining(","))
-                + "}");
+        setEntityType(builder.returnType);
+        this.actionName = builder.actionName;
+        this.actionRequestBody = builder.actionParameterMap == null || builder.actionParameterMap.isEmpty()
+                ? ""
+                : "{" + builder.actionParameterMap.entrySet()
+                    .stream()
+                    .map(entry -> String.format("\"%s\":%s", entry.getKey(), entry.getValue()))
+                    .collect(Collectors.joining(","))
+                + "}";
+        this.cacheKey = calculateCacheKey(builder);
     }
 
     @Override
@@ -68,8 +74,10 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
 
         ActionImportClientQuery that = (ActionImportClientQuery) o;
 
-        return getEntityType().equals(that.getEntityType()) && actionName.equals(that.actionName)
-                && actionRequestBody.equals(that.actionRequestBody);
+        return getEntityType().equals(that.getEntityType()) &&
+                actionName.equals(that.actionName) &&
+                actionRequestBody.equals(that.actionRequestBody) &&
+                cacheKey.equals(that.cacheKey);
     }
 
     @Override
@@ -77,6 +85,7 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
         int result = getEntityType().hashCode();
         result = HASH * result + actionName.hashCode();
         result = HASH * result + actionRequestBody.hashCode();
+        result = HASH * result + cacheKey.hashCode();
         return result;
     }
 
@@ -100,11 +109,13 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
             return this;
         }
 
-        public Builder withActionParameter(String actionParameterName, String actionParameterValue) {
+        public Builder withActionParameter(String actionParameterName,
+                                           String actionParameterValue) {
             return withActionParameter(actionParameterName, actionParameterValue, false);
         }
 
-        public Builder withActionParameter(String actionParameterName, String actionParameterValue,
+        public Builder withActionParameter(String actionParameterName,
+                                           String actionParameterValue,
                                            boolean excludeInCache) {
             if (actionParameterMap == null) {
                 actionParameterMap = new LinkedHashMap<>();
@@ -128,6 +139,10 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
 
     @Override
     public String getCacheKey() {
+        return cacheKey;
+    }
+
+    private String calculateCacheKey(Builder builder) {
         String requestParametersKey = builder.actionParameterMap == null || builder.actionParameterMap.isEmpty() ?
                 "" : (builder.actionParameterMap.entrySet().stream()
                 .filter(entry -> builder.omitCacheProperties.stream()
@@ -135,5 +150,6 @@ public final class ActionImportClientQuery extends AbstractODataClientQuery impl
                 .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining(":")));
         return actionName + ":" + requestParametersKey;
+
     }
 }
