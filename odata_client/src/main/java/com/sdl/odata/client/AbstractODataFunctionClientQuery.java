@@ -15,14 +15,18 @@
  */
 package com.sdl.odata.client;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Base class for functions calls to the OData service.
  */
-public abstract class AbstractODataFunctionClientQuery extends AbstractODataClientQuery {
+public abstract class AbstractODataFunctionClientQuery
+        extends AbstractODataClientQuery
+        implements Serializable {
 
+    private static final long serialVersionUID = 4940192877180997595L;
     private String functionName;
     private Map<String, String> functionParameterMap;
 

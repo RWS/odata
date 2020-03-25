@@ -17,14 +17,18 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataClientQuery;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Client Query for function call to the OData service.
  */
-public class BoundFunctionClientQuery extends AbstractODataFunctionClientQuery {
+public class BoundFunctionClientQuery
+        extends AbstractODataFunctionClientQuery
+        implements Serializable {
 
+    private static final long serialVersionUID = -3043509213070932752L;
     private String boundEntityName;
     private String functionNameSpace;
 
@@ -61,11 +65,11 @@ public class BoundFunctionClientQuery extends AbstractODataFunctionClientQuery {
         if (!functionNameSpace.equals(that.functionNameSpace)) {
             return false;
         }
-        if (getFunctionParameterMap() != null ? !getFunctionParameterMap().equals(that.getFunctionParameterMap())
+        if (getFunctionParameterMap() != null
+                ? !getFunctionParameterMap().equals(that.getFunctionParameterMap())
                 : that.getFunctionParameterMap() != null) {
             return false;
         }
-
         return true;
     }
 

@@ -59,8 +59,7 @@ public class DataSourceFactoryImpl implements DataSourceFactory {
         }
 
         LOG.error("No data source provider found for entity type '{}'", entityType);
-        throw new ODataDataSourceException(
-                String.format("No data source provider found for entity type '%s'", entityType));
+        throw new ODataDataSourceException("No data source provider found for entity type '" + entityType + "'");
     }
 
     @Override
@@ -91,12 +90,11 @@ public class DataSourceFactoryImpl implements DataSourceFactory {
         // If the supplied entity is an EntitySet, return entity set type. Else check for Singleton
         if (entitySet != null) {
             return entitySet.getTypeName();
-        } else {
-            Singleton singleton = entityDataModel.getEntityContainer().getSingleton(operation.entitySetName());
+        }
+        Singleton singleton = entityDataModel.getEntityContainer().getSingleton(operation.entitySetName());
 
-            if (singleton != null) {
-                return singleton.getTypeName();
-            }
+        if (singleton != null) {
+            return singleton.getTypeName();
         }
         return null;
     }
