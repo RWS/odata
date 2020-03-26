@@ -34,14 +34,14 @@ public class JsonParserUtilsTest {
     private static final String BAD_VALUE = "BAD_VALUE";
 
     @Test
-    public void testIncorrectEnumValue() throws ODataUnmarshallingException {
+    public void testIncorrectEnumValue() throws Exception {
         thrown.expect(ODataUnmarshallingException.class);
         thrown.expectMessage(BAD_VALUE);
         JsonParserUtils.getAppropriateFieldValue(TestEnum.class, BAD_VALUE);
     }
 
     @Test
-    public void testIncorrectIntegerValue() throws ODataUnmarshallingException {
+    public void testIncorrectIntegerValue() throws Exception {
         thrown.expect(ODataUnmarshallingException.class);
         thrown.expectMessage(BAD_VALUE);
         JsonParserUtils.getAppropriateFieldValue(Integer.class, BAD_VALUE);
