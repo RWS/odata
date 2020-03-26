@@ -107,7 +107,7 @@ public final class JsonParserUtils {
                 return wrappedType.getMethod("valueOf", String.class).invoke(null, fieldValue);
             } catch (ReflectiveOperationException e) {
                 throw new ODataUnmarshallingException("Could not invoke 'valueOf' method on " +
-                        wrappedType.getCanonicalName(), e);
+                        wrappedType.getCanonicalName() + " for " + fieldValue, e);
             }
         } else if (wrappedType == ZonedDateTime.class) {
             return ZonedDateTime.parse(fieldValue);
