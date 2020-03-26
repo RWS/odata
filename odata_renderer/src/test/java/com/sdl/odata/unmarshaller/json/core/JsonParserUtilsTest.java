@@ -41,7 +41,7 @@ public class JsonParserUtilsTest {
     }
 
     @Test
-    public void testIncorrectIntegerValue() throws ODataUnmarshallingException {
+    public void testIncorrectIntegerValue() throws Exception {
         thrown.expect(ODataUnmarshallingException.class);
         thrown.expectMessage(BAD_VALUE);
         JsonParserUtils.getAppropriateFieldValue(Integer.class, BAD_VALUE);
