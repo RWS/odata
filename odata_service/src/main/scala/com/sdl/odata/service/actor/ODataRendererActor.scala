@@ -45,7 +45,7 @@ class ODataRendererActor @Autowired()(rendererFactory: RendererFactory) extends 
           renderError(actorContext, clientException, responseBuilder)
           setStatus(actorContext, responseBuilder, UNSUPPORTED_MEDIA_TYPE)
         case clientException: ODataEntityNotFoundException =>
-          logger.error(s"Entity not found: '${e.getMessage}'", e)
+          logger.warn(s"Entity not found: '${e.getMessage}'")
           renderError(actorContext, clientException, responseBuilder)
           setStatus(actorContext, responseBuilder, NOT_FOUND)
         case clientException: ODataClientException =>
