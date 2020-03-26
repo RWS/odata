@@ -7,4 +7,5 @@ commonBuild {
     mavenPhases = [
             default: 'install',
     ]
+    mavenProfiles = [default: 'local-build']
 }
