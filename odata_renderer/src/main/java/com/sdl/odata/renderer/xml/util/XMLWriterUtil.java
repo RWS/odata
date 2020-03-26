@@ -26,9 +26,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static com.sdl.odata.AtomConstants.ELEMENT;
 import static com.sdl.odata.AtomConstants.METADATA;
 import static com.sdl.odata.AtomConstants.NULL;
@@ -38,10 +38,10 @@ import static com.sdl.odata.AtomConstants.ODATA_DATA_NS;
 import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.TYPE;
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * This class is util class for writing atom xml properties.
- *
  */
 public final class XMLWriterUtil {
 
@@ -67,6 +67,43 @@ public final class XMLWriterUtil {
             return outputStream.toString(UTF_8.name());
         } catch (XMLStreamException | IOException e) {
             throw new ODataRenderException("Error while rendering primitive property value.", e);
+        }
+    }
+
+    public static XMLStreamWriter getPropertyXmlForPrimitivesStartDocument(
+            String rootName, Type type, Object data, String context, OutputStream outputStream)
+            throws ODataRenderException {
+        LOG.debug("PropertyXMLForPrimitivesStartDocument invoked with {}, {}, {}", rootName, type, data);
+        try {
+            return startElement(outputStream, rootName, type.getName(), context, false);
+        } catch (XMLStreamException e) {
+            throw new ODataRenderException("Error while rendering start document primitive property value.", e);
+        }
+    }
+
+    public static void getPropertyXmlForPrimitivesBodyDocument(
+            String rootName, Type type, Object data, XMLStreamWriter xmlStreamWriter) throws ODataRenderException {
+        LOG.debug("PropertyXMLForPrimitivesBodyDocument invoked with {}, {}, {}", rootName, type, data);
+        try {
+            // write values
+            if (data instanceof List<?>) {
+                writeMultipleElementsForPrimitives(xmlStreamWriter, (List<?>) data);
+            } else {
+                xmlStreamWriter.writeCharacters(data.toString());
+            }
+        } catch (XMLStreamException e) {
+            throw new ODataRenderException("Error while rendering body document primitive property value.", e);
+        }
+    }
+
+    public static void getPropertyXmlForPrimitivesEndDocument(
+            String rootName, Type type, Object data, XMLStreamWriter xmlStreamWriter)
+            throws ODataRenderException {
+        LOG.debug("PropertyXMLForPrimitivesEndDocument invoked with {}, {}, {}", rootName, type, data);
+        try {
+            xmlStreamWriter.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw new ODataRenderException("Error while rendering end document primitive property value.", e);
         }
     }
 
@@ -101,7 +138,7 @@ public final class XMLWriterUtil {
         writer.close();
     }
 
-    public static XMLStreamWriter startElement(ByteArrayOutputStream outputStream, String rootName, String typeName,
+    public static XMLStreamWriter startElement(OutputStream outputStream, String rootName, String typeName,
                                                String context, boolean defaultNameSpace) throws XMLStreamException {
         XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
         writer.writeStartElement(METADATA, rootName, ODATA_METADATA_NS);

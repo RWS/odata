@@ -247,6 +247,7 @@ object ODataUriUtil {
   private def getContextUrl(odataUri: ODataUri, isWriteOperation: Boolean): Option[String] = {
     val ENTITY = "$entity"
     val METADATA = "$metadata"
+
     def handleKeyPredicatePath(typeName: String, keyPredicate: KeyPredicate, subPath: Option[PathSegment], acc: String) = keyPredicate match {
       case SimpleKeyPredicate(literal) => getContextFromSubPath(typeName, subPath, s"$acc$typeName", Some(formatLiteral(literal)))
       case CompoundKeyPredicate(literals) => getContextFromSubPath(typeName, subPath, s"$acc$typeName", Some(compoundKeyToString(literals)))
@@ -404,13 +405,19 @@ object ODataUriUtil {
           resolve(TargetType(if (entitySet == null) returnType else entitySet.getTypeName,
             isCollection(entityDataModel, returnType)), None)
 
-        case FunctionImportCall(functionName, args, subPath) =>
+        case FunctionImportCall(functionName, _, subPath) =>
           val functionImport: FunctionImport = getAndCheckFunctionImport(entityDataModel, functionName)
-          val returnType = functionImport.getFunction.getReturnType
+          var returnType = functionImport.getFunction.getReturnType
           val entitySet = entityDataModel.getEntityContainer.getEntitySet(returnType)
+          val matcher = COLLECTION_PATTERN.matcher(returnType)
+          val collection = matcher.matches()
+          if (collection) {
+            returnType = matcher.group(1)
+          }
 
-          resolve(TargetType(if (entitySet == null) returnType else entitySet.getTypeName,
-            isCollection(entityDataModel, returnType)), subPath)
+          resolve(TargetType(
+            if (entitySet == null) returnType else entitySet.getTypeName,
+            if (collection) collection else isCollection(entityDataModel, returnType)), subPath)
 
         case CrossJoinPath(_) => None
         case AllPath => None
@@ -554,7 +561,7 @@ object ODataUriUtil {
   }
 
   /**
-   * Determites if an URI is an action or action import call.
+   * Determines if an URI is an action or action import call.
    *
    * @param odataUri The OData URI.
    * @return `true` if the URI is an action or action import call.
@@ -597,8 +604,8 @@ object ODataUriUtil {
 
   /**
    * Function returns the entity name bound to a bound operation
-    *
-    * @param odataUri The OData Uri
+   *
+   * @param odataUri The OData Uri
    * @return the name of bound entity name
    */
   def getBoundEntityName(odataUri: ODataUri): Option[String] = odataUri.relativeUri match {
@@ -714,7 +721,7 @@ object ODataUriUtil {
 
       case EntitySetPath(_,
       Some(EntityCollectionPath(_, Some(KeyPredicatePath(CompoundKeyPredicate(keyMap), _))))) =>
-        keyMap map { case (key, value) => (key, getLiteralValue(value))}
+        keyMap map { case (key, value) => (key, getLiteralValue(value)) }
 
       case _ => throw new ODataUriParseException(
         "The resource path does not have the expected format: EntitySetName(...)")
@@ -760,8 +767,8 @@ object ODataUriUtil {
 
   /**
    * This converts compound key to string
-    *
-    * @param literals map which represent compound key
+   *
+   * @param literals map which represent compound key
    * @return converted string
    */
   def compoundKeyToString(literals: Map[String, Literal]): String =

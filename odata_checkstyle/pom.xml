@@ -22,11 +22,11 @@
     <parent>
         <groupId>com.sdl</groupId>
         <artifactId>odata</artifactId>
-        <version>2.4-SNAPSHOT</version>
+        <version>2.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>odata_checkstyle</artifactId>
-    <version>2.4-SNAPSHOT</version>
+    <version>2.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>OData Checkstyle</name>

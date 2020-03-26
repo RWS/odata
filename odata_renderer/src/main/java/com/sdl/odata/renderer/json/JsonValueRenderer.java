@@ -19,6 +19,7 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
@@ -79,5 +81,37 @@ public class JsonValueRenderer extends AbstractJsonRenderer {
         }
 
         LOG.debug("End rendering property for request: {}", requestContext);
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        LOG.debug("Start rendering start property for request: {}", requestContext);
+        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        ChunkedActionRenderResult renderResult = propertyWriter.getPropertyStartDocument(result.getData(),
+                outputStream);
+        renderResult.setContentType(MediaType.JSON);
+        renderResult.addHeader("OData-Version", ODATA_VERSION_HEADER);
+
+        return renderResult;
+    }
+
+    @Override
+    public ChunkedActionRenderResult renderBody(ODataRequestContext requestContext, QueryResult result,
+                                                ChunkedActionRenderResult previousResult) throws ODataException {
+        LOG.debug("Start rendering body property for request: {}", requestContext);
+        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        return propertyWriter.getPropertyBodyDocument(result.getData(), previousResult);
+    }
+
+    @Override
+    public void renderEnd(ODataRequestContext requestContext, QueryResult result,
+                          ChunkedActionRenderResult previousResult) throws ODataException {
+        LOG.debug("Start rendering end property for request: {}", requestContext);
+        JsonPropertyWriter propertyWriter = new JsonPropertyWriter(requestContext.getUri(),
+                requestContext.getEntityDataModel());
+        propertyWriter.getPropertyEndDocument(result.getData(), previousResult);
     }
 }

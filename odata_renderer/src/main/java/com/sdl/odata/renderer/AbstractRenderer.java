@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.renderer;
 
+import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.MetaType;
 import com.sdl.odata.api.edm.model.Type;
@@ -22,17 +23,22 @@ import com.sdl.odata.api.parser.FormatOption;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.parser.TargetType;
+import com.sdl.odata.api.processor.query.QueryResult;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.api.renderer.ODataRenderer;
 import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
+import com.sdl.odata.api.service.ODataResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.sdl.odata.ODataRendererUtils.buildContextUrlFromOperationCall;
 import static com.sdl.odata.api.parser.ODataUriUtil.getContextUrl;
@@ -41,6 +47,8 @@ import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.MediaType.JSON;
 import static com.sdl.odata.api.service.ODataRequest.Method;
 import static com.sdl.odata.api.service.ODataRequestContextUtil.isWriteOperation;
+import static com.sdl.odata.api.service.ODataResponse.Status.OK;
+import static java.text.MessageFormat.format;
 
 /**
  * Abstract superclass with common functionality for renderers.
@@ -182,22 +190,23 @@ public abstract class AbstractRenderer implements ODataRenderer {
         return checkForContentType(oDataRequestContext, ATOM_XML) || checkForContentType(oDataRequestContext, JSON);
     }
 
-    protected boolean isCollection(Object data) {
-        return data instanceof List;
+    protected boolean isListOrStream(Object data) {
+        return data instanceof List || data instanceof Stream;
     }
 
     /**
      * Build the 'Context URL' from a given OData request context.
      *
-     * @param requestContext The given OData request context.
-     * @return The built 'Context URL'.
+     * @param requestContext The given OData request context
+     * @param data           Result data
+     * @return The built 'Context URL'
      * @throws ODataRenderException If unable to build context url
      */
     protected String buildContextURL(ODataRequestContext requestContext, Object data) throws ODataRenderException {
         ODataUri oDataUri = requestContext.getUri();
         if (ODataUriUtil.isActionCallUri(oDataUri) || ODataUriUtil.isFunctionCallUri(oDataUri)) {
             return buildContextUrlFromOperationCall(oDataUri, requestContext.getEntityDataModel(),
-                isCollection(data));
+                    isListOrStream(data));
         }
 
         Option<String> contextURL;
@@ -224,5 +233,48 @@ public abstract class AbstractRenderer implements ODataRenderer {
             throw new ODataRenderException(
                     String.format("Not possible to create context URL for request %s", requestContext));
         }
+    }
+
+    /**
+     * Default implementation. Returns empty string, the real content goes when triggering renderBody.
+     * <p>
+     * {@inheritDoc}
+     */
+    @Override
+    public ChunkedActionRenderResult renderStart(ODataRequestContext requestContext, QueryResult result,
+                                                 OutputStream outputStream) throws ODataException {
+        // Do nothing for default implementation
+        return new ChunkedActionRenderResult(outputStream);
+    }
+
+    /**
+     * Default implementation. Return the whole rendered data within this method call.
+     * <p>
+     * {@inheritDoc}
+     */
+    @Override
+    public ChunkedActionRenderResult renderBody(ODataRequestContext requestContext, QueryResult result,
+                                                ChunkedActionRenderResult previousResult) throws ODataException {
+        LOG.debug("Start rendering property for request body: {}", requestContext);
+        ODataResponse.Builder responseBuilder = new ODataResponse.Builder().setStatus(OK);
+        render(requestContext, result, responseBuilder);
+        try {
+            previousResult.getOutputStream().write(responseBuilder.build().getBody());
+            return previousResult;
+        } catch (java.io.IOException e) {
+            throw new ODataRenderException(format("Unable to render result: {0} for request: {1}",
+                    result, requestContext.getRequest()), e);
+        }
+    }
+
+    /**
+     * Default implementation. Return empty string as we get all rendered data by triggering renderBody.
+     * <p>
+     * {@inheritDoc}
+     */
+    @Override
+    public void renderEnd(ODataRequestContext requestContext, QueryResult result,
+                          ChunkedActionRenderResult previousResult) throws ODataException {
+        // Do nothing for default implementation
     }
 }

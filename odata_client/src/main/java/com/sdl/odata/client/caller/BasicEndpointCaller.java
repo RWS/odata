@@ -39,7 +39,11 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static com.sdl.odata.api.service.HeaderNames.ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY;
+import static com.sdl.odata.api.service.HeaderNames.TRANSFER_ENCODING;
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.MediaType.XML;
 import static com.sdl.odata.client.ODataClientConstants.DefaultValues.CLIENT_PROXY_PORT_DEFAULT;
@@ -59,6 +63,9 @@ import static com.sdl.odata.client.util.ODataClientUtils.populateRequestProperti
 public class BasicEndpointCaller implements EndpointCaller {
 
     private static final Logger LOG = LoggerFactory.getLogger(BasicEndpointCaller.class);
+
+    private static final Pattern ODATA_CHUNKED_ERROR_MESSAGE_PATTERN = Pattern
+            .compile(ODATA_CHUNKED_ERROR_MESSAGE_PROPERTY + ":(.*)");
 
     private Integer timeout;
     private int proxyServerPort;
@@ -194,12 +201,22 @@ public class BasicEndpointCaller implements EndpointCaller {
             } else {
                 response.append("No Response.");
             }
-
-            if (isError) {
-                throw buildException(response.toString(), responseCode);
+            String resultResponse = response.toString();
+            if ("chunked".equals(httpConnection.getHeaderField(TRANSFER_ENCODING))) {
+                String[] responseLines = resultResponse.split(System.lineSeparator());
+                Matcher matcher = ODATA_CHUNKED_ERROR_MESSAGE_PATTERN.matcher(responseLines[responseLines.length - 1]);
+                if (matcher.matches()) {
+                    String errorMessage = matcher.group(1);
+                    resultResponse = "Unable to get response from OData service: " + errorMessage;
+                    isError = true;
+                }
             }
 
-            return response.toString();
+            if (isError) {
+                throw buildException(resultResponse, responseCode);
+            }
+
+            return resultResponse;
         } catch (SocketException e) {
             throw new ODataClientSocketException("Could not initiate connection to the endpoint.", e);
         } catch (IOException e) {

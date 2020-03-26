@@ -27,7 +27,7 @@ import java.util.Map;
 public class FunctionImportClientQuery extends AbstractODataFunctionClientQuery {
 
     public FunctionImportClientQuery(Builder builder) {
-        super(builder.entityType, builder.functionName, builder.functionParameterMap);
+        super(builder.entityType, builder.functionName, builder.functionParameterMap, builder.streaming);
     }
 
     @Override
@@ -82,6 +82,7 @@ public class FunctionImportClientQuery extends AbstractODataFunctionClientQuery 
         private Class<?> entityType;
         private String functionName;
         private Map<String, String> functionParameterMap;
+        private boolean streaming;
 
         public Builder withEntityType(Class<?> clazz) {
             this.entityType = clazz;
@@ -98,6 +99,11 @@ public class FunctionImportClientQuery extends AbstractODataFunctionClientQuery 
 
         public Builder withFunctionName(String name) {
             this.functionName = name;
+            return this;
+        }
+
+        public Builder withStreamingSupport(boolean streamingSupport) {
+            this.streaming = streamingSupport;
             return this;
         }
 

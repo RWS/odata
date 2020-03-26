@@ -226,11 +226,14 @@ public final class TestUtils {
 
     public static ODataRequest createODataRequest(ODataRequest.Method method, Map<String, String> headers)
             throws UnsupportedEncodingException {
-
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
         return new ODataRequest.Builder().setBodyText("test", "UTF-8")
                 .setUri(SERVICE_ROOT)
                 .setHeaders(headers)
-                .setMethod(method).build();
+                .setMethod(method)
+                .build();
     }
 
     /**
@@ -392,12 +395,32 @@ public final class TestUtils {
      * @return The created OData request.
      * @throws UnsupportedEncodingException
      */
-    public static ODataRequest createODataRequest(ODataRequest.Method method, MediaType... mediaTypes)
+    public static ODataRequest createODataRequest(ODataRequest.Method method,
+                                                  MediaType... mediaTypes)
             throws UnsupportedEncodingException {
+        return createODataRequest(method, null, mediaTypes);
+    }
+
+    /**
+     * Create an OData request with the given HTTP method, and list of media types in the 'Accept-header'.
+     *
+     * @param method     The given HTTP method.
+     * @param headers    The given headers.
+     * @param mediaTypes The given list of media types.
+     * @return The created OData request.
+     * @throws UnsupportedEncodingException
+     */
+    public static ODataRequest createODataRequest(ODataRequest.Method method, Map<String, String> headers,
+                                                  MediaType... mediaTypes)
+            throws UnsupportedEncodingException {
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
         return new ODataRequest.Builder().setBodyText("test", "UTF-8")
                 .setUri(SERVICE_ROOT)
                 .setAccept(mediaTypes)
-                .setMethod(method).build();
+                .setMethod(method)
+                .setHeaders(headers).build();
     }
 
     /**
@@ -415,7 +438,6 @@ public final class TestUtils {
                 .setContentType(contentType)
                 .setMethod(method).build();
     }
-
 
     /**
      * Create an OData request with the given HHTP method.
@@ -458,6 +480,23 @@ public final class TestUtils {
                                                                 EntityDataModel entityDataModel)
             throws UnsupportedEncodingException {
         return new ODataRequestContext(createODataRequest(method), oDataUri, entityDataModel);
+    }
+
+    /**
+     * Create an OData Request Context with the given HTTP method, OData URI and Entity Data Model.
+     *
+     * @param method          The given HTTP method.
+     * @param oDataUri        The given OData URI.
+     * @param entityDataModel The given Entity Data Model.
+     * @param headers         An additional request headers.
+     * @return The created OData request context.
+     * @throws UnsupportedEncodingException
+     */
+    public static ODataRequestContext createODataRequestContext(ODataRequest.Method method, ODataUri oDataUri,
+                                                                EntityDataModel entityDataModel,
+                                                                Map<String, String> headers)
+            throws UnsupportedEncodingException {
+        return new ODataRequestContext(createODataRequest(method, headers), oDataUri, entityDataModel);
     }
 
     /**

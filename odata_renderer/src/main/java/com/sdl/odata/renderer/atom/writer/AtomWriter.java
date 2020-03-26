@@ -30,6 +30,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
@@ -78,7 +79,7 @@ public class AtomWriter {
     private static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
 
     private XMLStreamWriter xmlWriter = null;
-    private ByteArrayOutputStream outputStream = null;
+    private OutputStream outputStream = null;
     private AtomMetadataWriter metadataWriter = null;
     private AtomDataWriter dataWriter = null;
     private final ZonedDateTime dateTime;
@@ -143,10 +144,20 @@ public class AtomWriter {
      * @throws ODataRenderException if unable to render the feed
      */
     public void startDocument() throws ODataRenderException {
+        startDocument(new ByteArrayOutputStream());
+    }
 
-        outputStream = new ByteArrayOutputStream();
+    /**
+     * Start the XML stream document by defining things like the type of encoding, and prefixes used. It needs to be
+     * used before calling any write method.
+     *
+     * @param os {@link OutputStream} to write to.
+     * @throws ODataRenderException if unable to render the feed
+     */
+    public void startDocument(OutputStream os) throws ODataRenderException {
         try {
-            xmlWriter = XML_OUTPUT_FACTORY.createXMLStreamWriter(outputStream, UTF_8.name());
+            outputStream = os;
+            xmlWriter = XML_OUTPUT_FACTORY.createXMLStreamWriter(os, UTF_8.name());
             metadataWriter = new AtomMetadataWriter(xmlWriter, oDataUri, entityDataModel, nsConfigurationProvider);
             dataWriter = new AtomDataWriter(xmlWriter, entityDataModel, nsConfigurationProvider);
             xmlWriter.writeStartDocument(UTF_8.name(), XML_VERSION);
@@ -164,10 +175,21 @@ public class AtomWriter {
      * @throws ODataRenderException if unable to render
      */
     public void endDocument() throws ODataRenderException {
+        endDocument(true);
+    }
 
+    /**
+     * End the XML stream document.
+     *
+     * @param flush flush result flag
+     * @throws ODataRenderException if unable to render
+     */
+    public void endDocument(boolean flush) throws ODataRenderException {
         try {
             xmlWriter.writeEndDocument();
-            xmlWriter.flush();
+            if (flush) {
+                xmlWriter.flush();
+            }
         } catch (XMLStreamException e) {
             LOG.error("Not possible to end stream XML");
             throw new ODataRenderException("Not possible to end stream XML: ", e);
@@ -186,13 +208,65 @@ public class AtomWriter {
      */
     public void writeFeed(List<?> entities, String requestContextURL, Map<String, Object> meta)
             throws ODataRenderException {
+        writeStartFeed(requestContextURL, meta);
+        writeBodyFeed(entities);
+        writeEndFeed();
+    }
 
-        checkNotNull(entities);
+    /**
+     * Write start feed to the XML stream.
+     *
+     * @param requestContextURL The 'Context URL' to write for the feed. It can not {@code null}.
+     * @param meta              Additional metadata to write.
+     * @throws ODataRenderException In case it is not possible to write to the XML stream.
+     */
+    public void writeStartFeed(String requestContextURL, Map<String, Object> meta) throws ODataRenderException {
         this.contextURL = checkNotNull(requestContextURL);
-
         try {
-            writeFeed(entities, null, null, meta);
+            startFeed(false);
+
+            if (ODataUriUtil.hasCountOption(oDataUri) &&
+                    meta != null && meta.containsKey("count")) {
+                metadataWriter.writeCount(meta.get("count"));
+            }
+
+            metadataWriter.writeFeedId(null, null);
+            metadataWriter.writeTitle();
+            metadataWriter.writeUpdate(dateTime);
+            metadataWriter.writeFeedLink(null, null);
+        } catch (XMLStreamException | ODataEdmException e) {
+            LOG.error("Not possible to marshall feed stream XML");
+            throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
+        }
+    }
+
+    /**
+     * Write feed body.
+     *
+     * @param entities The list of entities to fill in the XML stream. It can not {@code null}.
+     * @throws ODataRenderException In case it is not possible to write to the XML stream.
+     */
+    public void writeBodyFeed(List<?> entities) throws ODataRenderException {
+        checkNotNull(entities);
+        try {
+            for (Object entity : entities) {
+                writeEntry(entity, true);
+            }
         } catch (XMLStreamException | IllegalAccessException | NoSuchFieldException | ODataEdmException e) {
+            LOG.error("Not possible to marshall feed stream XML");
+            throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
+        }
+    }
+
+    /**
+     * Write end feed.
+     *
+     * @throws ODataRenderException In case it is not possible to write to the XML stream.
+     */
+    public void writeEndFeed() throws ODataRenderException {
+        try {
+            endFeed();
+        } catch (XMLStreamException e) {
             LOG.error("Not possible to marshall feed stream XML");
             throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
         }
@@ -228,7 +302,7 @@ public class AtomWriter {
      */
     public String getXml() {
         try {
-            return outputStream.toString(StandardCharsets.UTF_8.name());
+            return ((ByteArrayOutputStream) outputStream).toString(StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             return outputStream.toString();
         }
@@ -321,7 +395,6 @@ public class AtomWriter {
     }
 
     private void endFeed() throws XMLStreamException {
-
         xmlWriter.writeEndElement();
     }
 
