@@ -36,20 +36,19 @@ public final class ActionImportClientQuery
     private final String actionRequestBody;
     private final String cacheKey;
 
-    private ActionImportClientQuery(Builder initBuilder) {
-        checkNotNull(initBuilder.returnType, "Action return type should not be null");
-        checkNotNull(initBuilder.actionName, "Action name should not be null");
-
-        this.cacheKey = calculateCacheKey(initBuilder);
-        setEntityType(initBuilder.returnType);
-        this.actionName = initBuilder.actionName;
-        actionRequestBody = initBuilder.actionParameterMap == null || initBuilder.actionParameterMap.isEmpty()
+    private ActionImportClientQuery(Builder builder) {
+        checkNotNull(builder.returnType, "Action return type should not be null");
+        checkNotNull(builder.actionName, "Action name should not be null");
+        setEntityType(builder.returnType);
+        this.actionName = builder.actionName;
+        actionRequestBody = builder.actionParameterMap == null || builder.actionParameterMap.isEmpty()
                 ? ""
-                : "{" + initBuilder.actionParameterMap.entrySet()
+                : "{" + builder.actionParameterMap.entrySet()
                     .stream()
-                .map(entry -> String.format("\"%s\":%s", entry.getKey(), entry.getValue()))
-                .collect(Collectors.joining(","))
+                    .map(entry -> String.format("\"%s\":%s", entry.getKey(), entry.getValue()))
+                    .collect(Collectors.joining(","))
                 + "}";
+        this.cacheKey = calculateCacheKey(builder);
     }
 
     @Override
@@ -145,10 +144,11 @@ public final class ActionImportClientQuery
                 ? ""
                 : builder.actionParameterMap.entrySet()
                     .stream()
-                .filter(entry -> builder.omitCacheProperties.stream()
-                        .noneMatch(propertyToOmit -> entry.getKey().contains(propertyToOmit)))
-                .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
-                .collect(Collectors.joining(":"));
+                    .filter(entry ->
+                            builder.omitCacheProperties.stream().noneMatch(propertyToOmit ->
+                                                                           entry.getKey().contains(propertyToOmit)))
+                    .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
+                    .collect(Collectors.joining(":"));
         return actionName + ":" + requestParametersKey;
     }
 }
