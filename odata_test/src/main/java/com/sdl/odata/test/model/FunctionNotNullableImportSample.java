@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sdl.odata.service
+package com.sdl.odata.test.model;
 
-import org.scalatest.{Suite, BeforeAndAfterAll}
-import akka.testkit.TestKit
+import com.sdl.odata.api.edm.annotations.EdmFunctionImport;
 
-trait StopSystemAfterAll extends BeforeAndAfterAll {
-  this: TestKit with Suite =>
+/**
+ * Function with not nullable parameters import sample model.
+ */
+@EdmFunctionImport(function = "ODataDemoFunctionNotNullable", includeInServiceDocument = true,
+        name = "ODataDemoFunctionNotNullableImport", namespace = "ODataDemo")
+public class FunctionNotNullableImportSample {
 
-  override protected def afterAll() {
-    super.afterAll()
-  }
 }

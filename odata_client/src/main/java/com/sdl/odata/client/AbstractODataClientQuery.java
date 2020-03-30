@@ -20,6 +20,8 @@ import com.sdl.odata.api.edm.annotations.EdmSingleton;
 import com.sdl.odata.client.api.ODataClientQuery;
 import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 
+import java.util.List;
+
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.pluralize;
 import static java.lang.String.format;
@@ -37,7 +39,9 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
     private Class<?> entityType;
     private String entityKey;
     private boolean isSingletonEntity;
+    private boolean streaming = false;
 
+    @Override
     public Class<?> getEntityType() {
         return entityType;
     }
@@ -50,7 +54,12 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
         this.entityKey = entityKey;
     }
 
+    @Override
     public String getEdmEntityName() {
+        if (entityType.getName().equals(List.class.getName())) {
+            return entityType.getSimpleName();
+        }
+
         EdmEntitySet edmEntitySet = entityType.getAnnotation(EdmEntitySet.class);
 
         if (edmEntitySet != null) {
@@ -98,7 +107,17 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
         return isSingletonEntity;
     }
 
+    @Override
     public String getCacheKey() {
         return getQuery();
+    }
+
+    @Override
+    public boolean isStreamingSupport() {
+        return streaming;
+    }
+
+    public void setStreamingSupport(boolean streamingSupport) {
+        this.streaming = streamingSupport;
     }
 }

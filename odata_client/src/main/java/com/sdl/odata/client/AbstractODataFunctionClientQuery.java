@@ -28,11 +28,13 @@ public abstract class AbstractODataFunctionClientQuery extends AbstractODataClie
 
     public AbstractODataFunctionClientQuery(Class<?> entityType,
                                             String functionName,
-                                            Map<String, String> functionParameterMap) {
+                                            Map<String, String> functionParameterMap,
+                                            boolean streaming) {
         checkNotNull(functionName, "FunctionName shouldn't be null");
         checkNotNull(entityType, "EntityType shouldn't be null");
 
         setEntityType(entityType);
+        setStreamingSupport(streaming);
         this.functionName = functionName;
         this.functionParameterMap = functionParameterMap;
     }

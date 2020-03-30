@@ -22,13 +22,17 @@ import com.sdl.odata.api.edm.annotations.EdmFunction;
 import com.sdl.odata.api.edm.annotations.EdmReturnType;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.Operation;
+import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
+import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.test.model.FunctionImportSample;
+import com.sdl.odata.test.model.FunctionNotNullableImportSample;
+import com.sdl.odata.test.model.FunctionNotNullableSample;
 import com.sdl.odata.test.model.FunctionSample;
 import com.sdl.odata.test.model.Order;
 import com.sdl.odata.test.model.UnboundFunctionSample;
@@ -41,9 +45,13 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.GET;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
@@ -65,8 +73,10 @@ public class ODataFunctionProcessorImplTest {
         entityDataModel = new AnnotationEntityDataModelFactory()
                 .addClass(Order.class)
                 .addClass(FunctionSample.class)
+                .addClass(FunctionNotNullableSample.class)
                 .addClass(UnboundFunctionSample.class)
                 .addClass(FunctionImportSample.class)
+                .addClass(FunctionNotNullableImportSample.class)
                 .addClass(FakeFunctionSample.class)
                 .addClass(NullResultFunctionSample.class)
                 .addClass(NoInitFunctionSample.class)
@@ -85,6 +95,38 @@ public class ODataFunctionProcessorImplTest {
     }
 
     @Test
+    public void testDoFunctionWithDefaultTransportHeaders() throws ODataException, UnsupportedEncodingException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("te", "chunked");
+
+        ODataUri uri = new ODataParserImpl().parseUri(
+                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFunction(" +
+                        "stringFunctionField='myString',intFunctionField=12)", entityDataModel);
+
+        ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, uri, entityDataModel, headers);
+
+        ProcessorResult processorResult = functionProcessor.doFunction(requestContext);
+        assertEquals(ODataResponse.Status.OK, processorResult.getStatus());
+        assertTrue(Stream.class.isAssignableFrom(processorResult.getData().getClass()));
+    }
+
+    @Test
+    public void testDoFunctionWithCustomTransportHeaders() throws ODataException, UnsupportedEncodingException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-odata-te", "chunked");
+
+        ODataUri uri = new ODataParserImpl().parseUri(
+                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFunction(" +
+                        "stringFunctionField='myString',intFunctionField=24)", entityDataModel);
+
+        ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, uri, entityDataModel, headers);
+
+        ProcessorResult processorResult = functionProcessor.doFunction(requestContext);
+        assertEquals(ODataResponse.Status.OK, processorResult.getStatus());
+        assertTrue(Stream.class.isAssignableFrom(processorResult.getData().getClass()));
+    }
+
+    @Test
     public void testDoFunctionUsingFunctionImport() throws ODataException, UnsupportedEncodingException {
         ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
                 "http://localhost/odata.svc/ODataDemoFunctionImport(" +
@@ -92,6 +134,21 @@ public class ODataFunctionProcessorImplTest {
         ProcessorResult processorResult = functionProcessor.doFunction(requestContext);
         assertEquals(ODataResponse.Status.OK, processorResult.getStatus());
         assertEquals("myString250", processorResult.getData());
+    }
+
+    @Test(expected = ODataUnmarshallingException.class)
+    public void testAllNullParametersUsingFunctionImport() throws ODataException, UnsupportedEncodingException {
+        ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
+                "http://localhost/odata.svc/ODataDemoFunctionNotNullableImport", entityDataModel), entityDataModel);
+        functionProcessor.doFunction(requestContext);
+    }
+
+    @Test(expected = ODataUnmarshallingException.class)
+    public void testNullParameterUsingFunctionImport() throws ODataException, UnsupportedEncodingException {
+        ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
+                "http://localhost/odata.svc/ODataDemoFunctionNotNullableImport(" +
+                        "stringFunctionField='myString')", entityDataModel), entityDataModel);
+        functionProcessor.doFunction(requestContext);
     }
 
     @Test(expected = ODataBadRequestException.class)
@@ -104,7 +161,7 @@ public class ODataFunctionProcessorImplTest {
     @Test(expected = ODataEdmException.class)
     public void testDoFunctionUsingFakeFunction() throws ODataException, UnsupportedEncodingException {
         ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
-                        "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFakeFunction", entityDataModel),
+                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFakeFunction", entityDataModel),
                 entityDataModel);
         functionProcessor.doFunction(requestContext);
     }
@@ -112,7 +169,7 @@ public class ODataFunctionProcessorImplTest {
     @Test(expected = ODataEdmException.class)
     public void testDoFunctionUsingWrongInitFunction() throws ODataException, UnsupportedEncodingException {
         ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
-                        "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoNoInitFunction", entityDataModel),
+                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoNoInitFunction", entityDataModel),
                 entityDataModel);
         functionProcessor.doFunction(requestContext);
     }

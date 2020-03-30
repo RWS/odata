@@ -144,9 +144,9 @@ public final class ActionImportClientQuery
                 ? ""
                 : builder.actionParameterMap.entrySet()
                     .stream()
-                    .filter(entry ->
-                            builder.omitCacheProperties.stream().noneMatch(propertyToOmit ->
-                                                                           entry.getKey().contains(propertyToOmit)))
+                    .filter(entry -> builder.omitCacheProperties
+                                .stream()
+                                .noneMatch(propertyToOmit -> entry.getKey().contains(propertyToOmit)))
                     .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
                     .collect(Collectors.joining(":"));
         return actionName + ":" + requestParametersKey;

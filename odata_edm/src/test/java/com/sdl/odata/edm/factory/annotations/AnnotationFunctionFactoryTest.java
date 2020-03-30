@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.edm.factory.annotations;
 
-import com.google.common.collect.Iterables;
 import com.sdl.odata.api.edm.annotations.EdmFunction;
 import com.sdl.odata.api.edm.model.Function;
 import com.sdl.odata.test.model.FunctionSample;
@@ -53,9 +52,9 @@ public class AnnotationFunctionFactoryTest {
         assertEquals("ODataDemoFunction", function.getName());
         assertEquals("ODataDemo", function.getNamespace());
         assertEquals(2, function.getParameters().size());
-        assertTrue(Iterables.all(function.getParameters(), parameter ->
+        assertTrue(function.getParameters().stream().allMatch(parameter ->
                 parameter.getName().equals("stringFunctionField") && parameter.getType().equals("String") ||
-                parameter.getName().equals("intFunctionField") && parameter.getType().equals("int")));
+                        parameter.getName().equals("intFunctionField") && parameter.getType().equals("int")));
 
         assertEquals("Edm.String", function.getReturnType());
         assertTrue(function.isBound());

@@ -24,21 +24,26 @@ import com.sdl.odata.api.edm.model.Type;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.parser.TargetType;
+import com.sdl.odata.api.renderer.ChunkedActionRenderResult;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import static com.sdl.odata.ODataRendererUtils.checkNotNull;
+import static com.sdl.odata.renderer.PropertyStreamWriter.ChunkedStreamAction.BODY_DOCUMENT;
+import static com.sdl.odata.renderer.PropertyStreamWriter.ChunkedStreamAction.END_DOCUMENT;
+import static com.sdl.odata.renderer.PropertyStreamWriter.ChunkedStreamAction.START_DOCUMENT;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.getAndCheckType;
 
 /**
  * Handles property writing.
- *
  */
-public abstract class AbstractPropertyWriter {
+public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPropertyWriter.class);
     private final ODataUri oDataUri;
     private final EntityDataModel entityDataModel;
@@ -67,10 +72,54 @@ public abstract class AbstractPropertyWriter {
         }
     }
 
+    @Override
+    public ChunkedActionRenderResult getPropertyStartDocument(Object data, OutputStream outputStream)
+            throws ODataException {
+        LOG.debug("GetPropertyStartDocument invoked with {}", data);
+        if (data == null) {
+            // If null - return info in one piece within getPropertyBodyDocument() call and here just empty string
+            return new ChunkedActionRenderResult(outputStream);
+        } else {
+            return makePropertyStringChunked(data, START_DOCUMENT, new ChunkedActionRenderResult(outputStream));
+        }
+    }
+
+    @Override
+    public ChunkedActionRenderResult getPropertyBodyDocument(Object data, ChunkedActionRenderResult previousResult)
+            throws ODataException {
+        LOG.debug("GetPropertyBodyDocument invoked with {}", data);
+        if (data == null) {
+            try {
+                previousResult.getOutputStream().write(generateNullPropertyString().getBytes());
+            } catch (IOException e) {
+                throw new ODataRenderException("Unable to render property body.", e);
+            }
+            return previousResult;
+        } else {
+            return makePropertyStringChunked(data, BODY_DOCUMENT, previousResult);
+        }
+    }
+
+    @Override
+    public void getPropertyEndDocument(Object data, ChunkedActionRenderResult previousResult) throws ODataException {
+        LOG.debug("GetPropertyEndDocument invoked with {}", data);
+        if (data != null) {
+            makePropertyStringChunked(data, END_DOCUMENT, previousResult);
+        }
+    }
+
+    protected abstract ChunkedActionRenderResult getPrimitivePropertyChunked(
+            Object data, Type type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
+            throws ODataException;
+
+    protected abstract ChunkedActionRenderResult getComplexPropertyChunked(
+            Object data, StructuredType type, ChunkedStreamAction action, ChunkedActionRenderResult previousResult)
+            throws ODataException;
+
     /**
      * This abstract method this needs to be implemented in subclass. Purpose of this method is to
      * generate string (either json or xml ) if the given property is null. For example, atom null string
-     *
+     * <p>
      * {@code
      * <pre>
      *  <metadata:value xmlns:metadata="metadata name space uri" metadata:context="some context" metadata:null="true" />
@@ -85,7 +134,7 @@ public abstract class AbstractPropertyWriter {
     /**
      * This method handles simple primitive property and generates string based on property. For example following
      * atom xml generates in case of simple primitive in AtomPropertyWriter.
-     *
+     * <p>
      * {@code
      * <pre>
      *     <value xmlns="metadata namespace uri" context="context">CEO</value>
@@ -102,7 +151,7 @@ public abstract class AbstractPropertyWriter {
     /**
      * This method handles complex properties and generates string based on property. For example following
      * atom xml generates in case of complex property in AtomPropertyWriter.
-     *
+     * <p>
      * {@code
      * <pre>
      * <metadata:value metadata:type="#Model.Address" metadata:context="context"
@@ -144,6 +193,29 @@ public abstract class AbstractPropertyWriter {
         return propertyXML;
     }
 
+    private ChunkedActionRenderResult makePropertyStringChunked(Object data, ChunkedStreamAction action,
+                                                                ChunkedActionRenderResult previousResult)
+            throws ODataException {
+        if (previousResult.getType() == null) {
+            previousResult.setType(getTypeFromODataUri());
+        }
+        Type type = previousResult.getType();
+        if (!previousResult.isTypeValidated()) {
+            validateRequestChunk(type, data);
+        }
+        switch (type.getMetaType()) {
+            case PRIMITIVE:
+                LOG.debug("Given property type is primitive");
+                return getPrimitivePropertyChunked(data, type, action, previousResult);
+            case COMPLEX:
+                LOG.debug("Given property type is complex");
+                return getComplexPropertyChunked(data, (StructuredType) type, action, previousResult);
+            default:
+                defaultHandling(type);
+        }
+        return null;
+    }
+
     private void validateRequest(Type type, Object data) throws ODataRenderException,
             ODataClientException, ODataEdmException {
         if (!areValidTypesToProceed(type, data)) {
@@ -156,7 +228,18 @@ public abstract class AbstractPropertyWriter {
                 && getType(data).equals(type);
     }
 
-    protected Type getTypeFromODataUri() throws ODataRenderException {
+    public void validateRequestChunk(Type type, Object data) throws ODataRenderException,
+            ODataClientException, ODataEdmException {
+        if (!areValidTypesToProceedChunk(type, data)) {
+            throw new ODataRenderException("ODataUri type is not matched with given 'data' type: " + type);
+        }
+    }
+
+    private boolean areValidTypesToProceedChunk(Type type, Object data) throws ODataRenderException, ODataEdmException {
+        return isEmptyCollection(data) || getType(data).equals(type);
+    }
+
+    public Type getTypeFromODataUri() throws ODataRenderException {
         return entityDataModel.getType(targetType.typeName());
     }
 
