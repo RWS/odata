@@ -23,5 +23,6 @@ trait StopSystemAfterAll extends BeforeAndAfterAll {
 
   override protected def afterAll() {
     super.afterAll()
+    system.shutdown()
   }
 }

@@ -16,7 +16,10 @@
 package com.sdl.odata.client.caller;
 
 import com.github.kristofa.brave.Brave;
+import com.github.kristofa.brave.EmptySpanCollectorMetricsHandler;
 import com.github.kristofa.brave.Sampler;
+import com.github.kristofa.brave.http.DefaultSpanNameProvider;
+import com.github.kristofa.brave.http.HttpSpanCollector;
 import com.github.kristofa.brave.httpclient.BraveHttpRequestInterceptor;
 import com.github.kristofa.brave.httpclient.BraveHttpResponseInterceptor;
 import com.sdl.odata.api.service.HeaderNames;
@@ -36,9 +39,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
-import zipkin.reporter.AsyncReporter;
-import zipkin.reporter.urlconnection.URLConnectionSender;
-
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -107,20 +107,18 @@ public class TracingEndpointCaller implements EndpointCaller {
         } catch (IOException e) {
             LOG.warn("'{}' file is not available in the classpath", APPLICATION_PROPERTIES_FILE_NAME);
         }
-
         Brave brave = new Brave.Builder(applicationProperties.getProperty("spring.application.name", "cil-call"))
                 .traceSampler(Sampler.create(
                         Float.valueOf(applicationProperties.getProperty("spring.sleuth.sampler.percentage", "1.0"))))
-                .reporter(AsyncReporter.builder(URLConnectionSender.builder().endpoint(
-                        applicationProperties.getProperty("spring.zipkin.baseUrl", DEFAULT_ZIPKIN_HOSTNAME)).build())
-                        .build()).build();
+                .spanCollector(HttpSpanCollector.create(
+                        applicationProperties.getProperty("spring.zipkin.baseUrl", DEFAULT_ZIPKIN_HOSTNAME),
+                        new EmptySpanCollectorMetricsHandler()))
+                .build();
 
         closeableHttpClient = httpClientBuilder
-                .addInterceptorFirst(BraveHttpRequestInterceptor.builder(brave).build())
-                        //new BraveHttpRequestInterceptor(brave.clientRequestInterceptor(),
-                        //new DefaultSpanNameProvider()))
-                .addInterceptorFirst(BraveHttpResponseInterceptor.builder(brave).build())
-                        //new BraveHttpResponseInterceptor(brave.clientResponseInterceptor()))
+                .addInterceptorFirst(new BraveHttpRequestInterceptor(brave.clientRequestInterceptor(),
+                        new DefaultSpanNameProvider()))
+                .addInterceptorFirst(new BraveHttpResponseInterceptor(brave.clientResponseInterceptor()))
                 .build();
     }
 

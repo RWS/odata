@@ -40,18 +40,6 @@ case class NegateExpr(expression: Expression) extends Expression
 // methodCallExpr
 case class MethodCallExpr(methodName: String, args: List[Expression]) extends Expression
 
-// applyPropertyExpr
-case class ApplyPropertyExpr(args: List[Expression]) extends Expression
-
-// applyfunctionExpr
-case class ApplyFunctionExpr(methodName: String, args: String) extends Expression
-
-// methodCallExpr
-case class ApplyMethodCallExpr(properties: ApplyPropertyExpr, function: ApplyFunctionExpr) extends Expression
-
-// applyExpr
-case class ApplyExpr(methodName: String, args: ApplyMethodCallExpr) extends Expression
-
 // castExpr
 case class CastExpr(expression: Option[Expression], typeName: String) extends Expression
 

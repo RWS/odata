@@ -247,7 +247,6 @@ object ODataUriUtil {
   private def getContextUrl(odataUri: ODataUri, isWriteOperation: Boolean): Option[String] = {
     val ENTITY = "$entity"
     val METADATA = "$metadata"
-
     def handleKeyPredicatePath(typeName: String, keyPredicate: KeyPredicate, subPath: Option[PathSegment], acc: String) = keyPredicate match {
       case SimpleKeyPredicate(literal) => getContextFromSubPath(typeName, subPath, s"$acc$typeName", Some(formatLiteral(literal)))
       case CompoundKeyPredicate(literals) => getContextFromSubPath(typeName, subPath, s"$acc$typeName", Some(compoundKeyToString(literals)))
@@ -405,19 +404,13 @@ object ODataUriUtil {
           resolve(TargetType(if (entitySet == null) returnType else entitySet.getTypeName,
             isCollection(entityDataModel, returnType)), None)
 
-        case FunctionImportCall(functionName, _, subPath) =>
+        case FunctionImportCall(functionName, args, subPath) =>
           val functionImport: FunctionImport = getAndCheckFunctionImport(entityDataModel, functionName)
-          var returnType = functionImport.getFunction.getReturnType
+          val returnType = functionImport.getFunction.getReturnType
           val entitySet = entityDataModel.getEntityContainer.getEntitySet(returnType)
-          val matcher = COLLECTION_PATTERN.matcher(returnType)
-          val collection = matcher.matches()
-          if (collection) {
-            returnType = matcher.group(1)
-          }
 
-          resolve(TargetType(
-            if (entitySet == null) returnType else entitySet.getTypeName,
-            if (collection) collection else isCollection(entityDataModel, returnType)), subPath)
+          resolve(TargetType(if (entitySet == null) returnType else entitySet.getTypeName,
+            isCollection(entityDataModel, returnType)), subPath)
 
         case CrossJoinPath(_) => None
         case AllPath => None
@@ -561,7 +554,7 @@ object ODataUriUtil {
   }
 
   /**
-   * Determines if an URI is an action or action import call.
+   * Determites if an URI is an action or action import call.
    *
    * @param odataUri The OData URI.
    * @return `true` if the URI is an action or action import call.
@@ -604,8 +597,8 @@ object ODataUriUtil {
 
   /**
    * Function returns the entity name bound to a bound operation
-   *
-   * @param odataUri The OData Uri
+    *
+    * @param odataUri The OData Uri
    * @return the name of bound entity name
    */
   def getBoundEntityName(odataUri: ODataUri): Option[String] = odataUri.relativeUri match {
@@ -721,7 +714,7 @@ object ODataUriUtil {
 
       case EntitySetPath(_,
       Some(EntityCollectionPath(_, Some(KeyPredicatePath(CompoundKeyPredicate(keyMap), _))))) =>
-        keyMap map { case (key, value) => (key, getLiteralValue(value)) }
+        keyMap map { case (key, value) => (key, getLiteralValue(value))}
 
       case _ => throw new ODataUriParseException(
         "The resource path does not have the expected format: EntitySetName(...)")
@@ -767,8 +760,8 @@ object ODataUriUtil {
 
   /**
    * This converts compound key to string
-   *
-   * @param literals map which represent compound key
+    *
+    * @param literals map which represent compound key
    * @return converted string
    */
   def compoundKeyToString(literals: Map[String, Literal]): String =
@@ -790,8 +783,8 @@ object ODataUriUtil {
    * @return The converted Java list.
    */
   def asJavaList[T](list: List[T]): java.util.List[T] = {
-    import scala.collection.JavaConverters._
-    list.asJava
+    import scala.collection.JavaConversions._
+    list
   }
 
   /**
@@ -801,8 +794,8 @@ object ODataUriUtil {
    * @return The converted Scala list.
    */
   def asScalaList[T](list: java.util.List[T]): List[T] = {
-    import scala.collection.JavaConverters._
-    list.asScala.toList
+    import scala.collection.JavaConversions._
+    list.toList
   }
 
   /**
@@ -814,8 +807,8 @@ object ODataUriUtil {
    * @return THe converted Java map
    */
   def asJavaMap[K, V](map: Map[K, V]): java.util.Map[K, V] = {
-    import scala.collection.JavaConverters._
-    map.asJava
+    import scala.collection.JavaConversions._
+    map
   }
 
   /**
@@ -825,7 +818,7 @@ object ODataUriUtil {
    * @return The converted Scala map.
    */
   def asScalaMap[K, V](map: java.util.Map[K, V]): Map[K, V] = {
-    import scala.collection.JavaConverters._
-    map.asScala.toMap
+    import scala.collection.JavaConversions._
+    map.toMap
   }
 }

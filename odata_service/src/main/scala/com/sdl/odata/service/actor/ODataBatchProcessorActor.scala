@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
+import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
@@ -53,7 +54,7 @@ class ODataBatchProcessorActor @Autowired()(actorProducer: ActorProducer, dataSo
     case BatchOperation(actorContext, data) =>
       log.debug("Started processing OData Batch request")
       checkBatchRequestHeaders(actorContext.requestContext)
-      val results: util.List[ProcessorResult] = processBatchOperation(actorContext.requestContext, data.get).asJava
+      val results: util.List[ProcessorResult] = processBatchOperation(actorContext.requestContext, data.get)
       log.debug("OData Batch request execution complete")
 
       routeMessage(actorProducer, context, BatchOperationResult(actorContext, results.asScala.toList))
@@ -97,7 +98,7 @@ class ODataBatchProcessorActor @Autowired()(actorProducer: ActorProducer, dataSo
           if (componentRequestContext.getRequest.getMethod == Method.DELETE) null
           else getParsedBatchRequestComponentEntity(componentRequestContext))
       })
-      new BatchMethodHandler(oDataRequestContext, dataSourceFactory, changeSetEntities.asJava).handleWrite().asScala.toList
+      new BatchMethodHandler(oDataRequestContext, dataSourceFactory, changeSetEntities).handleWrite().asScala.toList
     }
 
     def getParsedBatchRequestComponentEntity(requestContext: ODataRequestContext): Any = {

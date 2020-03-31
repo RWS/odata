@@ -19,7 +19,7 @@ import com.sdl.odata.api.edm.model.NavigationPropertyBinding;
 import com.sdl.odata.api.edm.model.Singleton;
 import org.junit.Test;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -44,9 +44,9 @@ public class EntityContainerImplTest {
                 .setName("singleton")
                 .setTypeName("Singleton")
                 .addNavigationPropertyBinding(navigation)
-                .addNavigationPropertyBindings(Collections.singletonList(navigation))
+                .addNavigationPropertyBindings(Arrays.asList(navigation))
                 .build();
-        entityContainerBuilder.addSingletons(Collections.singletonList(singleton));
+        entityContainerBuilder.addSingletons(Arrays.asList(singleton));
         entityContainerBuilder.setBaseEntityContainerName("baseName");
 
         EntityContainerImpl entityContainer = entityContainerBuilder.build();
