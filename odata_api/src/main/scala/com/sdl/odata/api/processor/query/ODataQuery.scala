@@ -274,25 +274,3 @@ case class SelectPropertiesOperation(@BeanProperty source: QueryOperation, @Bean
   extends TransformOperation {
   def getPropertyNamesAsJava: java.util.List[String] = propertyNames.asJava
 }
-
-/**
- * Transform operation contains the inner function of an apply option.
- * 
- * @param methodName The name of the function.
- * @param expression The expression string for the function.
- */
-case class ApplyFunction(@BeanProperty methodName: String, @BeanProperty expression: String)
-
-/**
- *  Transform operation holding data of the $apply option.
- *  
- *  @param source The source operation.
- *  @param functionName The name of the apply custom function.
- *  @param propertyNames String list of the selected properties for the custom function.
- *  @param method Inner method of the custom function.
- */
-case class ApplyOperation(@BeanProperty source: QueryOperation, @BeanProperty functionName: String,
-                          @BeanProperty propertyNames: List[String], @BeanProperty method: ApplyFunction)
-extends TransformOperation {
-  def getApplyPropertiesAsJava: java.util.List[String] = propertyNames.asJava
-}

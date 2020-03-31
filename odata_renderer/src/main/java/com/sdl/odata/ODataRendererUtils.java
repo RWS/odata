@@ -20,14 +20,14 @@ import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import scala.Option;
-import scala.collection.JavaConverters;
+import scala.collection.JavaConversions;
 
 import java.util.Map;
 
 import static com.sdl.odata.JsonConstants.METADATA;
-import static com.sdl.odata.api.parser.ODataUriUtil.getContextUrl;
 import static com.sdl.odata.api.parser.ODataUriUtil.getFunctionCallParameters;
 import static com.sdl.odata.api.parser.ODataUriUtil.isFunctionCallUri;
+import static com.sdl.odata.api.parser.ODataUriUtil.getContextUrl;
 
 /**
  * This class contains render utility classes.
@@ -114,8 +114,6 @@ public final class ODataRendererUtils {
      * This differs from Guava that throws Illegal Argument Exception + message.
      *
      * @param reference reference
-     * @param message   error message
-     * @param args      arguments
      * @param <T>       type
      * @return reference or exception
      */
@@ -128,9 +126,8 @@ public final class ODataRendererUtils {
 
     /**
      * Checks if we are trying to force expand all Nav properties for function calls by looking at expand parameter.
-     *
-     * @param oDataUri The OData URI
-     * @return boolean if force expand parameter is set
+     * @param oDataUri  The odata uri
+     * @return
      */
     public static boolean isForceExpandParamSet(ODataUri oDataUri) {
         if (isFunctionCallUri(oDataUri)) {
@@ -138,7 +135,7 @@ public final class ODataRendererUtils {
             Option<scala.collection.immutable.Map<String, String>> params = getFunctionCallParameters(oDataUri);
 
             if (params.isDefined() && !params.get().isEmpty()) {
-                Map<String, String> parametersMap = JavaConverters.mapAsJavaMap(params.get());
+                Map<String, String> parametersMap = JavaConversions.mapAsJavaMap(params.get());
                 if (parametersMap.containsKey(FORCE_EXPAND_PARAM)) {
                     return Boolean.parseBoolean(parametersMap.get(FORCE_EXPAND_PARAM));
                 }

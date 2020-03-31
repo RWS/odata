@@ -291,7 +291,7 @@ public class AnnotationEntityDataModelFactory implements EntityDataModelFactory 
                 List<EntitySet> internalEntityList = new LinkedList<>();
 
                 Predicate<EntitySet> predicate = entitySet -> entitySet.getName().equals(entitySetName);
-                entitySets.stream().filter(predicate).forEach(internalEntityList::add);
+                entitySets.stream().filter(predicate).forEach(entitySetMatch -> internalEntityList.add(entitySetMatch));
 
                 return internalEntityList.isEmpty() ? null : internalEntityList.get(0);
             }

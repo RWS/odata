@@ -16,7 +16,7 @@
 package com.sdl.odata.parser
 
 import com.sdl.odata.api.edm.model._
-import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 
 trait EntityDataModelHelpers {
 
@@ -107,11 +107,11 @@ trait EntityDataModelHelpers {
     checkPropertyWith(isPrimitiveSingleProperty)
 
   def isPrimitiveKeyPropertyOf(contextTypeName: String)(propertyName: String): Boolean = {
-    import scala.collection.JavaConverters._
+    import scala.collection.JavaConversions._
     val containingType = getEntityType(contextTypeName)
 
     def isKeyProperty(property: StructuralProperty): Boolean = containingType exists {
-      entityType => entityType.getKey.getPropertyRefs.asScala.map(_.getPath).toList.contains(property.getName)
+      entityType => entityType.getKey.getPropertyRefs.map(_.getPath).toList.contains(property.getName)
     }
 
     containingType.flatMap(t => Option(t.getStructuralProperty(propertyName)))
@@ -174,7 +174,7 @@ trait EntityDataModelHelpers {
     getAction(actionName).isDefined
 
   def getAction(actionName: String): Option[Action] =
-    entityDataModel.getSchemas.asScala.find(_.getAction(actionName) != null).map(_.getAction(actionName))
+    entityDataModel.getSchemas.find(_.getAction(actionName) != null).map(_.getAction(actionName))
 
   def isActionImport(actionImportName: String): Boolean =
     getActionImport(actionImportName).isDefined
@@ -186,7 +186,7 @@ trait EntityDataModelHelpers {
     getFunction(functionName).isDefined
 
   def getFunction(functionName: String): Option[Function] =
-    entityDataModel.getSchemas.asScala.find(_.getFunction(functionName) != null).map(_.getFunction(functionName))
+    entityDataModel.getSchemas.find(_.getFunction(functionName) != null).map(_.getFunction(functionName))
 
   def getFunctionReturnType(functionName: String): Option[String] =
     getFunction(functionName).map(_.getReturnType)

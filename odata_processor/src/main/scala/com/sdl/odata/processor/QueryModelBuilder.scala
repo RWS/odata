@@ -149,16 +149,11 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
 
   private def applyOption(source: QueryOperation, option: QueryOption): QueryOperation = option match {
     case FilterOption(expression) => applyFilterOption(source, expression)
-    // ApplyOption
-    case ApplyOption(applyMethod) => applyApplyOption(source, applyMethod)
     case TopOption(count) => LimitOperation(source, count)
     case SkipOption(count) => SkipOperation(source, count)
-    case CountOption(trueFalse) => CountOperation(source, trueFalse)
+    case CountOption(trueFalse) => source
     case ExpandOption(items) => applyExpandOption(source, items)
     case OrderByOption(items) => applyOrderByOption(source, items)
-
-    // SelectOption
-    case SelectOption(items) => applySelectOption(source, items)
 
     case FormatOption(_) => source
     case AliasAndValueOption(_, _) => source
@@ -166,19 +161,6 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
 
     case _ =>
       throw new ODataNotImplementedException("This type of option is not supported for queries: " + option)
-  }
-  // SelectOption handling
-  private def applySelectOption(source: QueryOperation, items: List[SelectItem]): QueryOperation = {
-    def getSelectPath(segment: SelectPathSegment): String = segment match {
-      case ComplexPropertySelectPathSegment(propertyName, _, subPath) => propertyName + "." + getSelectPath(subPath.get)
-      case TerminalPropertySelectPathSegment(propertyName) => propertyName
-    }
-
-    val selectField = items flatMap {
-      case selectItem: PathSelectItem => List(getSelectPath(selectItem.path))
-      case _ => Nil
-    }
-    source.select(selectField :_*)
   }
 
   private def applyFilterOption(source: QueryOperation, expression: BooleanExpr): QueryOperation = {
@@ -215,35 +197,11 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
 
       case AndExpr(left, right) => createCriteria(left).and(createCriteria(right))
       case OrExpr(left, right) => createCriteria(left).or(createCriteria(right))
-      case BooleanMethodCallExpr(methodName, args) => createMethodCriteria(methodName, args)
 
       case _ =>
         throw new ODataNotImplementedException("Unsupported expression type for 'filter': " + expr)
     }
-    
-    def createMethodCriteria(methodName: String, args: List[Expression]): Criteria = methodName match {
-      case "startswith" => evaluateStartsWithMethod(args)
-      case "endswith" => evaluateEndsWithMethod(args)
-      case "contains" => evaluateContainsMethod(args)
-      case "geo.intersects" => evaluateGeoIntersectsMethod(args)
-    }
-    
-    def evaluateEndsWithMethod(args: List[Expression]):Criteria = {
-      createCriteriaValue(args(0)).endswith(createCriteriaValue(args(1)))
-    }
 
-    def evaluateContainsMethod(args: List[Expression]):Criteria = {
-    		createCriteriaValue(args(0)).contains(createCriteriaValue(args(1)))
-    }
-    
-    def evaluateStartsWithMethod(args: List[Expression]):Criteria = {
-    		createCriteriaValue(args(0)).startswith(createCriteriaValue(args(1)))
-    }
-    
-    def evaluateGeoIntersectsMethod(args: List[Expression]):Criteria = {
-    		createCriteriaValue(args(0)).geointersects(createCriteriaValue(args(1)))
-    }
-    
     CriteriaFilterOperation(source, createCriteria(expression))
   }
 
@@ -262,23 +220,6 @@ class QueryModelBuilder(entityDataModel: EntityDataModel) {
     // NOTE: Expand options (per expand item) are not (yet) supported and are ignored for now
 
     ExpandOperation(source, expandFields)
-  }
-
-  // applyApplyOption to handle ApplyOption
-  private def applyApplyOption(source: QueryOperation, applyExp: ApplyExpr): QueryOperation = {
-    
-    def getApplyProperties(expr: ApplyPropertyExpr): List[String] = expr.args flatMap {
-        case propertyPath: Expression => List(getPropertyPath(propertyPath) match {
-          case Some(propertyPath) => propertyPath
-          case None =>
-            throw new ODataNotImplementedException("Unsupported expression type for 'apply': " + expr)
-        })
-        case _ => Nil
-    }
-    
-    def getApplyFunction(expr: ApplyFunctionExpr): ApplyFunction = ApplyFunction(expr.methodName, expr.args)
-    
-    ApplyOperation(source, applyExp.methodName, getApplyProperties(applyExp.args.properties), getApplyFunction(applyExp.args.function))
   }
 
   private def applyOrderByOption(source: QueryOperation, items: List[OrderByItem]): QueryOperation = {

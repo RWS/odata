@@ -22,11 +22,11 @@ import com.sdl.odata.edm.model.SingletonImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 
@@ -68,9 +68,11 @@ final class AnnotationSingletonFactory extends AnnotationNavigationPropertyBindi
     }
 
     public List<Singleton> build(FactoryLookup lookup) {
-        List<Singleton> listBuilder =
-                builders.entrySet().stream().map(entry -> entry.getValue().addNavigationPropertyBindings(
-                        createNavigationPropertyBindings(entry.getKey(), lookup)).build()).collect(Collectors.toList());
+        List<Singleton> listBuilder = new ArrayList<>();
+        for (Map.Entry<String, SingletonImpl.Builder> entry : builders.entrySet()) {
+            listBuilder.add(entry.getValue().addNavigationPropertyBindings(
+                    createNavigationPropertyBindings(entry.getKey(), lookup)).build());
+        }
         return Collections.unmodifiableList(listBuilder);
     }
 }

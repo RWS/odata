@@ -82,8 +82,8 @@ object ODataRequestContextUtil {
    * @return 'true' if it is supported, 'false' otherwise.
    */
   def isMediaTypesSupported(request: ODataRequest): Boolean = {
-    import scala.collection.JavaConverters._
-    request.getAccept.asScala.exists(mediaType => supportedMediaTypes.exists(_.matches(mediaType)))
+    import scala.collection.JavaConversions._
+    request.getAccept.exists(mediaType => supportedMediaTypes.exists(_.matches(mediaType)))
   }
 
   /**
@@ -104,8 +104,8 @@ object ODataRequestContextUtil {
    * @return 'true' if it is supported, 'false' otherwise.
    */
   def isMetadataMediaTypesSupported(request: ODataRequest): Boolean = {
-    import scala.collection.JavaConverters._
-    request.getAccept.asScala.exists(mediaType => supportedMetadataMediaTypes.exists(_.matches(mediaType)))
+    import scala.collection.JavaConversions._
+    request.getAccept.exists(mediaType => supportedMetadataMediaTypes.exists(_.matches(mediaType)))
   }
 
   /**
