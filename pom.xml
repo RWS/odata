@@ -99,7 +99,7 @@
         <java.version>1.8</java.version>
 
         <!-- Third party dependency versions, sorted alphabetically -->
-        <akka.version>2.4.1</akka.version>
+        <akka.version>2.4.19</akka.version>
         <apache-procrun.version>1.0</apache-procrun.version>
         <brave.version>3.8.0</brave.version>
         <guava.version>18.0</guava.version>
@@ -445,6 +445,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.1.2</version>
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
