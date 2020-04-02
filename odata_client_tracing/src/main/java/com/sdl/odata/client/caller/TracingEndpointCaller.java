@@ -166,7 +166,7 @@ public class TracingEndpointCaller implements EndpointCaller {
             }
             return closeableResponse.getEntity().getContent();
         } catch (URISyntaxException e) {
-            throw new ODataClientException(WRONG_URL_MESSAGE + url, e);
+            throw new ODataClientException(WRONG_URL_MESSAGE, e);
         } catch (IOException e) {
             throw new ODataClientRuntimeException(REQUEST_FAILED_MESSAGE + url, e);
         }
@@ -218,7 +218,7 @@ public class TracingEndpointCaller implements EndpointCaller {
             }
             return response;
         } catch (URISyntaxException e) {
-            throw new ODataClientException(WRONG_URL_MESSAGE + url, e);
+            throw new ODataClientException(WRONG_URL_MESSAGE, e);
         } catch (IOException e) {
             throw new ODataClientRuntimeException(REQUEST_FAILED_MESSAGE + url, e);
         } finally {
