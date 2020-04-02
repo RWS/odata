@@ -100,14 +100,14 @@ public final class JsonParserUtils {
                 return wrappedType.getMethod("parse", String.class).invoke(null, fieldValue);
             } catch (ReflectiveOperationException e) {
                 throw new ODataUnmarshallingException("Could not invoke 'parse' method on " +
-                        wrappedType.getCanonicalName() + " for " + fieldValue, e);
+                        wrappedType.getCanonicalName(), e);
             }
         } else if (hasMethod(wrappedType, "valueOf", String.class)) {
             try {
                 return wrappedType.getMethod("valueOf", String.class).invoke(null, fieldValue);
             } catch (ReflectiveOperationException e) {
                 throw new ODataUnmarshallingException("Could not invoke 'valueOf' method on " +
-                        wrappedType.getCanonicalName() + " for " + fieldValue, e);
+                        wrappedType.getCanonicalName(), e);
             }
         } else if (wrappedType == ZonedDateTime.class) {
             return ZonedDateTime.parse(fieldValue);
