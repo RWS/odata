@@ -78,85 +78,62 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
                 result = operation.doOperation(requestContext, dataSourceFactory);
             }
         } catch (Exception e) {
-            LOG.error("Unexpected exception when executing a function " + operation.getClass().getCanonicalName(), e);
+            LOG.error("Unexpected exception when executing a function.", e);
             throw e;
         }
 
-        return result == null
-                ? new ProcessorResult(ODataResponse.Status.NO_CONTENT)
-                : new ProcessorResult(ODataResponse.Status.OK, QueryResult.from(result));
+        return result == null ? new ProcessorResult(ODataResponse.Status.NO_CONTENT) :
+                new ProcessorResult(ODataResponse.Status.OK, QueryResult.from(result));
     }
 
-    private Operation getFunctionOrFunctionImportOperation(ODataRequestContext context)
+    private Operation getFunctionOrFunctionImportOperation(ODataRequestContext requestContext)
             throws ODataException {
-        Operation functionOperation = processFunctionCall(context);
-        if (functionOperation != null) {
+        Option<String> functionCallName = ODataUriUtil.getFunctionCallName(requestContext.getUri());
+        if (functionCallName.isDefined()) {
+            String functionName = functionCallName.get();
+            int lastNamespaceIndex = functionName.lastIndexOf('.');
+            String namespace = functionName.substring(0, lastNamespaceIndex);
+            String simpleFunctionName = functionName.substring(lastNamespaceIndex + 1);
+            Schema schema = requestContext.getEntityDataModel().getSchema(namespace);
+            if (schema == null) {
+                throw new IllegalArgumentException("Could not find schema with namespace: " + namespace);
+            }
+            Function function = schema.getFunction(simpleFunctionName);
+            Operation functionOperation = (Operation) initializeFunctionObject(function);
+            fillOperationParameters(functionOperation,
+                    ODataUriUtil.getFunctionCallParameters(requestContext.getUri()), function.getParameters());
+
             return functionOperation;
         }
-        Operation functionImportOperation = processImportCall(context);
-        if (functionImportOperation != null) {
+        Option<String> functionImportCallName = ODataUriUtil.getFunctionImportCallName(requestContext.getUri());
+        if (functionImportCallName.isDefined()) {
+            String functionImportName = functionImportCallName.get();
+            FunctionImport functionImport = requestContext.getEntityDataModel().getEntityContainer()
+                    .getFunctionImport(functionImportName);
+            Operation functionImportOperation = (Operation) initializeFunctionObject(functionImport.getFunction());
+            fillOperationParameters(functionImportOperation,
+                    ODataUriUtil.getFunctionImportCallParameters(requestContext.getUri()),
+                    functionImport.getFunction().getParameters());
             return functionImportOperation;
         }
 
-        throw new ODataBadRequestException("Neither target function nor import " +
-                "can be determined from URI " + context.getUri());
-    }
-
-    private Operation processImportCall(ODataRequestContext requestContext)
-            throws ODataEdmException, ODataUnmarshallingException {
-        Option<String> functionImportCallName = ODataUriUtil.getFunctionImportCallName(requestContext.getUri());
-        if (!functionImportCallName.isDefined()) {
-            return null;
-        }
-        String functionImportName = functionImportCallName.get();
-        FunctionImport functionImport = requestContext
-                .getEntityDataModel()
-                .getEntityContainer()
-                .getFunctionImport(functionImportName);
-        Operation functionImportOperation = (Operation) initializeFunctionObject(functionImport.getFunction());
-        fillOperationParameters(functionImportOperation,
-                ODataUriUtil.getFunctionImportCallParameters(requestContext.getUri()),
-                functionImport.getFunction().getParameters());
-        return functionImportOperation;
-    }
-
-    private Operation processFunctionCall(ODataRequestContext context)
-            throws ODataEdmException, ODataUnmarshallingException {
-        Option<String> functionCallName = ODataUriUtil.getFunctionCallName(context.getUri());
-        if (!functionCallName.isDefined()) {
-            return null;
-        }
-        String functionName = functionCallName.get();
-        int lastNamespaceIndex = functionName.lastIndexOf('.');
-        String namespace = functionName.substring(0, lastNamespaceIndex);
-        String simpleFunctionName = functionName.substring(lastNamespaceIndex + 1);
-        Schema schema = context.getEntityDataModel().getSchema(namespace);
-        if (schema == null) {
-            throw new IllegalArgumentException("Could not find schema with namespace: " +
-                    namespace + " from URI " + context.getUri());
-        }
-        Function function = schema.getFunction(simpleFunctionName);
-        Operation functionOperation = (Operation) initializeFunctionObject(function);
-        fillOperationParameters(functionOperation,
-                ODataUriUtil.getFunctionCallParameters(context.getUri()), function.getParameters());
-
-        return functionOperation;
+        throw new ODataBadRequestException("The target function or function import cannot be determined from URI");
     }
 
     private Object initializeFunctionObject(Function function) throws ODataEdmException {
-        Object operation;
+        Object functionOperationObject;
         try {
-            operation = function.getJavaClass().newInstance();
+            functionOperationObject = function.getJavaClass().newInstance();
         } catch (ReflectiveOperationException e) {
             throw new ODataEdmException("Error during initialization of OData Function instance: " +
-                    function.getName(), e);
+                    function.getName());
         }
-        if (!(operation instanceof Operation)) {
+        if (!(functionOperationObject instanceof Operation)) {
             throw new ODataEdmException("The initialized OData Function with name: " + function.getName() +
                     " does not implement Operation interface");
         }
 
-        return operation;
+        return functionOperationObject;
     }
 
     private void fillOperationParameters(Object functionOperationObject,
@@ -182,7 +159,7 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
             parameters.stream().filter(parameter -> !parameter.isNullable()).
                     forEach(parameter -> validationMessage.append(parameter.getName() + ", "));
         } else {
-        for (Parameter parameter : parameters) {
+            for (Parameter parameter : parameters) {
                 String parameterName = parameter.getName();
                 String parameterValue = parametersMap.get(parameterName);
                 if (!parameter.isNullable() && parameterValue == null) {
@@ -192,9 +169,9 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
                     ParameterTypeUtil.setParameter(functionOperationObject, parameter.getJavaField(),
                             parameterValue);
                 }
+            }
         }
     }
-}
 
     private void throwValidationException(StringBuilder validationMessage)
             throws ODataUnmarshallingException {

@@ -64,7 +64,10 @@ public class ODataQueryProcessorImpl implements ODataQueryProcessor {
         EntityDataModel entityDataModel = requestContext.getEntityDataModel();
 
         RelativeUri relativeUri = oDataUri.relativeUri();
-        if (isMetadataUri(relativeUri) || isServiceRootUri(relativeUri)) {
+        if (isMetadataUri(relativeUri)) {
+            return new ProcessorResult(OK, QueryResult.from(entityDataModel));
+        }
+        if (isServiceRootUri(relativeUri)) {
             return new ProcessorResult(OK, QueryResult.from(entityDataModel));
         }
 
@@ -90,39 +93,41 @@ public class ODataQueryProcessorImpl implements ODataQueryProcessor {
         try {
             result = strategy.execute();
         } catch (Exception e) {
-            LOG.error("Unexpected Exception when executing query " + query, e);
+            LOG.error("Unexpected Exception when executing query.", e);
             throw e;
         }
         if (targetType.isCollection()) {
             if (result.getType() == QueryResult.ResultType.COLLECTION ||
                     result.getType() == QueryResult.ResultType.RAW_JSON) {
                 return new ProcessorResult(OK, result);
-            }
-            throw new ODataDataSourceException("Expected a collection result, but found " +
+            } else {
+                throw new ODataDataSourceException("Expected a collection result, but found " +
                         result.getType().name() + " for this query: " +
                         result.getType().name(), requestContext.getRequest().getUri());
+            }
         } else {
-            if (result.getType() != QueryResult.ResultType.COLLECTION) {
+            if (result.getType() == QueryResult.ResultType.COLLECTION) {
+                List<?> list = (List<?>) result.getData();
+                if (list.size() == 0) {
+                    throw new ODataEntityNotFoundException("Entity not found for this query: " +
+                            requestContext.getRequest().getUri());
+                } else if (list.size() > 1) {
+                    throw new ODataDataSourceException("Expected one result, but found multiple for this query: " +
+                            requestContext.getRequest().getUri());
+                }
+
+                return new ProcessorResult(OK, QueryResult.from(list.get(0)));
+            } else {
                 return new ProcessorResult(OK, result);
             }
-            List<?> list = (List<?>) result.getData();
-            if (list.size() == 0) {
-                throw new ODataEntityNotFoundException("Entity not found for this query: " +
-                        requestContext.getRequest().getUri());
-            } else if (list.size() > 1) {
-                throw new ODataDataSourceException("Expected one result, but found multiple for this query: " +
-                        requestContext.getRequest().getUri());
-            }
-
-            return new ProcessorResult(OK, QueryResult.from(list.get(0)));
         }
     }
 
     private boolean isMetadataUri(RelativeUri relativeUri) {
-        return relativeUri instanceof MetadataUri;
+        return relativeUri != null && relativeUri instanceof MetadataUri;
     }
 
     private boolean isServiceRootUri(RelativeUri relativeUri) {
-        return relativeUri instanceof ServiceRootUri;
+        return relativeUri != null && relativeUri instanceof ServiceRootUri;
     }
 }

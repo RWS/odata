@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.renderer.atom.writer;
 
-import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.EntityType;
@@ -165,7 +164,7 @@ public class AtomWriter {
             xmlWriter.setPrefix(METADATA, nsConfigurationProvider.getOdataMetadataNs());
             xmlWriter.setPrefix(ODATA_DATA, nsConfigurationProvider.getOdataDataNs());
         } catch (XMLStreamException e) {
-            LOG.error("Not possible to start stream XML", e);
+            LOG.error("Not possible to start stream XML");
             throw new ODataRenderException("Not possible to start stream XML: ", e);
         }
     }
@@ -192,7 +191,7 @@ public class AtomWriter {
                 xmlWriter.flush();
             }
         } catch (XMLStreamException e) {
-            LOG.error("Not possible to end stream XML", e);
+            LOG.error("Not possible to end stream XML");
             throw new ODataRenderException("Not possible to end stream XML: ", e);
         }
     }
@@ -236,7 +235,7 @@ public class AtomWriter {
             metadataWriter.writeUpdate(dateTime);
             metadataWriter.writeFeedLink(null, null);
         } catch (XMLStreamException | ODataEdmException e) {
-            LOG.error("Not possible to marshall feed stream XML", e);
+            LOG.error("Not possible to marshall feed stream XML");
             throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
         }
     }
@@ -254,7 +253,7 @@ public class AtomWriter {
                 writeEntry(entity, true);
             }
         } catch (XMLStreamException | IllegalAccessException | NoSuchFieldException | ODataEdmException e) {
-            LOG.error("Not possible to marshall feed stream XML", e);
+            LOG.error("Not possible to marshall feed stream XML");
             throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
         }
     }
@@ -268,7 +267,7 @@ public class AtomWriter {
         try {
             endFeed();
         } catch (XMLStreamException e) {
-            LOG.error("Not possible to marshall feed stream XML", e);
+            LOG.error("Not possible to marshall feed stream XML");
             throw new ODataRenderException("Not possible to marshall feed stream XML: ", e);
         }
     }
@@ -291,7 +290,7 @@ public class AtomWriter {
         try {
             writeEntry(entity, false);
         } catch (XMLStreamException | IllegalAccessException | NoSuchFieldException | ODataEdmException e) {
-            LOG.error("Not possible to render single entity stream XML", e);
+            LOG.error("Not possible to render single entity stream XML");
             throw new ODataRenderException("Not possible to render single entity stream XML: ", e);
         }
     }
@@ -305,7 +304,7 @@ public class AtomWriter {
         try {
             return ((ByteArrayOutputStream) outputStream).toString(StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
-            throw new ODataSystemException(e);
+            return outputStream.toString();
         }
     }
 

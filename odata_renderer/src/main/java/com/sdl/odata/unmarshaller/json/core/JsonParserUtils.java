@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -78,8 +79,8 @@ public final class JsonParserUtils {
         }
 
         properties.addAll(structuredType.getStructuralProperties());
-        LOG.debug("Total number of properties returning are {} for given structured type {}",
-                properties.size(), structuredType.getName());
+        LOG.info("Total number of properties returning are {} for given structured type {}", properties.size(),
+                structuredType.getName());
         return properties;
     }
 
@@ -87,27 +88,26 @@ public final class JsonParserUtils {
         Class<?> wrappedType = PrimitiveUtil.wrap(type);
         if (String.class.isAssignableFrom(wrappedType)) {
             return fieldValue;
-        }
-        if (wrappedType == byte[].class) {
+        } else if (wrappedType == byte[].class) {
             return Base64.getDecoder().decode(fieldValue);
-        }
-        if (UUID.class.isAssignableFrom(wrappedType)) {
+        } else if (UUID.class.isAssignableFrom(wrappedType)) {
             return UUID.fromString(fieldValue);
-        }
-        if (hasMethod(wrappedType, "parse", String.class)) {
+        } else if (hasMethod(wrappedType, "parse", String.class)) {
             // Handle Java.Time types which have parse method
             try {
                 return wrappedType.getMethod("parse", String.class).invoke(null, fieldValue);
-            } catch (ReflectiveOperationException e) {
-                throw new ODataUnmarshallingException("Could not invoke 'parse' method on " +
-                        wrappedType.getCanonicalName(), e);
+            } catch (IllegalAccessException | NoSuchMethodException e) {
+                throw new ODataUnmarshallingException(e.getMessage(), e);
+            } catch (InvocationTargetException e) {
+                throw wrapInvocationTargetException(e);
             }
         } else if (hasMethod(wrappedType, "valueOf", String.class)) {
             try {
                 return wrappedType.getMethod("valueOf", String.class).invoke(null, fieldValue);
-            } catch (ReflectiveOperationException e) {
-                throw new ODataUnmarshallingException("Could not invoke 'valueOf' method on " +
-                        wrappedType.getCanonicalName(), e);
+            } catch (IllegalAccessException | NoSuchMethodException e) {
+                throw new ODataUnmarshallingException(e.getMessage(), e);
+            } catch (InvocationTargetException e) {
+                throw wrapInvocationTargetException(e);
             }
         } else if (wrappedType == ZonedDateTime.class) {
             return ZonedDateTime.parse(fieldValue);
@@ -119,10 +119,9 @@ public final class JsonParserUtils {
         try {
             field.setAccessible(true);
             field.set(entity, value);
-            LOG.trace("'{}' is set with '{}'", field.getName(), value);
-        } catch (ReflectiveOperationException e) {
-            throw new ODataUnmarshallingException("Cannot set field '" + field.getName() +
-                    "' = '" + value + "'", e);
+            LOG.debug("'{}' is set with '{}'", field.getName(), value);
+        } catch (IllegalAccessException e) {
+            throw new ODataUnmarshallingException(e.getMessage(), e);
         }
     }
 
@@ -131,13 +130,21 @@ public final class JsonParserUtils {
             Method method = clazz.getMethod(methodName, parameterTypes);
             return method != null;
         } catch (NoSuchMethodException e) {
-            LOG.warn("Method '{}' with parameter types {} is not found in {}",
-                    methodName, parameterTypes, clazz.getCanonicalName());
+            LOG.trace("Looking for method '{}' with parameter types {}", methodName, parameterTypes);
         }
         return false;
     }
 
     private static boolean isStructuredType(Type type) {
-        return type instanceof StructuredType;
+        return type != null && type instanceof StructuredType;
+    }
+
+    private static ODataUnmarshallingException wrapInvocationTargetException(
+        InvocationTargetException e) {
+        if (e.getCause() != null) {
+            return new ODataUnmarshallingException(e.getCause().getMessage(), e.getCause());
+        } else {
+            return new ODataUnmarshallingException(e.getMessage(), e);
+        }
     }
 }

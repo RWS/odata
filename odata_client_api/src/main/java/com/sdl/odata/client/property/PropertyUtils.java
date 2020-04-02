@@ -83,7 +83,7 @@ public final class PropertyUtils {
         try {
             propertyLong = Long.valueOf(property);
         } catch (NumberFormatException e) {
-            LOG.warn("Cannot convert string value {} into number", property, e);
+            LOG.warn("Cannot convert string value into number", e);
         }
         return propertyLong;
     }

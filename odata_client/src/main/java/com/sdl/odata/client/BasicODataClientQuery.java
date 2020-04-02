@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.client;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -27,16 +26,12 @@ import java.util.Map;
  * for ODataClient. With the help of ODataClientQuery we are to use
  * all possible options for search the entities we need.
  */
-public class BasicODataClientQuery
-        extends AbstractODataClientQuery
-        implements Serializable {
-
-    private static final long serialVersionUID = 6603128698934052827L;
-    private static final String EXPAND_PREFIX = "$expand=";
-    private static final String FILTER_PREFIX = "$filter=";
+public class BasicODataClientQuery extends AbstractODataClientQuery {
 
     private Map<String, String> filterMap;
     private List<String> expandParameters;
+    private static final String EXPAND_PREFIX = "$expand=";
+    private static final String FILTER_PREFIX = "$filter=";
 
     public BasicODataClientQuery(Builder builder) {
         if (builder.entityType == null) {
@@ -112,15 +107,16 @@ public class BasicODataClientQuery
         if (!getEntityType().equals(that.getEntityType())) {
             return false;
         }
-        if (expandParameters == null
-            ? that.expandParameters != null
-            : !expandParameters.equals(that.expandParameters)) {
+        if (expandParameters == null ?
+                that.expandParameters != null : !expandParameters.equals(that.expandParameters)) {
             return false;
         }
 
         if (filterMap == null ? that.filterMap != null : !filterMap.equals(that.filterMap)) {
             return false;
         }
+
+
         return true;
     }
 
@@ -141,9 +137,11 @@ public class BasicODataClientQuery
      * Builder for {@code ODataRequest} objects.
      */
     public static class Builder {
+
         private Class<?> entityType;
         private List<String> expandParameters;
-        private LinkedHashMap<String, String> filteringMap;
+        //Using LinkedHashMap to preserve filter parameters insertion order.
+        private Map<String, String> filteringMap;
         private String entityKey;
 
         public Builder withEntityType(Class<?> clazz) {
