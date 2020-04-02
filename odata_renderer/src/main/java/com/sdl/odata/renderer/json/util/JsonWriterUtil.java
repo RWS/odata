@@ -18,6 +18,7 @@ package com.sdl.odata.renderer.json.util;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.sdl.odata.util.PrimitiveUtil;
 
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -63,9 +64,5 @@ public final class JsonWriterUtil {
         } else {
             jsonGenerator.writeObject(primitiveValue.toString());
         }
-    }
-
-    public static String escapeQuotes(String source) {
-        return source.replaceAll("\"", "\\\\\"");
     }
 }
