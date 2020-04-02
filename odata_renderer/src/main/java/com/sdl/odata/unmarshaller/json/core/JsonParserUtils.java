@@ -96,18 +96,14 @@ public final class JsonParserUtils {
             // Handle Java.Time types which have parse method
             try {
                 return wrappedType.getMethod("parse", String.class).invoke(null, fieldValue);
-            } catch (IllegalAccessException | NoSuchMethodException e) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new ODataUnmarshallingException(e.getMessage(), e);
-            } catch (InvocationTargetException e) {
-                throw wrapInvocationTargetException(e);
             }
         } else if (hasMethod(wrappedType, "valueOf", String.class)) {
             try {
                 return wrappedType.getMethod("valueOf", String.class).invoke(null, fieldValue);
-            } catch (IllegalAccessException | NoSuchMethodException e) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new ODataUnmarshallingException(e.getMessage(), e);
-            } catch (InvocationTargetException e) {
-                throw wrapInvocationTargetException(e);
             }
         } else if (wrappedType == ZonedDateTime.class) {
             return ZonedDateTime.parse(fieldValue);
@@ -139,12 +135,4 @@ public final class JsonParserUtils {
         return type != null && type instanceof StructuredType;
     }
 
-    private static ODataUnmarshallingException wrapInvocationTargetException(
-        InvocationTargetException e) {
-        if (e.getCause() != null) {
-            return new ODataUnmarshallingException(e.getCause().getMessage(), e.getCause());
-        } else {
-            return new ODataUnmarshallingException(e.getMessage(), e);
-        }
-    }
 }
