@@ -45,8 +45,8 @@ public final class ActionImportClientQuery
                 ? ""
                 : "{" + builder.actionParameterMap.entrySet()
                     .stream()
-                    .map(entry -> String.format("\"%s\":%s", entry.getKey(), entry.getValue()))
-                    .collect(Collectors.joining(","))
+                .map(entry -> String.format("\"%s\":%s", entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining(","))
                 + "}";
         this.cacheKey = calculateCacheKey(builder);
     }
@@ -144,11 +144,10 @@ public final class ActionImportClientQuery
                 ? ""
                 : builder.actionParameterMap.entrySet()
                     .stream()
-                    .filter(entry -> builder.omitCacheProperties
-                                .stream()
-                                .noneMatch(propertyToOmit -> entry.getKey().contains(propertyToOmit)))
-                    .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
-                    .collect(Collectors.joining(":"));
+                .filter(entry -> builder.omitCacheProperties.stream()
+                        .noneMatch(propertyToOmit -> entry.getKey().contains(propertyToOmit)))
+                .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining(":"));
         return actionName + ":" + requestParametersKey;
     }
 }

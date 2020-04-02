@@ -31,12 +31,10 @@ public abstract class ODataRequestResponseBase {
 
     private Map<String, String> headers;
     private final byte[] body;
-    private ODataContent streamingContent;
 
-    protected ODataRequestResponseBase(Map<String, String> headers, byte[] body, ODataContent streamingContent) {
+    protected ODataRequestResponseBase(Map<String, String> headers, byte[] body) {
         this.headers = headers;
         this.body = body;
-        this.streamingContent = streamingContent;
     }
 
     public Map<String, String> getHeaders() {
@@ -80,10 +78,6 @@ public abstract class ODataRequestResponseBase {
 
     public byte[] getBody() {
         return body;
-    }
-
-    public ODataContent getStreamingContent() {
-        return streamingContent;
     }
 
     public String getBodyText(String charset) throws UnsupportedEncodingException {

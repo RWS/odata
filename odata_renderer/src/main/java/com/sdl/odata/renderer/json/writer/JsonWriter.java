@@ -137,11 +137,6 @@ public class JsonWriter {
 
     /**
      * Writes raw json to the JSON stream.
-     *
-     * @param json       JSON to write
-     * @param contextUrl context URL
-     * @return JSON result
-     * @throws ODataRenderException OData render exception
      */
     public String writeRawJson(final String json, final String contextUrl) throws ODataRenderException {
         this.contextURL = checkNotNull(contextUrl);
@@ -306,7 +301,7 @@ public class JsonWriter {
                 }
             });
         } else {
-            jsonGenerator.writeNull();
+                jsonGenerator.writeNull();
             LOG.trace("Structured value is null");
         }
         LOG.trace("End structured value of type: {}", structuredType);
