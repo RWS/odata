@@ -118,7 +118,7 @@
         <spring-boot.version>1.4.7.RELEASE</spring-boot.version>
         <tomcat.version>8.5.54</tomcat.version>
         <typesafe-config.version>1.2.1</typesafe-config.version>
-        <xerces.version>2.8.1</xerces.version>
+        <xerces.version>2.10.0</xerces.version>
     </properties>
 
     <!-- Dependency management -->
