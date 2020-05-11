@@ -93,25 +93,26 @@
         <java.version>1.8</java.version>
 
         <!-- Third party dependency versions, sorted alphabetically -->
-        <akka.version>2.5.21</akka.version>
+        <akka.version>2.5.31</akka.version>
         <apache-procrun.version>1.0</apache-procrun.version>
         <brave.version>4.2.0</brave.version>
         <guava.version>27.1-jre</guava.version>
-        <httpcomponents.version>4.5.9</httpcomponents.version>
-        <jackson.version>2.10.1</jackson.version>
+        <httpcomponents.version>4.5.12</httpcomponents.version>
+        <jackson.version>2.10.3</jackson.version>
         <jacoco.version>0.8.5</jacoco.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.2.3</logback.version>
         <mockito.version>2.24.0</mockito.version>
-        <scala.version>2.12.8</scala.version>
-        <scala-parser-combinators.version>1.1.1</scala-parser-combinators.version>
-        <scalatest.version>3.0.5</scalatest.version>
+        <scala.version>2.12.11</scala.version>
+        <scala-parser-combinators.version>1.1.2</scala-parser-combinators.version>
+        <scalatest.version>3.0.8</scalatest.version>
         <servlet-api.version>3.1.0</servlet-api.version>
-        <slf4j.version>1.7.26</slf4j.version>
-        <spring.version>5.1.8.RELEASE</spring.version>
-        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-        <tomcat.version>9.0.21</tomcat.version>
-        <typesafe-config.version>1.3.3</typesafe-config.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <spring.version>5.1.15.RELEASE</spring.version>
+        <spring-boot.version>2.1.14.RELEASE</spring-boot.version>
+        <tomcat.version>9.0.34</tomcat.version>
+        <typesafe-config.version>1.3.4</typesafe-config.version>
+        <xerces.version>2.10.0</xerces.version>
         <zipkin-sender.version>0.8.0</zipkin-sender.version>
     </properties>
 
@@ -169,7 +170,7 @@
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
-                <version>2.8.0</version>
+                <version>${xerces.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -448,7 +449,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.1.0</version>
+                    <version>1.2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -468,12 +469,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
+                    <version>3.0.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.ant</groupId>
                             <artifactId>ant</artifactId>
-                            <version>1.10.5</version>
+                            <version>1.10.7</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -535,12 +536,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.1</version>
                     <dependencies>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>8.21</version>
+                            <version>8.32</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -572,7 +573,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
