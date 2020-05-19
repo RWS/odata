@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.renderer;
 
-import com.sdl.odata.api.ODataClientException;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
@@ -129,29 +128,29 @@ public abstract class AbstractPropertyWriter {
         validateRequest(type, data);
         switch (type.getMetaType()) {
             case PRIMITIVE:
-                LOG.trace("Given property type is primitive");
+                LOG.trace("Given property type is primitive: " + type.getClass().getCanonicalName());
                 propertyXML = generatePrimitiveProperty(data, type);
                 break;
 
             case COMPLEX:
-                LOG.trace("Given property type is complex");
+                LOG.trace("Given property type is complex: " + type.getClass().getCanonicalName());
                 propertyXML = generateComplexProperty(data, (StructuredType) type);
                 break;
 
             default:
+                LOG.trace("Given property type is default: " + type.getClass().getCanonicalName());
                 defaultHandling(type);
         }
         return propertyXML;
     }
 
-    private void validateRequest(Type type, Object data) throws ODataRenderException,
-            ODataClientException, ODataEdmException {
+    private void validateRequest(Type type, Object data) throws ODataRenderException, ODataEdmException {
         if (!areValidTypesToProceed(type, data)) {
             throw new ODataRenderException("ODataUri type is not matched with given 'data' type: " + type);
         }
     }
 
-    private boolean areValidTypesToProceed(Type type, Object data) throws ODataRenderException, ODataEdmException {
+    private boolean areValidTypesToProceed(Type type, Object data) throws ODataEdmException {
         return isEmptyCollection(data) || !(isCollection(data) ^ targetType.isCollection())
                 && getType(data).equals(type);
     }
@@ -170,9 +169,13 @@ public abstract class AbstractPropertyWriter {
 
     protected Type getType(Object data) throws ODataEdmException {
         Type type;
+        if (isEmptyCollection(data)) {
+            throw new ODataEdmException("Given property is empty collection for " + data);
+        }
         if (isCollection(data)) {
             LOG.trace("Given property is collection");
-            type = getAndCheckType(entityDataModel, ((List<?>) data).get(0).getClass());
+            List<?> dataList = (List<?>) data;
+            type = getAndCheckType(entityDataModel, dataList.get(0).getClass());
         } else {
             type = getAndCheckType(entityDataModel, data.getClass());
         }
