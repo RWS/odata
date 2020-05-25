@@ -73,7 +73,8 @@ public abstract class AbstractODataClientComponentsProvider implements ODataClie
             LOG.trace("Using '{}' instance as endpoint caller object.", TRACING_ENDPOINT_CALLER_CLASSNAME);
         } catch (Exception e) {
             ec = new BasicEndpointCaller(properties);
-            LOG.warn("Using '{}' instance as endpoint caller object.", BasicEndpointCaller.class.getName(), e);
+            LOG.trace("No '{}' in classpath. Using '{}' instance as endpoint caller object.",
+                    TRACING_ENDPOINT_CALLER_CLASSNAME, BasicEndpointCaller.class.getName());
         }
         return ec;
     }
