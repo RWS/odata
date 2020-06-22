@@ -31,12 +31,12 @@ class ODataUriParser(val entityDataModel: EntityDataModel) extends RegexParsers
 
   def parseUri(input: String): ODataUri = parseAll(odataUri, URLDecoder.decode(input, "UTF-8")) match {
     case Success(result, _) => result
-    case NoSuccess(msg, _) => throw new ODataUriParseException(msg)
+    case NoSuccess(msg, _) => throw new ODataUriParseException(msg.concat(". uri: ").concat(input))
   }
 
   def parseResourcePath(input: String): ResourcePath = parseAll(resourcePath, URLDecoder.decode(input, "UTF-8")) match {
     case Success(result, _) => result
-    case NoSuccess(msg, _) => throw new ODataUriParseException(msg)
+    case NoSuccess(msg, _) => throw new ODataUriParseException(msg.concat(". uri: ").concat(input))
   }
 
   override val skipWhitespace = false
