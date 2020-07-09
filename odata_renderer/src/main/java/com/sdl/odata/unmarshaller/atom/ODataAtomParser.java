@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -94,21 +95,21 @@ import static com.sdl.odata.util.edm.EntityDataModelUtil.getStructuralProperty;
 public class ODataAtomParser extends AbstractParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODataAtomParser.class);
-    private final Set<String> foundCollectionProperties = new HashSet<>();
     private static final int COLLECTION_INDEX = 11;
+    private static final Set<String> FEED_METADATA_ELEMENT_NAMES = new HashSet(Arrays.asList(new String[] {
+            ATOM_ID, TITLE, ATOM_UPDATED, ATOM_LINK}));
+    public static final DocumentBuilderFactory DOCBUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+
+    private final Set<String> foundCollectionProperties = new HashSet<>();
+
+    static {
+        DOCBUILDER_FACTORY.setNamespaceAware(true);
+    }
 
     public ODataAtomParser(ODataRequestContext context, ODataParser uriParser) {
         super(context, uriParser);
     }
 
-    /**
-     * Document Builder Factory.
-     */
-    public static final DocumentBuilderFactory DOCBUILDER_FACTORY = DocumentBuilderFactory.newInstance();
-
-    static {
-        DOCBUILDER_FACTORY.setNamespaceAware(true);
-    }
 
     @Override
     protected Object processEntity(String bodyText) throws ODataException {
@@ -124,6 +125,9 @@ public class ODataAtomParser extends AbstractParser {
         try {
             return DOCBUILDER_FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
         } catch (SAXException e) {
+            if (LOG.isTraceEnabled())  {
+                LOG.trace("Could not parse XML: " + xml, e);
+            }
             throw new ODataUnmarshallingException("Error while parsing XML", e);
         } catch (IOException | ParserConfigurationException e) {
             throw new ODataSystemException(e);
@@ -141,9 +145,9 @@ public class ODataAtomParser extends AbstractParser {
         Object entity;
         try {
             Class<?> javaType = entityType.getJavaType();
-            LOG.debug("Creating new instance of type: {}", javaType.getName());
+            LOG.trace("Creating new instance of type: {}", javaType.getName());
             entity = javaType.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (ReflectiveOperationException e) {
             throw new ODataUnmarshallingException("Error while instantiating entity of type: " +
                     entityType.getFullyQualifiedName(), e);
         }
@@ -186,7 +190,7 @@ public class ODataAtomParser extends AbstractParser {
         for (int i = elements.getLength() - 1; i >= 0; i--) {
             Element element = (Element) elements.item(i);
             String scheme = element.getAttribute(SCHEME);
-            if (scheme != null && scheme.equals(getOdataSchemeNS())) {
+            if (getOdataSchemeNS().equals(scheme)) {
                 String entityTypeName = getEntityTerm(element);
 
                 if (entityTypeName == null) {
@@ -208,9 +212,8 @@ public class ODataAtomParser extends AbstractParser {
                 }
 
                 return (EntityType) type;
-            } else {
-                LOG.debug("Found a <category> element with an unexpected 'scheme' attribute: " + scheme);
             }
+            LOG.debug("Found a <category> element with an unexpected 'scheme' attribute: " + scheme);
         }
 
         throw new ODataUnmarshallingException("No <category> element found with attribute scheme=\""
@@ -251,7 +254,7 @@ public class ODataAtomParser extends AbstractParser {
     private void setStructProperty(Object instance, StructuredType structType, Element propertyElement)
             throws ODataException {
         String propertyName = propertyElement.getLocalName();
-        LOG.debug("Found property element: {}", propertyName);
+
 
         PropertyType propertyTypeFromXML = getPropertyTypeFromXML(propertyElement);
         if (propertyTypeFromXML == null) {
@@ -259,20 +262,16 @@ public class ODataAtomParser extends AbstractParser {
             return;
         }
 
-        LOG.debug("Property type from XML: {}", propertyTypeFromXML);
-
         StructuralProperty property = getStructuralProperty(getEntityDataModel(), structType, propertyName);
         if (property == null) {
             if (!structType.isOpen()) {
                 LOG.debug("{} property is not found in the following {} type. Ignoring",
                         propertyName, structType.toString());
                 return;
-            } else {
-                throw new ODataNotImplementedException("Open types are not supported, cannot set property value " +
-                        "for property '" + propertyName + "' in instance of type: " + structType);
             }
+            throw new ODataNotImplementedException("Open types are not supported, cannot set property value " +
+                    "for property '" + propertyName + "' in instance of type: " + structType);
         }
-
 
         if (propertyTypeFromXML.isCollection()) {
             if (!property.isCollection()) {
@@ -298,17 +297,15 @@ public class ODataAtomParser extends AbstractParser {
         }
 
         boolean notNullableProperty = propertyValue != null;
-
-        LOG.debug("Property value: {} ({})", propertyValue,
+        LOG.debug("Found property element: {}, type: {}, value: {} ({})", propertyName, propertyTypeFromXML, propertyValue,
                 notNullableProperty ? propertyValue.getClass().getName() : "<null>");
-
         try {
             Field field = property.getJavaField();
             field.setAccessible(true);
             field.set(instance, propertyValue);
-        } catch (IllegalAccessException e) {
+        } catch (ReflectiveOperationException e) {
             throw new ODataUnmarshallingException("Error while setting property value for property '" +
-                    propertyName + "': " + propertyValue, e);
+                    propertyName + "': " + propertyValue + " in class " + instance.getClass().getCanonicalName(), e);
         }
     }
 
@@ -428,7 +425,7 @@ public class ODataAtomParser extends AbstractParser {
         Object instance;
         try {
             instance = complexType.getJavaType().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (ReflectiveOperationException e) {
             throw new ODataUnmarshallingException("Error while instantiating instance of complex type: " +
                     complexType.getFullyQualifiedName(), e);
         }
@@ -570,8 +567,7 @@ public class ODataAtomParser extends AbstractParser {
     private boolean isFeedMetadataElement(Node node) {
         if (node instanceof Element) {
             String nodeLocalName = node.getLocalName();
-            return ATOM_ID.equals(nodeLocalName) || TITLE.equals(nodeLocalName) || ATOM_UPDATED.equals(nodeLocalName)
-                    || ATOM_LINK.equals(nodeLocalName);
+            return FEED_METADATA_ELEMENT_NAMES.contains(nodeLocalName);
         }
         return false;
     }
@@ -668,7 +664,7 @@ public class ODataAtomParser extends AbstractParser {
         if (missingCollectionPropertyName.size() != 0) {
             StringJoiner joiner = new StringJoiner(",");
             missingCollectionPropertyName.forEach(joiner::add);
-            LOG.debug("Non-nullable collections of {} are not found in the request" + missingCollectionPropertyName);
+            LOG.debug("Non-nullable collections of {} are not found in the request", missingCollectionPropertyName);
             throw new ODataUnmarshallingException("The request does not specify the non-nullable collections: '"
                     + joiner.toString() + ".");
         }
@@ -691,8 +687,8 @@ public class ODataAtomParser extends AbstractParser {
                     }
                 });
         if (missingNavigationPropertyNames.size() != 0) {
-            LOG.debug("Non-nullable navigation properties of {} are not found in the request"
-                    + missingNavigationPropertyNames);
+            LOG.debug("Non-nullable navigation properties of {} are not found in the request",
+                    missingNavigationPropertyNames);
             // NOTE: We are just logging if a navigation property is not present.
             // In future, we will impose this restriction like ODataJsonParser after
             // we support 8.2 of docs.oasis-open.org/odata/odata-atom-format/v4.0/cs02/odata-atom-format-v4.0-cs02.html
