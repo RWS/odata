@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2014 All Rights Reserved by the SDL Group.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -96,8 +96,11 @@ public class ODataAtomParser extends AbstractParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODataAtomParser.class);
     private static final int COLLECTION_INDEX = 11;
-    private static final Set<String> FEED_METADATA_ELEMENT_NAMES = new HashSet(Arrays.asList(new String[] {
+    private static final Set<String> FEED_METADATA_ELEMENT_NAMES = new HashSet(Arrays.asList(new String[]{
             ATOM_ID, TITLE, ATOM_UPDATED, ATOM_LINK}));
+    /**
+     * Document Builder Factory.
+     */
     public static final DocumentBuilderFactory DOCBUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
     private final Set<String> foundCollectionProperties = new HashSet<>();
@@ -125,7 +128,7 @@ public class ODataAtomParser extends AbstractParser {
         try {
             return DOCBUILDER_FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
         } catch (SAXException e) {
-            if (LOG.isTraceEnabled())  {
+            if (LOG.isTraceEnabled()) {
                 LOG.trace("Could not parse XML: " + xml, e);
             }
             throw new ODataUnmarshallingException("Error while parsing XML", e);
@@ -297,8 +300,8 @@ public class ODataAtomParser extends AbstractParser {
         }
 
         boolean notNullableProperty = propertyValue != null;
-        LOG.debug("Found property element: {}, type: {}, value: {} ({})", propertyName, propertyTypeFromXML, propertyValue,
-                notNullableProperty ? propertyValue.getClass().getName() : "<null>");
+        LOG.debug("Found property element: {}, type: {}, value: {} ({})", propertyName, propertyTypeFromXML,
+                propertyValue, notNullableProperty ? propertyValue.getClass().getName() : "<null>");
         try {
             Field field = property.getJavaField();
             field.setAccessible(true);
