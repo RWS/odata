@@ -58,12 +58,12 @@ public final class ParameterTypeUtil {
                 throw new ODataUnmarshallingException("Can't parse primitive value");
             }
         }
-        field.setAccessible(true);
-
         try {
+            field.setAccessible(true);
             field.set(object, fieldValue);
-        } catch (IllegalAccessException e) {
-            throw new ODataUnmarshallingException("Error during setting a parameter to action object field");
+        } catch (ReflectiveOperationException e) {
+            throw new ODataUnmarshallingException("Error during setting a parameter [" + fieldValue + "] " +
+                    "to action object field " + object.getClass().getCanonicalName() + "." + field.getName());
         }
 
     }
@@ -93,7 +93,7 @@ public final class ParameterTypeUtil {
             javaToPrimitiveType = Collections.unmodifiableMap(javaToPrimitiveTypeBuilder);
         }
 
-        public PrimitiveType resolveTypeName(Class<?> javaType) {
+        PrimitiveType resolveTypeName(Class<?> javaType) {
             return javaToPrimitiveType.get(PrimitiveUtil.unwrap(javaType));
         }
 
