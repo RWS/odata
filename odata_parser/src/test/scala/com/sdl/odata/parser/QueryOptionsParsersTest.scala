@@ -198,6 +198,25 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
             LevelsQueryOption(10)))))))))
   }
 
+  test("$expand & $apply") {
+    implicit val p = parser.odataUri
+
+    val serviceRoot = "http://hello/odata.svc"
+    val relativeUri = "/Customers(1)?$expand=Orders($apply=groupby((id), aggregate($count as OrderCount)))"
+
+    testSuccess(serviceRoot + relativeUri,
+      ODataUri(serviceRoot,
+        ResourcePathUri(EntitySetPath("Customers",
+          Some(EntityCollectionPath(None,
+            Some(KeyPredicatePath(SimpleKeyPredicate(NumberLiteral(1)),None))))),
+          List(ExpandOption(
+            List(PathExpandItem(None,NavigationPropertyExpandPathSegment("Orders",None),
+              List(ApplyOption(ApplyExpr("groupby",
+                ApplyMethodCallExpr(ApplyPropertyExpr(
+                  List(EntityPathExpr(None,Some(PropertyPathExpr("id",None))))),
+                  ApplyFunctionExpr("aggregate","$count as OrderCount"))))))))))))
+  }
+
   test("$expand + $ref") {
     implicit val p = parser.odataUri
 
