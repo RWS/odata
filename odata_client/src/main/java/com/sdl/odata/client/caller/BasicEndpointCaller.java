@@ -165,7 +165,8 @@ public class BasicEndpointCaller implements EndpointCaller {
             if (proxyServerHostName != null) {
                 LOG.info("Using proxy host='{}' port='{}'", proxyServerHostName, proxyServerPort);
             }
-            throw new ODataClientRuntimeException("Could not open connection to the service endpoint (" + url + ").", e);
+            throw new ODataClientRuntimeException("Could not open connection " +
+                    "to the service endpoint (" + url + ").", e);
         }
 
         if (timeout != null) {
