@@ -69,7 +69,7 @@ public class ODataServiceConfiguration {
 
     @PostConstruct
     public void intializeService() {
-        LOG.info("Initializing OData service routing");
+        LOG.debug("Initializing OData service routing");
 
         // register parsers
         registerRoute(ServiceRequest.class, ODataParserActor.class, actorProducer);

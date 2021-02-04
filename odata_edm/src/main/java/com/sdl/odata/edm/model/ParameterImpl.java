@@ -155,4 +155,19 @@ public final class ParameterImpl implements Parameter {
             return new ParameterImpl(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "ParameterImpl{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", nullable=" + nullable +
+                ", maxLength=" + maxLength +
+                ", precision=" + precision +
+                ", scale=" + scale +
+                ", srid=" + srid +
+                ", unicode=" + unicode +
+                ", javaField=" + javaField +
+                '}';
+    }
 }

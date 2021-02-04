@@ -290,7 +290,7 @@ public class AtomWriter {
 
         try {
             writeEntry(entity, false);
-        } catch (XMLStreamException | IllegalAccessException | NoSuchFieldException | ODataEdmException e) {
+        } catch (XMLStreamException | ReflectiveOperationException | ODataEdmException e) {
             LOG.error("Not possible to render single entity stream XML", e);
             throw new ODataRenderException("Not possible to render single entity stream XML: ", e);
         }

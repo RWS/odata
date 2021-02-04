@@ -107,9 +107,9 @@ public class JsonWriter {
 
         try {
             return writeJson(entities, meta);
-        } catch (IOException | IllegalAccessException | NoSuchFieldException
+        } catch (IOException | ReflectiveOperationException
                 | ODataEdmException | ODataRenderException e) {
-            LOG.error("Not possible to marshall feed stream JSON");
+            LOG.error("Not possible to marshall feed stream JSON", e);
             throw new ODataRenderException("Not possible to marshall feed stream JSON: ", e);
         }
     }
@@ -128,9 +128,9 @@ public class JsonWriter {
 
         try {
             return writeJson(entity, null);
-        } catch (IOException | IllegalAccessException | NoSuchFieldException |
+        } catch (IOException | ReflectiveOperationException |
                 ODataEdmException | ODataRenderException e) {
-            LOG.error("Not possible to marshall single entity stream JSON");
+            LOG.error("Not possible to marshall single entity stream JSON", e);
             throw new ODataRenderException("Not possible to marshall single entity stream JSON: ", e);
         }
     }
@@ -343,7 +343,7 @@ public class JsonWriter {
             field.setAccessible(true);
             propertyValue = field.get(object);
         } catch (IllegalAccessException e) {
-            LOG.error("Error getting field value of field: " + field.toGenericString());
+            LOG.error("Error getting field value of field: {}", field.toGenericString());
             throw new ODataRenderException("Error getting field value of field: " + field.toGenericString());
         }
 

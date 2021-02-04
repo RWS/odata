@@ -90,7 +90,7 @@ public class ODataQueryProcessorImpl implements ODataQueryProcessor {
         try {
             result = strategy.execute();
         } catch (Exception e) {
-            LOG.error("Unexpected Exception when executing query " + query, e);
+            LOG.error("Unexpected Exception when executing query {}", query, e);
             throw e;
         }
         if (targetType.isCollection()) {

@@ -74,7 +74,7 @@ public class XMLServiceDocumentWriter {
      * @throws ODataRenderException in case of errors
      */
     public String buildServiceDocument() throws ODataRenderException {
-        LOG.info("Building service(root) document");
+        LOG.debug("Building service(root) document");
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(BUFFER_SIZE)) {
             XMLStreamWriter writer = startServiceDocument(outputStream);
 
@@ -82,7 +82,7 @@ public class XMLServiceDocumentWriter {
             writeSingleton(writer);
 
             endServiceDocument(writer);
-            LOG.info("Successfully built service document");
+            LOG.debug("Successfully built service document");
             return outputStream.toString();
         } catch (XMLStreamException | IOException e) {
             String msg = "Something went wrong when writing service document.";
@@ -191,7 +191,6 @@ public class XMLServiceDocumentWriter {
         EntityContainer entityContainer = entityDataModel.getEntityContainer();
         if (entityContainer == null) {
             String message = "EntityContainer should not be null";
-            LOG.error(message);
             throw new ODataRenderException(message);
         }
         return entityContainer;

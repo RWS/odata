@@ -72,7 +72,7 @@ public class ParserTestSuite {
 
     @Before
     public void setUp() throws Exception {
-        LOG.info("Initializing EntityDataModel");
+        LOG.debug("Initializing EntityDataModel");
         AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
         factory.addClass(Address.class);
         factory.addClass(CollectionsSample.class);

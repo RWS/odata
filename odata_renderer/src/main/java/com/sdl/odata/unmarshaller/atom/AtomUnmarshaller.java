@@ -53,7 +53,7 @@ public class AtomUnmarshaller extends AbstractUnmarshaller {
 
     @Override
     public Object unmarshall(ODataRequestContext requestContext) throws ODataException {
-        LOG.info("Atom Unmarshaller invoked with {}", requestContext.getRequest());
+        LOG.debug("Atom Unmarshaller invoked with {}", requestContext.getRequest());
         return new ODataAtomParser(requestContext, uriParser).getODataEntity();
     }
 }

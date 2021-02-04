@@ -161,11 +161,11 @@ public class BasicEndpointCaller implements EndpointCaller {
                 urlConnection = (HttpURLConnection) url.openConnection(proxy);
             }
         } catch (IOException e) {
-            LOG.error("Could not open connection to the service endpoint.", e);
+            LOG.error("Could not open connection to the service endpoint ({}).", url, e);
             if (proxyServerHostName != null) {
                 LOG.info("Using proxy host='{}' port='{}'", proxyServerHostName, proxyServerPort);
             }
-            throw new ODataClientRuntimeException("Could not open connection to the service endpoint.", e);
+            throw new ODataClientRuntimeException("Could not open connection to the service endpoint (" + url + ").", e);
         }
 
         if (timeout != null) {

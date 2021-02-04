@@ -50,7 +50,7 @@ public class ODataEdmRegistryImpl implements ODataEdmRegistry {
             AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
             classes.forEach(factory::addClass);
 
-            LOG.info("Building EntityDataModel");
+            LOG.debug("Building EntityDataModel");
             entityDataModel = factory.buildEntityDataModel();
         }
 

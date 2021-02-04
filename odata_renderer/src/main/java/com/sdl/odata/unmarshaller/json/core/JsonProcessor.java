@@ -71,7 +71,7 @@ public class JsonProcessor {
      * @throws ODataUnmarshallingException If unable to initialize
      */
     public void initialize() throws ODataUnmarshallingException {
-        LOG.info("Parser is initializing");
+        LOG.debug("Parser is initializing");
         try {
             JsonParser jsonParser = JSON_FACTORY.createParser(inputJson);
 
@@ -88,6 +88,7 @@ public class JsonProcessor {
                 }
             }
         } catch (IOException e) {
+            LOG.trace("Cannot unmarshall JSON: {}", inputJson);
             throw new ODataUnmarshallingException("It is unable to unmarshall", e);
         }
     }
@@ -101,7 +102,7 @@ public class JsonProcessor {
      */
     private void process(JsonParser jsonParser) throws IOException, ODataUnmarshallingException {
         if (jsonParser.getCurrentToken() == JsonToken.FIELD_NAME) {
-            LOG.info("Starting to parse {} token", jsonParser.getCurrentName());
+            LOG.trace("Starting to parse {} token", jsonParser.getCurrentName());
             String key = jsonParser.getCurrentName();
             jsonParser.nextToken();
 
@@ -131,7 +132,7 @@ public class JsonProcessor {
      * @throws IOException If unable to read input parser
      */
     private List<Object> getCollectionValue(JsonParser jsonParser) throws IOException {
-        LOG.info("Start parsing {} array", jsonParser.getCurrentName());
+        LOG.debug("Start parsing {} array", jsonParser.getCurrentName());
         List<Object> list = new ArrayList<>();
         while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
             if (jsonParser.getCurrentToken() == JsonToken.START_OBJECT) {
@@ -141,7 +142,7 @@ public class JsonProcessor {
             if (!"}".equals(jsonParser.getText())) {
                 list.add(jsonParser.getText());
             } else {
-                LOG.info("Array is over.");
+                LOG.debug("Array is over.");
             }
         }
         return list;
@@ -155,7 +156,7 @@ public class JsonProcessor {
      * @throws IOException If unable to read input parser
      */
     private Object getEmbeddedObject(JsonParser jsonParser) throws IOException {
-        LOG.info("Start parsing an embedded object.");
+        LOG.trace("Start parsing an embedded object.");
         Map<String, Object> embeddedMap = new HashMap<>();
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String key = jsonParser.getText();
@@ -186,7 +187,7 @@ public class JsonProcessor {
      * @throws IOException If unable to read input parser
      */
     private void processSpecialTags(JsonParser jsonParser) throws IOException {
-        LOG.info("@odata tags found - start parsing");
+        LOG.trace("@odata tags found - start parsing");
         String key = jsonParser.getCurrentName();
         jsonParser.nextToken();
         String value = jsonParser.getText();
@@ -201,7 +202,7 @@ public class JsonProcessor {
      */
     private void processLinks(JsonParser jsonParser) throws IOException {
 
-        LOG.info("@odata.bind tag found - start parsing");
+        LOG.trace("@odata.bind tag found - start parsing");
 
         final String fullLinkFieldName = jsonParser.getText();
         final String key = fullLinkFieldName.substring(0, fullLinkFieldName.indexOf(ODATA_BIND));

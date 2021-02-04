@@ -54,7 +54,7 @@ public class JsonUnmarshaller extends AbstractUnmarshaller {
 
     @Override
     public Object unmarshall(ODataRequestContext requestContext) throws ODataException {
-        LOG.info("Json Unmarshaller invoked with {}", requestContext.getRequest());
+        LOG.trace("Json Unmarshaller invoked with {}", requestContext.getRequest());
         return new ODataJsonParser(requestContext, uriParser).getODataEntity();
     }
 }

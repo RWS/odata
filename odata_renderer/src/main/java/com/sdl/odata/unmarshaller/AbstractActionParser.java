@@ -128,8 +128,8 @@ public abstract class AbstractActionParser {
             Object bodyParameter = bodyParameters.get(parameter.getName());
 
             if (bodyParameter == null && !parameter.isNullable()) {
-                LOG.error("Error during setting a parameter to action object field");
-                throw new ODataUnmarshallingException("Assigning null to non nullable parameter");
+                LOG.error("Error during setting a parameter {} to action object field", parameter);
+                throw new ODataUnmarshallingException("Assigning null to non nullable parameter " + parameter);
             }
             Field javaField = parameter.getJavaField();
 

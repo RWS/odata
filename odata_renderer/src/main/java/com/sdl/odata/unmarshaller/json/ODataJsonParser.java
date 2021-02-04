@@ -60,7 +60,7 @@ public class ODataJsonParser extends AbstractParser {
      * @throws ODataUnmarshallingException If unable to initialize processor
      */
     private void initializeProcessor(JsonProcessor processor) throws ODataUnmarshallingException {
-        LOG.info("Trying to initialize processor: {}", processor.getClass().getSimpleName());
+        LOG.debug("Trying to initialize processor: {}", processor.getClass().getSimpleName());
         processor.initialize();
 
         fields = processor.getValues();

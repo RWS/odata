@@ -192,7 +192,8 @@ public class XMLPropertyWriter extends AbstractPropertyWriter {
         LOG.trace("Property name is '{}' and its value is '{}'", property.getName(), value);
         Type type = getType(value);
         if (type == null) {
-            String msg = String.format("Field type %s is not found in entity data model", field.getType());
+            String msg = String.format("Field type %s is not found in entity data model %s",
+                    field.getType(), entity.getClass().getCanonicalName());
             LOG.error(msg);
             throw new ODataRenderException(msg);
         }

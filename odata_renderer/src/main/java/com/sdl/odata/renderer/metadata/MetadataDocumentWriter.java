@@ -93,7 +93,7 @@ public class MetadataDocumentWriter {
             xmlWriter.writeStartDocument(UTF_8.name(), XML_VERSION);
             xmlWriter.setPrefix(EDMX_PREFIX, EDMX_NS);
         } catch (XMLStreamException e) {
-            LOG.error("Not possible to start stream XML");
+            LOG.error("Not possible to start stream XML", e);
             throw new ODataRenderException("Not possible to start stream XML: ", e);
         }
     }
@@ -109,7 +109,7 @@ public class MetadataDocumentWriter {
             xmlWriter.writeEndDocument();
             xmlWriter.flush();
         } catch (XMLStreamException e) {
-            LOG.error("Not possible to end stream XML");
+            LOG.error("Not possible to end stream XML", e);
             throw new ODataRenderException("Not possible to end stream XML: ", e);
         }
     }
@@ -160,7 +160,7 @@ public class MetadataDocumentWriter {
 
             xmlWriter.writeEndElement();
         } catch (XMLStreamException e) {
-            LOG.error("Not possible to start stream XML");
+            LOG.error("Not possible to start stream XML", e);
             throw new ODataRenderException("Not possible to start stream XML: ", e);
         }
     }

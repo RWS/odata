@@ -732,11 +732,11 @@ public final class EntityDataModelUtil {
                 }
                 return processedKeys.stream().map(Object::toString).collect(Collectors.joining(","));
             } else {
-                LOG.error("Not possible to retrieve entity key for entity " + entity);
+                LOG.error("Not possible to retrieve entity key for entity {}", entity);
                 throw new ODataEdmException("Entity key is not found for " + entity);
             }
         } catch (ReflectiveOperationException e) {
-            LOG.error("Not possible to retrieve entity key for entity " + entity, e);
+            LOG.error("Not possible to retrieve entity key for entity {}", entity, e);
             throw new ODataEdmException("Not possible to retrieve entity key for entity " + entity, e);
         }
     }

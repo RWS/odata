@@ -56,7 +56,7 @@ public class BatchUnmarshaller extends AbstractUnmarshaller {
 
     @Override
     public Object unmarshall(ODataRequestContext requestContext) throws ODataException {
-        LOG.info("Multipart unmarshaller invoked with {}", requestContext.getRequest());
+        LOG.trace("Multipart unmarshaller invoked with {}", requestContext.getRequest());
         return new ODataBatchParser(requestContext, uriParser).getODataEntity();
     }
 }

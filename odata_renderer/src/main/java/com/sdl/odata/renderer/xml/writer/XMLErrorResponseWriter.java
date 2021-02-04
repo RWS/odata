@@ -65,7 +65,7 @@ public class XMLErrorResponseWriter {
             xmlWriter.writeStartDocument(UTF_8.name(), XML_VERSION);
             xmlWriter.setPrefix(METADATA, ODATA_METADATA_NS);
         } catch (XMLStreamException e) {
-            LOG.error("Not possible to start stream XML");
+            LOG.error("Not possible to start stream XML", e);
             throw new ODataRenderException("Not possible to start stream XML: ", e);
         }
     }
@@ -81,7 +81,7 @@ public class XMLErrorResponseWriter {
             xmlWriter.writeEndDocument();
             xmlWriter.flush();
         } catch (XMLStreamException e) {
-            LOG.error("Not possible to end stream XML");
+            LOG.error("Not possible to end stream XML", e);
             throw new ODataRenderException("Not possible to end stream XML: ", e);
         }
     }
@@ -119,7 +119,7 @@ public class XMLErrorResponseWriter {
             }
             xmlWriter.writeEndElement();
         } catch (XMLStreamException e) {
-            LOG.error("Not possible to marshall error stream XML");
+            LOG.error("Not possible to marshall error stream XML", e);
             throw new ODataRenderException("Not possible to marshall error stream XML: ", e);
         }
     }

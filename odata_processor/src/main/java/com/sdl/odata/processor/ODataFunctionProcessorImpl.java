@@ -78,7 +78,7 @@ public class ODataFunctionProcessorImpl implements ODataFunctionProcessor {
                 result = operation.doOperation(requestContext, dataSourceFactory);
             }
         } catch (Exception e) {
-            LOG.error("Unexpected exception when executing a function " + operation.getClass().getCanonicalName(), e);
+            LOG.error("Cannot execute a function {}", operation.getClass().getCanonicalName(), e);
             throw e;
         }
 

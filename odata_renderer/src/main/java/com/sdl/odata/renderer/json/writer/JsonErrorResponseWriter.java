@@ -73,7 +73,7 @@ public class JsonErrorResponseWriter {
 
             return outputStream.toString();
         } catch (IOException e) {
-            LOG.error("Not possible to write error JSON.");
+            LOG.error("Not possible to write error JSON ", e);
             throw new ODataRenderException("Not possible to write error JSON: ", e);
         }
     }
