@@ -61,10 +61,7 @@ public abstract class AbstractODataController {
     })
     protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
             throws ServletException, IOException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Start processing request from: {}", servletRequest.getRemoteAddr());
-        }
-
+        LOG.trace("Start processing request from: {}", servletRequest.getRemoteAddr());
         ODataResponse oDataResponse;
         try {
             ODataRequest oDataRequest = buildODataRequest(servletRequest);
@@ -74,10 +71,7 @@ public abstract class AbstractODataController {
         } catch (ODataException e) {
             throw new ServletException(e);
         }
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Finished processing request from: {}", servletRequest.getRemoteAddr());
-        }
+        LOG.trace("Finished processing request from: {}", servletRequest.getRemoteAddr());
     }
 
     /**
@@ -109,14 +103,15 @@ public abstract class AbstractODataController {
         }
 
         // Read the request body
-        InputStream in = servletRequest.getInputStream();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int count;
-        byte[] buffer = new byte[BUFFER_SIZE];
-        while ((count = in.read(buffer)) != -1) {
-            out.write(buffer, 0, count);
+        try (InputStream in = servletRequest.getInputStream();
+             ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+            int count;
+            byte[] buffer = new byte[BUFFER_SIZE];
+            while ((count = in.read(buffer)) != -1) {
+                out.write(buffer, 0, count);
+            }
+            builder.setBody(out.toByteArray());
         }
-        builder.setBody(out.toByteArray());
 
         return builder.build();
     }
@@ -141,8 +136,8 @@ public abstract class AbstractODataController {
         url.append(scheme);
         url.append("://");
         url.append(request.getServerName());
-        if ((scheme.equals("http") && (port != DEFAULT_PORT_NUMBER))
-                || (scheme.equals("https") && (port != DEFAULT_SSL_PORT_NUMBER))) {
+        if (scheme.equals("http") && port != DEFAULT_PORT_NUMBER ||
+            scheme.equals("https") && port != DEFAULT_SSL_PORT_NUMBER) {
             url.append(':');
             url.append(port);
         }
