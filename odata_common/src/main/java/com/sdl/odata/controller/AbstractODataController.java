@@ -103,8 +103,8 @@ public abstract class AbstractODataController {
         }
 
         // Read the request body
-        try (InputStream in = servletRequest.getInputStream();
-             ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+        InputStream in = servletRequest.getInputStream();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             int count;
             byte[] buffer = new byte[BUFFER_SIZE];
             while ((count = in.read(buffer)) != -1) {
