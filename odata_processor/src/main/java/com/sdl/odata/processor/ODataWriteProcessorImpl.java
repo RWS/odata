@@ -19,7 +19,6 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.parser.ODataUriUtil;
 import com.sdl.odata.api.processor.ODataWriteProcessor;
 import com.sdl.odata.api.processor.ProcessorResult;
-import com.sdl.odata.api.processor.datasource.ODataDataSourceException;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -55,11 +54,8 @@ public class ODataWriteProcessorImpl implements ODataWriteProcessor {
                 return new ProcessorResult(METHOD_NOT_ALLOWED);
             }
             return methodHandler.handleWrite(entity);
-        } catch (ODataDataSourceException e) {
-            LOG.error("Couldn't persist or delete given entity '" + entity + "'", e);
-            throw e;
         } catch (Exception e) {
-            LOG.error("Unexpected Exception when persisting or deleting an entity.", e);
+            LOG.error("Couldn't persist or delete given entity '" + entity + "'", e);
             throw e;
         }
     }
@@ -72,9 +68,8 @@ public class ODataWriteProcessorImpl implements ODataWriteProcessor {
                 if (ODataUriUtil.isActionCallUri(requestContext.getUri())) {
                     LOG.debug("Invoking Action POST method handler");
                     return new ActionPostMethodHandler(requestContext, dataSourceFactory);
-                } else {
-                    return new PostMethodHandler(requestContext, dataSourceFactory);
                 }
+                return new PostMethodHandler(requestContext, dataSourceFactory);
             case PUT:
                 return new PutMethodHandler(requestContext, dataSourceFactory);
             case PATCH:

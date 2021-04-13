@@ -42,7 +42,6 @@ import java.util.List;
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
 import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
-import static java.text.MessageFormat.format;
 
 /**
  * Atom marshaller implementation of {@link ODataEntityMarshaller}.
@@ -66,9 +65,7 @@ public class AtomEntityMarshaller implements ODataEntityMarshaller {
             LOG.debug("Building entity data model...");
             this.entityDataModel = buildEntityDataModel(edmEntityClasses);
         } catch (ODataEdmException | RuntimeException e) {
-            throw new ODataClientRuntimeException(
-                    format("Caught exception {0}: {1} when building OData entity model", e.getClass().getSimpleName(),
-                            e.getMessage()), e);
+            throw new ODataClientRuntimeException("Cannot build OData entity model", e);
         }
     }
 
