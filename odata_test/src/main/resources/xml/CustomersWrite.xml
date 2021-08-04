@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata" xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#Customers" xml:base="http://localhost:8080/odata.svc">
 <!--
 
-    Copyright (c) 2014-2021 All Rights Reserved by the RWS.
+    Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
