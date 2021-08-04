@@ -142,7 +142,7 @@ public final class AtomConstants {
     /**
      * Atom Author Odata Framework.
      */
-    public static final String ATOM_AUTHOR_ODATA_FRAMEWORK = "SDL OData v4 framework";
+    public static final String ATOM_AUTHOR_ODATA_FRAMEWORK = "Tridion OData v4 framework";
 
     /**
      * The position of the feed {@code <id>} element in a XML fragment containing a feed.
