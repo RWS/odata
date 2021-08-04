@@ -1,5 +1,5 @@
 @REM
-@REM Copyright (c) 2014 All Rights Reserved by the RWS Group.
+@REM Copyright (c) 2021 All Rights Reserved by the RWS Group.
 @REM
 @REM Licensed under the Apache License, Version 2.0 (the "License");
 @REM you may not use this file except in compliance with the License.
