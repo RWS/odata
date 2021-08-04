@@ -1,7 +1,7 @@
-# RWS OData v4 Framework [![Build Status](https://travis-ci.org/sdl/odata.svg?branch=master)](https://travis-ci.org/sdl/odata) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata)
+# Tridion OData v4 Framework [![Build Status](https://travis-ci.org/sdl/odata.svg?branch=master)](https://travis-ci.org/sdl/odata) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata)
 
-This is the RWS Open Data Framework based on OData standard (http://www.odata.org/) fully implemented in Java. The RWS OData framework offers a Java
-implementation of the OData Service and also provides Java Client Libraries. The RWS OData framework is aligned to the v4 version of the OData OASIS standard.
+This is the RWS Open Data Framework based on OData standard (http://www.odata.org/) fully implemented in Java. The Tridion OData framework offers a Java
+implementation of the OData Service and also provides Java Client Libraries. The Tridion OData framework is aligned to the v4 version of the OData OASIS standard.
 
 # Starting the Service
 
@@ -24,7 +24,7 @@ In order to build your own service you need to provide some data models and data
 
 # DataSources
 
-The OData standard is based around resources that are well defined and modelled in something called the EDM. The RWS OData framework is build around the principle of having a well defined EDM. The EDM is a registry that contains which entities are present in the model and which properties and relations they have.
+The OData standard is based around resources that are well defined and modelled in something called the EDM. The Tridion OData framework is build around the principle of having a well defined EDM. The EDM is a registry that contains which entities are present in the model and which properties and relations they have.
 
 Based on the EDM the OData framework parses the input that is being sent or requested. Most important is that in order to return a result or show requested data there needs to be a datasource. That is why in the OData framework this is the most critical component and we offer the flexibility to plug in any datasource you want.
 
@@ -58,7 +58,7 @@ If above pre-requisites are met building is as simple as running the following c
 
 ## Components
 
-The RWS OData v4 Framework consists of the following Architecture components, each represented by their own Maven module:
+The Tridion OData v4 Framework consists of the following Architecture components, each represented by their own Maven module:
 
 - `odata_api` - Framework APIs
 - `odata_assembly` - Assembly structure for standalone distribution

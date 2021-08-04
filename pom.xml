@@ -30,8 +30,8 @@
     <version>2.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>OData v4 Framework</name>
-    <description>RWS OData v4 Framework</description>
+    <name>Tridion OData v4 Framework</name>
+    <description>Tridion OData v4 Framework</description>
     <inceptionYear>2014</inceptionYear>
 
     <modules>
@@ -55,7 +55,7 @@
 
     <organization>
         <name>RWS Group for and on behalf of its affiliates and subsidiaries</name>
-        <url>http://www.rws.com/</url>
+        <url>http://www.tridion.com/</url>
     </organization>
 
     <licenses>
@@ -68,9 +68,9 @@
     <developers>
         <developer>
             <name>Ben Middleton</name>
-            <email>bmiddleton@sdl.com</email>
+            <email>bmiddleton@tridion.com</email>
             <organization>RWS Group for and on behalf of its affiliates and subsidiaries</organization>
-            <organizationUrl>http://www.rws.com</organizationUrl>
+            <organizationUrl>http://www.tridion.com</organizationUrl>
         </developer>
     </developers>
 
