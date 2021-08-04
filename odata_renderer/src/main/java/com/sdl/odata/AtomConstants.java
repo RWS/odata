@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+/*
+ * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,7 +142,7 @@ public final class AtomConstants {
     /**
      * Atom Author Odata Framework.
      */
-    public static final String ATOM_AUTHOR_ODATA_FRAMEWORK = "SDL OData v4 framework";
+    public static final String ATOM_AUTHOR_ODATA_FRAMEWORK = "Tridion OData v4 framework";
 
     /**
      * The position of the feed {@code <id>} element in a XML fragment containing a feed.
