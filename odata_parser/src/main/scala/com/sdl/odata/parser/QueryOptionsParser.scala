@@ -145,7 +145,8 @@ trait QueryOptionsParser extends RegexParsers {
 
 
   def expandOption(contextTypeName: String): Parser[QueryOption] =
-    expandRefOption(contextTypeName) | select(contextTypeName) | expand(contextTypeName) | levels
+    expandRefOption(contextTypeName) | select(contextTypeName) | apply(contextTypeName) |
+      expand(contextTypeName) | levels
 
   def expandOptions(contextTypeName: String): Parser[List[QueryOption]] =
     "(" ~> rep1sep(expandOption(contextTypeName), ";") <~ ")"
