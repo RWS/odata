@@ -16,7 +16,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -590,6 +591,22 @@
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <executable>gpg</executable>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
                 <executions>
@@ -688,18 +705,18 @@
                         <configuration>
                             <exportAntProperties>true</exportAntProperties>
                             <target>
-                                <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath" />
+                                <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath"/>
                                 <!--suppress MavenModelInspection -->
                                 <echo>parsedVersion.qualifier = ${parsedVersion.qualifier}</echo>
                                 <if>
                                     <!--suppress MavenModelInspection -->
-                                    <equals arg1="${parsedVersion.qualifier}" arg2="SNAPSHOT" />
+                                    <equals arg1="${parsedVersion.qualifier}" arg2="SNAPSHOT"/>
                                     <then>
-                                        <property name="build.version" value="${snapshot.qualifier.version}" />
+                                        <property name="build.version" value="${snapshot.qualifier.version}"/>
                                     </then>
                                     <else>
                                         <!--suppress MavenModelInspection -->
-                                        <property name="build.version" value="${parsedVersion.qualifier}" />
+                                        <property name="build.version" value="${parsedVersion.qualifier}"/>
                                     </else>
                                 </if>
                             </target>
