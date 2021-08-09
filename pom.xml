@@ -596,6 +596,9 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
+                        <configuration>
+                            <executable>/usr/local/bin/gpg</executable>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
