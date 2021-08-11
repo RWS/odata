@@ -36,7 +36,7 @@ public class AkkaConfiguration {
     @Autowired
     private AkkaSpringExtension akkaSpringExtension;
 
-    @Bean
+    @Bean(destroyMethod = "terminate")
     public ActorSystem actorSystem() {
         LOG.info("Creating actor system");
         ActorSystem system = ActorSystem.create("ODataAkkaSpringContext");
