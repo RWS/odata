@@ -97,7 +97,7 @@
         <apache-procrun.version>1.0</apache-procrun.version>
         <brave.version>4.2.0</brave.version>
         <guava.version>30.1.1-jre</guava.version>
-        <httpcomponents.version>4.5.12</httpcomponents.version>
+        <httpcomponents.version>4.5.13</httpcomponents.version>
         <jackson.version>2.12.4</jackson.version>
         <jacoco.version>0.8.5</jacoco.version>
         <junit.version>4.13.1</junit.version>
