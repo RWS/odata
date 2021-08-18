@@ -1,4 +1,5 @@
-# Tridion OData v4 Framework [![Build Status](https://travis-ci.org/sdl/odata.svg?branch=master)](https://travis-ci.org/sdl/odata) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata)
+# Tridion OData v4 Framework 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata)
 
 This is the RWS Open Data Framework based on OData standard (http://www.odata.org/) fully implemented in Java. The Tridion OData framework offers a Java
 implementation of the OData Service and also provides Java Client Libraries. The Tridion OData framework is aligned to the v4 version of the OData OASIS standard.
