@@ -713,7 +713,9 @@
                                 <include>**/pom.xml</include>
                             </includes>
                             <excludes>
-                                    <exclude>**/test/resources/**/*.xml</exclude>
+                                <exclude>**/test/resources/**/*.xml</exclude>
+                                <exclude>**/main/resources/**/*.xml</exclude>
+                                <exclude>**/test/resources/**/*.txt</exclude>
                             </excludes>
                         </configuration>
                         <phase>process-sources</phase>
