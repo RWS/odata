@@ -43,7 +43,6 @@ import java.util.Properties;
 import static com.sdl.odata.api.service.MediaType.JSON;
 import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_HOST_NAME;
 import static com.sdl.odata.client.ODataClientConstants.WebService.CLIENT_SERVICE_PROXY_PORT;
-import static java.lang.System.lineSeparator;
 import static java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT;
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
@@ -85,7 +84,9 @@ public class TracingEndpointCallerTest {
     public void callEndpoint() throws ODataClientException, MalformedURLException {
         String response = caller.callEndpoint(singletonMap("Accept", JSON.getType()), new URL(basePath + RESPONSE));
         String expected = URLTestUtils.loadTextFile(RESPONSE);
-        assertThat(response, equalTo(expected.substring(0, expected.lastIndexOf(lineSeparator()))));
+        response = response.replace("\n", "").replace("\r", "");
+        expected = expected.replace("\n", "").replace("\r", "");
+        assertThat(response, equalTo(expected));
     }
 
     @Test
@@ -118,7 +119,9 @@ public class TracingEndpointCallerTest {
         String response = proxifiedCaller.callEndpoint(emptyMap(), new URL(basePath + RESPONSE));
         String result = URLTestUtils.loadTextFile(RESPONSE);
 
-        assertThat(response, equalTo(result.substring(0, result.lastIndexOf(lineSeparator()))));
+        response = response.replace("\n", "").replace("\r", "");
+        result = result.replace("\n", "").replace("\r", "");
+        assertThat(response, equalTo(result));
     }
 
     @Test
@@ -143,7 +146,9 @@ public class TracingEndpointCallerTest {
     public void okPutEntity() throws MalformedURLException, ODataClientException {
         String body = URLTestUtils.loadTextFile(RESPONSE);
         String result = caller.doPutEntity(emptyMap(), new URL(basePath + RESPONSE), body, JSON);
-        assertThat(body.substring(0, body.lastIndexOf(lineSeparator())), equalTo(result));
+        body = body.replace("\n", "").replace("\r", "");
+        result = result.replace("\n", "").replace("\r", "");
+        assertThat(body, equalTo(result));
     }
 
     @Test
