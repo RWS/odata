@@ -567,6 +567,8 @@
                         <header>${license.header.file}</header>
                         <excludes>
                             <exclude>src/license/**</exclude>
+                            <exclude>**.xml</exclude>
+                            <exclude>**.json</exclude>
                         </excludes>
                     </configuration>
                 </plugin>

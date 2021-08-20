@@ -22,9 +22,6 @@ import com.sdl.odata.renderer.WriterTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
-
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
 import static org.junit.Assert.assertEquals;
@@ -51,7 +48,7 @@ public class XMLServiceDocumentWriterTest extends WriterTest {
     }
 
     @Test(expected = ODataRenderException.class)
-    public void testBuildServiceDocumentException() throws ODataRenderException, IOException, TransformerException {
+    public void testBuildServiceDocumentException() throws Exception {
         EntityDataModel entityDataModel = mock(EntityDataModel.class);
         String serviceDocument = new XMLServiceDocumentWriter(odataUri, entityDataModel).buildServiceDocument();
 

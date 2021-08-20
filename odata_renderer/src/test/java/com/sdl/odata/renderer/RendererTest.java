@@ -25,8 +25,6 @@ import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import org.junit.Before;
 
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.MediaType.JSON;
@@ -150,8 +148,7 @@ public abstract class RendererTest {
      * @throws java.io.IOException
      * @throws javax.xml.transform.TransformerException
      */
-    protected void assertResponse(ODataResponse response, MediaType mediaType, String body)
-            throws IOException, TransformerException {
+    protected void assertResponse(ODataResponse response, MediaType mediaType, String body) throws Exception {
 
         assertThat(response.getContentType(), is(mediaType));
         String bodyText = response.getBodyText(UTF_8.name());
