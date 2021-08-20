@@ -568,6 +568,8 @@
                         <excludes>
                             <exclude>src/license/**</exclude>
                             <exclude>**/test/resources/**/*.xml</exclude>
+                            <exclude>**/main/resources/**/*.xml</exclude>
+                            <exclude>**/test/resources/**/*.txt</exclude>
                             <exclude>**.json</exclude>
                         </excludes>
                     </configuration>
@@ -716,6 +718,7 @@
                                 <exclude>**/test/resources/**/*.xml</exclude>
                                 <exclude>**/main/resources/**/*.xml</exclude>
                                 <exclude>**/test/resources/**/*.txt</exclude>
+                                <exclude>**.json</exclude>
                             </excludes>
                         </configuration>
                         <phase>process-sources</phase>
