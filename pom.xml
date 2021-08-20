@@ -567,7 +567,7 @@
                         <header>${license.header.file}</header>
                         <excludes>
                             <exclude>src/license/**</exclude>
-                            <exclude>**.xml</exclude>
+                            <exclude>**/test/resources/**/*.xml</exclude>
                             <exclude>**.json</exclude>
                         </excludes>
                     </configuration>
@@ -712,6 +712,9 @@
                                 <include>**/*.scala</include>
                                 <include>**/pom.xml</include>
                             </includes>
+                            <excludes>
+                                    <exclude>**/test/resources/**/*.xml</exclude>
+                            </excludes>
                         </configuration>
                         <phase>process-sources</phase>
                         <goals>
