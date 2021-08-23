@@ -36,6 +36,12 @@ jobs:
           git config user.email ${{ secrets.GIT_CONFIG_EMAIL }}
           git config user.name "RWS Artifact Publishers"
 
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: 'dummy'
+
       - name: Build and release
         run: bash release.sh "${{ github.event.inputs.releaseVersion }}-${{ github.event.inputs.releaseBuild }}" "${{ github.event.inputs.releaseVersion }}-SNAPSHOT"
         env:
