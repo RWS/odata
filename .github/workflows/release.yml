@@ -44,9 +44,9 @@ jobs:
 
       - name: Release
         env:
-          RELEASE: ${{ github.event.inputs.releaseVersion }}-${{ github.event.inputs.releaseBuild }}
+          RELEASE: ${{ github.event.inputs.releaseVersion }}.${{ github.event.inputs.releaseBuild }}
           SNAPSHOT: ${{ github.event.inputs.releaseVersion }}-SNAPSHOT
-          TAG: release/${{ github.event.inputs.releaseVersion }}/${RELEASE}
+          TAG: release/${{ github.event.inputs.releaseVersion }}/${{ env.RELEASE }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
