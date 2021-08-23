@@ -54,17 +54,13 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
         run: |
           echo "::group::Prepare"
-          mvn --batch-mode --no-transfer-progress -Prelease release:prepare -DreleaseVersion=${{ env.RELEASE }} \
+          mvn --batch-mode --no-transfer-progress release:prepare -DreleaseVersion=${{ env.RELEASE }} \
             -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} \
             -D${{ env.LOGGING }}
           echo "::endgroup::"
 
           echo "::group::Perform"
-          mvn --batch-mode --no-transfer-progress -Prelease release:perform -DreleaseVersion=${{ env.RELEASE }} \
+          mvn --batch-mode --no-transfer-progress release:perform -DreleaseVersion=${{ env.RELEASE }} \
             -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} \
             -D${{ env.LOGGING }}
-          echo "::endgroup::"
-
-          echo "::group::Deploy"
-          mvn --batch-mode --no-transfer-progress -Prelease deploy
           echo "::endgroup::"
