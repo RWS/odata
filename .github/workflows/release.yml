@@ -48,19 +48,23 @@ jobs:
           SNAPSHOT: ${{ github.event.inputs.releaseVersion }}-SNAPSHOT
           TAG: release/${{ github.event.inputs.releaseVersion }}/${{ github.event.inputs.releaseVersion }}.${{ github.event.inputs.releaseBuild }}
           # Suppress logging during release prep/perform
-          LOGGING: -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+          LOGGING: org.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
         run: |
-          echo "::group::Prepare release"
+          echo "::group::Prepare"
           mvn --batch-mode --no-transfer-progress -Prelease release:prepare -DreleaseVersion=${{ env.RELEASE }} \
-            -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} ${{ env.LOGGING }}
+            -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} \
+            -D${{ env.LOGGING }}
           echo "::endgroup::"
-          echo "::group::Perform release"
+
+          echo "::group::Perform"
           mvn --batch-mode --no-transfer-progress -Prelease release:perform -DreleaseVersion=${{ env.RELEASE }} \
-            -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} ${{ env.LOGGING }}
+            -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} \
+            -D${{ env.LOGGING }}
           echo "::endgroup::"
-          echo "::group::Deploy release"
+
+          echo "::group::Deploy"
           mvn --batch-mode --no-transfer-progress -Prelease deploy
           echo "::endgroup::"
