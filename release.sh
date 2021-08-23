@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+#
+# See https://dzone.com/articles/how-to-publish-artifacts-to-maven-central for help on releasing from GitHub
+#
 
 ###
 ### A bash script to simplify Maven releases.
