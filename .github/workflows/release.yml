@@ -1,8 +1,16 @@
 name: Release
 
 on:
-  release:
-    types: [ created ]
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'Release version'
+        required: true
+        default: '2.9'
+      releaseBuild:
+        description: 'Release build'
+        required: true
+        default: ''
 
 jobs:
   release:
@@ -17,14 +25,14 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '8'
-          server-id: maven # Value of the distributionManagement/repository/id field of the pom.xml
-          server-username: MAVEN_USERNAME # env variable for username in deploy
-          server-password: MAVEN_CENTRAL_TOKEN # env variable for token in deploy
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-      - name: Build with Maven
-        run: chmod +x release.sh; ./release.sh
+      - name: Build and release
+        run: chmod +x release.sh; ./release.sh "${{ github.event.inputs.releaseVersion }}-${{ github.event.inputs.buildVersion }}" "${{ github.event.inputs.releaseVersion }}-SNAPSHOT
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
