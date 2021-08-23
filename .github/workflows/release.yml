@@ -32,7 +32,7 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Build and release
-        run: bash release.sh "${{ github.event.inputs.releaseVersion }}-${{ github.event.inputs.buildVersion }}" "${{ github.event.inputs.releaseVersion }}-SNAPSHOT"
+        run: bash release.sh "${{ github.event.inputs.releaseVersion }}-${{ github.event.inputs.releaseBuild }}" "${{ github.event.inputs.releaseVersion }}-SNAPSHOT"
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
