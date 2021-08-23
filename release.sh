@@ -69,9 +69,9 @@ if [[ $# -eq 4 ]]; then
 fi
 
 mvn clean
-mvn -Prelease release:prepare -DreleaseVersion="${REL_VERSION}" -DdevelopmentVersion="${DEV_VERSION}" -Dtag=${REL_TAG} -Darguments="${EXTRA_ARGS}"
-mvn -Prelease release:perform -DreleaseVersion="${REL_VERSION}" -DdevelopmentVersion="${DEV_VERSION}" -Dtag=${REL_TAG} -Darguments="${EXTRA_ARGS}"
-mvn -Prelease deploy ${EXTRA_ARGS}
+mvn --batch-mode --no-transfer-progress -Prelease release:prepare -DreleaseVersion="${REL_VERSION}" -DdevelopmentVersion="${DEV_VERSION}" -Dtag=${REL_TAG} -Darguments="${EXTRA_ARGS}"
+mvn --batch-mode --no-transfer-progress -Prelease release:perform -DreleaseVersion="${REL_VERSION}" -DdevelopmentVersion="${DEV_VERSION}" -Dtag=${REL_TAG} -Darguments="${EXTRA_ARGS}"
+mvn --batch-mode --no-transfer-progress -Prelease deploy ${EXTRA_ARGS}
 
 echo "Released version:       ${REL_VERSION}"
 echo "Release tag:            ${REL_TAG}"
