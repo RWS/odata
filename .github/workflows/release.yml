@@ -31,6 +31,11 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
+      - name: Configure Git User
+        run: |
+          git config user.email ${{ secrets.GIT_CONFIG_EMAIL }}
+          git config user.name "RWS Artifact Publishers"
+
       - name: Build and release
         run: bash release.sh "${{ github.event.inputs.releaseVersion }}-${{ github.event.inputs.releaseBuild }}" "${{ github.event.inputs.releaseVersion }}-SNAPSHOT"
         env:
