@@ -53,9 +53,14 @@ jobs:
           MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
         run: |
+          echo "::group::Prepare release"
           mvn --batch-mode --no-transfer-progress -Prelease release:prepare -DreleaseVersion=${{ env.RELEASE }} \
             -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} ${{ env.LOGGING }}
+          echo "::endgroup::"
+          echo "::group::Perform release"
           mvn --batch-mode --no-transfer-progress -Prelease release:perform -DreleaseVersion=${{ env.RELEASE }} \
             -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} ${{ env.LOGGING }}
+          echo "::endgroup::"
+          echo "::group::Deploy release"
           mvn --batch-mode --no-transfer-progress -Prelease deploy
-
+          echo "::endgroup::"
