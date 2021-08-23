@@ -37,7 +37,7 @@ There is a JPA Datasource available that allows you to use JPA annotated entitie
 In order to build and run the OData framework on your pc the following is required:
 * Maven 3.x or higher
 * JDK 8 or higher
-* Scala SDK 2.10.x
+* Scala SDK 2.10.x (Scala maven plugin will download it if it is missing.)
 
 If above pre-requisites are met building is as simple as running the following command `mvn clean install`
 
