@@ -22,6 +22,7 @@ jobs:
         distribution: 'temurin'
         java-version: '8'
     - name: Build
-      run: mvn install --batch-mode --no-transfer-progress \
-        -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+      run: |
+        mvn install --batch-mode --no-transfer-progress \
+          -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
