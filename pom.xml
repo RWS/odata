@@ -16,7 +16,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.sdl</groupId>
@@ -26,6 +27,7 @@
 
     <name>Tridion OData v4 Framework</name>
     <description>Tridion OData v4 Framework</description>
+    <url>https://www.tridion.com</url>
     <inceptionYear>2014</inceptionYear>
 
     <modules>
@@ -426,6 +428,16 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.8</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.0.1</version>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>3.2.0</version>
@@ -434,18 +446,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.3.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.0.1</version>
-                    <configuration>
-                        <!-- Prevent gpg from using pinentry programs -->
-                        <gpgArguments>
-                            <arg>--pinentry-mode</arg>
-                            <arg>loopback</arg>
-                        </gpgArguments>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -692,18 +692,18 @@
                         <configuration>
                             <exportAntProperties>true</exportAntProperties>
                             <target>
-                                <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath" />
+                                <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath"/>
                                 <!--suppress MavenModelInspection -->
                                 <echo>parsedVersion.qualifier = ${parsedVersion.qualifier}</echo>
                                 <if>
                                     <!--suppress MavenModelInspection -->
-                                    <equals arg1="${parsedVersion.qualifier}" arg2="SNAPSHOT" />
+                                    <equals arg1="${parsedVersion.qualifier}" arg2="SNAPSHOT"/>
                                     <then>
-                                        <property name="build.version" value="${snapshot.qualifier.version}" />
+                                        <property name="build.version" value="${snapshot.qualifier.version}"/>
                                     </then>
                                     <else>
                                         <!--suppress MavenModelInspection -->
-                                        <property name="build.version" value="${parsedVersion.qualifier}" />
+                                        <property name="build.version" value="${parsedVersion.qualifier}"/>
                                     </else>
                                 </if>
                             </target>
@@ -745,15 +745,6 @@
         <profile>
             <id>release</id>
             <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.sonatype.plugins</groupId>
-                            <artifactId>nexus-staging-maven-plugin</artifactId>
-                            <version>1.6.8</version>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -761,6 +752,7 @@
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>jar-no-fork</goal>
                                 </goals>
@@ -773,8 +765,28 @@
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <configuration>
+                            <!-- Prevent gpg from using pinentry programs -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
                                 </goals>
                             </execution>
                         </executions>
