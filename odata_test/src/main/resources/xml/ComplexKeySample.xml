@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata" xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#ComplexKeySamples/$entity" xml:base="http://localhost:8080/odata.svc">
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata" xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#ComplexKeySamples/$entity" xml:base="http://localhost:8080/odata.svc">
     <id>http://localhost:8080/odata.svc/ComplexKeySamples(id=15,name='ComplexKey',period=duration'P3Y30M30D')</id>
     <title/>
     <summary/>
     <updated>2014-05-02T00:00:00Z</updated>
     <author>
-        <name>SDL OData v4 framework</name>
+        <name>Tridion OData v4 framework</name>
     </author>
     <link rel="edit" title="ComplexKeySample" href="ComplexKeySamples(id=15,name='ComplexKey',period=duration'P3Y30M30D')"/>
     <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#ODataSample.ComplexKeySample"/>

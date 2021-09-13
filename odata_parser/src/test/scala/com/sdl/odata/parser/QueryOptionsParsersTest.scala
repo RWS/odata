@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+/*
+ * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -196,6 +196,25 @@ class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
         List(ExpandOption(List(PathExpandItem(None,
           NavigationPropertyExpandPathSegment("Orders", None), List(
             LevelsQueryOption(10)))))))))
+  }
+
+  test("$expand & $apply") {
+    implicit val p = parser.odataUri
+
+    val serviceRoot = "http://hello/odata.svc"
+    val relativeUri = "/Customers(1)?$expand=Orders($apply=groupby((id), aggregate($count as OrderCount)))"
+
+    testSuccess(serviceRoot + relativeUri,
+      ODataUri(serviceRoot,
+        ResourcePathUri(EntitySetPath("Customers",
+          Some(EntityCollectionPath(None,
+            Some(KeyPredicatePath(SimpleKeyPredicate(NumberLiteral(1)),None))))),
+          List(ExpandOption(
+            List(PathExpandItem(None,NavigationPropertyExpandPathSegment("Orders",None),
+              List(ApplyOption(ApplyExpr("groupby",
+                ApplyMethodCallExpr(ApplyPropertyExpr(
+                  List(EntityPathExpr(None,Some(PropertyPathExpr("id",None))))),
+                  ApplyFunctionExpr("aggregate","$count as OrderCount"))))))))))))
   }
 
   test("$expand + $ref") {

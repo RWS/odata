@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+/*
+ * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -191,8 +191,7 @@ public class AtomWriterTest extends WriterTest {
      * @throws TransformerException
      */
     private void checkWrittenXmlStream(Object data, String contextURL, String expectedEntityPath,
-                                       boolean isWriteOperation)
-            throws ODataRenderException, IOException, TransformerException {
+                                       boolean isWriteOperation) throws Exception {
         checkWrittenXmlStream(data, null, contextURL, expectedEntityPath, isWriteOperation);
     }
 
@@ -210,8 +209,7 @@ public class AtomWriterTest extends WriterTest {
      * @throws TransformerException
      */
     private void checkWrittenXmlStream(Object data, Map<String, Object> meta, String contextURL,
-                                       String expectedEntityPath, boolean isWriteOperation)
-            throws ODataRenderException, IOException, TransformerException {
+                                       String expectedEntityPath, boolean isWriteOperation) throws Exception {
 
         ZonedDateTime dateTime = ZonedDateTime.of(2014, 5, 2, 0, 0, 0, 0, ZoneId.of("UTC").normalized());
 
@@ -226,6 +224,8 @@ public class AtomWriterTest extends WriterTest {
         }
         writer.endDocument();
 
-        assertEquals(prettyPrintXml(readContent(expectedEntityPath)), prettyPrintXml(writer.getXml()));
+        String expected = prettyPrintXml(readContent(expectedEntityPath));
+        String actual = prettyPrintXml(writer.getXml());
+        assertEquals(expected, actual);
     }
 }

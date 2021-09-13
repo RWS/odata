@@ -7,7 +7,7 @@
     <summary/>
     <updated>2014-05-02T00:00:00Z</updated>
     <author>
-        <name>SDL OData v4 framework</name>
+        <name>Tridion OData v4 framework</name>
     </author>
     <link rel="edit" title="Customer" href="Customers(10)"/>
     <!-- No navigation links here; the links produced by the writer do not work, for input we only support links to existing entities -->

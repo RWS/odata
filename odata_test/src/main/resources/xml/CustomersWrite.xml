@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata" xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#Customers" xml:base="http://localhost:8080/odata.svc">
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata" xmlns:data="http://docs.oasis-open.org/odata/ns/data" metadata:context="http://localhost:8080/odata.svc/$metadata#Customers" xml:base="http://localhost:8080/odata.svc">
     <id>http://localhost:8080/odata.svc/Customers</id>
     <title/>
     <updated>2014-05-02T00:00:00Z</updated>
@@ -9,7 +10,7 @@
         <summary/>
         <updated>2014-05-02T00:00:00Z</updated>
         <author>
-            <name>SDL OData v4 framework</name>
+            <name>Tridion OData v4 framework</name>
         </author>
         <link rel="edit" title="Customer" href="Customers(10)"/>
         <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="Customers(10)/Orders"/>
@@ -39,7 +40,7 @@
         <summary/>
         <updated>2014-05-02T00:00:00Z</updated>
         <author>
-            <name>SDL OData v4 framework</name>
+            <name>Tridion OData v4 framework</name>
         </author>
         <link rel="edit" title="Customer" href="Customers(20)"/>
         <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="Customers(20)/Orders"/>

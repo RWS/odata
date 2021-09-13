@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+/*
+ * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import org.junit.Before;
 
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.MediaType.JSON;
@@ -150,8 +148,7 @@ public abstract class RendererTest {
      * @throws java.io.IOException
      * @throws javax.xml.transform.TransformerException
      */
-    protected void assertResponse(ODataResponse response, MediaType mediaType, String body)
-            throws IOException, TransformerException {
+    protected void assertResponse(ODataResponse response, MediaType mediaType, String body) throws Exception {
 
         assertThat(response.getContentType(), is(mediaType));
         String bodyText = response.getBodyText(UTF_8.name());

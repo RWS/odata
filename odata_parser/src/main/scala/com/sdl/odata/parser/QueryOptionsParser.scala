@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+/*
+ * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,7 +145,8 @@ trait QueryOptionsParser extends RegexParsers {
 
 
   def expandOption(contextTypeName: String): Parser[QueryOption] =
-    expandRefOption(contextTypeName) | select(contextTypeName) | expand(contextTypeName) | levels
+    expandRefOption(contextTypeName) | select(contextTypeName) | apply(contextTypeName) |
+      expand(contextTypeName) | levels
 
   def expandOptions(contextTypeName: String): Parser[List[QueryOption]] =
     "(" ~> rep1sep(expandOption(contextTypeName), ";") <~ ")"

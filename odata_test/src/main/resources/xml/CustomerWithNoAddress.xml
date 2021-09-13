@@ -7,7 +7,7 @@
     <summary/>
     <updated>2014-05-02T00:00:00Z</updated>
     <author>
-        <name>SDL OData v4 framework</name>
+        <name>Tridion OData v4 framework</name>
     </author>
     <link rel="edit" title="Customer" href="Customers(10)"/>
     <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=entry" title="Order" href="Orders(0)"/>

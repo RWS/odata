@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014 All Rights Reserved by the SDL Group.
+/*
+ * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,6 @@ import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.WriterTest;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
@@ -51,7 +48,7 @@ public class XMLServiceDocumentWriterTest extends WriterTest {
     }
 
     @Test(expected = ODataRenderException.class)
-    public void testBuildServiceDocumentException() throws ODataRenderException, IOException, TransformerException {
+    public void testBuildServiceDocumentException() throws Exception {
         EntityDataModel entityDataModel = mock(EntityDataModel.class);
         String serviceDocument = new XMLServiceDocumentWriter(odataUri, entityDataModel).buildServiceDocument();
 

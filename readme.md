@@ -1,7 +1,8 @@
-# SDL OData v4 Framework [![Build Status](https://travis-ci.org/sdl/odata.svg?branch=master)](https://travis-ci.org/sdl/odata) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata)
+# Tridion OData v4 Framework 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sdl/odata)
 
-This is the SDL Open Data Framework based on OData standard (http://www.odata.org/) fully implemented in Java. The SDL OData framework offers a Java
-implementation of the OData Service and also provides Java Client Libraries. The SDL OData framework is aligned to the v4 version of the OData OASIS standard.
+This is the Tridion Open Data Framework based on OData standard (http://www.odata.org/) fully implemented in Java. The Tridion OData framework offers a Java
+implementation of the OData Service and also provides Java Client Libraries. The Tridion OData framework is aligned to the v4 version of the OData OASIS standard.
 
 # Starting the Service
 
@@ -24,7 +25,7 @@ In order to build your own service you need to provide some data models and data
 
 # DataSources
 
-The OData standard is based around resources that are well defined and modelled in something called the EDM. The SDL OData framework is build around the principle of having a well defined EDM. The EDM is a registry that contains which entities are present in the model and which properties and relations they have.
+The OData standard is based around resources that are well defined and modelled in something called the EDM. The Tridion OData framework is build around the principle of having a well defined EDM. The EDM is a registry that contains which entities are present in the model and which properties and relations they have.
 
 Based on the EDM the OData framework parses the input that is being sent or requested. Most important is that in order to return a result or show requested data there needs to be a datasource. That is why in the OData framework this is the most critical component and we offer the flexibility to plug in any datasource you want.
 
@@ -36,7 +37,7 @@ There is a JPA Datasource available that allows you to use JPA annotated entitie
 In order to build and run the OData framework on your pc the following is required:
 * Maven 3.x or higher
 * JDK 8 or higher
-* Scala SDK 2.10.x
+* Scala SDK 2.10.x (Scala maven plugin will download it if it is missing.)
 
 If above pre-requisites are met building is as simple as running the following command `mvn clean install`
 
@@ -58,7 +59,7 @@ If above pre-requisites are met building is as simple as running the following c
 
 ## Components
 
-The SDL OData v4 Framework consists of the following Architecture components, each represented by their own Maven module:
+The Tridion OData v4 Framework consists of the following Architecture components, each represented by their own Maven module:
 
 - `odata_api` - Framework APIs
 - `odata_assembly` - Assembly structure for standalone distribution
@@ -76,14 +77,10 @@ The SDL OData v4 Framework consists of the following Architecture components, ea
 - `odata_webservice` - Spring Boot based OData HTTP webservice container
 
 # License
-Copyright (c) 2014 All Rights Reserved by the SDL Group.
+Copyright (c) 2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
+License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software  distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and limitations under the License.
