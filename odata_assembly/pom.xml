@@ -34,11 +34,14 @@
         <license.header.file>${project.basedir}/../src/license/sdl_license/header.txt</license.header.file>
     </properties>
 
-
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>
             <artifactId>odata_webservice</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
         </dependency>
     </dependencies>
 

@@ -96,23 +96,22 @@ public class ODataAtomParser extends AbstractParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODataAtomParser.class);
     private static final int COLLECTION_INDEX = 11;
-    private static final Set<String> FEED_METADATA_ELEMENT_NAMES = new HashSet(Arrays.asList(new String[]{
-            ATOM_ID, TITLE, ATOM_UPDATED, ATOM_LINK}));
+    private static final Set<String> FEED_METADATA_ELEMENT_NAMES = new HashSet<>(
+            Arrays.asList(new String[]{ATOM_ID, TITLE, ATOM_UPDATED, ATOM_LINK}));
     /**
      * Document Builder Factory.
      */
-    public static final DocumentBuilderFactory DOCBUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+    public static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory.newInstance();
 
     private final Set<String> foundCollectionProperties = new HashSet<>();
 
     static {
-        DOCBUILDER_FACTORY.setNamespaceAware(true);
+        FACTORY.setNamespaceAware(true);
     }
 
     public ODataAtomParser(ODataRequestContext context, ODataParser uriParser) {
         super(context, uriParser);
     }
-
 
     @Override
     protected Object processEntity(String bodyText) throws ODataException {
@@ -126,11 +125,9 @@ public class ODataAtomParser extends AbstractParser {
 
     private Document parseXML(String xml) throws ODataUnmarshallingException {
         try {
-            return DOCBUILDER_FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+            return FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
         } catch (SAXException e) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Could not parse XML: " + xml, e);
-            }
+            LOG.trace("Could not parse XML: {}", xml, e);
             throw new ODataUnmarshallingException("Error while parsing XML", e);
         } catch (IOException | ParserConfigurationException e) {
             throw new ODataSystemException(e);
