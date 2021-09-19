@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'Release version'
+        required: true
+        default: '2.7'
+      releaseBuild:
+        description: 'Release build'
+        required: true
+        default: ''
+
+jobs:
+  release:
+    name: Release on Sonatype OSS
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Configure Git User
+        run: |
+          git config user.email ${{ secrets.GIT_CONFIG_EMAIL }}
+          git config user.name "RWS Artifact Publishers"
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: 'dummy'
+
+      - name: Release
+        env:
+          RELEASE: ${{ github.event.inputs.releaseVersion }}.${{ github.event.inputs.releaseBuild }}
+          SNAPSHOT: ${{ github.event.inputs.releaseVersion }}-SNAPSHOT
+          TAG: release/${{ github.event.inputs.releaseVersion }}/${{ github.event.inputs.releaseVersion }}.${{ github.event.inputs.releaseBuild }}
+          # Suppress logging during release prep/perform
+          LOGGING: org.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          echo "::group::Prepare"
+          mvn --batch-mode --no-transfer-progress release:prepare -DreleaseVersion=${{ env.RELEASE }} \
+            -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} \
+            -D${{ env.LOGGING }}
+          echo "::endgroup::"
+
+          echo "::group::Perform"
+          mvn --batch-mode --no-transfer-progress release:perform -DreleaseVersion=${{ env.RELEASE }} \
+            -DdevelopmentVersion=${{ env.SNAPSHOT }} -Dtag=${{ env.TAG }} \
+            -D${{ env.LOGGING }}
+          echo "::endgroup::"
