@@ -37,6 +37,10 @@
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>
+            <artifactId>odata_api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl</groupId>
             <artifactId>odata_client_api</artifactId>
         </dependency>
         <dependency>

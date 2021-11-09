@@ -20,6 +20,7 @@ import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.unmarshaller.AbstractLinkUnmarshaller;
+import com.sdl.odata.util.XmlBuilderFactory;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,8 +28,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -88,14 +87,12 @@ public class AtomLinkUnmarshaller extends AbstractLinkUnmarshaller {
     }
 
     private Document parseXML(String xml) throws ODataUnmarshallingException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-
+        DocumentBuilderFactory factory = XmlBuilderFactory.getSecuredInstance();
         try {
             return factory.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
         } catch (SAXException e) {
             throw new ODataUnmarshallingException("Error while parsing XML", e);
-        } catch (IOException | ParserConfigurationException e) {
+        } catch (Exception e) {
             throw new ODataSystemException(e);
         }
     }

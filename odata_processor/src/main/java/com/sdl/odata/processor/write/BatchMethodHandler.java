@@ -70,7 +70,7 @@ public class BatchMethodHandler {
      * @return processor results
      */
     public List<ProcessorResult> handleWrite() throws ODataException {
-        LOG.info("Handling transactional operations per each odata request.");
+        LOG.debug("Handling transactional operations per each odata request.");
         List<ProcessorResult> resultList = new ArrayList<>();
 
         try {
@@ -183,12 +183,12 @@ public class BatchMethodHandler {
     }
 
     private void commitTransactions() {
-        LOG.info("Committing batch transactions");
+        LOG.debug("Committing batch transactions");
         dataSourceMap.values().forEach(TransactionalDataSource::commit);
     }
 
     private void rollbackTransactions() {
-        LOG.info("Rolling back batch transactions");
+        LOG.warn("Rolling back batch transactions");
         dataSourceMap.values().forEach(TransactionalDataSource::rollback);
     }
 

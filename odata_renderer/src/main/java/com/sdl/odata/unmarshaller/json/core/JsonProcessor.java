@@ -101,7 +101,7 @@ public class JsonProcessor {
      */
     private void process(JsonParser jsonParser) throws IOException, ODataUnmarshallingException {
         if (jsonParser.getCurrentToken() == JsonToken.FIELD_NAME) {
-            LOG.info("Starting to parse {} token", jsonParser.getCurrentName());
+            LOG.debug("Starting to parse {} token", jsonParser.getCurrentName());
             String key = jsonParser.getCurrentName();
             jsonParser.nextToken();
 
@@ -131,7 +131,7 @@ public class JsonProcessor {
      * @throws IOException If unable to read input parser
      */
     private List<Object> getCollectionValue(JsonParser jsonParser) throws IOException {
-        LOG.info("Start parsing {} array", jsonParser.getCurrentName());
+        LOG.debug("Start parsing {} array", jsonParser.getCurrentName());
         List<Object> list = new ArrayList<>();
         while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
             if (jsonParser.getCurrentToken() == JsonToken.START_OBJECT) {
@@ -155,7 +155,7 @@ public class JsonProcessor {
      * @throws IOException If unable to read input parser
      */
     private Object getEmbeddedObject(JsonParser jsonParser) throws IOException {
-        LOG.info("Start parsing an embedded object.");
+        LOG.debug("Start parsing an embedded object.");
         Map<String, Object> embeddedMap = new HashMap<>();
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String key = jsonParser.getText();
@@ -186,7 +186,7 @@ public class JsonProcessor {
      * @throws IOException If unable to read input parser
      */
     private void processSpecialTags(JsonParser jsonParser) throws IOException {
-        LOG.info("@odata tags found - start parsing");
+        LOG.debug("@odata tags found - start parsing");
         String key = jsonParser.getCurrentName();
         jsonParser.nextToken();
         String value = jsonParser.getText();
@@ -201,7 +201,7 @@ public class JsonProcessor {
      */
     private void processLinks(JsonParser jsonParser) throws IOException {
 
-        LOG.info("@odata.bind tag found - start parsing");
+        LOG.debug("@odata.bind tag found - start parsing");
 
         final String fullLinkFieldName = jsonParser.getText();
         final String key = fullLinkFieldName.substring(0, fullLinkFieldName.indexOf(ODATA_BIND));
