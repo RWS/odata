@@ -24,13 +24,13 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class XmlBuilderFactory {
     private static final Logger LOG = LoggerFactory.getLogger(XmlBuilderFactory.class);
-    private static DocumentBuilderFactory factory = create();
+    private static final DocumentBuilderFactory FACTORY = create();
 
     private XmlBuilderFactory() {
     }
 
     public static DocumentBuilderFactory getSecuredInstance() {
-        return factory;
+        return FACTORY;
     }
 
     private static DocumentBuilderFactory create() {
