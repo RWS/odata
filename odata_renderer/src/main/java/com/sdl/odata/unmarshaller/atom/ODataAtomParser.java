@@ -35,6 +35,7 @@ import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.unmarshaller.AbstractParser;
 import com.sdl.odata.unmarshaller.PropertyType;
+import com.sdl.odata.util.XmlBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -45,8 +46,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -96,23 +95,19 @@ public class ODataAtomParser extends AbstractParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODataAtomParser.class);
     private static final int COLLECTION_INDEX = 11;
-    private static final Set<String> FEED_METADATA_ELEMENT_NAMES = new HashSet(Arrays.asList(new String[]{
+    private static final Set<String> FEED_METADATA_ELEMENT_NAMES =
+            new HashSet(Arrays.asList(new String[]{
             ATOM_ID, TITLE, ATOM_UPDATED, ATOM_LINK}));
     /**
      * Document Builder Factory.
      */
-    public static final DocumentBuilderFactory DOCBUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+    public static final DocumentBuilderFactory DOCBUILDER_FACTORY = XmlBuilderFactory.getSecuredInstance();
 
     private final Set<String> foundCollectionProperties = new HashSet<>();
-
-    static {
-        DOCBUILDER_FACTORY.setNamespaceAware(true);
-    }
 
     public ODataAtomParser(ODataRequestContext context, ODataParser uriParser) {
         super(context, uriParser);
     }
-
 
     @Override
     protected Object processEntity(String bodyText) throws ODataException {
@@ -132,7 +127,7 @@ public class ODataAtomParser extends AbstractParser {
                 LOG.trace("Could not parse XML: " + xml, e);
             }
             throw new ODataUnmarshallingException("Error while parsing XML", e);
-        } catch (IOException | ParserConfigurationException e) {
+        } catch (Exception e) {
             throw new ODataSystemException(e);
         }
     }
@@ -151,7 +146,7 @@ public class ODataAtomParser extends AbstractParser {
             LOG.trace("Creating new instance of type: {}", javaType.getName());
             entity = javaType.newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new ODataUnmarshallingException("Error while instantiating entity of type: " +
+            throw new ODataUnmarshallingException("Error while instantiating entity of type: {}",
                     entityType.getFullyQualifiedName(), e);
         }
 

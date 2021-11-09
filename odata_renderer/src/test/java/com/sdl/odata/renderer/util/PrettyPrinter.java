@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.xml.transform.OutputKeys.ENCODING;
 import static javax.xml.transform.OutputKeys.INDENT;
 import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
@@ -57,17 +58,16 @@ public final class PrettyPrinter {
         // Ignores all the comments described in the XML File
         factory.setIgnoringComments(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
-        InputStream xmlInput = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-        Document doc = builder.parse(xmlInput);
-
+        InputStream xmlInput = new ByteArrayInputStream(xml.getBytes(UTF_8));
         try (StringWriter stringWriter = new StringWriter()) {
+            Document doc = builder.parse(xmlInput);
             StreamResult xmlOutput = new StreamResult(stringWriter);
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             transformerFactory.setAttribute("indent-number", DEFAULT_INDENT);
             Transformer transformer = transformerFactory.newTransformer();
 
             transformer.setOutputProperty(OMIT_XML_DECLARATION, "yes");
-            transformer.setOutputProperty(ENCODING, StandardCharsets.UTF_8.name());
+            transformer.setOutputProperty(ENCODING, UTF_8.name());
             transformer.setOutputProperty(VERSION, "1.0");
             transformer.setOutputProperty(INDENT, "yes");
 
@@ -76,6 +76,8 @@ public final class PrettyPrinter {
 
             String result = xmlOutput.getWriter().toString();
             return result.replaceAll("(\n|\r)+", "\n");
+        } finally {
+            xmlInput.close();
         }
     }
 
