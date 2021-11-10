@@ -81,7 +81,7 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
 
     @Override
     public Object unmarshallEntity(String odataServiceResponse, ODataClientQuery query) throws ODataClientException {
-        LOG.debug("Unmarshalling entity for query: {}", query);
+        LOG.trace("Unmarshalling entity for query: {}", query.getQuery());
         try {
             if (List.class.getSimpleName().equals(query.getEntityType().getSimpleName())) {
                 return unmarshallCollectionOfPrimitives(odataServiceResponse);
@@ -111,7 +111,7 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
 
     @Override
     public List<?> unmarshall(String odataServiceResponse, ODataClientQuery query) throws ODataClientException {
-        LOG.debug("Unmarshalling entities for query: {}", query);
+        LOG.trace("Unmarshalling entities for query: {}", query.getQuery());
         try {
             ODataRequest request = buildODataRequestFromString(odataServiceResponse, query);
             ODataUri oDataUri = createODataUri(url, query.getEdmEntityName());
