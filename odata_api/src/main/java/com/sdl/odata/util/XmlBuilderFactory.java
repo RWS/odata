@@ -34,7 +34,9 @@ public class XmlBuilderFactory {
     }
 
     private static DocumentBuilderFactory create() {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(
+                "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl",
+                ClassLoader.getSystemClassLoader());
         factory.setNamespaceAware(true);
         // getting rid of XXE see:
         // see https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html

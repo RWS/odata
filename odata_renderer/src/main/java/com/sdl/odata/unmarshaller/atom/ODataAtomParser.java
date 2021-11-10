@@ -120,15 +120,17 @@ public class ODataAtomParser extends AbstractParser {
     }
 
     private Document parseXML(String xml) throws ODataUnmarshallingException {
+        long time = System.currentTimeMillis();
         try {
-            return DOCBUILDER_FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+            Document result = DOCBUILDER_FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+            LOG.debug("Parsing XML ({} bytes) took: {} ms", xml.length(), (System.currentTimeMillis() - time));
+            return result;
         } catch (SAXException e) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Could not parse XML: " + xml, e);
-            }
-            throw new ODataUnmarshallingException("Error while parsing XML", e);
+            LOG.trace("Could not parse XML: {}", xml, e);
+            throw new ODataUnmarshallingException("Could not parse xml due to: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new ODataSystemException(e);
+            LOG.trace("Could not parse XML: {}", xml, e);
+            throw new ODataSystemException("Could not parse xml due to: " + e.getMessage(), e);
         }
     }
 
