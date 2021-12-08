@@ -48,7 +48,7 @@ public class XMLServiceDocumentRenderer extends ServiceDocumentRenderer {
         if (shouldBeDefaultToXML(requestContext.getUri(), score)) {
             score += 1;
         }
-        LOG.debug("Score of XML service document renderer is {}", score);
+        LOG.trace("Score of XML service document renderer is {}", score);
 
         return score;
     }
@@ -56,7 +56,7 @@ public class XMLServiceDocumentRenderer extends ServiceDocumentRenderer {
     @Override
     public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
             throws ODataException {
-        LOG.debug("Start rendering service document for request: {}", requestContext);
+        LOG.trace("Start rendering service document for request: {}", requestContext);
 
         XMLServiceDocumentWriter writer = new XMLServiceDocumentWriter(requestContext.getUri(),
                 requestContext.getEntityDataModel());

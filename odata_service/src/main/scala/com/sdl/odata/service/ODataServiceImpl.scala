@@ -43,7 +43,7 @@ class ODataServiceImpl @Autowired() (producer: ActorProducer) extends ODataServi
   import com.sdl.odata.service.ODataServiceImpl._
 
   override def handleRequest(request: ODataRequest): ODataResponse = {
-    LOG.debug("Handling request: {}", request)
+    LOG.trace("Handling request: {}", request)
 
     implicit val timeout = new Timeout(1000000000l, MILLISECONDS)
 
@@ -57,7 +57,7 @@ class ODataServiceImpl @Autowired() (producer: ActorProducer) extends ODataServi
 
     val stop = System.currentTimeMillis()
 
-    LOG.debug("Request completed in " + (stop - start))
+    LOG.debug("Request completed in " + (stop - start) + " ms")
 
     serviceResponse.response
   }
