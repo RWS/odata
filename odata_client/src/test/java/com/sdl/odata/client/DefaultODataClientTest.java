@@ -24,11 +24,11 @@ import com.sdl.odata.api.service.MediaType;
 import com.sdl.odata.client.api.ODataClientComponentsProvider;
 import com.sdl.odata.client.api.ODataClientQuery;
 import com.sdl.odata.client.api.caller.EndpointCaller;
+import com.sdl.odata.client.api.exception.ODataClientException;
+import com.sdl.odata.client.api.exception.ODataNotImplementedException;
 import com.sdl.odata.client.api.marshall.ODataEntityMarshaller;
 import com.sdl.odata.client.api.marshall.ODataEntityUnmarshaller;
 import com.sdl.odata.client.api.model.ODataIdAwareEntity;
-import com.sdl.odata.client.api.exception.ODataClientException;
-import com.sdl.odata.client.api.exception.ODataNotImplementedException;
 import com.sdl.odata.client.marshall.AtomEntityUnmarshaller;
 import com.sdl.odata.test.model.Category;
 import com.sdl.odata.test.model.Product;
@@ -54,8 +54,7 @@ import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMapOf;
-import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -91,7 +90,7 @@ public class DefaultODataClientTest {
                 new AtomEntityUnmarshaller(getEdmEntityClasses(), SERVICE_URL));
         when(componentsProvider.getWebServiceUrl()).thenReturn(new URL(SERVICE_URL));
         when(componentsProvider.getMarshaller()).thenReturn(marshaller);
-        when(marshaller.marshallEntity(anyObject(), any(ODataClientQuery.class)))
+        when(marshaller.marshallEntity(any(), any(ODataClientQuery.class)))
                 .thenReturn(MARSHALLED_MOCKED_ENTITY_CONTENT);
     }
 
@@ -99,8 +98,8 @@ public class DefaultODataClientTest {
     public void testGetEntities() throws MalformedURLException, ODataClientException, ODataException,
             UnsupportedEncodingException {
         List<Product> products = Stream.of(
-                createProduct(11, "Book 11", BOOKS),
-                createProduct(12, "Electronics 12", ELECTRONICS))
+                        createProduct(11, "Book 11", BOOKS),
+                        createProduct(12, "Electronics 12", ELECTRONICS))
                 .collect(Collectors.toList());
         String marshalledProduct = atomMarshall(
                 products, createODataUri("http://mock/odata.svc/Products"));
@@ -138,7 +137,7 @@ public class DefaultODataClientTest {
     @Test
     public void testCreateEntity() throws ODataClientException {
         Product product = createProduct(31, "Best book ever", BOOKS);
-        when(endpointCaller.doPostEntity(anyMapOf(String.class, String.class),
+        when(endpointCaller.doPostEntity(anyMap(),
                 any(URL.class), eq(MARSHALLED_MOCKED_ENTITY_CONTENT), any(MediaType.class),
                 any(MediaType.class))).thenReturn(MARSHALLED_MOCKED_ENTITY_RETURNED_CONTENT);
         when(componentsProvider.getUnmarshaller()).thenReturn(unmarshaller);
@@ -154,7 +153,7 @@ public class DefaultODataClientTest {
     @Test
     public void testUpdateEntity() throws ODataClientException {
         Book existingBook = new Book("35", "Harry Potter", "J. K. Rowling");
-        when(endpointCaller.doPutEntity(anyMapOf(String.class, String.class),
+        when(endpointCaller.doPutEntity(anyMap(),
                 any(URL.class), eq(MARSHALLED_MOCKED_ENTITY_CONTENT), any(MediaType.class)))
                 .thenReturn(MARSHALLED_MOCKED_ENTITY_RETURNED_CONTENT);
         when(componentsProvider.getUnmarshaller()).thenReturn(unmarshaller);
@@ -194,7 +193,7 @@ public class DefaultODataClientTest {
      */
     @EdmEntity(namespace = "ODataDemo", keyRef = {@EdmPropertyRef(path = "id")})
     @EdmEntitySet
-    private class Book implements ODataIdAwareEntity {
+    private static class Book implements ODataIdAwareEntity {
 
         @EdmProperty
         private String id;
