@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2022 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -46,7 +45,6 @@ public class DataSourceFactoryImplTest {
     @InjectMocks
     private DataSourceFactoryImpl dataSourceFactory;
 
-    @Spy
     private List<DataSourceProvider> dataSourceProvidersSpy = new ArrayList<>();
 
     @Mock
@@ -62,9 +60,9 @@ public class DataSourceFactoryImplTest {
 
     @Before
     public void setUp() throws ODataDataSourceException {
-
         dataSourceProvidersSpy.clear();
         dataSourceProvidersSpy.add(dataSourceProviderMock);
+        dataSourceFactory.setDataSourceProviders(dataSourceProvidersSpy);
         when(dataSourceProviderMock.isSuitableFor(any(ODataRequestContext.class), eq("ODataDemo.Customer")
         )).thenReturn(true);
         when(dataSourceProviderMock.getDataSource(any(ODataRequestContext.class))).thenReturn(dataSourceMock);

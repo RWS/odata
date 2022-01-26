@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2022 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import com.sdl.odata.service.protocol.UnmarshallResult;
 import com.sdl.odata.service.protocol.WriteOperation;
 import com.sdl.odata.service.spring.ActorProducer;
 import com.sdl.odata.unmarshaller.UnmarshallerConfiguration;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.PostConstruct;
-
 import static com.sdl.odata.service.util.AkkaUtil.registerRoute;
 
 /**
@@ -57,9 +56,11 @@ import static com.sdl.odata.service.util.AkkaUtil.registerRoute;
  */
 @Configuration
 @ComponentScan("com.sdl.odata.service")
-@Import({EdmConfiguration.class, ParserConfiguration.class, ProcessorConfiguration.class, RendererConfiguration.class,
-        UnmarshallerConfiguration.class })
-@ImportResource({"classpath*:/META-INF/*/odata-*.xml" })
+@Import({
+        EdmConfiguration.class, ParserConfiguration.class, ProcessorConfiguration.class, RendererConfiguration.class,
+        UnmarshallerConfiguration.class
+})
+@ImportResource({"classpath*:/META-INF/*/odata-*.xml"})
 public class ODataServiceConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODataServiceConfiguration.class);
