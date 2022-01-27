@@ -107,7 +107,7 @@
         <spring-boot.version>2.6.1</spring-boot.version>
         <tomcat.version>9.0.45</tomcat.version>
         <typesafe-config.version>1.3.3</typesafe-config.version>
-        <xerces.version>2.12.1</xerces.version>
+        <xerces.version>2.12.2</xerces.version>
         <zipkin-sender.version>0.8.0</zipkin-sender.version>
     </properties>
 
