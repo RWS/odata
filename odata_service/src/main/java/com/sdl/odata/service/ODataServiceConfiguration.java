@@ -40,7 +40,6 @@ import com.sdl.odata.service.protocol.UnmarshallResult;
 import com.sdl.odata.service.protocol.WriteOperation;
 import com.sdl.odata.service.spring.ActorProducer;
 import com.sdl.odata.unmarshaller.UnmarshallerConfiguration;
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +47,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+
+import javax.annotation.PostConstruct;
 
 import static com.sdl.odata.service.util.AkkaUtil.registerRoute;
 
