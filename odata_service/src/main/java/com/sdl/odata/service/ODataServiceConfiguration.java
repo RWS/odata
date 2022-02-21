@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2022 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,9 +57,11 @@ import static com.sdl.odata.service.util.AkkaUtil.registerRoute;
  */
 @Configuration
 @ComponentScan("com.sdl.odata.service")
-@Import({EdmConfiguration.class, ParserConfiguration.class, ProcessorConfiguration.class, RendererConfiguration.class,
-        UnmarshallerConfiguration.class })
-@ImportResource({"classpath*:/META-INF/*/odata-*.xml" })
+@Import({
+        EdmConfiguration.class, ParserConfiguration.class, ProcessorConfiguration.class, RendererConfiguration.class,
+        UnmarshallerConfiguration.class
+})
+@ImportResource({"classpath*:/META-INF/*/odata-*.xml"})
 public class ODataServiceConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODataServiceConfiguration.class);

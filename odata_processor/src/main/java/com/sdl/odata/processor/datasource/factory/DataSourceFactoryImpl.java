@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2022 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,12 @@ public class DataSourceFactoryImpl implements DataSourceFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSourceFactoryImpl.class);
 
-    @Autowired(required = false)
     private List<DataSourceProvider> dataSourceProviders = new ArrayList<>();
+
+    @Autowired(required = false)
+    void setDataSourceProviders(List<DataSourceProvider> dataSourceProviders) {
+        this.dataSourceProviders = dataSourceProviders;
+    }
 
     @Override
     public DataSource getDataSource(ODataRequestContext requestContext,

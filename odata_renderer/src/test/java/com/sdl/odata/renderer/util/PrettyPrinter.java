@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2022 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -64,7 +66,9 @@ public final class PrettyPrinter {
             StreamResult xmlOutput = new StreamResult(stringWriter);
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             transformerFactory.setAttribute("indent-number", DEFAULT_INDENT);
-            Transformer transformer = transformerFactory.newTransformer();
+            Transformer transformer = transformerFactory.newTransformer(new StreamSource(
+                    new File(PrettyPrinter.class.getResource("/xslt/stylesheet.xslt").getFile())));
+
 
             transformer.setOutputProperty(OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(ENCODING, StandardCharsets.UTF_8.name());
