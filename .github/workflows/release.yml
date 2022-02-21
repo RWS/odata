@@ -53,7 +53,7 @@ jobs:
           MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           # This is to work around https://issues.sonatype.org/browse/NEXUS-27902 on JDK17
-          JDK_JAVA_OPTIONS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED"
+          JDK_JAVA_OPTIONS: "--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED"
         run: |
           echo "::group::Prepare"
           mvn --batch-mode --no-transfer-progress release:prepare -DreleaseVersion=${{ env.RELEASE }} \
