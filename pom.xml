@@ -87,8 +87,6 @@
 
         <java.version>17</java.version>
 
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-
         <!-- Third party dependency versions, sorted alphabetically -->
         <akka.version>2.5.32</akka.version>
         <apache-procrun.version>1.0</apache-procrun.version>
