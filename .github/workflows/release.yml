@@ -14,7 +14,7 @@ on:
 
 jobs:
   release:
-    name: Release on Sonatype OSS
+    name: Release on Sonatype OSS ${{ github.event.inputs.releaseVersion }}.${{ github.event.inputs.releaseBuild }}
     runs-on: ubuntu-latest
 
     steps:
