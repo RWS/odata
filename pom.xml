@@ -21,7 +21,7 @@
 
     <groupId>com.sdl</groupId>
     <artifactId>odata</artifactId>
-    <version>2.10-SNAPSHOT</version>
+    <version>2.10.7</version>
     <packaging>pom</packaging>
 
     <name>Tridion OData v4 Framework</name>
@@ -73,7 +73,7 @@
         <connection>scm:git:git@github.com:sdl/odata.git</connection>
         <developerConnection>scm:git:git@github.com:sdl/odata.git</developerConnection>
         <url>git@github.com:sdl/odata.git</url>
-        <tag>HEAD</tag>
+        <tag>release/2.10/2.10.7</tag>
     </scm>
 
     <properties>
