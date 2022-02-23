@@ -85,12 +85,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <javadoc.source.dir>${project.basedir}/src/javadoc</javadoc.source.dir>
         <java.version>17</java.version>
 
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-
         <!-- Third party dependency versions, sorted alphabetically -->
-        <akka.version>2.5.32</akka.version>
+        <akka.version>2.6.18</akka.version>
         <apache-procrun.version>1.0</apache-procrun.version>
         <brave.version>4.2.0</brave.version>
         <guava.version>30.1.1-jre</guava.version>
@@ -102,8 +101,9 @@
         <logback.version>1.2.3</logback.version>
         <mockito.version>4.0.0</mockito.version>
         <scala.version>2.12.15</scala.version>
-        <scala-parser-combinators.version>1.1.1</scala-parser-combinators.version>
-        <scalatest.version>3.0.8</scalatest.version>
+        <scala-parser-combinators.version>2.1.1</scala-parser-combinators.version>
+        <scala-genjavadoc-plugin.version>0.18_${scala.version}</scala-genjavadoc-plugin.version>
+        <scalatest.version>3.1.4</scalatest.version>
         <servlet-api.version>3.1.0</servlet-api.version>
         <slf4j.version>1.7.30</slf4j.version>
         <spring.version>5.3.14</spring.version>
@@ -437,7 +437,7 @@
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.11</version>
+                    <version>1.6.8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -447,17 +447,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M4</version>
+                    <version>3.0.0-M5</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <releaseProfiles>release</releaseProfiles>
@@ -466,12 +466,12 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.2.2</version>
+                    <version>1.2.7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.9.0</version>
                     <configuration>
                         <includes>
                             <include>com.sdl:*</include>
@@ -481,7 +481,7 @@
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
-                    <version>4.3.1</version>
+                    <version>4.5.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -498,17 +498,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.10.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>3.0.0-M2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.2.2</version>
                     <configuration>
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
@@ -530,12 +530,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.2.3</version>
+                    <version>3.3.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.scalatest</groupId>
                     <artifactId>scalatest-maven-plugin</artifactId>
-                    <version>2.0.0</version>
+                    <version>2.0.2</version>
                     <configuration>
                         <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                         <junitxml>.</junitxml>
@@ -553,7 +553,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.1.2</version>
                     <dependencies>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
@@ -570,7 +570,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M4</version>
+                    <version>3.0.0-M5</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -594,7 +594,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.3.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -629,11 +629,22 @@
                 <executions>
                     <execution>
                         <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>add-source</goal>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <args>
+                                <arg>-P:genjavadoc:out=${project.build.directory}/genjavadoc</arg>
+                            </args>
+                            <compilerPlugins>
+                                <compilerPlugin>
+                                    <groupId>com.typesafe.genjavadoc</groupId>
+                                    <artifactId>genjavadoc-plugin_${scala.version}</artifactId>
+                                    <version>${scala-genjavadoc-plugin.version}</version>
+                                </compilerPlugin>
+                            </compilerPlugins>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>scala-test-compile</id>
@@ -753,6 +764,40 @@
             <id>release</id>
             <build>
                 <plugins>
+                    <!-- Currently disabled due to https://github.com/lightbend/genjavadoc/issues/181 -->
+                    <!--plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <sourcepath>${project.build.directory}/genjavadoc:${project.basedir}/src/main/java</sourcepath>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin-->
+                    <!-- Generate empty javadoc instead -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>empty-javadoc-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>javadoc</classifier>
+                                    <classesDirectory>${javadoc.source.dir</classesDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
@@ -762,19 +807,6 @@
                                 <phase>verify</phase>
                                 <goals>
                                     <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
