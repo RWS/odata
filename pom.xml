@@ -96,7 +96,7 @@
         <jackson.version>2.10.3</jackson.version>
         <jacoco.version>0.8.5</jacoco.version>
         <junit.version>4.12</junit.version>
-        <logback.version>1.2.3</logback.version>
+        <logback.version>1.2.11</logback.version>
         <mockito.version>1.10.19</mockito.version>
         <scala.version>2.12.11</scala.version>
         <scala-parser-combinators.version>1.0.7</scala-parser-combinators.version>
@@ -105,7 +105,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <spring.version>4.3.26.RELEASE</spring.version>
         <spring-boot.version>1.5.22.RELEASE</spring-boot.version>
-        <tomcat.version>8.5.54</tomcat.version>
+        <tomcat.version>8.5.78</tomcat.version>
         <typesafe-config.version>1.3.4</typesafe-config.version>
         <zipkin-sender.version>0.8.0</zipkin-sender.version>
         <xerces.version>2.10.0</xerces.version>
