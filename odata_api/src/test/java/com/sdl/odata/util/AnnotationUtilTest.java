@@ -19,25 +19,18 @@ import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.edm.annotations.EdmComplex;
 import com.sdl.odata.api.edm.annotations.EdmEntity;
 import com.sdl.odata.api.edm.annotations.EdmProperty;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * AnnotationUtilTest.
  */
 public class AnnotationUtilTest {
-
-    /**
-     * Expected exception.
-     */
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void testCheckAnnotationPresent() {
@@ -53,31 +46,35 @@ public class AnnotationUtilTest {
         assertThat(AnnotationsUtil.getAnnotation(field, EdmProperty.class), notNullValue());
     }
 
-    @Test(expected = ODataSystemException.class)
+    @Test
     public void testGetAnnotationOnFieldError() throws Exception {
         Field field = AnnotatedClass.class.getDeclaredField("notAnnotatedField");
-        AnnotationsUtil.getAnnotation(field, EdmProperty.class);
-    }
-
-    @Test(expected = ODataSystemException.class)
-    public void testGetAnnotationOnClassError() throws Exception {
-        AnnotationsUtil.getAnnotation(AnnotatedClass.class, EdmComplex.class);
+        assertThrows(ODataSystemException.class, () ->
+                AnnotationsUtil.getAnnotation(field, EdmProperty.class)
+        );
     }
 
     @Test
-    public void testGetAnnotationNotExistingError() throws Exception {
-        expectedException.expect(ODataSystemException.class);
-        expectedException.expectMessage("Could not load annotation: " + EdmComplex.class.toString()
-                + " on source: " + AnnotatedClass.class.toString());
-
-        AnnotationsUtil.getAnnotation(AnnotatedClass.class, EdmComplex.class);
+    public void testGetAnnotationOnClassError() {
+        assertThrows(ODataSystemException.class, () ->
+                AnnotationsUtil.getAnnotation(AnnotatedClass.class, EdmComplex.class)
+        );
     }
 
     @Test
-    public void testGetAnnotationNotExistingCustomError() throws Exception {
-        expectedException.expect(ODataSystemException.class);
-        expectedException.expectMessage("My Special Error");
+    public void testGetAnnotationNotExistingError() {
+        assertThrows(ODataSystemException.class, () ->
+                AnnotationsUtil.getAnnotation(AnnotatedClass.class, EdmComplex.class),
+                "Could not load annotation: " + EdmComplex.class
+                        + " on source: " + AnnotatedClass.class
+        );
+    }
 
-        AnnotationsUtil.getAnnotation(AnnotatedClass.class, EdmComplex.class, "My Special Error");
+    @Test
+    public void testGetAnnotationNotExistingCustomError() {
+        assertThrows(ODataSystemException.class, () ->
+                AnnotationsUtil.getAnnotation(AnnotatedClass.class, EdmComplex.class, "My Special Error"),
+                "My Special Error"
+        );
     }
 }

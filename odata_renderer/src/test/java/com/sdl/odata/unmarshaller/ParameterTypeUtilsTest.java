@@ -18,7 +18,7 @@ package com.sdl.odata.unmarshaller;
 import com.sdl.odata.api.parser.util.ParameterTypeUtil;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.test.model.ActionSample;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 

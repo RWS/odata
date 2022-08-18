@@ -20,7 +20,7 @@ import com.sdl.odata.api.parser.ODataParser;
 import com.sdl.odata.api.parser.ODataUriParseException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -30,7 +30,7 @@ import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.test.util.TestUtils.createODataRequest;
 import static com.sdl.odata.test.util.TestUtils.createODataRequestContext;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test for Atom Action Unmarshaller class.
@@ -40,9 +40,9 @@ public class AtomActionUnmarshallerTest extends UnmarshallerTest {
 
     private static final Map<String, String> CONTENT_TYPE_JSON = ImmutableMap.of("Content-type", "application/json");
 
-    private AtomActionUnmarshaller unmarshaller = new AtomActionUnmarshaller();
+    private final AtomActionUnmarshaller unmarshaller = new AtomActionUnmarshaller();
 
-    private ODataParser uriParser = new ODataParserImpl();
+    private final ODataParser uriParser = new ODataParserImpl();
 
     @Test
     public void testActionPostRequestScore() throws UnsupportedEncodingException, ODataUriParseException {

@@ -22,22 +22,22 @@ import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import com.sdl.odata.test.model.Address;
 import com.sdl.odata.test.model.BankAccount;
 import com.sdl.odata.test.model.ComplexTypeSample;
+import com.sdl.odata.test.model.ComplexTypeSampleList;
 import com.sdl.odata.test.model.Customer;
 import com.sdl.odata.test.model.EntityTypeSample;
 import com.sdl.odata.test.model.Order;
-import com.sdl.odata.test.model.ComplexTypeSampleList;
 import com.sdl.odata.test.util.TestUtils;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
 
 /**
  * Base test class with functionality to be shared by writer and unmarshaller (Xml and Json) implementations.
@@ -47,9 +47,8 @@ public abstract class WriterUnmarshallerTest {
     protected EntityDataModel entityDataModel;
     protected ODataUri odataUri;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-
         this.entityDataModel = buildEntityDataModel();
 
         // Note: By the default create a simple OData URI about the Customers entity set, please note that this method

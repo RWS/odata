@@ -24,8 +24,8 @@ import com.sdl.odata.renderer.WriterTest;
 import com.sdl.odata.test.model.Address;
 import com.sdl.odata.test.model.ComplexTypeSample;
 import com.sdl.odata.test.model.Customer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -49,12 +49,13 @@ import static com.sdl.odata.AtomConstants.VALUE;
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This is unit test for {@link XMLPropertyWriter}.
@@ -68,28 +69,34 @@ public class XMLPropertyWriterTest extends WriterTest {
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_PATH = "/xml/AbstractComplexTypeSample.xml";
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_UTF_PATH = "/xml/AbstractComplexTypeUnicodeSample.xml";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
     }
 
-    @Test(expected = ODataRenderException.class)
+    @Test
     public void testTypesMismatch() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
-        propertyWriter.getPropertyAsString(1L);
+        assertThrows(ODataRenderException.class, () ->
+                propertyWriter.getPropertyAsString(1L)
+        );
     }
 
-    @Test(expected = ODataRenderException.class)
+    @Test
     public void testTypesMismatchCollection() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
         // Types are not same because expected is collection of strings not string
-        propertyWriter.getPropertyAsString("test");
+        assertThrows(ODataRenderException.class, () ->
+                propertyWriter.getPropertyAsString("test")
+        );
     }
 
-    @Test(expected = ODataRenderException.class)
+    @Test
     public void testTypesMismatchComplexType() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
-        propertyWriter.getPropertyAsString(newArrayList(new Customer()));
+        assertThrows(ODataRenderException.class, () ->
+                propertyWriter.getPropertyAsString(newArrayList(new Customer()))
+        );
     }
 
     @Test

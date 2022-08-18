@@ -18,7 +18,7 @@ package com.sdl.odata.unmarshaller;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.PrimitiveType;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,9 +29,10 @@ import java.util.UUID;
 
 import static com.sdl.odata.api.parser.util.ParserUtil.parsePrimitiveValue;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Parser Util Test.
@@ -63,54 +64,74 @@ public class ParserUtilTest {
         assertThat(parsePrimitiveValue("8.75", PrimitiveType.SINGLE), is(8.75f));
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseByteInvalid1() throws ODataException {
-        parsePrimitiveValue("-1", PrimitiveType.BYTE);
+    @Test
+    public void testParseByteInvalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-1", PrimitiveType.BYTE)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseByteInvalid2() throws ODataException {
-        parsePrimitiveValue("256", PrimitiveType.BYTE);
+    @Test
+    public void testParseByteInvalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("256", PrimitiveType.BYTE)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseSByteInvalid1() throws ODataException {
-        parsePrimitiveValue("-129", PrimitiveType.SBYTE);
+    @Test
+    public void testParseSByteInvalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-129", PrimitiveType.SBYTE)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseSByteInvalid2() throws ODataException {
-        parsePrimitiveValue("128", PrimitiveType.SBYTE);
+    @Test
+    public void testParseSByteInvalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("128", PrimitiveType.SBYTE)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt16Invalid1() throws ODataException {
-        parsePrimitiveValue("-32769", PrimitiveType.INT16);
+    @Test
+    public void testParseInt16Invalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-32769", PrimitiveType.INT16)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt16Invalid2() throws ODataException {
-        parsePrimitiveValue("32768", PrimitiveType.INT16);
+    @Test
+    public void testParseInt16Invalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("32768", PrimitiveType.INT16)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt32Invalid1() throws ODataException {
-        parsePrimitiveValue("-2147483649", PrimitiveType.INT32);
+    @Test
+    public void testParseInt32Invalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-2147483649", PrimitiveType.INT32)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt32Invalid2() throws ODataException {
-        parsePrimitiveValue("2147483648", PrimitiveType.INT32);
+    @Test
+    public void testParseInt32Invalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("2147483648", PrimitiveType.INT32)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt64Invalid1() throws ODataException {
-        parsePrimitiveValue("-9223372036854775809", PrimitiveType.INT64);
+    @Test
+    public void testParseInt64Invalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-9223372036854775809", PrimitiveType.INT64)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt64Invalid2() throws ODataException {
-        parsePrimitiveValue("9223372036854775808", PrimitiveType.INT64);
+    @Test
+    public void testParseInt64Invalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("9223372036854775808", PrimitiveType.INT64)
+        );
     }
 
     @Test

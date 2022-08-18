@@ -25,13 +25,13 @@ import com.sdl.odata.api.parser.MethodCallExpr;
 import com.sdl.odata.api.parser.NumberLiteral;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.PropertyPathExpr;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import scala.collection.Iterator;
 import scala.collection.immutable.List;
 import scala.math.BigDecimal;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Parser Query Functions Test.

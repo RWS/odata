@@ -26,14 +26,14 @@ import com.sdl.odata.test.model.ExampleFlags;
 import com.sdl.odata.test.model.Order;
 import com.sdl.odata.test.model.OrderLine;
 import com.sdl.odata.test.model.Product;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit tests for {@code ODataEdmRegistryImpl}.
@@ -42,7 +42,7 @@ public class ODataEdmRegistryImplTest {
 
     private ODataEdmRegistry registry;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         registry = new ODataEdmRegistryImpl();
     }

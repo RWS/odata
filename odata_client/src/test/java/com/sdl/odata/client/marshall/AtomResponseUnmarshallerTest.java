@@ -22,8 +22,8 @@ import com.sdl.odata.client.api.marshall.ODataEntityUnmarshaller;
 import com.sdl.odata.test.model.Category;
 import com.sdl.odata.test.model.Product;
 import com.sdl.odata.test.model.SingletonSample;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -38,9 +38,9 @@ import static com.sdl.odata.test.model.Category.BOOKS;
 import static com.sdl.odata.test.model.Category.ELECTRONICS;
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * The Atom Response Unmarshaller Test.
@@ -51,7 +51,7 @@ public class AtomResponseUnmarshallerTest {
 
     private ODataEntityUnmarshaller unmarshaller;
 
-    @Before
+    @BeforeEach
     public void setup() {
         unmarshaller = new AtomEntityUnmarshaller(getEdmEntityClasses(), SERVICE_URL);
     }

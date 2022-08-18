@@ -17,19 +17,22 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.api.edm.annotations.EdmEntitySet;
 import com.sdl.odata.client.api.ODataClientQuery;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The Default OData Client Query Test.
  */
 public class DefaultODataClientQueryTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createQueryWithoutWebServiceUri() {
-        new BasicODataClientQuery.Builder().build();
+        assertThrows(IllegalArgumentException.class, () ->
+                new BasicODataClientQuery.Builder().build()
+        );
     }
 
     @Test
@@ -41,11 +44,13 @@ public class DefaultODataClientQueryTest {
         assertThat(query.getQuery(), is("EmptyEntities"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createQueryWithoutEntityType() {
-        new BasicODataClientQuery.Builder()
-                .withEntityType(null)
-                .build();
+        assertThrows(IllegalArgumentException.class, () ->
+                new BasicODataClientQuery.Builder()
+                        .withEntityType(null)
+                        .build()
+        );
     }
 
     @Test
@@ -147,32 +152,42 @@ public class DefaultODataClientQueryTest {
         assertThat(query.getQuery(), is(expectedToString));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createUnboundFunctionQueryWithoutEntityName() {
-        new FunctionImportClientQuery.Builder().withFunctionName("SampleFunction").build();
+        assertThrows(NullPointerException.class, () ->
+                new FunctionImportClientQuery.Builder().withFunctionName("SampleFunction").build()
+        );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createUnboundFunctionQueryWithoutFunctionName() {
-        new FunctionImportClientQuery.Builder().withEntityType(EmptyEntity.class).build();
+        assertThrows(NullPointerException.class, () ->
+                new FunctionImportClientQuery.Builder().withEntityType(EmptyEntity.class).build()
+        );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createBoundFunctionQueryWithoutEntityName() {
-        new BoundFunctionClientQuery.Builder().withFunctionName("SampleFunction").build();
+        assertThrows(NullPointerException.class, () ->
+                new BoundFunctionClientQuery.Builder().withFunctionName("SampleFunction").build()
+        );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createBoundFunctionQueryWithoutFunctionName() {
-        new BoundFunctionClientQuery.Builder().withEntityType(EmptyEntity.class).build();
+        assertThrows(NullPointerException.class, () ->
+                new BoundFunctionClientQuery.Builder().withEntityType(EmptyEntity.class).build()
+        );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createBoundFunctionQueryWithoutBoundEntityName() {
-        new BoundFunctionClientQuery.Builder()
-                .withNameSpace("Web.Sdl")
-                .withFunctionName("SampleFunction")
-                .withEntityType(EmptyEntity.class).build();
+        assertThrows(NullPointerException.class, () ->
+                new BoundFunctionClientQuery.Builder()
+                        .withNameSpace("Web.Sdl")
+                        .withFunctionName("SampleFunction")
+                        .withEntityType(EmptyEntity.class).build()
+        );
     }
 
     @Test
@@ -188,7 +203,7 @@ public class DefaultODataClientQueryTest {
      * Empty Test Entity.
      */
     @EdmEntitySet("EmptyEntities")
-    private class EmptyEntity {
+    private static class EmptyEntity {
     }
 
 }

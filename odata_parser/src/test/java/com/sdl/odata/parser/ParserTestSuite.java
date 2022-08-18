@@ -40,14 +40,14 @@ import com.sdl.odata.test.model.PrimitiveTypesSample;
 import com.sdl.odata.test.model.Product;
 import com.sdl.odata.test.model.UnboundActionSample;
 import com.sdl.odata.test.model.UnboundFunctionSample;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.collection.immutable.List;
 import scala.math.BigDecimal;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Parser Test Suite.
@@ -70,7 +70,7 @@ public class ParserTestSuite {
 
     protected EntityDataModel model;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         LOG.info("Initializing EntityDataModel");
         AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();

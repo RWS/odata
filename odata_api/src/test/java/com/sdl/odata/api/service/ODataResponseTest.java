@@ -16,12 +16,13 @@
 package com.sdl.odata.api.service;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link ODataResponse}.
@@ -64,8 +65,8 @@ public class ODataResponseTest {
         assertThat(ODataResponse.Status.forCode(500), is(ODataResponse.Status.INTERNAL_SERVER_ERROR));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testStatusForCodeException() {
-        ODataResponse.Status.forCode(0);
+        assertThrows(IllegalArgumentException.class, () -> ODataResponse.Status.forCode(0));
     }
 }

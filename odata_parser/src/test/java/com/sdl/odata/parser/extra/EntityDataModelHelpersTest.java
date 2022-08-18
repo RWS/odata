@@ -22,16 +22,17 @@ import com.sdl.odata.api.edm.model.TypeDefinition;
 import com.sdl.odata.parser.ODataUriParser;
 import com.sdl.odata.parser.ParserTestSuite;
 import com.sdl.odata.test.model.Address;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import scala.Option;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Entity Data Model Helpers Test.
@@ -46,7 +47,7 @@ public class EntityDataModelHelpersTest extends ParserTestSuite {
 
     private ODataUriParser parser;
 
-    @Before
+    @BeforeEach
     public void setup() {
         parser = new ODataUriParser(model);
     }
@@ -57,9 +58,11 @@ public class EntityDataModelHelpersTest extends ParserTestSuite {
         assertThat(parser.isEntityType("Edm.Int64"), is(false));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalArgumentEntityCheck() {
-        assertThat(parser.isEntityType("AnyAnotherEntity"), is(true));
+        assertThrows(IllegalArgumentException.class, () ->
+                parser.isEntityType("AnyAnotherEntity")
+        );
     }
 
     @Test

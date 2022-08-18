@@ -22,8 +22,8 @@ import com.sdl.odata.client.api.marshall.ODataEntityMarshaller;
 import com.sdl.odata.client.api.marshall.ODataEntityUnmarshaller;
 import com.sdl.odata.test.model.Product;
 import com.sdl.odata.test.model.SingletonSample;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,11 +32,11 @@ import java.util.stream.Stream;
 
 import static com.sdl.odata.test.model.Category.BOOKS;
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for {@link AtomEntityMarshaller}.
@@ -48,7 +48,7 @@ public class AtomEntityMarshallerTest {
     private ODataEntityMarshaller oDataEntityMarshaller;
     private ODataEntityUnmarshaller oDataEntityUnmarshaller;
 
-    @Before
+    @BeforeEach
     public void setup() {
         oDataEntityMarshaller = new AtomEntityMarshaller(getEdmEntityClasses(), ODATA_SERVICE_MOCK_URL);
         oDataEntityUnmarshaller = new AtomEntityUnmarshaller(getEdmEntityClasses(), ODATA_SERVICE_MOCK_URL);

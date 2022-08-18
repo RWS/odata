@@ -17,7 +17,7 @@ package com.sdl.odata.edm.model;
 
 import com.sdl.odata.api.edm.model.NavigationPropertyBinding;
 import com.sdl.odata.api.edm.model.Singleton;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 

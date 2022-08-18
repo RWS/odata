@@ -20,18 +20,19 @@ import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.unmarshaller.NoEntityUnmarshaller;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * No Entity Unmarshaller Test.
  */
 public class NoEntityUnmarshallerTest extends UnmarshallerTest {
+
     @Test
     public void testTheLowestScore() throws UnsupportedEncodingException, ODataException {
         ODataRequest.Builder builder = new ODataRequest.Builder()

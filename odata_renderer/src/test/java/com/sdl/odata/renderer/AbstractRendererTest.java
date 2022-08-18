@@ -17,7 +17,6 @@ package com.sdl.odata.renderer;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.parser.EntityCollectionPath;
 import com.sdl.odata.api.parser.EntitySetPath;
@@ -44,8 +43,8 @@ import com.sdl.odata.test.model.Order;
 import com.sdl.odata.test.model.PrimitiveTypesSample;
 import com.sdl.odata.test.model.Product;
 import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import scala.Option;
 import scala.collection.immutable.List$;
 
@@ -61,8 +60,8 @@ import static com.sdl.odata.renderer.AbstractRenderer.DEFAULT_SCORE;
 import static com.sdl.odata.renderer.AbstractRenderer.MAXIMUM_FORMAT_SCORE;
 import static com.sdl.odata.renderer.AbstractRenderer.MAXIMUM_HEADER_SCORE;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link AbstractRenderer}.
@@ -76,7 +75,7 @@ public class AbstractRendererTest {
 
     private EntityDataModel entityDataModel;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         final AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
@@ -102,14 +101,13 @@ public class AbstractRendererTest {
         }
 
         @Override
-        public void render(ODataRequestContext requestContext, QueryResult data, ODataResponse.Builder responseBuilder)
-                throws ODataException {
+        public void render(ODataRequestContext requestContext, QueryResult data,
+                           ODataResponse.Builder responseBuilder) {
         }
     };
 
     @Test
     public void testByFormat() {
-
         assertScoreByFormat(createFormatOption(null));
         assertScoreByFormat(createFormatOption(ATOM_SVC_XML));
         assertScoreByFormat(createFormatOption(ATOM_XML));
@@ -141,7 +139,7 @@ public class AbstractRendererTest {
                 Collections.singletonList(ATOM_XML), ATOM_XML), is(MAXIMUM_HEADER_SCORE));
 
         assertThat(renderer.scoreByMediaType(
-                Collections.<MediaType>emptyList(), JSON), is(DEFAULT_SCORE));
+                Collections.emptyList(), JSON), is(DEFAULT_SCORE));
     }
 
     @Test
@@ -173,8 +171,8 @@ public class AbstractRendererTest {
 
         int jsonScore = new JsonRenderer().score(buildODataRequest(ODATA_URI, mediaTypes),
                 QueryResult.from(Lists.newArrayList()));
-        assertTrue("Score of XML marshaller should have higher value in case of wild card matching ",
-                atomXMLScore > jsonScore);
+        assertTrue(atomXMLScore > jsonScore,
+                "Score of XML marshaller should have higher value in case of wild card matching ");
     }
 
     private Option<FormatOption> createFormatOption(MediaType mediaType) {

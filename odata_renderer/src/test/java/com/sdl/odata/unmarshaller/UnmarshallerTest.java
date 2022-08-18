@@ -33,7 +33,7 @@ import com.sdl.odata.test.model.Product;
 import com.sdl.odata.test.model.complex.ODataDemoEntity;
 import com.sdl.odata.test.model.complex.ODataDemoProperty;
 import com.sdl.odata.test.model.complex.ODataVersion;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -45,13 +45,13 @@ import static com.sdl.odata.api.service.ODataRequest.Method.GET;
 import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.test.util.TestUtils.readContent;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Base test class with functionality to be shared by Xml and Json unmarshaller implementations.
@@ -76,7 +76,7 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
     protected Object entityTypeSample = null;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         requestBuilder.setUri(odataUri.serviceRoot()).setMethod(ODataRequest.Method.GET);
@@ -133,7 +133,6 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
     }
 
     public void assertCustomersSample() throws Exception {
-
         assertThat(customersFeed, is(notNullValue()));
         assertThat(customersFeed.size(), is(2));
 

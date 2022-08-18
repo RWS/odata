@@ -15,11 +15,12 @@
  */
 package com.sdl.odata.api.edm.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link AbstractType}.
@@ -33,9 +34,9 @@ public class AbstractTypeTest {
         assertThat(AbstractType.forName("EntityType"), is(AbstractType.ENTITY_TYPE));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testForNameException() {
-        AbstractType.forName("String");
+        assertThrows(IllegalArgumentException.class, () -> AbstractType.forName("String"));
     }
 
     @Test

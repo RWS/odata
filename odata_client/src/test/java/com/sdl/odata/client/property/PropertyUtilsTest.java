@@ -15,12 +15,12 @@
  */
 package com.sdl.odata.client.property;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for {@link PropertyUtils} class.
@@ -31,7 +31,7 @@ public class PropertyUtilsTest {
 
     @Test
     public void testGetLongPropertyFromString() {
-        Assert.assertEquals(Long.valueOf(150L), PropertyUtils.getLongProperty("150"));
+        assertEquals(Long.valueOf(150L), PropertyUtils.getLongProperty("150"));
         assertNull(PropertyUtils.getLongProperty("150a"));
     }
 
@@ -39,9 +39,9 @@ public class PropertyUtilsTest {
     public void testGetIntegerProperty() {
         Properties properties = new Properties();
         properties.setProperty(PROPERTY_NAME, "15");
-        Assert.assertEquals(Integer.valueOf(15), PropertyUtils.getIntegerProperty(properties, PROPERTY_NAME));
-        Assert.assertEquals(Integer.valueOf(15), PropertyUtils.getIntegerProperty(properties, PROPERTY_NAME, 10));
-        Assert.assertEquals(Integer.valueOf(10), PropertyUtils.getIntegerProperty(new Properties(), PROPERTY_NAME, 10));
+        assertEquals(Integer.valueOf(15), PropertyUtils.getIntegerProperty(properties, PROPERTY_NAME));
+        assertEquals(Integer.valueOf(15), PropertyUtils.getIntegerProperty(properties, PROPERTY_NAME, 10));
+        assertEquals(Integer.valueOf(10), PropertyUtils.getIntegerProperty(new Properties(), PROPERTY_NAME, 10));
         assertNull(PropertyUtils.getIntegerProperty(new Properties(), PROPERTY_NAME));
     }
 
@@ -49,7 +49,7 @@ public class PropertyUtilsTest {
     public void testGetStringProperty() {
         Properties properties = new Properties();
         properties.setProperty(PROPERTY_NAME, "someValue");
-        Assert.assertEquals("someValue", PropertyUtils.getStringProperty(properties, PROPERTY_NAME));
+        assertEquals("someValue", PropertyUtils.getStringProperty(properties, PROPERTY_NAME));
         assertNull(PropertyUtils.getStringProperty(new Properties(), PROPERTY_NAME));
     }
 

@@ -16,15 +16,15 @@
 package com.sdl.odata.api.service;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link ODataRequest}.
@@ -96,7 +96,7 @@ public class ODataRequestTest {
     }
 
     @Test
-    public void testBuilderWithAdditionalData() throws UnsupportedEncodingException {
+    public void testBuilderWithAdditionalData() {
         ODataRequest request = new ODataRequest.Builder()
                 .setMethod(ODataRequest.Method.GET)
                 .setUri("http://localhost:8080/test")
@@ -113,7 +113,7 @@ public class ODataRequestTest {
     /**
      * Sample class to test additional parameters in oDataRequest.
      */
-    class Person {
+    static class Person {
         private final String name;
 
         Person(String name) {

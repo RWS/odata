@@ -21,10 +21,12 @@ import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link ODataAtomParser}.
@@ -46,7 +48,7 @@ public class ODataAtomParserTest extends UnmarshallerTest {
 
     private ODataParser uriParser;
 
-    @Before
+    @BeforeEach
     public void setUpParser() {
         uriParser = new ODataParserImpl();
     }
@@ -61,27 +63,26 @@ public class ODataAtomParserTest extends UnmarshallerTest {
         assertCustomerSample();
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
+    @Test
     public void testCustomerWithNoAddressShouldThrowException() throws Exception {
 
         requestBuilder.setUri(odataUri.serviceRoot()).setMethod(ODataRequest.Method.POST);
         preparePostRequestContext(CUSTOMER_WITH_NO_ADDRESS);
         ODataAtomParser atomParser = new ODataAtomParser(context, uriParser);
 
-        singleCustomer = atomParser.getODataEntity();
-        assertCustomerSample();
+        assertThrows(ODataUnmarshallingException.class, () ->
+                singleCustomer = atomParser.getODataEntity()
+        );
     }
 
     @Test
     public void testCustomerWithLinksSample() throws Exception {
-
         preparePostRequestContext(CUSTOMER_WITH_LINKS_PATH_WRITE);
         ODataAtomParser atomParser = new ODataAtomParser(context, uriParser);
 
         singleCustomer = atomParser.getODataEntity();
         assertCustomerWithLinksSample();
     }
-
 
     @Test
     public void testProductSample() throws Exception {
@@ -113,11 +114,12 @@ public class ODataAtomParserTest extends UnmarshallerTest {
         assertCollectionsTypesSample();
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
+    @Test
     public void testCustomersSample() throws IOException, ODataException {
-
         preparePostRequestContext(CUSTOMER_FEED_PATH);
-        new ODataAtomParser(context, uriParser).getODataEntity();
+        assertThrows(ODataUnmarshallingException.class, () ->
+                new ODataAtomParser(context, uriParser).getODataEntity()
+        );
     }
 
     @Test

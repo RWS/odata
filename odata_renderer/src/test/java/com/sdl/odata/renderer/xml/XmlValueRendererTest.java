@@ -22,14 +22,14 @@ import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.parser.ODataUriParser;
 import com.sdl.odata.renderer.RendererTest;
 import com.sdl.odata.test.util.TestUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.MediaType.XML;
 import static com.sdl.odata.test.util.TestUtils.createODataRequest;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to cover {@link XmlValueRendererTest}.
@@ -41,7 +41,7 @@ public class XmlValueRendererTest extends RendererTest {
 
     private XMLValueRenderer xmlValueRenderer;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         xmlValueRenderer = new XMLValueRenderer();

@@ -18,11 +18,11 @@ package com.sdl.odata.edm.model;
 import com.google.common.collect.ImmutableList;
 import com.sdl.odata.api.edm.model.MetaType;
 import com.sdl.odata.api.edm.model.PropertyRef;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * The Entity Type Impl Test.

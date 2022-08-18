@@ -19,17 +19,19 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.parser.MetadataUri;
 import com.sdl.odata.api.parser.ODataUriParseException;
 import com.sdl.odata.api.parser.RelativeUri;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Parser Metadata Test.
  *
  */
 public class ParserMetadataTest extends ParserTestSuite {
+
     @Test
     public void testEmptyMetadataFormat() throws ODataException {
         uri = parser.parseUri(SERVICE_ROOT + "$metadata", model);
@@ -55,8 +57,10 @@ public class ParserMetadataTest extends ParserTestSuite {
         assertThat(metadata.format().get().getSubType(), is("json"));
     }
 
-    @Test(expected = ODataUriParseException.class)
-    public void testNonExistentFormat() throws ODataException {
-        uri = parser.parseUri(SERVICE_ROOT + "$metadata?$format=superman", model);
+    @Test
+    public void testNonExistentFormat() {
+        assertThrows(ODataUriParseException.class, () ->
+                uri = parser.parseUri(SERVICE_ROOT + "$metadata?$format=superman", model)
+        );
     }
 }

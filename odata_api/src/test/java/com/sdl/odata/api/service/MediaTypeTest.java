@@ -15,10 +15,11 @@
  */
 package com.sdl.odata.api.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link MediaType}.
@@ -56,9 +57,11 @@ public class MediaTypeTest {
         assertThat(mediaType.getParameter("q"), is("0.8"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromStringInvalid() {
-        MediaType.fromString("text;q=0.8");
+        assertThrows(IllegalArgumentException.class, () ->
+                MediaType.fromString("text;q=0.8")
+        );
     }
 
     @Test

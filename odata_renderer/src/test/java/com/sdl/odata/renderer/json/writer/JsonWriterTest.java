@@ -19,7 +19,7 @@ import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.WriterTest;
 import com.sdl.odata.test.model.SingletonSample;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -29,7 +29,7 @@ import java.util.Map;
 
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintJson;
 import static com.sdl.odata.test.util.TestUtils.readContent;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Common test case for testing Atom XML and JSON marshalling process

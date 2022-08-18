@@ -22,14 +22,14 @@ import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.renderer.RendererTest;
 import com.sdl.odata.test.model.Customer;
 import com.sdl.odata.test.util.TestUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.test.util.TestUtils.SERVICE_ROOT;
 import static com.sdl.odata.test.util.TestUtils.createODataRequest;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to covering {@link PrimitiveRenderer}.
@@ -38,7 +38,7 @@ public class PrimitiveRendererTest extends RendererTest {
 
     private PrimitiveRenderer primitiveRenderer;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         primitiveRenderer = new PrimitiveRenderer();

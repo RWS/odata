@@ -16,12 +16,12 @@
 package com.sdl.odata.edm.model;
 
 import com.sdl.odata.api.edm.model.NavigationPropertyBinding;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Unit tests for {@link SingletonImpl}.

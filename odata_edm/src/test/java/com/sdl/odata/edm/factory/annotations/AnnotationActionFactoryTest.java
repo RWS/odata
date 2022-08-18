@@ -18,17 +18,18 @@ package com.sdl.odata.edm.factory.annotations;
 import com.sdl.odata.api.edm.model.Action;
 import com.sdl.odata.test.model.ActionSample;
 import com.sdl.odata.test.model.DefaultActionSample;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * AnnotationActionFactory test.
  */
 public class AnnotationActionFactoryTest {
-    private AnnotationActionFactory factory = new AnnotationActionFactory();
+
+    private final AnnotationActionFactory factory = new AnnotationActionFactory();
 
     @Test
     public void testAnnotationActionFactory() {

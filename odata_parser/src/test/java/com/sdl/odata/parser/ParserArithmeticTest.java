@@ -29,11 +29,11 @@ import com.sdl.odata.api.parser.NumberLiteral;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.PropertyPathExpr;
 import com.sdl.odata.api.parser.SubExpr;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import scala.math.BigDecimal;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Parser Arithmetic Test.

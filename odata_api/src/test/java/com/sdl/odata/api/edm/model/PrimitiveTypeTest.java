@@ -15,10 +15,11 @@
  */
 package com.sdl.odata.api.edm.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link PrimitiveType}.
@@ -30,9 +31,11 @@ public class PrimitiveTypeTest {
         assertThat(PrimitiveType.forName("String"), is(PrimitiveType.STRING));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testForNameException() {
-        PrimitiveType.forName("Primitive");
+        assertThrows(IllegalArgumentException.class, () ->
+                PrimitiveType.forName("Primitive")
+        );
     }
 
     @Test

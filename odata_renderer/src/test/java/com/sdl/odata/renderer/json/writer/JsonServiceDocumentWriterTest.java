@@ -18,13 +18,14 @@ package com.sdl.odata.renderer.json.writer;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.WriterTest;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintJson;
 import static com.sdl.odata.test.util.TestUtils.readContent;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Json Service Root Test.
@@ -36,7 +37,7 @@ public class JsonServiceDocumentWriterTest extends WriterTest {
 
     private static final String EXPECTED_SERVICE_DOCUMENT = "/json/ServiceDocument.json";
 
-    @Test
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         odataUri = new ODataParserImpl().parseUri("http://localhost:8080/odata.svc", entityDataModel);

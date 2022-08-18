@@ -28,14 +28,14 @@ import com.sdl.odata.api.parser.SimpleKeyPredicate;
 import com.sdl.odata.api.parser.StringLiteral;
 import com.sdl.odata.parser.ODataUriParser;
 import com.sdl.odata.parser.ParserTestSuite;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import scala.Option;
 import scala.collection.Iterator;
 import scala.collection.immutable.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Expression Parser Test.

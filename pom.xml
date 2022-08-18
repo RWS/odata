@@ -97,6 +97,8 @@
         <jacoco.version>0.8.7</jacoco.version>
         <jakarta-annotation-api.version>1.3.5</jakarta-annotation-api.version>
         <junit.version>4.13.2</junit.version>
+        <junit-jupiter.version>5.9.0</junit-jupiter.version>
+        <mockito-junit5.version>4.3.1</mockito-junit5.version>
         <logback.version>1.2.11</logback.version>
         <mockito.version>4.3.1</mockito.version>
         <scala-genjavadoc-plugin.version>0.18_${scala.version}</scala-genjavadoc-plugin.version>
@@ -199,6 +201,24 @@
             </dependency>
 
             <!-- Testing -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito-junit5.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -414,6 +434,21 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

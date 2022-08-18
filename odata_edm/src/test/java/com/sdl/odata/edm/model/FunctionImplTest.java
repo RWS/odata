@@ -16,13 +16,13 @@
 package com.sdl.odata.edm.model;
 
 import com.sdl.odata.test.model.FunctionSample;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for {@link FunctionImpl}.
@@ -41,6 +41,7 @@ public class FunctionImplTest {
                 .setParameters(new HashSet<>())
                 .setReturnType("MyFunctionReturnType")
                 .build();
+
         assertTrue(function.isBound());
         assertTrue(function.isComposable());
         assertEquals("MyEntitySetPath", function.getEntitySetPath());

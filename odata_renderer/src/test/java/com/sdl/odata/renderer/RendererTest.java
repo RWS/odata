@@ -23,7 +23,7 @@ import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.service.ODataResponse;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.UnsupportedEncodingException;
 
@@ -43,10 +43,10 @@ import static com.sdl.odata.test.util.TestUtils.createSimpleODataRequest;
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
 import static com.sdl.odata.test.util.TestUtils.readContent;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -61,7 +61,7 @@ public abstract class RendererTest {
     protected ODataResponse.Builder responseBuilderMock;
     protected EntityDataModel entityDataModel;
 
-    @Before
+    @BeforeEach
     protected void setUp() throws Exception {
         entityDataModel = new AnnotationEntityDataModelFactory()
                 .addClasses(getEdmEntityClasses()).buildEntityDataModel();

@@ -48,19 +48,20 @@ import com.sdl.odata.test.model.OrderLine;
 import com.sdl.odata.test.model.Product;
 import com.sdl.odata.test.model.UnboundActionSample;
 import com.sdl.odata.test.model.UnboundFunctionSample;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link AnnotationEntityDataModelFactory}.
@@ -74,7 +75,7 @@ public class AnnotationEntityDataModelFactoryTest {
     private AnnotationEntityDataModelFactory factory;
     private EntityDataModel model;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         factory = new AnnotationEntityDataModelFactory();
 
@@ -96,9 +97,9 @@ public class AnnotationEntityDataModelFactoryTest {
         model = factory.buildEntityDataModel();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIncorrectClassAdd() {
-        factory.addClass(Object.class);
+        assertThrows(IllegalArgumentException.class, () -> factory.addClass(Object.class));
     }
 
     @Test

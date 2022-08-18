@@ -18,7 +18,7 @@ package com.sdl.odata.renderer.atom.writer;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.WriterTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.Map;
 
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for {@link AtomWriter}.

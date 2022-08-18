@@ -15,7 +15,7 @@
  */
 package com.sdl.odata.edm.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -25,6 +25,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * The Entity Set Impl Test.
  */
 public class EntitySetImplTest {
+
     @Test
     public void testEntitySetImpl() {
         EntitySetImpl.Builder builder = new EntitySetImpl.Builder();

@@ -22,13 +22,14 @@ import com.sdl.odata.api.processor.datasource.ODataDataSourceException;
 import com.sdl.odata.api.processor.datasource.TransactionalDataSource;
 import com.sdl.odata.api.service.ChangeSetEntity;
 import com.sdl.odata.api.service.ODataRequestContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.POST;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,8 +39,8 @@ import static org.mockito.Mockito.when;
  */
 public class BatchMethodHandlerTest extends MethodHandlerTest {
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    public void setup() {
         super.setup("Persons");
     }
 
@@ -50,7 +51,7 @@ public class BatchMethodHandlerTest extends MethodHandlerTest {
         return new BatchMethodHandler(requestContext, dataSourceFactoryMock, Collections.singletonList(entity));
     }
 
-    @Test(expected = ODataException.class)
+    @Test
     public void testFailWithDbError() throws Exception {
         stubForTesting(getEntity());
         TransactionalDataSource trxDataSourceMock = mock(TransactionalDataSource.class);
@@ -59,7 +60,10 @@ public class BatchMethodHandlerTest extends MethodHandlerTest {
         when(dataSourceMock.startTransaction()).thenReturn(trxDataSourceMock);
 
         EntityDataModel entityDataModel = getEntityDataModel();
-        getPostMethodHandler(entityDataModel, getEntity()).handleWrite();
+
+        assertThrows(ODataException.class, () ->
+                getPostMethodHandler(entityDataModel, getEntity()).handleWrite()
+        );
     }
 
     @Test

@@ -27,13 +27,14 @@ import com.sdl.odata.test.model.IdNamePairSample;
 import com.sdl.odata.test.model.OrderLine;
 import com.sdl.odata.test.model.PrimitiveTypesSample;
 import com.sdl.odata.test.model.Product;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Parser Operation Test.
@@ -53,15 +54,19 @@ public class ParserOperationTest extends ParserTestSuite {
         assertTrue(relative instanceof ServiceRootUri);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testIncorrectModel() throws ODataException {
+    @Test
+    public void testIncorrectModel() {
         AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
-        factory.addClass(EmptyDummy.class);
-        parser.parseUri(SERVICE_ROOT, factory.buildEntityDataModel());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+                    factory.addClass(EmptyDummy.class);
+                    parser.parseUri(SERVICE_ROOT, factory.buildEntityDataModel());
+                }
+        );
     }
 
-    @Test(expected = ODataUriParseException.class)
-    public void testIfExistingModelIsAbsent() throws ODataException {
+    @Test
+    public void testIfExistingModelIsAbsent() {
         AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
         // Order.class is not added
         factory.addClass(Address.class);
@@ -72,7 +77,10 @@ public class ParserOperationTest extends ParserTestSuite {
         factory.addClass(OrderLine.class);
         factory.addClass(PrimitiveTypesSample.class);
         factory.addClass(Product.class);
-        parser.parseUri(SERVICE_ROOT + "Orders(1)", factory.buildEntityDataModel());
+
+        assertThrows(ODataUriParseException.class, () ->
+                parser.parseUri(SERVICE_ROOT + "Orders(1)", factory.buildEntityDataModel())
+        );
     }
 
     /**

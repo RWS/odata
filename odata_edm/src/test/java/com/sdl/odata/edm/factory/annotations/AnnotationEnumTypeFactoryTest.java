@@ -20,13 +20,13 @@ import com.sdl.odata.api.edm.model.EnumType;
 import com.sdl.odata.api.edm.model.PrimitiveType;
 import com.sdl.odata.test.model.Category;
 import com.sdl.odata.test.model.ExampleFlags;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link AnnotationEnumTypeFactory}.
@@ -36,7 +36,7 @@ public class AnnotationEnumTypeFactoryTest {
 
     private AnnotationEnumTypeFactory factory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         factory = new AnnotationEnumTypeFactory();
     }

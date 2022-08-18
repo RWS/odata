@@ -23,22 +23,22 @@ import com.sdl.odata.parser.ODataBatchRequestContent;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.parser.ODataUriParser;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to cover {@link BatchUnmarshaller}.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class BatchUnmarshallerTest extends UnmarshallerTest {
 
     private static final String REQUEST_ENTITY_PATH = "/batch/BatchReq.txt";
@@ -49,7 +49,7 @@ public class BatchUnmarshallerTest extends UnmarshallerTest {
     @InjectMocks
     private BatchUnmarshaller batchUnmarshaller;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException, ODataUnmarshallingException {
         odataUri = new ODataUriParser(entityDataModel).parseUri(odataUri.serviceRoot() + "/$batch");
         requestBuilder.setUri(odataUri.serviceRoot()).setMethod(ODataRequest.Method.POST);

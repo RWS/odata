@@ -15,10 +15,11 @@
  */
 package com.sdl.odata.api.edm.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link OnDeleteAction}.
@@ -33,9 +34,9 @@ public class OnDeleteActionTest {
         assertThat(OnDeleteAction.forName("SetDefault"), is(OnDeleteAction.SET_DEFAULT));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testForNameException() {
-        OnDeleteAction.forName("CASCADE");
+        assertThrows(IllegalArgumentException.class, () -> OnDeleteAction.forName("CASCADE"));
     }
 
     @Test

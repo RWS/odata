@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.edm.factory.annotations;
 
-import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.annotations.EdmFunctionImport;
 import com.sdl.odata.test.model.Address;
 import com.sdl.odata.test.model.Category;
@@ -26,9 +25,10 @@ import com.sdl.odata.test.model.FunctionSample;
 import com.sdl.odata.test.model.Order;
 import com.sdl.odata.test.model.OrderLine;
 import com.sdl.odata.test.model.Product;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for {@link AnnotationFunctionImportFactory}.
@@ -54,8 +54,8 @@ public class AnnotationFunctionImportFactoryTest {
                 fullyQualifiedFunctionImportName);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testLookupGetFunctionFail() throws ODataEdmException {
+    @Test
+    public void testLookupGetFunctionFail() {
         AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
 
         factory.addClass(Address.class);
@@ -69,11 +69,11 @@ public class AnnotationFunctionImportFactoryTest {
         factory.addClass(WrongFunctionImportSample.class);
         factory.setSchemaAlias("ODataDemo", "TestAlias");
 
-        factory.buildEntityDataModel();
+        assertThrows(IllegalArgumentException.class, factory::buildEntityDataModel);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testLookupGetFunctionNoEntitySetFail() throws ODataEdmException {
+    @Test
+    public void testLookupGetFunctionNoEntitySetFail() {
         AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
 
         factory.addClass(Address.class);
@@ -87,7 +87,7 @@ public class AnnotationFunctionImportFactoryTest {
         factory.addClass(FunctionImportWithoutEntitySetDefinedSample.class);
         factory.setSchemaAlias("ODataDemo", "TestAlias");
 
-        factory.buildEntityDataModel();
+        assertThrows(IllegalArgumentException.class, factory::buildEntityDataModel);
     }
 
     /**

@@ -21,7 +21,7 @@ import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.test.model.ActionSample;
 import com.sdl.odata.test.model.UnboundActionSample;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +29,7 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for OData Json Action Parser class.
@@ -39,7 +40,7 @@ public class ODataJsonActionParserTest extends UnmarshallerTest {
     private static final String EMPTY_PARAMETERS_JSON = "/json/ActionEmpty.json";
     private static final String INCORRECT_PARAMETERS_JSON = "/xml/Product.xml";
 
-    private ODataParser uriParser = new ODataParserImpl();
+    private final ODataParser uriParser = new ODataParserImpl();
 
     @Test
     public void testParseAction() throws Exception {
@@ -76,21 +77,21 @@ public class ODataJsonActionParserTest extends UnmarshallerTest {
         assertThat(action.getStringParameter(), is("BLACKFRIDAY"));
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
+    @Test
     public void testEmptyBodyActionImport() throws Exception {
         String uri = "http://some.com/xyz.svc/ODataDemoActionImport";
         odataUri = uriParser.parseUri(uri, entityDataModel);
         preparePostRequestContext(EMPTY_PARAMETERS_JSON);
         ODataJsonActionParser parser = new ODataJsonActionParser(context);
-        parser.getAction();
+        assertThrows(ODataUnmarshallingException.class, parser::getAction);
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
+    @Test
     public void testIncorrectActionRequestBody() throws Exception {
         String uri = "http://some.com/xyz.svc/Customers(2)/ODataDemo.ODataDemoAction";
         odataUri = uriParser.parseUri(uri, entityDataModel);
         preparePostRequestContext(INCORRECT_PARAMETERS_JSON);
         ODataJsonActionParser parser = new ODataJsonActionParser(context);
-        parser.getAction();
+        assertThrows(ODataUnmarshallingException.class, parser::getAction);
     }
 }
