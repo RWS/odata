@@ -20,8 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for {@link SingletonImpl}.
@@ -40,14 +39,14 @@ public class SingletonImplTest {
                 .addNavigationPropertyBindings(Arrays.asList(navigation, navigation))
                 .build();
 
-        assertThat(singleton.getName(), is("singleton"));
-        assertThat(singleton.toString(), is("singleton"));
-        assertThat(singleton.getTypeName(), is("Singleton"));
-        assertThat(singleton.getNavigationPropertyBindings().size(), is(3));
+        assertEquals("singleton", singleton.getName());
+        assertEquals("singleton", singleton.toString());
+        assertEquals("Singleton", singleton.getTypeName());
+        assertEquals(3, singleton.getNavigationPropertyBindings().size());
 
         for (NavigationPropertyBinding property : singleton.getNavigationPropertyBindings()) {
-            assertThat(property.getPath(), is("path"));
-            assertThat(property.getTarget(), is("target"));
+            assertEquals("path", property.getPath());
+            assertEquals("target", property.getTarget());
         }
     }
 

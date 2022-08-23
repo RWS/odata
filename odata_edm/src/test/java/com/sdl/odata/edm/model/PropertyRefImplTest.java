@@ -17,8 +17,7 @@ package com.sdl.odata.edm.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The Propert Ref Impl Test.
@@ -28,7 +27,7 @@ public class PropertyRefImplTest {
     @Test
     public void testPropertyRefImpl() {
         PropertyRefImpl refImpl = new PropertyRefImpl("path", "alias");
-        assertThat(refImpl.getAlias(), is("alias"));
-        assertThat(refImpl.getPath(), is("path"));
+        assertEquals("alias", refImpl.getAlias());
+        assertEquals("path", refImpl.getPath());
     }
 }

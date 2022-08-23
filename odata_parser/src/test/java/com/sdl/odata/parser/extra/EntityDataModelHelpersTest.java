@@ -26,8 +26,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import scala.Option;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,8 +52,8 @@ public class EntityDataModelHelpersTest extends ParserTestSuite {
 
     @Test
     public void testEntityHelpersMethods() {
-        assertThat(parser.isEntityType(ORDER), is(true));
-        assertThat(parser.isEntityType("Edm.Int64"), is(false));
+        assertTrue(parser.isEntityType(ORDER));
+        assertFalse(parser.isEntityType("Edm.Int64"));
     }
 
     @Test
@@ -73,9 +71,8 @@ public class EntityDataModelHelpersTest extends ParserTestSuite {
 
     @Test
     public void testKeyProperty() {
-        assertThat(parser.isPrimitiveKeyPropertyOf(ORDER, "id"), is(true));
+        assertTrue(parser.isPrimitiveKeyPropertyOf(ORDER, "id"));
     }
-
 
     @Test
     public void testNavigationProperty() {
@@ -83,10 +80,10 @@ public class EntityDataModelHelpersTest extends ParserTestSuite {
         ComplexType addressType = (ComplexType) type;
         Property streetProp = (Property) addressType.getStructuralProperty("Street");
 
-        assertThat(parser.isEntityNavigationProperty(streetProp), is(false));
-        assertThat(parser.isPrimitiveCollectionProperty(streetProp), is(false));
-        assertThat(parser.isEntitySingleNavigationProperty(streetProp), is(false));
-        assertThat(parser.isEntityCollectionNavigationProperty(streetProp), is(false));
+        assertFalse(parser.isEntityNavigationProperty(streetProp));
+        assertFalse(parser.isPrimitiveCollectionProperty(streetProp));
+        assertFalse(parser.isEntitySingleNavigationProperty(streetProp));
+        assertFalse(parser.isEntityCollectionNavigationProperty(streetProp));
     }
 
     @Test

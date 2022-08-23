@@ -24,7 +24,6 @@ import com.sdl.odata.renderer.WriterTest;
 import com.sdl.odata.test.model.Address;
 import com.sdl.odata.test.model.ComplexTypeSample;
 import com.sdl.odata.test.model.Customer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -49,11 +48,9 @@ import static com.sdl.odata.AtomConstants.VALUE;
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -68,11 +65,6 @@ public class XMLPropertyWriterTest extends WriterTest {
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_LIST_PATH = "/xml/AbstractComplexTypeListSample.xml";
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_PATH = "/xml/AbstractComplexTypeSample.xml";
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_UTF_PATH = "/xml/AbstractComplexTypeUnicodeSample.xml";
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
     @Test
     public void testTypesMismatch() throws ODataException {
@@ -119,7 +111,7 @@ public class XMLPropertyWriterTest extends WriterTest {
 
         // Checking expected values
         NodeList nodeList = assertNodeList(xml, 1);
-        assertThat(nodeList.item(0).getTextContent(), is("1"));
+        assertEquals("1", nodeList.item(0).getTextContent());
         assertAttributes(nodeList, 4, "metadata:type", "Int64");
     }
 
@@ -132,7 +124,7 @@ public class XMLPropertyWriterTest extends WriterTest {
 
         // Checking expected values
         NodeList nodeList = assertNodeList(xml, 1);
-        assertThat(nodeList.item(0).getTextContent(), is(UNICODE_STRING));
+        assertEquals(UNICODE_STRING, nodeList.item(0).getTextContent());
     }
 
     @Test
@@ -146,13 +138,13 @@ public class XMLPropertyWriterTest extends WriterTest {
         NodeList nodeList = assertNodeList(xml, 1);
 
         Node node = assertAndGetElement(nodeList, 3, 0);
-        assertThat(node.getTextContent(), is("test1"));
+        assertEquals("test1", node.getTextContent());
 
         node = assertAndGetElement(nodeList, 3, 1);
-        assertThat(node.getTextContent(), is("test2"));
+        assertEquals("test2", node.getTextContent());
 
         node = assertAndGetElement(nodeList, 3, 2);
-        assertThat(node.getTextContent(), is("test3"));
+        assertEquals("test3", node.getTextContent());
 
         assertAttributes(nodeList, 3, "metadata:context",
                 "http://localhost:8080/odata.svc/$metadata#Customers(1)/Phone");
@@ -183,16 +175,16 @@ public class XMLPropertyWriterTest extends WriterTest {
         assertAttributes(nodeList, 4, "metadata:type", "#ODataDemo.Address");
         Node firstElement = assertAndGetElement(nodeList, 2, 0);
 
-        assertThat(firstElement.getChildNodes().getLength(), is(5));
+        assertEquals(5, firstElement.getChildNodes().getLength());
         Node streetNode = firstElement.getChildNodes().item(0);
-        assertThat(streetNode.getNodeName(), is("Street"));
-        assertThat(streetNode.getTextContent(), is("first street"));
+        assertEquals("Street", streetNode.getNodeName());
+        assertEquals("first street", streetNode.getTextContent());
 
         Node secondElement = assertAndGetElement(nodeList, 2, 1);
-        assertThat(secondElement.getChildNodes().getLength(), is(5));
+        assertEquals(5, secondElement.getChildNodes().getLength());
         streetNode = secondElement.getChildNodes().item(0);
-        assertThat(streetNode.getNodeName(), is("Street"));
-        assertThat(streetNode.getTextContent(), is("second street"));
+        assertEquals("Street", streetNode.getNodeName());
+        assertEquals("second street", streetNode.getTextContent());
     }
 
     @Test
@@ -233,7 +225,7 @@ public class XMLPropertyWriterTest extends WriterTest {
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
-        assertThat(nodeList.item(0).getTextContent(), is("1"));
+        assertEquals("1", nodeList.item(0).getTextContent());
         assertAttributes(nodeList, 4, "metadata:type", "Int64");
     }
 
@@ -277,7 +269,7 @@ public class XMLPropertyWriterTest extends WriterTest {
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
-        assertThat(nodeList.item(0).getTextContent(), is(UNICODE_STRING));
+        assertEquals(UNICODE_STRING, nodeList.item(0).getTextContent());
     }
 
     @Test
@@ -300,13 +292,13 @@ public class XMLPropertyWriterTest extends WriterTest {
         NodeList nodeList = assertNodeList(result, 1);
 
         Node node = assertAndGetElement(nodeList, 3, 0);
-        assertThat(node.getTextContent(), is("test1"));
+        assertEquals("test1", node.getTextContent());
 
         node = assertAndGetElement(nodeList, 3, 1);
-        assertThat(node.getTextContent(), is("test2"));
+        assertEquals("test2", node.getTextContent());
 
         node = assertAndGetElement(nodeList, 3, 2);
-        assertThat(node.getTextContent(), is("test3"));
+        assertEquals("test3", node.getTextContent());
 
         assertAttributes(nodeList, 3, "metadata:context",
                 "http://localhost:8080/odata.svc/$metadata#Customers(1)/Phone");
@@ -355,16 +347,16 @@ public class XMLPropertyWriterTest extends WriterTest {
         assertAttributes(nodeList, 4, "metadata:type", "#ODataDemo.Address");
         Node firstElement = assertAndGetElement(nodeList, 2, 0);
 
-        assertThat(firstElement.getChildNodes().getLength(), is(5));
+        assertEquals(5, firstElement.getChildNodes().getLength());
         Node streetNode = firstElement.getChildNodes().item(0);
-        assertThat(streetNode.getNodeName(), is("Street"));
-        assertThat(streetNode.getTextContent(), is("first street"));
+        assertEquals("Street", streetNode.getNodeName());
+        assertEquals("first street", streetNode.getTextContent());
 
         Node secondElement = assertAndGetElement(nodeList, 2, 1);
-        assertThat(secondElement.getChildNodes().getLength(), is(5));
+        assertEquals(5, secondElement.getChildNodes().getLength());
         streetNode = secondElement.getChildNodes().item(0);
-        assertThat(streetNode.getNodeName(), is("Street"));
-        assertThat(streetNode.getTextContent(), is("second street"));
+        assertEquals("Street", streetNode.getNodeName());
+        assertEquals("second street", streetNode.getTextContent());
     }
 
     @Test
@@ -430,17 +422,17 @@ public class XMLPropertyWriterTest extends WriterTest {
 
     private Node assertAndGetElement(NodeList nodeList, int expectedElements, int elementPosition) {
         Node valueNode = nodeList.item(0);
-        assertThat(valueNode.getChildNodes().getLength(), is(expectedElements));
+        assertEquals(expectedElements, valueNode.getChildNodes().getLength());
         assertTrue(valueNode.getChildNodes().getLength() > elementPosition);
         Node element = valueNode.getChildNodes().item(elementPosition);
-        assertThat(element, is(not(nullValue())));
+        assertNotNull(element);
         return element;
     }
 
     private NamedNodeMap assertNodeMap(NodeList nodeList, int expected) {
         NamedNodeMap nodeMap = nodeList.item(0).getAttributes();
-        assertThat(nodeMap, is(not(nullValue())));
-        assertThat(nodeMap.getLength(), is(expected));
+        assertNotNull(nodeMap);
+        assertEquals(expected, nodeMap.getLength());
         return nodeMap;
     }
 
@@ -448,14 +440,14 @@ public class XMLPropertyWriterTest extends WriterTest {
                                   String attributeName, String expectedValue) {
         NamedNodeMap nodeMap = assertNodeMap(nodeList, expectedAttributes);
         Node typeAttribute = nodeMap.getNamedItem(attributeName);
-        assertThat(typeAttribute, is(not(nullValue())));
-        assertThat(typeAttribute.getNodeValue(), is(expectedValue));
+        assertNotNull(typeAttribute);
+        assertEquals(expectedValue, typeAttribute.getNodeValue());
     }
 
     private void metaDataTypeShouldNotPresent(NodeList nodeList, int expectedAttributes) {
         NamedNodeMap nodeMap = assertNodeMap(nodeList, expectedAttributes);
         Node typeAttribute = nodeMap.getNamedItem("metadata:type");
-        assertThat(typeAttribute, is(nullValue()));
+        assertNull(typeAttribute);
     }
 
     private Document parseXML(String xml) {
@@ -470,11 +462,11 @@ public class XMLPropertyWriterTest extends WriterTest {
 
     private NodeList assertNodeList(String result, int expectedNodes) {
         Document parsedDocument = parseXML(result);
-        assertThat(parsedDocument, is(not(nullValue())));
+        assertNotNull(parsedDocument);
 
         NodeList nodeList = parsedDocument.getElementsByTagNameNS(ODATA_METADATA_NS, VALUE);
-        assertThat(nodeList, is(not(nullValue())));
-        assertThat(nodeList.getLength(), is(expectedNodes));
+        assertNotNull(nodeList);
+        assertEquals(expectedNodes, nodeList.getLength());
         return nodeList;
     }
 

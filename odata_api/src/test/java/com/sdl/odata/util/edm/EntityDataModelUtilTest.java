@@ -18,8 +18,7 @@ package com.sdl.odata.util.edm;
 import org.junit.jupiter.api.Test;
 
 import static com.sdl.odata.util.edm.EntityDataModelUtil.pluralize;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -29,18 +28,16 @@ public class EntityDataModelUtilTest {
 
     @Test
     public void testPluralize() {
-        assertThat(pluralize("Bus"), is("Buses"));
-        assertThat(pluralize("Hash"), is("Hashes"));
-        assertThat(pluralize("Potato"), is("Potatoes"));
-        assertThat(pluralize("Capability"), is("Capabilities"));
-        assertThat(pluralize("Day"), is("Days"));
-        assertThat(pluralize("WebApplication"), is("WebApplications"));
+        assertEquals("Buses", pluralize("Bus"));
+        assertEquals("Hashes", pluralize("Hash"));
+        assertEquals("Potatoes", pluralize("Potato"));
+        assertEquals("Capabilities", pluralize("Capability"));
+        assertEquals("Days", pluralize("Day"));
+        assertEquals("WebApplications", pluralize("WebApplication"));
     }
 
     @Test
     public void testPluralizeNull() {
-        assertThrows(IllegalArgumentException.class, () ->
-                pluralize(null)
-        );
+        assertThrows(IllegalArgumentException.class, () -> pluralize(null));
     }
 }

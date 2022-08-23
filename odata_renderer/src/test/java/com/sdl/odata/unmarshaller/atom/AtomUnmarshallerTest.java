@@ -21,7 +21,6 @@ import com.sdl.odata.api.parser.ODataParser;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,8 +36,7 @@ import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.api.service.ODataRequest.Method.PUT;
 import static com.sdl.odata.test.util.TestUtils.createODataRequest;
 import static com.sdl.odata.test.util.TestUtils.createODataRequestContext;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -56,14 +54,9 @@ public class AtomUnmarshallerTest extends UnmarshallerTest {
     @Spy
     private ODataParser uriParser = new ODataParserImpl();
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     @Test
     public void testAtomNullScore() {
-        assertThat(atomUnmarshaller.score(errorContext), is(0));
+        assertEquals(0, atomUnmarshaller.score(errorContext));
         assertThrows(ODataUnmarshallingException.class, () -> atomUnmarshaller.unmarshall(errorContext));
     }
 
@@ -75,8 +68,8 @@ public class AtomUnmarshallerTest extends UnmarshallerTest {
 
     @Test
     public void testScoreForGET() throws UnsupportedEncodingException {
-        assertThat(atomUnmarshaller.score(createODataRequestContext(
-                createODataRequest(GET, CONTENT_TYPE), odataUri, entityDataModel)), is(0));
+        assertEquals(0, atomUnmarshaller.score(createODataRequestContext(
+                createODataRequest(GET, CONTENT_TYPE), odataUri, entityDataModel)));
     }
 
     @Test
@@ -87,6 +80,6 @@ public class AtomUnmarshallerTest extends UnmarshallerTest {
 
     @Test
     public void testScoreForDelete() throws UnsupportedEncodingException {
-        assertThat(atomUnmarshaller.score(createODataRequestContext(DELETE, entityDataModel)), is(0));
+        assertEquals(0, atomUnmarshaller.score(createODataRequestContext(DELETE, entityDataModel)));
     }
 }

@@ -22,8 +22,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -41,13 +41,14 @@ public class ODataRequestTest {
                 .setBody(new byte[]{1, 2, 3})
                 .build();
 
-        assertThat(request.getMethod(), is(ODataRequest.Method.POST));
-        assertThat(request.getUri(), is("http://localhost:8080/test"));
-        assertThat(request.getHeaders().size(), is(3));
-        assertThat(request.getHeader("one"), is("value1"));
-        assertThat(request.getHeader("TWO"), is("value2"));
-        assertThat(request.getHeader("Three"), is("value3"));
-        assertThat(request.getBody(), is(new byte[]{1, 2, 3}));
+        assertEquals(ODataRequest.Method.POST, request.getMethod());
+        assertEquals("http://localhost:8080/test", request.getUri());
+        assertEquals(3, request.getHeaders().size());
+        assertEquals("value1", request.getHeader("one"));
+        assertEquals("value2", request.getHeader("TWO"));
+        assertEquals("value2", request.getHeader("TWO"));
+        assertEquals("value3", request.getHeader("Three"));
+        assertArrayEquals(new byte[]{1, 2, 3}, request.getBody());
     }
 
     @Test
@@ -58,9 +59,9 @@ public class ODataRequestTest {
                 .setBodyText("The bike costs € 725", "UTF-8")
                 .build();
 
-        assertThat(request.getMethod(), is(ODataRequest.Method.PUT));
-        assertThat(request.getUri(), is("http://localhost:8080/test"));
-        assertThat(request.getBodyText("UTF-8"), is("The bike costs € 725"));
+        assertEquals(ODataRequest.Method.PUT, request.getMethod());
+        assertEquals("http://localhost:8080/test", request.getUri());
+        assertEquals("The bike costs € 725", request.getBodyText("UTF-8"));
     }
 
     @Test
@@ -75,24 +76,24 @@ public class ODataRequestTest {
                 .build();
 
         List<MediaType> mediaTypes = request.getAccept();
-        assertThat(mediaTypes.size(), is(3));
+        assertEquals(3, mediaTypes.size());
 
         MediaType mediaType1 = mediaTypes.get(0);
-        assertThat(mediaType1.getType(), is("text"));
-        assertThat(mediaType1.getSubType(), is("html"));
-        assertThat(mediaType1.getParameters().size(), is(0));
+        assertEquals("text", mediaType1.getType());
+        assertEquals("html", mediaType1.getSubType());
+        assertEquals(0, mediaType1.getParameters().size());
 
         MediaType mediaType2 = mediaTypes.get(1);
-        assertThat(mediaType2.getType(), is("application"));
-        assertThat(mediaType2.getSubType(), is("xml"));
-        assertThat(mediaType2.getParameters().size(), is(1));
-        assertThat(mediaType2.getParameter("q"), is("0.8"));
+        assertEquals("application", mediaType2.getType());
+        assertEquals("xml", mediaType2.getSubType());
+        assertEquals(1, mediaType2.getParameters().size());
+        assertEquals("0.8", mediaType2.getParameter("q"));
 
         MediaType mediaType3 = mediaTypes.get(2);
-        assertThat(mediaType3.getType(), is("*"));
-        assertThat(mediaType3.getSubType(), is("*"));
-        assertThat(mediaType3.getParameters().size(), is(1));
-        assertThat(mediaType3.getParameter("q"), is("0.1"));
+        assertEquals("*", mediaType3.getType());
+        assertEquals("*", mediaType3.getSubType());
+        assertEquals(1, mediaType3.getParameters().size());
+        assertEquals("0.1", mediaType3.getParameter("q"));
     }
 
     @Test
@@ -103,11 +104,11 @@ public class ODataRequestTest {
                 .addAdditionalData(new Person("PersonName"))
                 .build();
 
-        assertThat(request.getMethod(), is(ODataRequest.Method.GET));
-        assertThat(request.getUri(), is("http://localhost:8080/test"));
+        assertEquals(ODataRequest.Method.GET, request.getMethod());
+        assertEquals("http://localhost:8080/test", request.getUri());
         Optional<Person> personData = request.getAdditionalData(Person.class);
         assertTrue(personData.isPresent());
-        assertThat(personData.get().getName(), is("PersonName"));
+        assertEquals("PersonName", personData.get().getName());
     }
 
     /**

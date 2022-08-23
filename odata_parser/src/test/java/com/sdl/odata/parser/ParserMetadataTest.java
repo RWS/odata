@@ -21,8 +21,7 @@ import com.sdl.odata.api.parser.ODataUriParseException;
 import com.sdl.odata.api.parser.RelativeUri;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,13 +47,13 @@ public class ParserMetadataTest extends ParserTestSuite {
         // xml
         uri = parser.parseUri(SERVICE_ROOT + "$metadata?$format=xml", model);
         MetadataUri metadata = (MetadataUri) uri.relativeUri();
-        assertThat(metadata.format().get().getType(), is("application"));
-        assertThat(metadata.format().get().getSubType(), is("xml"));
+        assertEquals("application", metadata.format().get().getType());
+        assertEquals("xml", metadata.format().get().getSubType());
         // json
         uri = parser.parseUri(SERVICE_ROOT + "$metadata?$format=json", model);
         metadata = (MetadataUri) uri.relativeUri();
-        assertThat(metadata.format().get().getType(), is("application"));
-        assertThat(metadata.format().get().getSubType(), is("json"));
+        assertEquals("application", metadata.format().get().getType());
+        assertEquals("json", metadata.format().get().getSubType());
     }
 
     @Test

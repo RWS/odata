@@ -29,8 +29,7 @@ import static com.sdl.odata.api.service.ODataRequest.Method.GET;
 import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.test.util.TestUtils.createODataRequest;
 import static com.sdl.odata.test.util.TestUtils.createODataRequestContext;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test for Atom Action Unmarshaller class.
@@ -50,7 +49,7 @@ public class AtomActionUnmarshallerTest extends UnmarshallerTest {
         odataUri = uriParser.parseUri(uri, entityDataModel);
         int score = unmarshaller.score(createODataRequestContext(
                 createODataRequest(POST, CONTENT_TYPE), odataUri, entityDataModel));
-        assertThat(score, is(180));
+        assertEquals(180, score);
     }
 
     @Test
@@ -59,7 +58,7 @@ public class AtomActionUnmarshallerTest extends UnmarshallerTest {
         odataUri = uriParser.parseUri(uri, entityDataModel);
         int score = unmarshaller.score(createODataRequestContext(
                 createODataRequest(GET, CONTENT_TYPE), odataUri, entityDataModel));
-        assertThat(score, is(0));
+        assertEquals(0, score);
     }
 
     @Test
@@ -68,7 +67,7 @@ public class AtomActionUnmarshallerTest extends UnmarshallerTest {
         odataUri = uriParser.parseUri(uri, entityDataModel);
         int score = unmarshaller.score(createODataRequestContext(
                 createODataRequest(POST, CONTENT_TYPE_JSON), odataUri, entityDataModel));
-        assertThat(score, is(0));
+        assertEquals(0, score);
     }
 
     @Test
@@ -77,7 +76,7 @@ public class AtomActionUnmarshallerTest extends UnmarshallerTest {
         odataUri = uriParser.parseUri(uri, entityDataModel);
         int score = unmarshaller.score(createODataRequestContext(
                 createODataRequest(POST, CONTENT_TYPE), odataUri, entityDataModel));
-        assertThat(score, is(180));
+        assertEquals(180, score);
     }
 
     @Test
@@ -86,6 +85,6 @@ public class AtomActionUnmarshallerTest extends UnmarshallerTest {
         odataUri = uriParser.parseUri(uri, entityDataModel);
         int score = unmarshaller.score(createODataRequestContext(
                 createODataRequest(POST, CONTENT_TYPE), odataUri, entityDataModel));
-        assertThat(score, is(0));
+        assertEquals(0, score);
     }
 }

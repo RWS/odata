@@ -17,8 +17,7 @@ package com.sdl.odata.edm.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The ReferentialConstraintImplTest.
@@ -27,9 +26,10 @@ public class ReferentialConstraintImplTest {
 
     @Test
     public void testReferentialConstraint() {
-        ReferentialConstraintImpl refConstraint = new ReferentialConstraintImpl("propertyPath", "referencedPath");
-        assertThat(refConstraint.getPropertyPath(), is("propertyPath"));
-        assertThat(refConstraint.getReferencedPropertyPath(), is("referencedPath"));
+        ReferentialConstraintImpl refConstraint =
+                new ReferentialConstraintImpl("propertyPath", "referencedPath");
+        assertEquals("propertyPath", refConstraint.getPropertyPath());
+        assertEquals("referencedPath", refConstraint.getReferencedPropertyPath());
     }
 }
 

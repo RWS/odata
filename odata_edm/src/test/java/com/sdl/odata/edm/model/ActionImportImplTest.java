@@ -17,8 +17,7 @@ package com.sdl.odata.edm.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test for ActionImportImpl class.
@@ -33,8 +32,8 @@ public class ActionImportImplTest {
                 .setAction(new ActionImpl.Builder().setName("someActionName").build());
 
         ActionImportImpl actionImport = builder.build();
-        assertThat(actionImport.getName(), is("someActionImport"));
-        assertThat(actionImport.getEntitySet().getName(), is("someEntitySet"));
-        assertThat(actionImport.getAction().getName(), is("someActionName"));
+        assertEquals("someActionImport", actionImport.getName());
+        assertEquals("someEntitySet", actionImport.getEntitySet().getName());
+        assertEquals("someActionName", actionImport.getAction().getName());
     }
 }

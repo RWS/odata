@@ -33,9 +33,8 @@ import scala.Option;
 import scala.collection.Iterator;
 import scala.collection.immutable.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Expression Parser Test.
@@ -47,12 +46,12 @@ public class ExpressionParserTest extends ParserTestSuite {
         ODataUriParser parser = new ODataUriParser(model);
         ODataUri target = parser.parseUri(SERVICE_ROOT + "Customers?$filter=Phone eq $root/Customers('A1245')/Phone");
 
-        assertThat(target.serviceRoot() + "/", is(SERVICE_ROOT));
+        assertEquals(SERVICE_ROOT, target.serviceRoot() + "/");
 
         ResourcePathUri resourcePathUri = (ResourcePathUri) target.relativeUri();
 
         List<QueryOption> options = resourcePathUri.options();
-        assertThat(options.size(), is(1));
+        assertEquals(1, options.size());
 
         Iterator<QueryOption> iter = options.iterator();
 
@@ -66,16 +65,15 @@ public class ExpressionParserTest extends ParserTestSuite {
                 Option<PathExpr> subPath = pathExpr.subPath();
                 PropertyPathExpr propertyPath = (PropertyPathExpr) subPath.get();
 
-                assertThat(propertyPath.propertyName(), is(notNullValue()));
-                assertThat(propertyPath.propertyName(), is("Phone"));
+                assertNotNull(propertyPath.propertyName());
+                assertEquals("Phone", propertyPath.propertyName());
 
                 EntitySetRootExpr rootExpr = (EntitySetRootExpr) expr.right();
-                assertThat(rootExpr.entitySetName(), is("Customers"));
+                assertEquals("Customers", rootExpr.entitySetName());
 
                 SimpleKeyPredicate predicate = (SimpleKeyPredicate) rootExpr.keyPredicate();
                 StringLiteral value = (StringLiteral) predicate.value();
-                assertThat(value.value(), is("A1245"));
-
+                assertEquals("A1245", value.value());
             }
         }
     }

@@ -28,8 +28,7 @@ import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.api.service.ODataResponse.Status.CREATED;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -64,14 +63,13 @@ public class PostMethodHandlerTest extends MethodHandlerTest {
         assertThrows(ODataBadRequestException.class, () ->
                 getPostMethodHandler(entityDataModel, true).handleWrite(null)
         );
-
     }
 
     public void doWrite(Object entity, EntityDataModel entityDataModel) throws Exception {
         stubForTesting(entity,  entityDataModel);
         ProcessorResult result = getPostMethodHandler(entityDataModel, true).handleWrite(entity);
-        assertThat(result.getStatus(), is(CREATED));
-        assertThat(result.getData(), is(entity));
+        assertEquals(CREATED, result.getStatus());
+        assertEquals(entity, result.getData());
         verify(dataSourceMock, times(1)).create(entitySetOdataURI, entity,  entityDataModel);
     }
 
@@ -128,7 +126,5 @@ public class PostMethodHandlerTest extends MethodHandlerTest {
         );
         // Should fail with an exception because 'primaryAddress' is not nullable
     }
-
-
 
 }

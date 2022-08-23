@@ -23,8 +23,7 @@ import com.sdl.odata.test.model.ExampleFlags;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,41 +44,41 @@ public class AnnotationEnumTypeFactoryTest {
     public void testBuildEnumType() {
         EnumType categoryType = factory.build(Category.class);
 
-        assertThat(categoryType.getMembers().size(), is(3));
-        assertThat(categoryType.getUnderlyingType(), is(PrimitiveType.INT32));
+        assertEquals(3, categoryType.getMembers().size());
+        assertEquals(PrimitiveType.INT32, categoryType.getUnderlyingType());
         assertFalse(categoryType.isFlags());
 
         EnumMember booksMember = categoryType.getMember(Category.BOOKS.name());
-        assertThat(booksMember.getName(), is(Category.BOOKS.name()));
-        assertThat(booksMember.getValue(), is(0L));
+        assertEquals(Category.BOOKS.name(), booksMember.getName());
+        assertEquals(0L, booksMember.getValue());
 
         EnumMember electronicsMember = categoryType.getMember(Category.ELECTRONICS.name());
-        assertThat(electronicsMember.getName(), is(Category.ELECTRONICS.name()));
-        assertThat(electronicsMember.getValue(), is(1L));
+        assertEquals(Category.ELECTRONICS.name(), electronicsMember.getName());
+        assertEquals(1L, electronicsMember.getValue());
 
         EnumMember householdMember = categoryType.getMember(Category.HOUSEHOLD.name());
-        assertThat(householdMember.getName(), is(Category.HOUSEHOLD.name()));
-        assertThat(householdMember.getValue(), is(2L));
+        assertEquals(Category.HOUSEHOLD.name(), householdMember.getName());
+        assertEquals(2L, householdMember.getValue());
     }
 
     @Test
     public void testBuildEnumTypeFlags() {
         EnumType flagsType = factory.build(ExampleFlags.class);
 
-        assertThat(flagsType.getMembers().size(), is(3));
-        assertThat(flagsType.getUnderlyingType(), is(PrimitiveType.INT16));
+        assertEquals(3, flagsType.getMembers().size());
+        assertEquals(PrimitiveType.INT16, flagsType.getUnderlyingType());
         assertTrue(flagsType.isFlags());
 
         EnumMember hasNameMember = flagsType.getMember(ExampleFlags.HAS_NAME.name());
-        assertThat(hasNameMember.getName(), is(ExampleFlags.HAS_NAME.name()));
-        assertThat(hasNameMember.getValue(), is(1L));
+        assertEquals(ExampleFlags.HAS_NAME.name(), hasNameMember.getName());
+        assertEquals(1L, hasNameMember.getValue());
 
         EnumMember hasDescriptionMember = flagsType.getMember(ExampleFlags.HAS_DESCRIPTION.name());
-        assertThat(hasDescriptionMember.getName(), is(ExampleFlags.HAS_DESCRIPTION.name()));
-        assertThat(hasDescriptionMember.getValue(), is(2L));
+        assertEquals(ExampleFlags.HAS_DESCRIPTION.name(), hasDescriptionMember.getName());
+        assertEquals(2L, hasDescriptionMember.getValue());
 
         EnumMember isSpecialMember = flagsType.getMember(ExampleFlags.IS_SPECIAL.name());
-        assertThat(isSpecialMember.getName(), is(ExampleFlags.IS_SPECIAL.name()));
-        assertThat(isSpecialMember.getValue(), is(4L));
+        assertEquals(ExampleFlags.IS_SPECIAL.name(), isSpecialMember.getName());
+        assertEquals(4L, isSpecialMember.getValue());
     }
 }

@@ -31,8 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -53,10 +52,10 @@ public class ODataEdmRegistryImplTest {
                 Order.class, OrderLine.class, Product.class));
 
         EntityDataModel entityDataModel = registry.getEntityDataModel();
-        assertThat(entityDataModel.getSchemas().size(), is(2));
+        assertEquals(2, entityDataModel.getSchemas().size());
 
         Schema schema = entityDataModel.getSchema("ODataDemo");
         assertNotNull(schema);
-        assertThat(schema.getTypes().size(), is(6));
+        assertEquals(6, schema.getTypes().size());
     }
 }

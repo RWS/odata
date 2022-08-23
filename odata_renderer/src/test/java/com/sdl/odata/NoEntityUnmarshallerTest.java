@@ -24,9 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * No Entity Unmarshaller Test.
@@ -39,7 +38,8 @@ public class NoEntityUnmarshallerTest extends UnmarshallerTest {
                 .setBodyText("test", "UTF-8").setUri("mockURI").setMethod(ODataRequest.Method.GET);
         ODataRequestContext context = new ODataRequestContext(builder.build(), odataUri, entityDataModel);
         NoEntityUnmarshaller noEntityUnmarshaller = new NoEntityUnmarshaller();
-        assertThat(noEntityUnmarshaller.score(context), is(1));
-        assertThat(noEntityUnmarshaller.unmarshall(context), is(nullValue()));
+
+        assertEquals(1, noEntityUnmarshaller.score(context));
+        assertNull(noEntityUnmarshaller.unmarshall(context));
     }
 }

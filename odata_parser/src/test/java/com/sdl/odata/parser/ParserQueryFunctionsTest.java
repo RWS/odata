@@ -30,8 +30,7 @@ import scala.collection.Iterator;
 import scala.collection.immutable.List;
 import scala.math.BigDecimal;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Parser Query Functions Test.
@@ -53,7 +52,7 @@ public class ParserQueryFunctionsTest extends ParserTestSuite {
     private void testQueryFunction(String operator) throws ODataException {
         EqExpr expr = getExprFromOperator(operator);
         MethodCallExpr call = (MethodCallExpr) expr.left();
-        assertThat(call.methodName(), is(operator));
+        assertEquals(operator, call.methodName());
         List<Expression> args = call.args();
         Iterator iter = args.iterator();
         while (iter.hasNext()) {
@@ -61,12 +60,12 @@ public class ParserQueryFunctionsTest extends ParserTestSuite {
             if (obj instanceof EntityPathExpr) {
                 EntityPathExpr entityPathExpr = (EntityPathExpr) obj;
                 PropertyPathExpr propertyPath = (PropertyPathExpr) entityPathExpr.subPath().get();
-                assertThat(propertyPath.propertyName(), is("name"));
+                assertEquals("name", propertyPath.propertyName());
             }
         }
         LiteralExpr literal = (LiteralExpr) expr.right();
         NumberLiteral number = (NumberLiteral) literal.value();
-        assertThat(number.value(), is(new BigDecimal(new java.math.BigDecimal(19))));
+        assertEquals(new BigDecimal(new java.math.BigDecimal(19)), number.value());
     }
 
 

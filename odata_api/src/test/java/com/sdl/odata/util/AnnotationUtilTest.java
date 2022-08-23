@@ -23,8 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -35,15 +34,15 @@ public class AnnotationUtilTest {
     @Test
     public void testCheckAnnotationPresent() {
         //This should pass without exception
-        assertThat(AnnotationsUtil.checkAnnotationPresent(AnnotatedClass.class, EdmEntity.class), notNullValue());
+        assertNotNull(AnnotationsUtil.checkAnnotationPresent(AnnotatedClass.class, EdmEntity.class));
     }
 
     @Test
     public void testGetAnnotation() throws Exception {
-        assertThat(AnnotationsUtil.getAnnotation(AnnotatedClass.class, EdmEntity.class), notNullValue());
+        assertNotNull(AnnotationsUtil.getAnnotation(AnnotatedClass.class, EdmEntity.class));
 
         Field field = AnnotatedClass.class.getDeclaredField("annotatedField");
-        assertThat(AnnotationsUtil.getAnnotation(field, EdmProperty.class), notNullValue());
+        assertNotNull(AnnotationsUtil.getAnnotation(field, EdmProperty.class));
     }
 
     @Test

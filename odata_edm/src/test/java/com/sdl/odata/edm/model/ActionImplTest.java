@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for ActionImpl class.
@@ -38,11 +38,12 @@ public class ActionImplTest {
                 .setParameters(new HashSet<>());
 
         ActionImpl action = builder.build();
-        assertThat(action.getName(), is("testAction"));
-        assertThat(action.getNamespace(), is("testNamespace"));
-        assertThat(action.isBound(), is(true));
-        assertThat(action.getReturnType(), is("someReturnType"));
-        assertThat(action.getEntitySetPath(), is("someEntitySetPath"));
-        assertThat(action.getParameters().size(), is(0));
+        assertEquals("testAction", action.getName());
+        assertEquals("testNamespace", action.getNamespace());
+
+        assertTrue(action.isBound());
+        assertEquals("someReturnType", action.getReturnType());
+        assertEquals("someEntitySetPath", action.getEntitySetPath());
+        assertEquals(0, action.getParameters().size());
     }
 }

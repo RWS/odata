@@ -46,8 +46,7 @@ import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -76,7 +75,7 @@ public class BasicEndpointCallerTest {
     public void callEndpoint() throws ODataClientException, MalformedURLException {
         String response = caller.callEndpoint(singletonMap("Accept", APPLICATION_JSON_VALUE),
                 new URL(basePath + RESPONSE));
-        assertThat(response, equalTo(URLTestUtils.loadTextFile(RESPONSE)));
+        assertEquals(URLTestUtils.loadTextFile(RESPONSE), response);
     }
 
     @Test
@@ -98,7 +97,7 @@ public class BasicEndpointCallerTest {
                 sb.append(line).append(System.lineSeparator());
             }
         }
-        assertThat(sb.toString(), equalTo(URLTestUtils.loadTextFile(RESPONSE)));
+        assertEquals(URLTestUtils.loadTextFile(RESPONSE), sb.toString());
     }
 
     @Test
@@ -109,7 +108,7 @@ public class BasicEndpointCallerTest {
         BasicEndpointCaller proxifiedCaller = new BasicEndpointCaller(properties);
         String response = proxifiedCaller.callEndpoint(emptyMap(), new URL(basePath + RESPONSE));
 
-        assertThat(response, equalTo(URLTestUtils.loadTextFile(RESPONSE)));
+        assertEquals(URLTestUtils.loadTextFile(RESPONSE), response);
     }
 
     @Test

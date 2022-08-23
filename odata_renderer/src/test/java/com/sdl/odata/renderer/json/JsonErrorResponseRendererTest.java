@@ -34,8 +34,7 @@ import static com.sdl.odata.renderer.AbstractRenderer.CONTENT_TYPE_HEADER;
 import static com.sdl.odata.renderer.AbstractRenderer.ERROR_EXTRA_SCORE;
 import static com.sdl.odata.renderer.AbstractRenderer.MAXIMUM_HEADER_SCORE;
 import static com.sdl.odata.test.util.TestUtils.createODataUri;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -57,38 +56,40 @@ public class JsonErrorResponseRendererTest extends RendererTest {
     @Test
     public void testScoreExceptionNull() throws Exception {
         prepareRequestContextHeader(JSON);
-        assertThat(renderer.score(context, null), is(0));
+        assertEquals(0, renderer.score(context, null));
     }
 
     @Test
     public void testScoreNoException() throws Exception {
         prepareRequestContextHeader(JSON);
-        assertThat(renderer.score(context, QueryResult.from("data")), is(0));
+        assertEquals(0, renderer.score(context, QueryResult.from("data")));
     }
 
     @Test
     public void testScoreJsonInHeader() throws Exception {
         prepareRequestContextHeader(JSON);
-        assertThat(renderer.score(context, QueryResult.from(exception)), is(MAXIMUM_HEADER_SCORE + ERROR_EXTRA_SCORE));
+        assertEquals(MAXIMUM_HEADER_SCORE + ERROR_EXTRA_SCORE,
+                renderer.score(context, QueryResult.from(exception)));
     }
 
     @Test
     public void testScoreJsonContentTypeInHeader() throws Exception {
         prepareRequestContextHeaderWithContextType(JSON);
-        assertThat(renderer.score(context, QueryResult.from(exception)), is(CONTENT_TYPE_HEADER + ERROR_EXTRA_SCORE));
+        assertEquals(CONTENT_TYPE_HEADER + ERROR_EXTRA_SCORE,
+                renderer.score(context, QueryResult.from(exception)));
     }
 
     @Test
     public void testScoreWithoutContentType() throws Exception {
         prepareSimpleRequestContextHeader();
-        assertThat(renderer.score(context, QueryResult.from(exception)), is(0));
+        assertEquals(0, renderer.score(context, QueryResult.from(exception)));
     }
 
 
     @Test
     public void testScoreEmptyHeader() throws Exception {
         prepareRequestContextHeader();
-        assertThat(renderer.score(context, QueryResult.from(exception)), is(0));
+        assertEquals(0, renderer.score(context, QueryResult.from(exception)));
     }
 
     @Test
@@ -99,7 +100,7 @@ public class JsonErrorResponseRendererTest extends RendererTest {
         responseBuilder.setStatus(OK);
         ODataResponse response = responseBuilder.build();
         assertResponse(response, JSON, ERROR_RESPONSE_PATH);
-        assertThat(response.getHeader(CONTENT_LANGUAGE), is("en"));
+        assertEquals("en", response.getHeader(CONTENT_LANGUAGE));
     }
 
     @Test

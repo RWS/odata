@@ -19,8 +19,7 @@ import com.sdl.odata.api.edm.annotations.EdmEntitySet;
 import com.sdl.odata.client.api.ODataClientQuery;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -41,7 +40,7 @@ public class DefaultODataClientQueryTest {
                 .withEntityType(EmptyEntity.class)
                 .build();
 
-        assertThat(query.getQuery(), is("EmptyEntities"));
+        assertEquals("EmptyEntities", query.getQuery());
     }
 
     @Test
@@ -60,7 +59,7 @@ public class DefaultODataClientQueryTest {
                 .withFilterMap("Area", "Web")
                 .build();
         String expectedToString = "EmptyEntities?$filter=Area eq 'Web'";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -71,7 +70,7 @@ public class DefaultODataClientQueryTest {
                 .withFilterMap("Environment", "e1")
                 .build();
         String expectedToString = "EmptyEntities?$filter=Area eq 'Web' and Environment eq 'e1'";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -81,7 +80,7 @@ public class DefaultODataClientQueryTest {
                 .withExpandParameters("Using")
                 .build();
         String expectedToString = "EmptyEntities?$expand=Using";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -92,7 +91,7 @@ public class DefaultODataClientQueryTest {
                 .withExpandParameters("Imported")
                 .build();
         String expectedToString = "EmptyEntities?$expand=Using,Imported";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -103,7 +102,7 @@ public class DefaultODataClientQueryTest {
                 .withExpandParameters("Using")
                 .build();
         String expectedToString = "EmptyEntities?$filter=Area eq 'Web'&$expand=Using";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -114,7 +113,7 @@ public class DefaultODataClientQueryTest {
                 .withFunctionParameter("ParamName", "ParamValue")
                 .build();
         String expectedToString = "SampleFunction(ParamName=ParamValue)";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -127,7 +126,7 @@ public class DefaultODataClientQueryTest {
                 .withFunctionParameter("ParamName", "ParamValue")
                 .build();
         String expectedToString = "SampleEntitySet/Web.Sdl.SampleFunction(ParamName=ParamValue)";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -137,7 +136,7 @@ public class DefaultODataClientQueryTest {
                 .withFunctionName("SampleFunction")
                 .build();
         String expectedToString = "SampleFunction";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -149,7 +148,7 @@ public class DefaultODataClientQueryTest {
                 .withFunctionName("SampleFunction")
                 .build();
         String expectedToString = "SampleEntitySet/Web.Sdl.SampleFunction";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -196,7 +195,7 @@ public class DefaultODataClientQueryTest {
                 .withEntityType(EmptyEntity.class)
                 .build();
         String expectedToString = "ODataClientQuery[EmptyEntities]";
-        assertThat(query.toString(), is(expectedToString));
+        assertEquals(expectedToString, query.toString());
     }
 
     /**

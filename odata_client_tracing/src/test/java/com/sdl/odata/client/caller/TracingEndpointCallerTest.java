@@ -47,8 +47,7 @@ import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -82,7 +81,7 @@ public class TracingEndpointCallerTest {
         String expected = URLTestUtils.loadTextFile(RESPONSE);
         response = response.replace("\n", "").replace("\r", "");
         expected = expected.replace("\n", "").replace("\r", "");
-        assertThat(response, equalTo(expected));
+        assertEquals(expected, response);
     }
 
     @Test
@@ -103,7 +102,7 @@ public class TracingEndpointCallerTest {
                 sb.append(line).append(System.lineSeparator());
             }
         }
-        assertThat(sb.toString(), equalTo(URLTestUtils.loadTextFile(RESPONSE)));
+        assertEquals(URLTestUtils.loadTextFile(RESPONSE), sb.toString());
     }
 
     @Test
@@ -117,7 +116,7 @@ public class TracingEndpointCallerTest {
 
         response = response.replace("\n", "").replace("\r", "");
         result = result.replace("\n", "").replace("\r", "");
-        assertThat(response, equalTo(result));
+        assertEquals(result, response);
     }
 
     @Test
@@ -147,7 +146,7 @@ public class TracingEndpointCallerTest {
         String result = caller.doPutEntity(emptyMap(), new URL(basePath + RESPONSE), body, JSON);
         body = body.replace("\n", "").replace("\r", "");
         result = result.replace("\n", "").replace("\r", "");
-        assertThat(body, equalTo(result));
+        assertEquals(result, body);
     }
 
     @Test
@@ -221,7 +220,7 @@ public class TracingEndpointCallerTest {
     }
 
     @Test
-    public void testIOExceptionOnOpenConnection() throws IOException, ODataClientException {
+    public void testIOExceptionOnOpenConnection() throws IOException {
         URL ioExceptionOnConnectUrl = URLTestUtils.getIOExceptionThrowingUrl(true);
         Properties properties = new Properties();
         properties.setProperty(CLIENT_SERVICE_PROXY_HOST_NAME, "localhost");

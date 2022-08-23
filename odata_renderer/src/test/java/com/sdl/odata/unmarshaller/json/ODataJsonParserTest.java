@@ -30,8 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -187,15 +186,15 @@ public class ODataJsonParserTest extends UnmarshallerTest {
 
         ExpandedPropertiesSample targetSample = (ExpandedPropertiesSample) givenEntity;
 
-        assertThat(targetSample.getId(), is(5L));
-        assertThat(targetSample.getName(), is("Expanded Properties Sample"));
+        assertEquals(5L, targetSample.getId());
+        assertEquals("Expanded Properties Sample", targetSample.getName());
         assertNotNull(targetSample.getExpandedEntry());
         assertNotNull(targetSample.getExpandedFeed());
-        assertThat(targetSample.getExpandedFeed().size(), is(2));
+        assertEquals(2, targetSample.getExpandedFeed().size());
 
         IdNamePairSample expandedEntry = targetSample.getExpandedEntry();
-        assertThat(expandedEntry.getId(), is(10L));
-        assertThat(expandedEntry.getName(), is("Expanded entry"));
+        assertEquals(10L, expandedEntry.getId());
+        assertEquals("Expanded entry", expandedEntry.getName());
 
         List<IdNamePairSample> feeds = targetSample.getExpandedFeed();
         assertNotNull(feeds);
@@ -203,12 +202,11 @@ public class ODataJsonParserTest extends UnmarshallerTest {
         IdNamePairSample entryFeed2 = feeds.get(1);
 
         assertNotSame(entryFeed1, entryFeed2);
-        assertThat(entryFeed1.getId(), is(10L));
-        assertThat(entryFeed1.getName(), is("Expanded feed entry 1"));
+        assertEquals(10L, entryFeed1.getId());
+        assertEquals("Expanded feed entry 1", entryFeed1.getName());
 
-        assertThat(entryFeed2.getId(), is(20L));
-        assertThat(entryFeed2.getName(), is("Expanded feed entry 2"));
-
+        assertEquals(20L, entryFeed2.getId());
+        assertEquals("Expanded feed entry 2", entryFeed2.getName());
     }
 
     @Test

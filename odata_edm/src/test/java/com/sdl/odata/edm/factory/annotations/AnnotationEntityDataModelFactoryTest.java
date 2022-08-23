@@ -53,10 +53,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -125,27 +122,27 @@ public class AnnotationEntityDataModelFactoryTest {
 
         model = factory.buildEntityDataModel();
 
-        assertThat(model.getEntityContainer().getEntitySets().size(), is(4));
-        assertThat(model.getEntityContainer().getActionImports().size(), is(1));
-        assertThat(model.getEntityContainer().getFunctionImports().size(), is(1));
-        assertThat(model.getSchemas().size(), is(2));
+        assertEquals(4, model.getEntityContainer().getEntitySets().size());
+        assertEquals(1, model.getEntityContainer().getActionImports().size());
+        assertEquals(1, model.getEntityContainer().getFunctionImports().size());
+        assertEquals(2, model.getSchemas().size());
     }
 
     @Test
     public void testSchemaLookup() {
-        assertThat(model.getSchemas().size(), is(2));
+        assertEquals(2, model.getSchemas().size());
 
         // Lookup schema by namespace
         Schema schema = model.getSchema(NAMESPACE);
         assertNotNull(schema);
-        assertThat(schema.getNamespace(), is(NAMESPACE));
-        assertThat(schema.getAlias(), is(ALIAS));
+        assertEquals(NAMESPACE, schema.getNamespace());
+        assertEquals(ALIAS, schema.getAlias());
 
         // Lookup schema by alias
         schema = model.getSchema(ALIAS);
         assertNotNull(schema);
-        assertThat(schema.getNamespace(), is(NAMESPACE));
-        assertThat(schema.getAlias(), is(ALIAS));
+        assertEquals(NAMESPACE, schema.getNamespace());
+        assertEquals(ALIAS, schema.getAlias());
     }
 
     @Test
@@ -154,7 +151,7 @@ public class AnnotationEntityDataModelFactoryTest {
         String customerFullyQualifiedName = NAMESPACE + "." + Customer.class.getSimpleName();
         Type customerType = model.getType(customerFullyQualifiedName);
         assertNotNull(customerType);
-        assertThat(customerType.getFullyQualifiedName(), is(customerFullyQualifiedName));
+        assertEquals(customerFullyQualifiedName, customerType.getFullyQualifiedName());
     }
 
     @Test
@@ -164,66 +161,68 @@ public class AnnotationEntityDataModelFactoryTest {
         String customerAliasQualifiedName = ALIAS + "." + Customer.class.getSimpleName();
         Type customerType = model.getType(customerAliasQualifiedName);
         assertNotNull(customerType);
-        assertThat(customerType.getFullyQualifiedName(), is(customerFullyQualifiedName));
+        assertEquals(customerFullyQualifiedName, customerType.getFullyQualifiedName());
     }
 
     @Test
     public void testTypeLookupByJavaType() {
         Type customerType = model.getType(Customer.class);
-        assertThat(customerType.getFullyQualifiedName(), is(NAMESPACE + "." + Customer.class.getSimpleName()));
+        assertEquals(NAMESPACE + "." + Customer.class.getSimpleName(), customerType.getFullyQualifiedName());
 
         Type orderType = model.getType(Order.class);
-        assertThat(orderType.getFullyQualifiedName(), is(NAMESPACE + "." + Order.class.getSimpleName()));
-        assertThat(orderType.getMetaType(), is(MetaType.ENTITY));
+        assertEquals(NAMESPACE + "." + Order.class.getSimpleName(), orderType.getFullyQualifiedName());
+        assertEquals(MetaType.ENTITY, orderType.getMetaType());
     }
 
     @Test
     public void testEntityContainer() {
         EntityContainer entityContainer = model.getEntityContainer();
 
-        assertThat(entityContainer.getName(), is("ODataDemoContainer"));
-        assertThat(entityContainer.getNamespace(), is("ODataDemo"));
-        assertThat(entityContainer.getBaseEntityContainerName(), is(nullValue()));
+        assertEquals("ODataDemoContainer", entityContainer.getName());
+        assertEquals("ODataDemo", entityContainer.getNamespace());
+        assertNull(entityContainer.getBaseEntityContainerName());
+        assertEquals(4, entityContainer.getEntitySets().size());
 
-        assertThat(entityContainer.getEntitySets().size(), is(4));
         List<String> entitySetsNames = Lists.transform(entityContainer.getEntitySets(),
                 EntitySet::getName);
-        assertThat(entitySetsNames, hasItems("Customers", "Products", "Orders", "OrderLines"));
 
-        assertThat(entityContainer.getSingletons().isEmpty(), is(true));
+        assertTrue(entitySetsNames.containsAll(List.of("Customers", "Products", "Orders", "OrderLines")));
+        assertTrue(entityContainer.getSingletons().isEmpty());
+        assertEquals(1, entityContainer.getFunctionImports().size());
 
-        assertThat(entityContainer.getFunctionImports().size(), is(1));
         FunctionImport functionImport = entityContainer.getFunctionImports().get(0);
         assertTrue(functionImport.isIncludeInServiceDocument());
-        assertThat(functionImport.getName(), is("ODataDemoFunctionImport"));
+        assertEquals("ODataDemoFunctionImport", functionImport.getName());
+
         EntitySet entitySet = functionImport.getEntitySet();
         assertNull(entitySet);
 
         com.sdl.odata.api.edm.model.Function function = functionImport.getFunction();
-        assertThat(function.getEntitySetPath(), is(""));
-        assertThat(function.getName(), is("UnboundODataDemoFunction"));
-        assertThat(function.getNamespace(), is("ODataDemo"));
-        assertThat(function.getParameters().isEmpty(), is(false));
-        assertThat(function.getReturnType(), is("Edm.String"));
-        assertThat(function.isBound(), is(false));
-        assertThat(function.isComposable(), is(false));
+        assertEquals("", function.getEntitySetPath());
+        assertEquals("UnboundODataDemoFunction", function.getName());
+        assertEquals("ODataDemo", function.getNamespace());
+        assertFalse(function.getParameters().isEmpty());
+        assertEquals("Edm.String", function.getReturnType());
 
-        assertThat(entityContainer.getActionImports().size(), is(1));
+        assertFalse(function.isBound());
+        assertFalse(function.isComposable());
+
+        assertEquals(1, entityContainer.getActionImports().size());
         ActionImport actionImport = entityContainer.getActionImports().get(0);
-        assertThat(actionImport.getName(), is("ODataDemoActionImport"));
+        assertEquals("ODataDemoActionImport", actionImport.getName());
         entitySet = actionImport.getEntitySet();
-        assertThat(entitySet.getName(), is("Customers"));
-        assertThat(entitySet.getNavigationPropertyBindings().size(), is(1));
-        assertThat(entitySet.getTypeName(), is("ODataDemo.Customer"));
-        assertThat(entitySet.isIncludedInServiceDocument(), is(true));
+        assertEquals("Customers", entitySet.getName());
+        assertEquals(1, entitySet.getNavigationPropertyBindings().size());
+        assertEquals("ODataDemo.Customer", entitySet.getTypeName());
+        assertTrue(entitySet.isIncludedInServiceDocument());
 
         Action action = actionImport.getAction();
-        assertThat(action.getEntitySetPath(), is("ODataDemoEntitySetPath"));
-        assertThat(action.getName(), is("ODataDemoUnboundAction"));
-        assertThat(action.getNamespace(), is("ODataDemo"));
-        assertThat(action.getParameters().size(), is(2));
-        assertThat(action.getReturnType(), is("Customers"));
-        assertThat(action.isBound(), is(false));
+        assertEquals("ODataDemoEntitySetPath", action.getEntitySetPath());
+        assertEquals("ODataDemoUnboundAction", action.getName());
+        assertEquals("ODataDemo", action.getNamespace());
+        assertEquals(2, action.getParameters().size());
+        assertEquals("Customers", action.getReturnType());
+        assertFalse(action.isBound());
     }
 
     @Test
@@ -235,8 +234,8 @@ public class AnnotationEntityDataModelFactoryTest {
 
         EntityContainer entityContainer = model2.getEntityContainer();
 
-        assertThat(entityContainer.getName(), is("ODataDemoSampleContainer"));
-        assertThat(entityContainer.getNamespace(), is("ODataDemo.SampleContainer"));
+        assertEquals("ODataDemoSampleContainer", entityContainer.getName());
+        assertEquals("ODataDemo.SampleContainer", entityContainer.getNamespace());
     }
 
     @Test
@@ -246,21 +245,21 @@ public class AnnotationEntityDataModelFactoryTest {
         assertTrue(type instanceof ComplexType);
 
         ComplexType addressType = (ComplexType) type;
-        assertThat(addressType.getMetaType(), is(MetaType.COMPLEX));
-        assertThat(addressType.getStructuralProperties().size(), is(5));
+        assertEquals(MetaType.COMPLEX, addressType.getMetaType());
+        assertEquals(5, addressType.getStructuralProperties().size());
 
         Property streetProp = (Property) addressType.getStructuralProperty("Street");
         assertNotNull(streetProp);
-        assertThat(streetProp.getName(), is("Street"));
-        assertThat(streetProp.getTypeName(), is(PrimitiveType.STRING.getFullyQualifiedName()));
+        assertEquals("Street", streetProp.getName());
+        assertEquals(PrimitiveType.STRING.getFullyQualifiedName(), streetProp.getTypeName());
         assertNull(streetProp.getElementTypeName());
         assertFalse(streetProp.isCollection());
         assertFalse(streetProp.isNullable());
         assertNull(streetProp.getDefaultValue());
-        assertThat(streetProp.getMaxLength(), is(60L));
-        assertThat(streetProp.getPrecision(), is(Facets.PRECISION_UNSPECIFIED));
-        assertThat(streetProp.getScale(), is(Facets.SCALE_UNSPECIFIED));
-        assertThat(streetProp.getSRID(), is(Facets.SRID_UNSPECIFIED));
+        assertEquals(60L, streetProp.getMaxLength());
+        assertEquals(Facets.PRECISION_UNSPECIFIED, streetProp.getPrecision());
+        assertEquals(Facets.SCALE_UNSPECIFIED, streetProp.getScale());
+        assertEquals(Facets.SRID_UNSPECIFIED, streetProp.getSRID());
         assertTrue(streetProp.isUnicode());
     }
 
@@ -271,56 +270,61 @@ public class AnnotationEntityDataModelFactoryTest {
         assertTrue(type instanceof EntityType);
 
         EntityType customerType = (EntityType) type;
-        assertThat(customerType.getMetaType(), is(MetaType.ENTITY));
+        assertEquals(MetaType.ENTITY, customerType.getMetaType());
         assertNull(customerType.getBaseTypeName());
         assertFalse(customerType.isAbstract());
-        assertThat(customerType.getStructuralProperties().size(), is(7));
+        assertEquals(7, customerType.getStructuralProperties().size());
 
         Property idProp = (Property) customerType.getStructuralProperty("id");
-        assertThat(idProp.getName(), is("id"));
-        assertThat(idProp.getTypeName(), is(PrimitiveType.INT64.getFullyQualifiedName()));
+        assertEquals("id", idProp.getName());
+        assertEquals(PrimitiveType.INT64.getFullyQualifiedName(), idProp.getTypeName());
+
         assertNull(idProp.getElementTypeName());
         assertFalse(idProp.isCollection());
         assertFalse(idProp.isNullable());
-        assertThat(idProp.getJavaField().getName(), is(Customer.class.getDeclaredField("id").getName()));
+        assertEquals(Customer.class.getDeclaredField("id").getName(), idProp.getJavaField().getName());
         assertNull(idProp.getDefaultValue());
-        assertThat(idProp.getMaxLength(), is(Facets.MAX_LENGTH_UNSPECIFIED));
-        assertThat(idProp.getPrecision(), is(Facets.PRECISION_UNSPECIFIED));
-        assertThat(idProp.getScale(), is(Facets.SCALE_UNSPECIFIED));
-        assertThat(idProp.getSRID(), is(Facets.SRID_UNSPECIFIED));
+        assertEquals(Facets.MAX_LENGTH_UNSPECIFIED, idProp.getMaxLength());
+        assertEquals(Facets.PRECISION_UNSPECIFIED, idProp.getPrecision());
+        assertEquals(Facets.SCALE_UNSPECIFIED, idProp.getScale());
+        assertEquals(Facets.SRID_UNSPECIFIED, idProp.getSRID());
         assertTrue(idProp.isUnicode());
 
         Property addressProp = (Property) customerType.getStructuralProperty("address");
-        assertThat(addressProp.getName(), is("address"));
-        assertThat(addressProp.getTypeName(), is("Collection(" +
-                model.getType(Address.class).getFullyQualifiedName() + ")"));
+        assertEquals("address", addressProp.getName());
+        assertEquals("Collection(" +
+                model.getType(Address.class).getFullyQualifiedName() + ")", addressProp.getTypeName());
         assertNotNull(addressProp.getElementTypeName());
         assertTrue(addressProp.isCollection());
         assertFalse(addressProp.isNullable());
-        assertThat(addressProp.getJavaField().getName(), is(Customer.class.getDeclaredField("address").getName()));
+        assertEquals(Customer.class.getDeclaredField("address").getName(), addressProp.getJavaField().getName());
         assertNull(addressProp.getDefaultValue());
-        assertThat(addressProp.getMaxLength(), is(Facets.MAX_LENGTH_UNSPECIFIED));
-        assertThat(addressProp.getPrecision(), is(Facets.PRECISION_UNSPECIFIED));
-        assertThat(addressProp.getScale(), is(Facets.SCALE_UNSPECIFIED));
-        assertThat(addressProp.getSRID(), is(Facets.SRID_UNSPECIFIED));
+
+        assertEquals(Facets.MAX_LENGTH_UNSPECIFIED, addressProp.getMaxLength());
+        assertEquals(Facets.PRECISION_UNSPECIFIED, addressProp.getPrecision());
+        assertEquals(Facets.SCALE_UNSPECIFIED, addressProp.getScale());
+        assertEquals(Facets.SRID_UNSPECIFIED, addressProp.getSRID());
         assertTrue(addressProp.isUnicode());
 
         NavigationProperty ordersNavProp = (NavigationProperty) customerType.getStructuralProperty("Orders");
-        assertThat(ordersNavProp.getName(), is("Orders"));
-        assertThat(ordersNavProp.getTypeName(), is("Collection("
-                + model.getType(Order.class).getFullyQualifiedName() + ")"));
-        assertThat(ordersNavProp.getElementTypeName(), is(model.getType(Order.class).getFullyQualifiedName()));
+        assertEquals("Orders", ordersNavProp.getName());
+        assertEquals("Collection(" + model.getType(Order.class).getFullyQualifiedName() + ")",
+                ordersNavProp.getTypeName());
+
+        assertEquals(model.getType(Order.class).getFullyQualifiedName(), ordersNavProp.getElementTypeName());
         assertTrue(ordersNavProp.isCollection());
         assertFalse(ordersNavProp.isNullable());
-        assertThat(ordersNavProp.getJavaField().getName(), is(Customer.class.getDeclaredField("orders").getName()));
-        assertThat(ordersNavProp.getPartnerName(), is("customer"));
-        assertFalse(ordersNavProp.containsTarget());
+        assertEquals(Customer.class.getDeclaredField("orders").getName(), ordersNavProp.getJavaField().getName());
 
-        assertThat(ordersNavProp.getReferentialConstraints().size(), is(0));
+        assertEquals("customer", ordersNavProp.getPartnerName());
+
+        assertFalse(ordersNavProp.containsTarget());
+        assertEquals(0, ordersNavProp.getReferentialConstraints().size());
 
         List<OnDeleteAction> onDeleteActions = ordersNavProp.getOnDeleteActions();
-        assertThat(onDeleteActions.size(), is(1));
-        assertThat(onDeleteActions.get(0), is(OnDeleteAction.NONE));
+
+        assertEquals(1, onDeleteActions.size());
+        assertEquals(OnDeleteAction.NONE, onDeleteActions.get(0));
     }
 
     @Test
@@ -328,13 +332,13 @@ public class AnnotationEntityDataModelFactoryTest {
         // Test if everything in the type Category is as expected
         Type type = model.getType(Category.class);
         assertTrue(type instanceof EnumType);
-        assertThat(type.getMetaType(), is(MetaType.ENUM));
+        assertEquals(MetaType.ENUM, type.getMetaType());
     }
 
     @Test
     public void testExampleFlags() {
         Type type = model.getType(ExampleFlags.class);
         assertTrue(type instanceof EnumType);
-        assertThat(type.getMetaType(), is(MetaType.ENUM));
+        assertEquals(MetaType.ENUM, type.getMetaType());
     }
 }

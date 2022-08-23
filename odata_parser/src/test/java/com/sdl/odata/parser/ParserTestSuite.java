@@ -46,8 +46,7 @@ import org.slf4j.LoggerFactory;
 import scala.collection.immutable.List;
 import scala.math.BigDecimal;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Parser Test Suite.
@@ -97,15 +96,15 @@ public class ParserTestSuite {
         EntityPathExpr left = (EntityPathExpr) expr.left();
         LiteralExpr right = (LiteralExpr) expr.right();
         PropertyPathExpr propertyPath = (PropertyPathExpr) left.subPath().get();
-        assertThat(propertyPath.propertyName(), is("id"));
+        assertEquals("id", propertyPath.propertyName());
         NumberLiteral numberLiteral = (NumberLiteral) right.value();
-        assertThat(numberLiteral.value(), is(new BigDecimal(new java.math.BigDecimal(20))));
+        assertEquals(new BigDecimal(new java.math.BigDecimal(20)), numberLiteral.value());
     }
 
     public FilterOption getSingleOption(ODataUri oDataUri) {
         ResourcePathUri relative = (ResourcePathUri) oDataUri.relativeUri();
         List<QueryOption> options = relative.options();
-        assertThat(options.size(), is(1));
+        assertEquals(1, options.size());
         return (FilterOption) options.head();
     }
 

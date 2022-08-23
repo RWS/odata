@@ -35,8 +35,7 @@ import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.api.service.ODataRequest.Method.PUT;
 import static com.sdl.odata.test.util.TestUtils.createODataRequest;
 import static com.sdl.odata.test.util.TestUtils.createODataRequestContext;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -56,7 +55,7 @@ public class JsonUnmarshallerTest extends UnmarshallerTest {
 
     @Test
     public void testJsonNullScore() {
-        assertThat(jsonUnmarshaller.score(errorContext), is(0));
+        assertEquals(0, jsonUnmarshaller.score(errorContext));
         assertThrows(ODataUnmarshallingException.class, () ->
                 jsonUnmarshaller.unmarshall(errorContext)
         );
@@ -71,8 +70,8 @@ public class JsonUnmarshallerTest extends UnmarshallerTest {
 
     @Test
     public void testScoreForGET() throws UnsupportedEncodingException {
-        assertThat(jsonUnmarshaller.score(createODataRequestContext(
-                createODataRequest(GET, CONTENT_TYPE), odataUri, entityDataModel)), is(0));
+        assertEquals(0, jsonUnmarshaller.score(createODataRequestContext(
+                createODataRequest(GET, CONTENT_TYPE), odataUri, entityDataModel)));
     }
 
     @Test
@@ -83,6 +82,6 @@ public class JsonUnmarshallerTest extends UnmarshallerTest {
 
     @Test
     public void testScoreForDelete() throws UnsupportedEncodingException {
-        assertThat(jsonUnmarshaller.score(createODataRequestContext(DELETE, entityDataModel)), is(0));
+        assertEquals(0, jsonUnmarshaller.score(createODataRequestContext(DELETE, entityDataModel)));
     }
 }

@@ -57,9 +57,8 @@ import static com.sdl.odata.api.service.ODataResponse.Status.OK;
 import static com.sdl.odata.test.util.TestUtils.SERVICE_ROOT;
 import static com.sdl.odata.test.util.TestUtils.createODataRequestContext;
 import static com.sdl.odata.test.util.TestUtils.createODataUriEntityKeys;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -112,21 +111,20 @@ public class ODataWriteProcessorImplTest {
         requestContext = createContextWithEntitySet(GET);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(METHOD_NOT_ALLOWED));
-        assertThat(result.getData(), is(nullValue()));
+        assertEquals(METHOD_NOT_ALLOWED, result.getStatus());
+        assertNull(result.getData());
     }
 
     @Test
     public void testPost() throws Exception {
-
         requestContext = createContextWithEntitySet(POST);
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
         when(dataSource.create(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(CREATED));
-        assertThat(result.getData(), is(entity));
+        assertEquals(CREATED, result.getStatus());
+        assertEquals(entity, result.getData());
         verify(dataSource, times(1)).create(requestContext.getUri(), entity, entityDataModel);
     }
 
@@ -153,7 +151,7 @@ public class ODataWriteProcessorImplTest {
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
         ProcessorResult result = oDataWriteProcessor.write(requestContext, null);
-        assertThat(result.getStatus(), is(NO_CONTENT));
+        assertEquals(NO_CONTENT, result.getStatus());
         verify(dataSource, times(1)).delete(requestContext.getUri(), entityDataModel);
     }
 
@@ -191,12 +189,11 @@ public class ODataWriteProcessorImplTest {
         when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(OK));
-        assertThat(result.getData(), is(entity));
+        assertEquals(OK, result.getStatus());
+        assertEquals(entity, result.getData());
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
-        assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
-
+        assertEquals(1, headers.size());
+        assertEquals("http://localhost:8080/odata.svc/Persons('" + entityKey + "')", headers.get("Location"));
     }
 
     @Test
@@ -223,11 +220,11 @@ public class ODataWriteProcessorImplTest {
         when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(NO_CONTENT));
-        assertThat(result.getData(), is(nullValue()));
+        assertEquals(NO_CONTENT, result.getStatus());
+        assertNull(result.getData());
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
-        assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
+        assertEquals(1, headers.size());
+        assertEquals("http://localhost:8080/odata.svc/Persons('" + entityKey + "')", headers.get("Location"));
     }
 
     @Test
@@ -238,11 +235,12 @@ public class ODataWriteProcessorImplTest {
         when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(OK));
-        assertThat(result.getData(), is(entity));
+        assertEquals(OK, result.getStatus());
+        assertEquals(entity, result.getData());
+
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
-        assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
+        assertEquals(1, headers.size());
+        assertEquals("http://localhost:8080/odata.svc/Persons('" + entityKey + "')", headers.get("Location"));
     }
 
     @Test
@@ -253,11 +251,11 @@ public class ODataWriteProcessorImplTest {
         when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(NO_CONTENT));
-        assertThat(result.getData(), is(nullValue()));
+        assertEquals(NO_CONTENT, result.getStatus());
+        assertNull(result.getData());
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
-        assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
+        assertEquals(1, headers.size());
+        assertEquals("http://localhost:8080/odata.svc/Persons('" + entityKey + "')", headers.get("Location"));
     }
 
     @Test
@@ -268,7 +266,7 @@ public class ODataWriteProcessorImplTest {
                 entity.getClass().getSimpleName())).thenReturn(dataSource);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(METHOD_NOT_ALLOWED));
+        assertEquals(METHOD_NOT_ALLOWED, result.getStatus());
     }
 
     private ODataRequestContext createContextWithEntitySet(ODataRequest.Method method)

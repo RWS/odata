@@ -26,8 +26,7 @@ import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.DELETE;
 import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -39,7 +38,7 @@ import static org.mockito.Mockito.times;
 public class DeleteMethodHandlerTest extends MethodHandlerTest {
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         super.setup("Persons");
     }
 
@@ -69,7 +68,7 @@ public class DeleteMethodHandlerTest extends MethodHandlerTest {
     public void doWrite(Object entity, EntityDataModel entityDataModel) throws Exception {
         stubForTesting(entity);
         ProcessorResult result = getDeleteMethodHandler(entityDataModel, false).handleWrite(null);
-        assertThat(result.getStatus(), is(NO_CONTENT));
+        assertEquals(NO_CONTENT, result.getStatus());
         assertNull(result.getData());
         verify(dataSourceMock, times(1)).delete(entityOdataURI, entityDataModel);
     }

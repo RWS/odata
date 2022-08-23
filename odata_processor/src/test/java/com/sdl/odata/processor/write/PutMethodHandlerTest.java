@@ -27,8 +27,7 @@ import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.PUT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
@@ -81,7 +80,7 @@ public class PutMethodHandlerTest extends MethodHandlerTest {
     public void doWrite(Object entity, EntityDataModel entityDataModel) throws Exception {
         stubForTesting(entity,  entityDataModel);
         ProcessorResult result = getPutMethodHandler(entityDataModel, false).handleWrite(entity);
-        assertThat(result.getStatus(), is(OK));
+        assertEquals(OK, result.getStatus());
         assertNull(result.getData());
         verify(dataSourceMock, times(1)).update(entityOdataURI, entity,  entityDataModel);
     }

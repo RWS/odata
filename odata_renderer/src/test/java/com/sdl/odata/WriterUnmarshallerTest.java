@@ -34,10 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Base test class with functionality to be shared by writer and unmarshaller (Xml and Json) implementations.
@@ -201,33 +200,32 @@ public abstract class WriterUnmarshallerTest {
      * @param expected The expected customer.
      */
     protected void assertCustomer(Customer actual, Customer expected) {
-
-        assertThat(actual, is(not(nullValue())));
-        assertThat(actual.getId(), is(expected.getId()));
-        assertThat(actual.getName(), is(expected.getName()));
+        assertNotNull(actual);
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getName(), actual.getName());
 
         List<String> actualPhoneNumbers = actual.getPhoneNumbers();
         List<String> expectedPhoneNumbers = expected.getPhoneNumbers();
-        assertThat(actualPhoneNumbers.size(), is(expectedPhoneNumbers.size()));
+        assertEquals(expectedPhoneNumbers.size(), actualPhoneNumbers.size());
         int phoneNumberIndex = 0;
         for (String phoneNumber : actualPhoneNumbers) {
-            assertThat(phoneNumber, is(expectedPhoneNumbers.get(phoneNumberIndex++)));
+            assertEquals(expectedPhoneNumbers.get(phoneNumberIndex++), phoneNumber);
         }
 
         List<Address> actualAddresses = actual.getAddress();
         List<Address> expectedAddresses = expected.getAddress();
-        assertThat(actualAddresses.size(), is(expectedAddresses.size()));
+        assertEquals(expectedAddresses.size(), actualAddresses.size());
 
         int addressIndex = 0;
         for (Address address : actualAddresses) {
             assertAddress(address, expectedAddresses.get(addressIndex++));
         }
 
-        assertThat(actual.getDateTime(), is(expected.getDateTime()));
+        assertEquals(expected.getDateTime(), actual.getDateTime());
 
         List<Order> actualOrders = actual.getOrders();
         List<Order> expectedOrders = expected.getOrders();
-        assertThat(actualOrders.size(), is(expectedOrders.size()));
+        assertEquals(expectedOrders.size(), actualOrders.size());
 
         int orderIndex = 0;
         for (Order order : actualOrders) {
@@ -244,13 +242,12 @@ public abstract class WriterUnmarshallerTest {
      * @param expected The expected address.
      */
     protected void assertAddress(Address actual, Address expected) {
-
-        assertThat(actual, is(not(nullValue())));
-        assertThat(actual.getStreet(), is(expected.getStreet()));
-        assertThat(actual.getHouseNumber(), is(expected.getHouseNumber()));
-        assertThat(actual.getPostalCode(), is(expected.getPostalCode()));
-        assertThat(actual.getCity(), is(expected.getCity()));
-        assertThat(actual.getCountry(), is(expected.getCountry()));
+        assertNotNull(actual);
+        assertEquals(expected.getStreet(), actual.getStreet());
+        assertEquals(expected.getHouseNumber(), actual.getHouseNumber());
+        assertEquals(expected.getPostalCode(), actual.getPostalCode());
+        assertEquals(expected.getCity(), actual.getCity());
+        assertEquals(expected.getCountry(), actual.getCountry());
     }
 
     /**
@@ -260,9 +257,8 @@ public abstract class WriterUnmarshallerTest {
      * @param expected The expected order.
      */
     protected void assertOrder(Order actual, Order expected) {
-
-        assertThat(actual, is(not(nullValue())));
-        assertThat(actual.getId(), is(expected.getId()));
+        assertNotNull(actual);
+        assertEquals(expected.getId(), actual.getId());
     }
 
     /**
@@ -274,10 +270,10 @@ public abstract class WriterUnmarshallerTest {
     protected void assertBankAccount(BankAccount actual, BankAccount expected) {
 
         if (expected == null) {
-            assertThat(actual, is(nullValue()));
+            assertNull(actual);
         } else {
-            assertThat(actual, is(not(nullValue())));
-            assertThat(actual.getIban(), is(expected.getIban()));
+            assertNotNull(actual);
+            assertEquals(expected.getIban(), actual.getIban());
         }
     }
 

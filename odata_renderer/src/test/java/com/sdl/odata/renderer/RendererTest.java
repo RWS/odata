@@ -43,10 +43,8 @@ import static com.sdl.odata.test.util.TestUtils.createSimpleODataRequest;
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
 import static com.sdl.odata.test.util.TestUtils.readContent;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -136,7 +134,7 @@ public abstract class RendererTest {
      * @param expectedScore The expected resulting score.
      */
     protected void assertScore(ODataRenderer renderer, int expectedScore) {
-        assertThat(renderer.score(context, null), is(expectedScore));
+        assertEquals(expectedScore, renderer.score(context, null));
     }
 
     /**
@@ -149,14 +147,14 @@ public abstract class RendererTest {
      * @throws javax.xml.transform.TransformerException
      */
     protected void assertResponse(ODataResponse response, MediaType mediaType, String body) throws Exception {
-
-        assertThat(response.getContentType(), is(mediaType));
+        assertEquals(mediaType, response.getContentType());
         String bodyText = response.getBodyText(UTF_8.name());
-        assertThat(bodyText, is(not(nullValue())));
+
+        assertNotNull(bodyText);
         if (mediaType.equals(XML)) {
-            assertThat(prettyPrintXml(bodyText), is(prettyPrintXml(readContent(body))));
+            assertEquals(prettyPrintXml(readContent(body)), prettyPrintXml(bodyText));
         } else if (mediaType.equals(JSON)) {
-            assertThat(prettyPrintJson(bodyText), is(prettyPrintJson(readContent(body))));
+            assertEquals(prettyPrintJson(readContent(body)), prettyPrintJson(bodyText));
         }
     }
 
