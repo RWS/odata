@@ -15,10 +15,10 @@
  */
 package com.sdl.odata.api.edm.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link OnDeleteAction}.
@@ -27,22 +27,22 @@ public class OnDeleteActionTest {
 
     @Test
     public void testForName() {
-        assertThat(OnDeleteAction.forName("Cascade"), is(OnDeleteAction.CASCADE));
-        assertThat(OnDeleteAction.forName("None"), is(OnDeleteAction.NONE));
-        assertThat(OnDeleteAction.forName("SetNull"), is(OnDeleteAction.SET_NULL));
-        assertThat(OnDeleteAction.forName("SetDefault"), is(OnDeleteAction.SET_DEFAULT));
+        assertEquals(OnDeleteAction.CASCADE, OnDeleteAction.forName("Cascade"));
+        assertEquals(OnDeleteAction.NONE, OnDeleteAction.forName("None"));
+        assertEquals(OnDeleteAction.SET_NULL, OnDeleteAction.forName("SetNull"));
+        assertEquals(OnDeleteAction.SET_DEFAULT, OnDeleteAction.forName("SetDefault"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testForNameException() {
-        OnDeleteAction.forName("CASCADE");
+        assertThrows(IllegalArgumentException.class, () -> OnDeleteAction.forName("CASCADE"));
     }
 
     @Test
     public void testGetName() {
-        assertThat(OnDeleteAction.CASCADE.getName(), is("Cascade"));
-        assertThat(OnDeleteAction.NONE.getName(), is("None"));
-        assertThat(OnDeleteAction.SET_NULL.getName(), is("SetNull"));
-        assertThat(OnDeleteAction.SET_DEFAULT.getName(), is("SetDefault"));
+        assertEquals("Cascade", OnDeleteAction.CASCADE.getName());
+        assertEquals("None", OnDeleteAction.NONE.getName());
+        assertEquals("SetNull", OnDeleteAction.SET_NULL.getName());
+        assertEquals("SetDefault", OnDeleteAction.SET_DEFAULT.getName());
     }
 }

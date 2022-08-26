@@ -15,10 +15,10 @@
  */
 package com.sdl.odata.api.edm.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link PrimitiveType}.
@@ -27,36 +27,38 @@ public class PrimitiveTypeTest {
 
     @Test
     public void testForName() {
-        assertThat(PrimitiveType.forName("String"), is(PrimitiveType.STRING));
+        assertEquals(PrimitiveType.STRING, PrimitiveType.forName("String"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testForNameException() {
-        PrimitiveType.forName("Primitive");
+        assertThrows(IllegalArgumentException.class, () ->
+                PrimitiveType.forName("Primitive")
+        );
     }
 
     @Test
     public void testGetMetaType() {
-        assertThat(PrimitiveType.INT32.getMetaType(), is(MetaType.PRIMITIVE));
+        assertEquals(MetaType.PRIMITIVE, PrimitiveType.INT32.getMetaType());
     }
 
     @Test
     public void testGetName() {
-        assertThat(PrimitiveType.DECIMAL.getName(), is("Decimal"));
+        assertEquals("Decimal", PrimitiveType.DECIMAL.getName());
     }
 
     @Test
     public void testGetNamespace() {
-        assertThat(PrimitiveType.DOUBLE.getNamespace(), is("Edm"));
+        assertEquals("Edm", PrimitiveType.DOUBLE.getNamespace());
     }
 
     @Test
     public void testGetFullyQualifiedName() {
-        assertThat(PrimitiveType.BOOLEAN.getFullyQualifiedName(), is("Edm.Boolean"));
+        assertEquals("Edm.Boolean", PrimitiveType.BOOLEAN.getFullyQualifiedName());
     }
 
     @Test
     public void testGetJavaType() {
-        assertThat(PrimitiveType.INT16.getJavaType().getName(), is(short.class.getName()));
+        assertEquals(short.class.getName(), PrimitiveType.INT16.getJavaType().getName());
     }
 }

@@ -53,7 +53,7 @@ public abstract class MethodHandlerTest {
     protected ODataUri entityOdataURI;
 
 
-    protected void setup(String entitySetName) throws Exception {
+    protected void setup(String entitySetName) {
         entitySetOdataURI = createODataUri(SERVICE_ROOT, entitySetName);
         entityOdataURI = createODataUriWithSimpleKeyPredicate(entitySetName);
         initMocks(ODataWriteProcessorImpl.class);

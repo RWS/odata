@@ -19,17 +19,18 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.parser.MetadataUri;
 import com.sdl.odata.api.parser.ODataUriParseException;
 import com.sdl.odata.api.parser.RelativeUri;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Parser Metadata Test.
  *
  */
 public class ParserMetadataTest extends ParserTestSuite {
+
     @Test
     public void testEmptyMetadataFormat() throws ODataException {
         uri = parser.parseUri(SERVICE_ROOT + "$metadata", model);
@@ -46,17 +47,19 @@ public class ParserMetadataTest extends ParserTestSuite {
         // xml
         uri = parser.parseUri(SERVICE_ROOT + "$metadata?$format=xml", model);
         MetadataUri metadata = (MetadataUri) uri.relativeUri();
-        assertThat(metadata.format().get().getType(), is("application"));
-        assertThat(metadata.format().get().getSubType(), is("xml"));
+        assertEquals("application", metadata.format().get().getType());
+        assertEquals("xml", metadata.format().get().getSubType());
         // json
         uri = parser.parseUri(SERVICE_ROOT + "$metadata?$format=json", model);
         metadata = (MetadataUri) uri.relativeUri();
-        assertThat(metadata.format().get().getType(), is("application"));
-        assertThat(metadata.format().get().getSubType(), is("json"));
+        assertEquals("application", metadata.format().get().getType());
+        assertEquals("json", metadata.format().get().getSubType());
     }
 
-    @Test(expected = ODataUriParseException.class)
-    public void testNonExistentFormat() throws ODataException {
-        uri = parser.parseUri(SERVICE_ROOT + "$metadata?$format=superman", model);
+    @Test
+    public void testNonExistentFormat() {
+        assertThrows(ODataUriParseException.class, () ->
+                uri = parser.parseUri(SERVICE_ROOT + "$metadata?$format=superman", model)
+        );
     }
 }

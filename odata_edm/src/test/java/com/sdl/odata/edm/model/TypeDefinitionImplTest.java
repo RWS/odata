@@ -18,10 +18,10 @@ package com.sdl.odata.edm.model;
 
 import com.sdl.odata.api.edm.model.Facets;
 import com.sdl.odata.api.edm.model.PrimitiveType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit tests for {@link TypeDefinitionImpl}.
@@ -43,14 +43,14 @@ public class TypeDefinitionImplTest {
                 .setJavaType(TypeDefinitionImpl.class)
                 .build();
 
-        assertThat(definition.getMaxLength(), is(Facets.MAX_LENGTH_MAX));
-        assertThat(definition.getScale(), is(20L));
-        assertThat(definition.getSRID(), is(1234L));
-        assertThat(definition.getPrecision(), is(4L));
-        assertThat(definition.isUnicode(), is(false));
-        assertThat(definition.getName(), is("definition"));
-        assertThat(definition.getNamespace(), is("namespace"));
-        assertThat(definition.getUnderlyingType(), is(PrimitiveType.INT64));
+        assertEquals(Facets.MAX_LENGTH_MAX, definition.getMaxLength());
+        assertEquals(20L, definition.getScale());
+        assertEquals(1234L, definition.getSRID());
+        assertEquals(4L, definition.getPrecision());
+        assertFalse(definition.isUnicode());
+        assertEquals("definition", definition.getName());
+        assertEquals("namespace", definition.getNamespace());
+        assertEquals(PrimitiveType.INT64, definition.getUnderlyingType());
     }
 
 }

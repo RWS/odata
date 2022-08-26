@@ -24,7 +24,7 @@ import com.sdl.odata.api.parser.LeExpr;
 import com.sdl.odata.api.parser.LtExpr;
 import com.sdl.odata.api.parser.NeExpr;
 import com.sdl.odata.api.parser.ODataUri;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Parser Comparison Test.

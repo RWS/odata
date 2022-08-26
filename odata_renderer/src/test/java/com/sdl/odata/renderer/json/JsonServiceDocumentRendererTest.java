@@ -15,12 +15,11 @@
  */
 package com.sdl.odata.renderer.json;
 
-import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.renderer.AbstractRenderer;
 import com.sdl.odata.renderer.RendererTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
@@ -29,6 +28,7 @@ import static com.sdl.odata.api.service.MediaType.XML;
 import static com.sdl.odata.api.service.ODataRequest.Method.GET;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
 import static com.sdl.odata.test.util.TestUtils.createODataUriForServiceDocument;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link JsonServiceDocumentRenderer}.
@@ -38,7 +38,7 @@ public class JsonServiceDocumentRendererTest extends RendererTest {
     private static final String SERVICE_DOCUMENT = "/json/ServiceDocument.json";
     private JsonServiceDocumentRenderer serviceDocumentRenderer;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         super.setUp();
@@ -96,10 +96,11 @@ public class JsonServiceDocumentRendererTest extends RendererTest {
         assertResponse(responseBuilder.build(), JSON, SERVICE_DOCUMENT);
     }
 
-    @Test(expected = ODataSystemException.class)
-    public void testRenderException() throws ODataException, UnsupportedEncodingException {
-
+    @Test
+    public void testRenderException() throws UnsupportedEncodingException {
         prepareRequestContextRenderException(GET, createODataUriForServiceDocument(JSON));
-        serviceDocumentRenderer.render(context, null, responseBuilderMock);
+        assertThrows(ODataSystemException.class, () ->
+                serviceDocumentRenderer.render(context, null, responseBuilderMock)
+        );
     }
 }

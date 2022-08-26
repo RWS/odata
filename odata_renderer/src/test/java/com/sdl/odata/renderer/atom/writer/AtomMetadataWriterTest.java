@@ -18,9 +18,9 @@ package com.sdl.odata.renderer.atom.writer;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.WriterTest;
 import com.sdl.odata.test.model.Customer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -39,7 +39,7 @@ import static com.sdl.odata.AtomConstants.XML_VERSION;
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The Atom Metadata Writer Test.
@@ -65,7 +65,7 @@ public class AtomMetadataWriterTest extends WriterTest {
     private Customer customer;
     private AtomNSConfigurationProvider nsConfigurationProvider;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         super.setUp();
@@ -75,7 +75,7 @@ public class AtomMetadataWriterTest extends WriterTest {
         nsConfigurationProvider = new ODataV4AtomNSConfigurationProvider();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
 
         xmlWriter.close();

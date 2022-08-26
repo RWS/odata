@@ -18,7 +18,7 @@ package com.sdl.odata.renderer.json.util;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.util.UUID;
 
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintJson;
 import static com.sdl.odata.test.util.TestUtils.readContent;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for {@link JsonWriterUtilTest}.

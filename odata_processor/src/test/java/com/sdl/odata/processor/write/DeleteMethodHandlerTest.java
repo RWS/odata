@@ -19,16 +19,16 @@ import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.service.ODataRequestContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.DELETE;
 import static com.sdl.odata.api.service.ODataResponse.Status.NO_CONTENT;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 
@@ -37,8 +37,8 @@ import static org.mockito.Mockito.times;
  */
 public class DeleteMethodHandlerTest extends MethodHandlerTest {
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    public void setup() {
         super.setup("Persons");
     }
 
@@ -48,23 +48,27 @@ public class DeleteMethodHandlerTest extends MethodHandlerTest {
         return new DeleteMethodHandler(requestContext, dataSourceFactoryMock);
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testWriteWithNotNull() throws Exception {
         stubForTesting(getEntity());
-        getDeleteMethodHandler(getEntityDataModel(), false).handleWrite(getEntity());
+        assertThrows(ODataBadRequestException.class, () ->
+                getDeleteMethodHandler(getEntityDataModel(), false).handleWrite(getEntity())
+        );
     }
 
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testWriteEntitySet() throws Exception {
         stubForTesting(getEntity());
-        getDeleteMethodHandler(getEntityDataModel(), true).handleWrite(getEntity());
+        assertThrows(ODataBadRequestException.class, () ->
+                getDeleteMethodHandler(getEntityDataModel(), true).handleWrite(getEntity())
+        );
     }
 
     public void doWrite(Object entity, EntityDataModel entityDataModel) throws Exception {
         stubForTesting(entity);
         ProcessorResult result = getDeleteMethodHandler(entityDataModel, false).handleWrite(null);
-        assertThat(result.getStatus(), is(NO_CONTENT));
+        assertEquals(NO_CONTENT, result.getStatus());
         assertNull(result.getData());
         verify(dataSourceMock, times(1)).delete(entityOdataURI, entityDataModel);
     }

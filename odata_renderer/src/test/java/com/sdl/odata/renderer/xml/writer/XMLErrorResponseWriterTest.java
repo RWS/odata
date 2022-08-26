@@ -16,13 +16,13 @@
 package com.sdl.odata.renderer.xml.writer;
 
 import com.sdl.odata.api.ODataServerException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.odata.api.ODataErrorCode.EDM_ERROR;
 import static com.sdl.odata.api.ODataErrorCode.UNMARSHALLER_ERROR;
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The XML Error Response Writer Test.

@@ -20,32 +20,34 @@ import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.DataSourceProvider;
 import com.sdl.odata.api.processor.datasource.ODataDataSourceException;
 import com.sdl.odata.api.service.ODataRequestContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 /**
  * The DataSource Factory Impl Test.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class DataSourceFactoryImplTest {
 
     @InjectMocks
     private DataSourceFactoryImpl dataSourceFactory;
 
-    private List<DataSourceProvider> dataSourceProvidersSpy = new ArrayList<>();
+    private final List<DataSourceProvider> dataSourceProvidersSpy = new ArrayList<>();
 
     @Mock
     private DataSourceProvider dataSourceProviderMock;
@@ -58,25 +60,28 @@ public class DataSourceFactoryImplTest {
 
     private ODataRequestContext oDataRequestContext;
 
-    @Before
+    @BeforeEach
     public void setUp() throws ODataDataSourceException {
         dataSourceProvidersSpy.clear();
         dataSourceProvidersSpy.add(dataSourceProviderMock);
         dataSourceFactory.setDataSourceProviders(dataSourceProvidersSpy);
-        when(dataSourceProviderMock.isSuitableFor(any(ODataRequestContext.class), eq("ODataDemo.Customer")
-        )).thenReturn(true);
-        when(dataSourceProviderMock.getDataSource(any(ODataRequestContext.class))).thenReturn(dataSourceMock);
         oDataRequestContext = new ODataRequestContext(null, null, entityDataModelMock);
+
+        when(dataSourceProviderMock.getDataSource(any(ODataRequestContext.class))).thenReturn(dataSourceMock);
+        when(dataSourceProviderMock.isSuitableFor(oDataRequestContext, "ODataDemo.Customer"))
+                .thenReturn(true);
     }
 
     @Test
     public void testGetDataSource() throws ODataDataSourceException {
-        assertThat(dataSourceFactory.getDataSource(oDataRequestContext, "ODataDemo.Customer"), is(dataSourceMock));
+        assertEquals(dataSourceMock, dataSourceFactory.getDataSource(oDataRequestContext,
+                "ODataDemo.Customer"));
     }
 
-    @Test(expected = ODataDataSourceException.class)
-    public void testGetDataSourceNotExisting() throws ODataDataSourceException {
-
-        assertThat(dataSourceFactory.getDataSource(oDataRequestContext, "ODataDemo.Product"), is(dataSourceMock));
+    @Test
+    public void testGetDataSourceNotExisting() {
+        assertThrows(ODataDataSourceException.class, () ->
+                dataSourceFactory.getDataSource(oDataRequestContext, "ODataDemo.Product")
+        );
     }
 }

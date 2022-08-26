@@ -16,7 +16,7 @@
 package com.sdl.odata.parser
 
 import com.sdl.odata.api.parser.ODataBatchParseException
-import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.scalatest.FunSuite
 
 import scala.io.Source

@@ -20,25 +20,26 @@ import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.unmarshaller.NoEntityUnmarshaller;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * No Entity Unmarshaller Test.
  */
 public class NoEntityUnmarshallerTest extends UnmarshallerTest {
+
     @Test
     public void testTheLowestScore() throws UnsupportedEncodingException, ODataException {
         ODataRequest.Builder builder = new ODataRequest.Builder()
                 .setBodyText("test", "UTF-8").setUri("mockURI").setMethod(ODataRequest.Method.GET);
         ODataRequestContext context = new ODataRequestContext(builder.build(), odataUri, entityDataModel);
         NoEntityUnmarshaller noEntityUnmarshaller = new NoEntityUnmarshaller();
-        assertThat(noEntityUnmarshaller.score(context), is(1));
-        assertThat(noEntityUnmarshaller.unmarshall(context), is(nullValue()));
+
+        assertEquals(1, noEntityUnmarshaller.score(context));
+        assertNull(noEntityUnmarshaller.unmarshall(context));
     }
 }

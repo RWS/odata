@@ -22,16 +22,15 @@ import com.sdl.odata.api.edm.model.TypeDefinition;
 import com.sdl.odata.parser.ODataUriParser;
 import com.sdl.odata.parser.ParserTestSuite;
 import com.sdl.odata.test.model.Address;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import scala.Option;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Entity Data Model Helpers Test.
@@ -46,20 +45,22 @@ public class EntityDataModelHelpersTest extends ParserTestSuite {
 
     private ODataUriParser parser;
 
-    @Before
+    @BeforeEach
     public void setup() {
         parser = new ODataUriParser(model);
     }
 
     @Test
     public void testEntityHelpersMethods() {
-        assertThat(parser.isEntityType(ORDER), is(true));
-        assertThat(parser.isEntityType("Edm.Int64"), is(false));
+        assertTrue(parser.isEntityType(ORDER));
+        assertFalse(parser.isEntityType("Edm.Int64"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalArgumentEntityCheck() {
-        assertThat(parser.isEntityType("AnyAnotherEntity"), is(true));
+        assertThrows(IllegalArgumentException.class, () ->
+                parser.isEntityType("AnyAnotherEntity")
+        );
     }
 
     @Test
@@ -70,9 +71,8 @@ public class EntityDataModelHelpersTest extends ParserTestSuite {
 
     @Test
     public void testKeyProperty() {
-        assertThat(parser.isPrimitiveKeyPropertyOf(ORDER, "id"), is(true));
+        assertTrue(parser.isPrimitiveKeyPropertyOf(ORDER, "id"));
     }
-
 
     @Test
     public void testNavigationProperty() {
@@ -80,10 +80,10 @@ public class EntityDataModelHelpersTest extends ParserTestSuite {
         ComplexType addressType = (ComplexType) type;
         Property streetProp = (Property) addressType.getStructuralProperty("Street");
 
-        assertThat(parser.isEntityNavigationProperty(streetProp), is(false));
-        assertThat(parser.isPrimitiveCollectionProperty(streetProp), is(false));
-        assertThat(parser.isEntitySingleNavigationProperty(streetProp), is(false));
-        assertThat(parser.isEntityCollectionNavigationProperty(streetProp), is(false));
+        assertFalse(parser.isEntityNavigationProperty(streetProp));
+        assertFalse(parser.isPrimitiveCollectionProperty(streetProp));
+        assertFalse(parser.isEntitySingleNavigationProperty(streetProp));
+        assertFalse(parser.isEntityCollectionNavigationProperty(streetProp));
     }
 
     @Test

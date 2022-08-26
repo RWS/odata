@@ -22,15 +22,14 @@ import com.sdl.odata.client.api.exception.ODataClientHttpError;
 import com.sdl.odata.client.api.exception.ODataClientNotAuthorized;
 import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.odata.client.api.exception.ODataClientTimeout;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,58 +47,54 @@ import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.core.Is.isA;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * Integration test for {@link TracingEndpointCaller}.
  */
-@RunWith(SpringRunner.class)
+@Disabled
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TestConfiguration.class)
 @DirtiesContext
 public class TracingEndpointCallerTest {
 
     private static final String RESPONSE = "/response.xml";
 
-    private EndpointCaller caller = new TracingEndpointCaller(new Properties());
+    private final EndpointCaller caller = new TracingEndpointCaller(new Properties());
 
     @Value("${local.server.port}")
     private int port;
 
-    /**
-     * Used, to capture exceptions.
-     */
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private String basePath;
 
-    @Before
+    @BeforeEach
     public void init() {
         basePath = "http://127.0.0.1:" + port;
     }
 
     @Test
     public void callEndpoint() throws ODataClientException, MalformedURLException {
-        String response = caller.callEndpoint(singletonMap("Accept", JSON.getType()), new URL(basePath + RESPONSE));
+        String response = caller.callEndpoint(singletonMap("Accept", APPLICATION_JSON_VALUE),
+                new URL(basePath + RESPONSE));
         String expected = URLTestUtils.loadTextFile(RESPONSE);
         response = response.replace("\n", "").replace("\r", "");
         expected = expected.replace("\n", "").replace("\r", "");
-        assertThat(response, equalTo(expected));
+        assertEquals(expected, response);
     }
 
     @Test
-    public void callEndpointWithoutResponse() throws ODataClientException, MalformedURLException {
-        thrown.expect(ODataClientHttpError.class);
-        caller.callEndpoint(singletonMap("Accept", JSON.getType()), new URL(basePath));
+    public void callEndpointWithoutResponse() {
+        assertThrows(ODataClientHttpError.class, () ->
+                caller.callEndpoint(singletonMap("Accept", APPLICATION_JSON_VALUE), new URL(basePath))
+        );
     }
-
 
     @Test
     public void getInputStream() throws ODataClientException, IOException {
         InputStream stream = caller.getInputStream(
-                singletonMap("Accept", JSON.getType()), new URL(basePath + RESPONSE));
+                singletonMap("Accept", APPLICATION_JSON_VALUE), new URL(basePath + RESPONSE));
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
             String line;
@@ -107,7 +102,7 @@ public class TracingEndpointCallerTest {
                 sb.append(line).append(System.lineSeparator());
             }
         }
-        assertThat(sb.toString(), equalTo(URLTestUtils.loadTextFile(RESPONSE)));
+        assertEquals(URLTestUtils.loadTextFile(RESPONSE), sb.toString());
     }
 
     @Test
@@ -121,25 +116,28 @@ public class TracingEndpointCallerTest {
 
         response = response.replace("\n", "").replace("\r", "");
         result = result.replace("\n", "").replace("\r", "");
-        assertThat(response, equalTo(result));
+        assertEquals(result, response);
     }
 
     @Test
-    public void unauthorizedPostEntity() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientNotAuthorized.class);
-        caller.doPostEntity(emptyMap(), buildUrlToCall(HTTP_UNAUTHORIZED), "", JSON, JSON);
+    public void unauthorizedPostEntity() {
+        assertThrows(ODataClientNotAuthorized.class, () ->
+                caller.doPostEntity(emptyMap(), buildUrlToCall(HTTP_FORBIDDEN), "", JSON, JSON)
+        );
     }
 
     @Test
-    public void forbiddenPostEntity() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientHttpError.class);
-        caller.doPostEntity(emptyMap(), buildUrlToCall(HTTP_FORBIDDEN), "", JSON, JSON);
+    public void forbiddenPostEntity() {
+        assertThrows(ODataClientHttpError.class, () ->
+                caller.doPostEntity(emptyMap(), buildUrlToCall(HTTP_FORBIDDEN), "", JSON, JSON)
+        );
     }
 
     @Test
-    public void timeoutPostEntity() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientTimeout.class);
-        caller.doPostEntity(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT), "", JSON, JSON);
+    public void timeoutPostEntity() {
+        assertThrows(ODataClientTimeout.class, () ->
+                caller.doPostEntity(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT), "", JSON, JSON)
+        );
     }
 
     @Test
@@ -148,80 +146,90 @@ public class TracingEndpointCallerTest {
         String result = caller.doPutEntity(emptyMap(), new URL(basePath + RESPONSE), body, JSON);
         body = body.replace("\n", "").replace("\r", "");
         result = result.replace("\n", "").replace("\r", "");
-        assertThat(body, equalTo(result));
+        assertEquals(result, body);
     }
 
     @Test
-    public void unauthorizedPutEntity() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientNotAuthorized.class);
-        caller.doPutEntity(emptyMap(), buildUrlToCall(HTTP_UNAUTHORIZED), "", JSON);
+    public void unauthorizedPutEntity() {
+        assertThrows(ODataClientNotAuthorized.class, () ->
+                caller.doPutEntity(emptyMap(), buildUrlToCall(HTTP_UNAUTHORIZED), "", JSON)
+        );
     }
 
     @Test
-    public void forbiddenPutEntity() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientHttpError.class);
-        caller.doPutEntity(emptyMap(), buildUrlToCall(HTTP_FORBIDDEN), "", JSON);
+    public void forbiddenPutEntity() {
+        assertThrows(ODataClientHttpError.class, () ->
+                caller.doPutEntity(emptyMap(), buildUrlToCall(HTTP_FORBIDDEN), "", JSON)
+        );
     }
 
     @Test
-    public void timeoutPutEntity() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientTimeout.class);
-        caller.doPutEntity(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT), "", JSON);
+    public void timeoutPutEntity() {
+        assertThrows(ODataClientTimeout.class, () ->
+                caller.doPutEntity(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT), "", JSON)
+        );
     }
 
     @Test
-    public void unauthorizedDeleteEntity() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientNotAuthorized.class);
-        caller.doDeleteEntity(emptyMap(), buildUrlToCall(HTTP_UNAUTHORIZED));
+    public void unauthorizedDeleteEntity() {
+        assertThrows(ODataClientNotAuthorized.class, () ->
+                caller.doDeleteEntity(emptyMap(), buildUrlToCall(HTTP_UNAUTHORIZED))
+        );
     }
 
     @Test
-    public void forbiddenDeleteEntity() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientHttpError.class);
-        caller.doDeleteEntity(emptyMap(), buildUrlToCall(HTTP_FORBIDDEN));
+    public void forbiddenDeleteEntity() {
+        assertThrows(ODataClientHttpError.class, () ->
+                caller.doDeleteEntity(emptyMap(), buildUrlToCall(HTTP_FORBIDDEN))
+        );
     }
 
     @Test
-    public void timeoutDeleteEntity() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientTimeout.class);
-        caller.doDeleteEntity(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT));
+    public void timeoutDeleteEntity() {
+        assertThrows(ODataClientTimeout.class, () ->
+                caller.doDeleteEntity(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT))
+        );
     }
 
     @Test
-    public void unauthorizedGet() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientNotAuthorized.class);
-        caller.callEndpoint(emptyMap(), buildUrlToCall(HTTP_UNAUTHORIZED));
+    public void unauthorizedGet() {
+        assertThrows(ODataClientNotAuthorized.class, () ->
+                caller.callEndpoint(emptyMap(), buildUrlToCall(HTTP_UNAUTHORIZED))
+        );
     }
 
     @Test
-    public void forbiddenGet() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientHttpError.class);
-        caller.callEndpoint(emptyMap(), buildUrlToCall(HTTP_FORBIDDEN));
+    public void forbiddenGet() {
+        assertThrows(ODataClientHttpError.class, () ->
+                caller.callEndpoint(emptyMap(), buildUrlToCall(HTTP_FORBIDDEN))
+        );
     }
 
     @Test
-    public void timeoutGet() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientTimeout.class);
-        caller.callEndpoint(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT));
+    public void timeoutGet() {
+        assertThrows(ODataClientTimeout.class, () ->
+                caller.callEndpoint(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT))
+        );
     }
 
     @Test
-    public void timeoutInputStream() throws MalformedURLException, ODataClientException {
-        thrown.expect(ODataClientTimeout.class);
-        caller.getInputStream(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT));
+    public void timeoutInputStream() {
+        assertThrows(ODataClientTimeout.class, () ->
+                caller.getInputStream(emptyMap(), buildUrlToCall(HTTP_CLIENT_TIMEOUT))
+        );
     }
 
     @Test
-    public void testIOExceptionOnOpenConnection() throws IOException, ODataClientException {
+    public void testIOExceptionOnOpenConnection() throws IOException {
         URL ioExceptionOnConnectUrl = URLTestUtils.getIOExceptionThrowingUrl(true);
         Properties properties = new Properties();
         properties.setProperty(CLIENT_SERVICE_PROXY_HOST_NAME, "localhost");
         properties.setProperty(CLIENT_SERVICE_PROXY_PORT, "9999");
         EndpointCaller proxifiedCaller = new TracingEndpointCaller(properties);
-        thrown.expect(ODataClientRuntimeException.class);
-        thrown.expectCause(isA(IOException.class));
 
-        proxifiedCaller.callEndpoint(emptyMap(), ioExceptionOnConnectUrl);
+        assertThrows(ODataClientRuntimeException.class, () ->
+                proxifiedCaller.callEndpoint(emptyMap(), ioExceptionOnConnectUrl)
+        );
     }
 
     private URL buildUrlToCall(int code) throws MalformedURLException {

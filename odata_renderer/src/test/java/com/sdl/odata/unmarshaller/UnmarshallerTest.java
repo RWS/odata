@@ -33,7 +33,7 @@ import com.sdl.odata.test.model.Product;
 import com.sdl.odata.test.model.complex.ODataDemoEntity;
 import com.sdl.odata.test.model.complex.ODataDemoProperty;
 import com.sdl.odata.test.model.complex.ODataVersion;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -45,13 +45,10 @@ import static com.sdl.odata.api.service.ODataRequest.Method.GET;
 import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.test.util.TestUtils.readContent;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Base test class with functionality to be shared by Xml and Json unmarshaller implementations.
@@ -76,7 +73,7 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
     protected Object entityTypeSample = null;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         requestBuilder.setUri(odataUri.serviceRoot()).setMethod(ODataRequest.Method.GET);
@@ -119,9 +116,8 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
     }
 
     public void assertCustomerSample() throws Exception {
-
-        assertThat(singleCustomer, is(not(nullValue())));
-        assertThat(singleCustomer, instanceOf(Customer.class));
+        assertNotNull(singleCustomer);
+        assertTrue(singleCustomer instanceof Customer);
 
         final List<Address> expectedAddresses = new ArrayList<>();
         expectedAddresses.add(createAddress("Diagon Alley", "Behind Leaky Couldron", "10127", "London", "UK"));
@@ -133,9 +129,8 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
     }
 
     public void assertCustomersSample() throws Exception {
-
-        assertThat(customersFeed, is(notNullValue()));
-        assertThat(customersFeed.size(), is(2));
+        assertNotNull(customersFeed);
+        assertEquals(2, customersFeed.size());
 
         final List<Address> expectedAddresses = new ArrayList<>();
         expectedAddresses.add(createAddress("Diagon Alley", "Behind Leaky Couldron", "10127", "London", "UK"));
@@ -151,9 +146,8 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
     }
 
     public void assertCustomerWithLinksSample() throws Exception {
-
-        assertThat(singleCustomer, is(not(nullValue())));
-        assertThat(singleCustomer, instanceOf(Customer.class));
+        assertNotNull(singleCustomer);
+        assertTrue(singleCustomer instanceof Customer);
 
         final List<Address> expectedAddresses = new ArrayList<>();
         expectedAddresses.add(createAddress("Diagon Alley", "Behind Leaky Couldron", "10127", "London", "UK"));
@@ -169,96 +163,94 @@ public class UnmarshallerTest extends WriterUnmarshallerTest {
     }
 
     public void assertProductSample() {
-
-        assertThat(products, is(not(nullValue())));
-        assertThat(products, instanceOf((Class) Product.class));
+        assertNotNull(products);
+        assertTrue(products instanceof Product);
 
         final Product product = (Product) products;
-        assertThat(product.getId(), is(15L));
-        assertThat(product.getName(), is("Asus Nexus 7"));
-        assertThat(product.getCategory(), is(Category.ELECTRONICS));
+        assertEquals(15L, product.getId());
+        assertEquals("Asus Nexus 7", product.getName());
+        assertEquals(Category.ELECTRONICS, product.getCategory());
     }
 
     public void assertPrimitiveTypesSample() {
-
-        assertThat(primitiveTypesSamples, is(not(nullValue())));
-        assertThat(primitiveTypesSamples, instanceOf((Class) PrimitiveTypesSample.class));
+        assertNotNull(primitiveTypesSamples);
+        assertTrue(primitiveTypesSamples instanceof PrimitiveTypesSample);
 
         final PrimitiveTypesSample primitiveTypesSample = (PrimitiveTypesSample) primitiveTypesSamples;
-        assertThat(primitiveTypesSample.getId(), is(20L));
-        assertThat(primitiveTypesSample.getName(), is("John"));
-        assertThat(primitiveTypesSample.getDoubleProperty(), is(16.7));
+        assertEquals(20L, primitiveTypesSample.getId());
+        assertEquals("John", primitiveTypesSample.getName());
+        assertEquals(16.7, primitiveTypesSample.getDoubleProperty());
         // Note: Add all expectations over all primitives
     }
 
     public void assertCollectionsTypesSample() {
-
-        assertThat(collectionsTypesSamples, is(not(nullValue())));
-        assertThat(collectionsTypesSamples, instanceOf((Class) CollectionsSample.class));
+        assertNotNull(collectionsTypesSamples);
+        assertTrue(collectionsTypesSamples instanceof CollectionsSample);
 
         final CollectionsSample collectionsSample = (CollectionsSample) collectionsTypesSamples;
-        assertThat(collectionsSample.getId(), is(40L));
-        assertThat(collectionsSample.getName(), is("Mixed collections"));
+        assertEquals(40L, collectionsSample.getId());
+        assertEquals("Mixed collections", collectionsSample.getName());
     }
 
     public void assertNestedComplexTypesSamples() {
-        assertThat(nestedComplexTypesSamples, is(not(nullValue())));
-        assertThat(nestedComplexTypesSamples, instanceOf((Class) ODataDemoEntity.class));
+        assertNotNull(nestedComplexTypesSamples);
+        assertTrue(nestedComplexTypesSamples instanceof ODataDemoEntity);
 
         final ODataDemoEntity oDataContextVocabulary = (ODataDemoEntity) nestedComplexTypesSamples;
         List<ODataDemoProperty> propertyDefinitions = oDataContextVocabulary.getProperties();
-        assertThat(propertyDefinitions.size(), is(33));
+        assertEquals(33, propertyDefinitions.size());
 
         Set<String> setValues = propertyDefinitions.get(0).getDefaultValue().getSetValue();
-        assertThat(setValues.size(), is(2));
+        assertEquals(2, setValues.size());
         assertTrue(setValues.contains("PNG"));
         assertTrue(setValues.contains("JPEG"));
 
-        assertThat(propertyDefinitions.get(7).getDefaultValue().getIntegerValue(), is(800));
+        assertEquals(800, propertyDefinitions.get(7).getDefaultValue().getIntegerValue());
 
         assertTrue(propertyDefinitions.get(9).getDefaultValue().getBooleanValue());
 
         final ODataVersion versionValue = propertyDefinitions.get(12).getDefaultValue().getVersionValue();
-        assertThat(versionValue.getMajorVersion(), is(1));
-        assertThat(versionValue.getMinorVersion(), is(8));
-        assertThat(versionValue.getIncrementalVersion(), is(5));
-        assertThat(versionValue.getName(), is("1.8.5"));
-        assertThat(versionValue.getMajorVersionPart().getModifierPriority(), is(4));
-
-        assertThat(propertyDefinitions.get(25).getDefaultValue().getFloatValue(), is(1.0));
+        assertEquals(1, versionValue.getMajorVersion());
+        assertEquals(8, versionValue.getMinorVersion());
+        assertEquals(5, versionValue.getIncrementalVersion());
+        assertEquals("1.8.5", versionValue.getName());
+        assertEquals(4, versionValue.getMajorVersionPart().getModifierPriority());
+        assertEquals(1.0, propertyDefinitions.get(25).getDefaultValue().getFloatValue());
     }
 
     public void assertExtendedPropertiesSample() {
-        assertThat(expandedPropertiesSamples, is(not(nullValue())));
+        assertNotNull(expandedPropertiesSamples);
         ExpandedPropertiesSample expandedPropertiesSample = (ExpandedPropertiesSample) expandedPropertiesSamples;
-        assertThat(expandedPropertiesSample.getId(), is(5L));
-        assertThat(expandedPropertiesSample.getName(), is("Expanded Properties Sample"));
+        assertEquals(5, expandedPropertiesSample.getId());
+        assertEquals("Expanded Properties Sample", expandedPropertiesSample.getName());
 
         IdNamePairSample expandedEntry = expandedPropertiesSample.getExpandedEntry();
-        assertThat(expandedEntry, is(notNullValue()));
-        assertThat(expandedEntry.getId(), is(10L));
-        assertThat(expandedEntry.getName(), is("Expanded entry"));
+        assertNotNull(expandedEntry);
+        assertEquals(10L, expandedEntry.getId());
+        assertEquals("Expanded entry", expandedEntry.getName());
 
         List<IdNamePairSample> expandedFeed = expandedPropertiesSample.getExpandedFeed();
-        assertThat(expandedFeed, is(notNullValue()));
-        assertThat(expandedFeed.size(), is(2));
+        assertNotNull(expandedFeed);
+        assertEquals(2, expandedFeed.size());
+
         assertIdNamePairSample(expandedFeed.get(0), 10, "Expanded feed entry 1");
         assertIdNamePairSample(expandedFeed.get(1), 20, "Expanded feed entry 2");
     }
 
     private void assertIdNamePairSample(IdNamePairSample idNamePairSample, long id, String name) {
-        assertThat(idNamePairSample, is(notNullValue()));
-        assertThat(idNamePairSample.getId(), is(id));
-        assertThat(idNamePairSample.getName(), is(name));
+        assertNotNull(idNamePairSample);
+        assertEquals(id, idNamePairSample.getId());
+        assertEquals(name, idNamePairSample.getName());
     }
 
     public void assertAbstractEntityTypeSample() {
-        assertThat(entityTypeSample, is(notNullValue()));
+        assertNotNull(entityTypeSample);
         EntityTypeSample entityTypeSampleTyped = (EntityTypeSample) entityTypeSample;
-        assertThat(entityTypeSampleTyped.getId(), is("id.10"));
-        assertThat(entityTypeSampleTyped.getInheritedProperty(), is("Some inherited value"));
-        assertThat(entityTypeSampleTyped.getInheritedId(), is(nullValue()));
-        assertThat(entityTypeSampleTyped.getComplexTypeProperty().getSimpleProperty(), is("Simple value"));
-        assertThat(entityTypeSampleTyped.getComplexTypeProperty().getInheritedProperty(), is("Inherited value"));
+        assertEquals("id.10", entityTypeSampleTyped.getId());
+        assertEquals("Some inherited value", entityTypeSampleTyped.getInheritedProperty());
+
+        assertNull(entityTypeSampleTyped.getInheritedId());
+        assertEquals("Simple value", entityTypeSampleTyped.getComplexTypeProperty().getSimpleProperty());
+        assertEquals("Inherited value", entityTypeSampleTyped.getComplexTypeProperty().getInheritedProperty());
     }
 }

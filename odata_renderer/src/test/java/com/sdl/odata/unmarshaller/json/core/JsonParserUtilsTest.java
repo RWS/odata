@@ -16,35 +16,31 @@
 package com.sdl.odata.unmarshaller.json.core;
 
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for JsonParserUtils.
  */
 public class JsonParserUtilsTest {
 
-    /**
-     * Used for tests that expect exception when parsing field.
-     */
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private static final String BAD_VALUE = "BAD_VALUE";
 
     @Test
-    public void testIncorrectEnumValue() throws Exception {
-        thrown.expect(ODataUnmarshallingException.class);
-        thrown.expectMessage(BAD_VALUE);
-        JsonParserUtils.getAppropriateFieldValue(TestEnum.class, BAD_VALUE);
+    public void testIncorrectEnumValue() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                JsonParserUtils.getAppropriateFieldValue(TestEnum.class, BAD_VALUE),
+                BAD_VALUE
+        );
     }
 
     @Test
-    public void testIncorrectIntegerValue() throws Exception {
-        thrown.expect(ODataUnmarshallingException.class);
-        thrown.expectMessage(BAD_VALUE);
-        JsonParserUtils.getAppropriateFieldValue(Integer.class, BAD_VALUE);
+    public void testIncorrectIntegerValue() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                JsonParserUtils.getAppropriateFieldValue(Integer.class, BAD_VALUE),
+                BAD_VALUE
+        );
     }
 
     /**

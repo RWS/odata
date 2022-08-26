@@ -15,10 +15,10 @@
  */
 package com.sdl.odata.api.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link MediaType}.
@@ -29,19 +29,19 @@ public class MediaTypeTest {
     public void testFromStringNoParams() {
         MediaType mediaType = MediaType.fromString("text/html");
 
-        assertThat(mediaType.getType(), is("text"));
-        assertThat(mediaType.getSubType(), is("html"));
-        assertThat(mediaType.getParameters().size(), is(0));
+        assertEquals("text", mediaType.getType());
+        assertEquals("html", mediaType.getSubType());
+        assertEquals(0, mediaType.getParameters().size());
     }
 
     @Test
     public void testFromStringOneParam() {
         MediaType mediaType = MediaType.fromString("text/html;encoding=UTF-8");
 
-        assertThat(mediaType.getType(), is("text"));
-        assertThat(mediaType.getSubType(), is("html"));
-        assertThat(mediaType.getParameters().size(), is(1));
-        assertThat(mediaType.getParameter("encoding"), is("UTF-8"));
+        assertEquals("text", mediaType.getType());
+        assertEquals("html", mediaType.getSubType());
+        assertEquals(1, mediaType.getParameters().size());
+        assertEquals("UTF-8", mediaType.getParameter("encoding"));
     }
 
     @Test
@@ -49,28 +49,30 @@ public class MediaTypeTest {
         // NOTE: Spaces after ; should also be allowed
         MediaType mediaType = MediaType.fromString("application/atom+xml; encoding=UTF-8; q=0.8");
 
-        assertThat(mediaType.getType(), is("application"));
-        assertThat(mediaType.getSubType(), is("atom+xml"));
-        assertThat(mediaType.getParameters().size(), is(2));
-        assertThat(mediaType.getParameter("encoding"), is("UTF-8"));
-        assertThat(mediaType.getParameter("q"), is("0.8"));
+        assertEquals("application", mediaType.getType());
+        assertEquals("atom+xml", mediaType.getSubType());
+        assertEquals(2, mediaType.getParameters().size());
+        assertEquals("UTF-8", mediaType.getParameter("encoding"));
+        assertEquals("0.8", mediaType.getParameter("q"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromStringInvalid() {
-        MediaType.fromString("text;q=0.8");
+        assertThrows(IllegalArgumentException.class, () ->
+                MediaType.fromString("text;q=0.8")
+        );
     }
 
     @Test
     public void testDefaultUrlConnectionAcceptHeaders() {
         MediaType mediaType = MediaType.fromString("*/*; q=.2");
-        assertThat(mediaType.getType(), is("*"));
-        assertThat(mediaType.getSubType(), is("*"));
-        assertThat(mediaType.getParameter("q"), is(".2"));
+        assertEquals("*", mediaType.getType());
+        assertEquals("*", mediaType.getSubType());
+        assertEquals(".2", mediaType.getParameter("q"));
 
         mediaType = MediaType.fromString("*; q=.4");
-        assertThat(mediaType.getType(), is("*"));
-        assertThat(mediaType.getSubType(), is("*"));
-        assertThat(mediaType.getParameter("q"), is(".4"));
+        assertEquals("*", mediaType.getType());
+        assertEquals("*", mediaType.getSubType());
+        assertEquals(".4", mediaType.getParameter("q"));
     }
 }

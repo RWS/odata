@@ -18,11 +18,12 @@ package com.sdl.odata.edm.model;
 import com.google.common.collect.ImmutableList;
 import com.sdl.odata.api.edm.model.MetaType;
 import com.sdl.odata.api.edm.model.PropertyRef;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The Entity Type Impl Test.
@@ -39,9 +40,9 @@ public class EntityTypeImplTest {
         builder.setKey(new KeyImpl(propertyRefs));
 
         EntityTypeImpl entityTypeImpl = builder.build();
-        assertThat(entityTypeImpl.getKey(), is(notNullValue()));
-        assertThat(entityTypeImpl.hasStream(), is(true));
-        assertThat(entityTypeImpl.isReadOnly(), is(false));
-        assertThat(entityTypeImpl.getMetaType(), is(MetaType.ENTITY));
+        assertNotNull(entityTypeImpl.getKey());
+        assertTrue(entityTypeImpl.hasStream());
+        assertFalse(entityTypeImpl.isReadOnly());
+        assertEquals(MetaType.ENTITY, entityTypeImpl.getMetaType());
     }
 }

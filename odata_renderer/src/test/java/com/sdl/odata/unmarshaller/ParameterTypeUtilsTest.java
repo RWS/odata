@@ -18,13 +18,12 @@ package com.sdl.odata.unmarshaller;
 import com.sdl.odata.api.parser.util.ParameterTypeUtil;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.test.model.ActionSample;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test for parameter types util class.
@@ -36,7 +35,7 @@ public class ParameterTypeUtilsTest {
         ActionSample actionSample = new ActionSample();
         Field field = actionSample.getClass().getDeclaredField("number");
         ParameterTypeUtil.setParameter(actionSample, field, "24");
-        assertThat(actionSample.getNumber(), is(24L));
+        assertEquals(24L, actionSample.getNumber());
     }
 
     @Test
@@ -44,7 +43,7 @@ public class ParameterTypeUtilsTest {
         ActionSample actionSample = new ActionSample();
         Field field = actionSample.getClass().getDeclaredField("intNumber");
         ParameterTypeUtil.setParameter(actionSample, field, "42");
-        assertThat(actionSample.getIntNumber(), is(42));
+        assertEquals(42, actionSample.getIntNumber());
     }
 
     @Test
@@ -52,7 +51,7 @@ public class ParameterTypeUtilsTest {
         ActionSample actionSample = new ActionSample();
         Field field = actionSample.getClass().getDeclaredField("stringParameter");
         ParameterTypeUtil.setParameter(actionSample, field, "someText");
-        assertThat(actionSample.getStringParameter(), is("someText"));
+        assertEquals("someText", actionSample.getStringParameter());
     }
 
     @Test
@@ -60,6 +59,6 @@ public class ParameterTypeUtilsTest {
         ActionSample actionSample = new ActionSample();
         Field field = actionSample.getClass().getDeclaredField("stringParameter");
         ParameterTypeUtil.setParameter(actionSample, field, null);
-        assertThat(actionSample.getStringParameter(), nullValue());
+        assertNull(actionSample.getStringParameter());
     }
 }

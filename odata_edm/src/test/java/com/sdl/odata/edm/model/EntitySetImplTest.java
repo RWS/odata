@@ -15,16 +15,17 @@
  */
 package com.sdl.odata.edm.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The Entity Set Impl Test.
  */
 public class EntitySetImplTest {
+
     @Test
     public void testEntitySetImpl() {
         EntitySetImpl.Builder builder = new EntitySetImpl.Builder();
@@ -38,12 +39,13 @@ public class EntitySetImplTest {
         builder.addNavigationPropertyBinding(propertyBinding);
 
         EntitySetImpl entitySet = builder.build();
-        assertThat(entitySet.getName(), is("name"));
-        assertThat(entitySet.getTypeName(), is("typeName"));
-        assertThat(entitySet.isIncludedInServiceDocument(), is(true));
-        assertThat(entitySet.getNavigationPropertyBindings(), is(notNullValue()));
-        assertThat(entitySet.getNavigationPropertyBindings().size(), is(1));
-        assertThat(entitySet.toString(), is("name"));
+        assertEquals("name", entitySet.getName());
+        assertEquals("typeName", entitySet.getTypeName());
+
+        assertTrue(entitySet.isIncludedInServiceDocument());
+        assertNotNull(entitySet.getNavigationPropertyBindings());
+        assertEquals(1, entitySet.getNavigationPropertyBindings().size());
+        assertEquals("name", entitySet.toString());
     }
 
 }

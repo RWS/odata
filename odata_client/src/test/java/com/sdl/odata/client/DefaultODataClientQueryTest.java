@@ -17,19 +17,21 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.api.edm.annotations.EdmEntitySet;
 import com.sdl.odata.client.api.ODataClientQuery;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The Default OData Client Query Test.
  */
 public class DefaultODataClientQueryTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createQueryWithoutWebServiceUri() {
-        new BasicODataClientQuery.Builder().build();
+        assertThrows(IllegalArgumentException.class, () ->
+                new BasicODataClientQuery.Builder().build()
+        );
     }
 
     @Test
@@ -38,14 +40,16 @@ public class DefaultODataClientQueryTest {
                 .withEntityType(EmptyEntity.class)
                 .build();
 
-        assertThat(query.getQuery(), is("EmptyEntities"));
+        assertEquals("EmptyEntities", query.getQuery());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createQueryWithoutEntityType() {
-        new BasicODataClientQuery.Builder()
-                .withEntityType(null)
-                .build();
+        assertThrows(IllegalArgumentException.class, () ->
+                new BasicODataClientQuery.Builder()
+                        .withEntityType(null)
+                        .build()
+        );
     }
 
     @Test
@@ -55,7 +59,7 @@ public class DefaultODataClientQueryTest {
                 .withFilterMap("Area", "Web")
                 .build();
         String expectedToString = "EmptyEntities?$filter=Area eq 'Web'";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -66,7 +70,7 @@ public class DefaultODataClientQueryTest {
                 .withFilterMap("Environment", "e1")
                 .build();
         String expectedToString = "EmptyEntities?$filter=Area eq 'Web' and Environment eq 'e1'";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -76,7 +80,7 @@ public class DefaultODataClientQueryTest {
                 .withExpandParameters("Using")
                 .build();
         String expectedToString = "EmptyEntities?$expand=Using";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -87,7 +91,7 @@ public class DefaultODataClientQueryTest {
                 .withExpandParameters("Imported")
                 .build();
         String expectedToString = "EmptyEntities?$expand=Using,Imported";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -98,7 +102,7 @@ public class DefaultODataClientQueryTest {
                 .withExpandParameters("Using")
                 .build();
         String expectedToString = "EmptyEntities?$filter=Area eq 'Web'&$expand=Using";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -109,7 +113,7 @@ public class DefaultODataClientQueryTest {
                 .withFunctionParameter("ParamName", "ParamValue")
                 .build();
         String expectedToString = "SampleFunction(ParamName=ParamValue)";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -122,7 +126,7 @@ public class DefaultODataClientQueryTest {
                 .withFunctionParameter("ParamName", "ParamValue")
                 .build();
         String expectedToString = "SampleEntitySet/Web.Sdl.SampleFunction(ParamName=ParamValue)";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -132,7 +136,7 @@ public class DefaultODataClientQueryTest {
                 .withFunctionName("SampleFunction")
                 .build();
         String expectedToString = "SampleFunction";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
     @Test
@@ -144,35 +148,45 @@ public class DefaultODataClientQueryTest {
                 .withFunctionName("SampleFunction")
                 .build();
         String expectedToString = "SampleEntitySet/Web.Sdl.SampleFunction";
-        assertThat(query.getQuery(), is(expectedToString));
+        assertEquals(expectedToString, query.getQuery());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createUnboundFunctionQueryWithoutEntityName() {
-        new FunctionImportClientQuery.Builder().withFunctionName("SampleFunction").build();
+        assertThrows(NullPointerException.class, () ->
+                new FunctionImportClientQuery.Builder().withFunctionName("SampleFunction").build()
+        );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createUnboundFunctionQueryWithoutFunctionName() {
-        new FunctionImportClientQuery.Builder().withEntityType(EmptyEntity.class).build();
+        assertThrows(NullPointerException.class, () ->
+                new FunctionImportClientQuery.Builder().withEntityType(EmptyEntity.class).build()
+        );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createBoundFunctionQueryWithoutEntityName() {
-        new BoundFunctionClientQuery.Builder().withFunctionName("SampleFunction").build();
+        assertThrows(NullPointerException.class, () ->
+                new BoundFunctionClientQuery.Builder().withFunctionName("SampleFunction").build()
+        );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createBoundFunctionQueryWithoutFunctionName() {
-        new BoundFunctionClientQuery.Builder().withEntityType(EmptyEntity.class).build();
+        assertThrows(NullPointerException.class, () ->
+                new BoundFunctionClientQuery.Builder().withEntityType(EmptyEntity.class).build()
+        );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createBoundFunctionQueryWithoutBoundEntityName() {
-        new BoundFunctionClientQuery.Builder()
-                .withNameSpace("Web.Sdl")
-                .withFunctionName("SampleFunction")
-                .withEntityType(EmptyEntity.class).build();
+        assertThrows(NullPointerException.class, () ->
+                new BoundFunctionClientQuery.Builder()
+                        .withNameSpace("Web.Sdl")
+                        .withFunctionName("SampleFunction")
+                        .withEntityType(EmptyEntity.class).build()
+        );
     }
 
     @Test
@@ -181,14 +195,14 @@ public class DefaultODataClientQueryTest {
                 .withEntityType(EmptyEntity.class)
                 .build();
         String expectedToString = "ODataClientQuery[EmptyEntities]";
-        assertThat(query.toString(), is(expectedToString));
+        assertEquals(expectedToString, query.toString());
     }
 
     /**
      * Empty Test Entity.
      */
     @EdmEntitySet("EmptyEntities")
-    private class EmptyEntity {
+    private static class EmptyEntity {
     }
 
 }

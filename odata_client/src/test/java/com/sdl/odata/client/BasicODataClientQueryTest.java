@@ -19,9 +19,10 @@ import com.sdl.odata.api.edm.annotations.EdmEntity;
 import com.sdl.odata.api.edm.annotations.EdmEntitySet;
 import com.sdl.odata.api.edm.annotations.EdmProperty;
 import com.sdl.odata.api.edm.annotations.EdmSingleton;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
  * Unit test to cover {@link BasicODataClientQuery}.
@@ -53,7 +54,7 @@ public class BasicODataClientQueryTest {
      */
     @EdmEntity
     @EdmEntitySet
-    private class EntitySetSample {
+    private static class EntitySetSample {
 
         @EdmProperty
         private String field;
@@ -64,7 +65,7 @@ public class BasicODataClientQueryTest {
      */
     @EdmEntity
     @EdmSingleton
-    private class EntitySingletonSample {
+    private static class EntitySingletonSample {
 
         @EdmProperty
         private String field;

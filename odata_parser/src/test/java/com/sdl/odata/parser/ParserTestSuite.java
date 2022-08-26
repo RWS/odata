@@ -40,14 +40,13 @@ import com.sdl.odata.test.model.PrimitiveTypesSample;
 import com.sdl.odata.test.model.Product;
 import com.sdl.odata.test.model.UnboundActionSample;
 import com.sdl.odata.test.model.UnboundFunctionSample;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.collection.immutable.List;
 import scala.math.BigDecimal;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Parser Test Suite.
@@ -70,7 +69,7 @@ public class ParserTestSuite {
 
     protected EntityDataModel model;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         LOG.info("Initializing EntityDataModel");
         AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
@@ -97,15 +96,15 @@ public class ParserTestSuite {
         EntityPathExpr left = (EntityPathExpr) expr.left();
         LiteralExpr right = (LiteralExpr) expr.right();
         PropertyPathExpr propertyPath = (PropertyPathExpr) left.subPath().get();
-        assertThat(propertyPath.propertyName(), is("id"));
+        assertEquals("id", propertyPath.propertyName());
         NumberLiteral numberLiteral = (NumberLiteral) right.value();
-        assertThat(numberLiteral.value(), is(new BigDecimal(new java.math.BigDecimal(20))));
+        assertEquals(new BigDecimal(new java.math.BigDecimal(20)), numberLiteral.value());
     }
 
     public FilterOption getSingleOption(ODataUri oDataUri) {
         ResourcePathUri relative = (ResourcePathUri) oDataUri.relativeUri();
         List<QueryOption> options = relative.options();
-        assertThat(options.size(), is(1));
+        assertEquals(1, options.size());
         return (FilterOption) options.head();
     }
 

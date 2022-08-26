@@ -23,15 +23,15 @@ import com.sdl.odata.api.parser.ODataUriParseException;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
 import com.sdl.odata.parser.ODataParserImpl;
-import junit.framework.TestCase;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.odata.ODataRendererUtils.buildContextUrlFromOperationCall;
 import static com.sdl.odata.ODataRendererUtils.isForceExpandParamSet;
 import static com.sdl.odata.test.util.TestUtils.getEdmEntityClasses;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link com.sdl.odata.ODataRendererUtils}.
@@ -41,7 +41,7 @@ public class ODataRendererUtilsTest {
     protected EntityDataModel entityDataModel;
     private ODataParser uriParser = new ODataParserImpl();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.entityDataModel = buildEntityDataModel();
     }
@@ -53,7 +53,7 @@ public class ODataRendererUtilsTest {
 
         String contextUrl = buildContextUrlFromOperationCall(odataUri, entityDataModel, false);
 
-        TestCase.assertEquals("http://some.com/xyz.svc/$metadata#Customers/$entity", contextUrl);
+        assertEquals("http://some.com/xyz.svc/$metadata#Customers/$entity", contextUrl);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class ODataRendererUtilsTest {
 
         String contextUrl = buildContextUrlFromOperationCall(odataUri, entityDataModel, true);
 
-        TestCase.assertEquals("http://some.com/xyz.svc/$metadata#Edm.String", contextUrl);
+        assertEquals("http://some.com/xyz.svc/$metadata#Edm.String", contextUrl);
     }
 
     @Test

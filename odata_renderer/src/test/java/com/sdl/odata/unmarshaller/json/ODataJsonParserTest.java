@@ -23,18 +23,18 @@ import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.test.model.ExpandedPropertiesSample;
 import com.sdl.odata.test.model.IdNamePairSample;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * OData Json Parser test.
@@ -56,19 +56,21 @@ public class ODataJsonParserTest extends UnmarshallerTest {
     private ODataJsonParser jsonParser;
     private ODataParser uriParser;
 
-    @Before
+    @BeforeEach
     public void setUpParser() {
         uriParser = new ODataParserImpl();
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
+    @Test
     public void testShouldThrowExceptionAsOrdersIsNull() throws Exception {
 
         requestBuilder.setUri(odataUri.serviceRoot()).setMethod(ODataRequest.Method.POST);
         preparePostRequestContext(CUSTOMER_ENTITY_PATH);
 
         jsonParser = new ODataJsonParser(context, uriParser);
-        singleCustomer = jsonParser.getODataEntity();
+        assertThrows(ODataUnmarshallingException.class, () ->
+                singleCustomer = jsonParser.getODataEntity()
+        );
 
     }
 
@@ -81,14 +83,16 @@ public class ODataJsonParserTest extends UnmarshallerTest {
         singleCustomer = jsonParser.getODataEntity();
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
+    @Test
     public void testShouldThrowExceptionAsAddressIsNull() throws Exception {
 
         requestBuilder.setUri(odataUri.serviceRoot()).setMethod(ODataRequest.Method.POST);
         preparePostRequestContext(CUSTOMER_WITH_NO_ADDRESS_ENTITY_PATH);
         jsonParser = new ODataJsonParser(context, uriParser);
 
-        singleCustomer = jsonParser.getODataEntity();
+        assertThrows(ODataUnmarshallingException.class, () ->
+                singleCustomer = jsonParser.getODataEntity()
+        );
     }
 
     @Test
@@ -134,16 +138,17 @@ public class ODataJsonParserTest extends UnmarshallerTest {
         assertCollectionsTypesSample();
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
+    @Test
     public void testCustomersSample() throws ODataException, IOException {
-
         preparePostRequestContext(CUSTOMER_FEED_PATH);
-        new ODataJsonParser(context, uriParser).getODataEntity();
+        assertThrows(ODataUnmarshallingException.class, () ->
+                new ODataJsonParser(context, uriParser).getODataEntity()
+        );
     }
 
     // Note: Parsing a feed using the Json parser is not supported yet
     @Test
-    @Ignore
+    @Disabled
     public void testCustomersReadSample() throws Exception {
 
         prepareGetRequestContext(CUSTOMER_FEED_PATH);
@@ -170,7 +175,7 @@ public class ODataJsonParserTest extends UnmarshallerTest {
 
     // this test has been ignored since we remove JsonPossibleTypeMatcher
     // because of critical CM issue - it shouldn't be ignored after future changes
-    @Ignore
+    @Disabled
     @Test
     public void testInlineFeedAndEntries() throws Exception {
         prepareGetRequestContext(EXPANDED_PROPERTIES_PATH);
@@ -181,15 +186,15 @@ public class ODataJsonParserTest extends UnmarshallerTest {
 
         ExpandedPropertiesSample targetSample = (ExpandedPropertiesSample) givenEntity;
 
-        assertThat(targetSample.getId(), is(5L));
-        assertThat(targetSample.getName(), is("Expanded Properties Sample"));
+        assertEquals(5L, targetSample.getId());
+        assertEquals("Expanded Properties Sample", targetSample.getName());
         assertNotNull(targetSample.getExpandedEntry());
         assertNotNull(targetSample.getExpandedFeed());
-        assertThat(targetSample.getExpandedFeed().size(), is(2));
+        assertEquals(2, targetSample.getExpandedFeed().size());
 
         IdNamePairSample expandedEntry = targetSample.getExpandedEntry();
-        assertThat(expandedEntry.getId(), is(10L));
-        assertThat(expandedEntry.getName(), is("Expanded entry"));
+        assertEquals(10L, expandedEntry.getId());
+        assertEquals("Expanded entry", expandedEntry.getName());
 
         List<IdNamePairSample> feeds = targetSample.getExpandedFeed();
         assertNotNull(feeds);
@@ -197,12 +202,11 @@ public class ODataJsonParserTest extends UnmarshallerTest {
         IdNamePairSample entryFeed2 = feeds.get(1);
 
         assertNotSame(entryFeed1, entryFeed2);
-        assertThat(entryFeed1.getId(), is(10L));
-        assertThat(entryFeed1.getName(), is("Expanded feed entry 1"));
+        assertEquals(10L, entryFeed1.getId());
+        assertEquals("Expanded feed entry 1", entryFeed1.getName());
 
-        assertThat(entryFeed2.getId(), is(20L));
-        assertThat(entryFeed2.getName(), is("Expanded feed entry 2"));
-
+        assertEquals(20L, entryFeed2.getId());
+        assertEquals("Expanded feed entry 2", entryFeed2.getName());
     }
 
     @Test

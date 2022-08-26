@@ -20,16 +20,16 @@ import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.processor.ProcessorResult;
 import com.sdl.odata.api.service.ODataRequestContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.PUT;
 import static com.sdl.odata.api.service.ODataResponse.Status.OK;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,8 +40,8 @@ import static org.mockito.Mockito.when;
  */
 public class PutMethodHandlerTest extends MethodHandlerTest {
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    public void setup() {
         super.setup("Persons");
     }
 
@@ -56,25 +56,31 @@ public class PutMethodHandlerTest extends MethodHandlerTest {
         return new PutMethodHandler(requestContext, dataSourceFactoryMock);
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testWriteWithNull() throws Exception {
         EntityDataModel entityDataModel = getEntityDataModel();
         stubForTesting(getEntity(), entityDataModel);
-        getPutMethodHandler(entityDataModel, false).handleWrite(null);
+
+        assertThrows(ODataBadRequestException.class, () ->
+                getPutMethodHandler(entityDataModel, false).handleWrite(null)
+        );
     }
 
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testWriteEntitySet() throws Exception {
         EntityDataModel entityDataModel = getEntityDataModel();
         stubForTesting(getEntity(), entityDataModel);
-        getPutMethodHandler(entityDataModel, true).handleWrite(getEntity());
+
+        assertThrows(ODataBadRequestException.class, () ->
+                getPutMethodHandler(entityDataModel, true).handleWrite(getEntity())
+        );
     }
 
     public void doWrite(Object entity, EntityDataModel entityDataModel) throws Exception {
         stubForTesting(entity,  entityDataModel);
         ProcessorResult result = getPutMethodHandler(entityDataModel, false).handleWrite(entity);
-        assertThat(result.getStatus(), is(OK));
+        assertEquals(OK, result.getStatus());
         assertNull(result.getData());
         verify(dataSourceMock, times(1)).update(entityOdataURI, entity,  entityDataModel);
     }

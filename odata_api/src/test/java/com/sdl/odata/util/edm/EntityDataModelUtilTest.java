@@ -15,11 +15,11 @@
  */
 package com.sdl.odata.util.edm;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.odata.util.edm.EntityDataModelUtil.pluralize;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The Entity Data model Util Test.
@@ -27,17 +27,17 @@ import static org.junit.Assert.assertThat;
 public class EntityDataModelUtilTest {
 
     @Test
-    public void testPluralize() throws Exception {
-        assertThat(pluralize("Bus"), is("Buses"));
-        assertThat(pluralize("Hash"), is("Hashes"));
-        assertThat(pluralize("Potato"), is("Potatoes"));
-        assertThat(pluralize("Capability"), is("Capabilities"));
-        assertThat(pluralize("Day"), is("Days"));
-        assertThat(pluralize("WebApplication"), is("WebApplications"));
+    public void testPluralize() {
+        assertEquals("Buses", pluralize("Bus"));
+        assertEquals("Hashes", pluralize("Hash"));
+        assertEquals("Potatoes", pluralize("Potato"));
+        assertEquals("Capabilities", pluralize("Capability"));
+        assertEquals("Days", pluralize("Day"));
+        assertEquals("WebApplications", pluralize("WebApplication"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testPluralizeNull() throws Exception {
-        pluralize(null);
+    @Test
+    public void testPluralizeNull() {
+        assertThrows(IllegalArgumentException.class, () -> pluralize(null));
     }
 }

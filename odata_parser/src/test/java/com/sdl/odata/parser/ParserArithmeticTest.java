@@ -29,11 +29,10 @@ import com.sdl.odata.api.parser.NumberLiteral;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.PropertyPathExpr;
 import com.sdl.odata.api.parser.SubExpr;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import scala.math.BigDecimal;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Parser Arithmetic Test.
@@ -67,15 +66,15 @@ public class ParserArithmeticTest extends ParserTestSuite {
     private void processArithmeticTree(ArithmeticExpr addExpr, GtExpr expression) {
         EntityPathExpr entityPathExpr = (EntityPathExpr) addExpr.left();
         PropertyPathExpr propertyPathExpr = (PropertyPathExpr) entityPathExpr.subPath().get();
-        assertThat(propertyPathExpr.propertyName(), is("id"));
+        assertEquals("id", propertyPathExpr.propertyName());
 
         LiteralExpr literalExpr = (LiteralExpr) addExpr.right();
         NumberLiteral nubmerLiteral = (NumberLiteral) literalExpr.value();
-        assertThat(nubmerLiteral.value(), is(new BigDecimal(new java.math.BigDecimal(5))));
+        assertEquals(new BigDecimal(new java.math.BigDecimal(5)), nubmerLiteral.value());
 
         LiteralExpr literal = (LiteralExpr) expression.right();
         NumberLiteral number = (NumberLiteral) literal.value();
-        assertThat(number.value(), is(new BigDecimal(new java.math.BigDecimal(10))));
+        assertEquals(new BigDecimal(new java.math.BigDecimal(10)), number.value());
     }
 
     public GtExpr getExprFromOperator(String operator) throws ODataException {

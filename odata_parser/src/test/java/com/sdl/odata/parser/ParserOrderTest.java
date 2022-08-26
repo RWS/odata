@@ -18,10 +18,10 @@ package com.sdl.odata.parser;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.parser.RelativeUri;
 import com.sdl.odata.api.parser.ResourcePathUri;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Parser Order Test.

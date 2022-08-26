@@ -26,8 +26,8 @@ import com.sdl.odata.parser.ODataUriParser;
 import com.sdl.odata.renderer.WriterTest;
 import com.sdl.odata.test.model.Address;
 import com.sdl.odata.test.model.Customer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,11 +38,9 @@ import java.util.Map;
 
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintJson;
 import static com.sdl.odata.test.util.TestUtils.readContent;
-import static junit.framework.TestCase.assertTrue;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * OData Json Property Test.
@@ -56,30 +54,36 @@ public class JsonPropertyWriterTest extends WriterTest {
     private static final String EXPECTED_ABSTRACT_COMPLEX_TYPE_UTF_PATH = "/json/AbstractComplexTypeUnicodeSample.json";
     private static final String UNICODE_STRING = "Japanese: 日本語 Cyrillic: Кириллица,Кирилиця,Кірыліца,Ћирилица";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         propertyWriter = new JsonPropertyWriter(odataUri, entityDataModel);
     }
 
-    @Test(expected = ODataRenderException.class)
+    @Test
     public void testTypesMismatch() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
-        propertyWriter.getPropertyAsString(1L);
+        assertThrows(ODataRenderException.class, () ->
+                propertyWriter.getPropertyAsString(1L)
+        );
     }
 
-    @Test(expected = ODataRenderException.class)
+    @Test
     public void testTypesMismatchCollection() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
 
         // Types are not same because expected is collection of strings not string
-        propertyWriter.getPropertyAsString("test");
+        assertThrows(ODataRenderException.class, () ->
+                propertyWriter.getPropertyAsString("test")
+        );
     }
 
-    @Test(expected = ODataRenderException.class)
+    @Test
     public void testTypesMismatchComplexType() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
-        propertyWriter.getPropertyAsString(Lists.newArrayList(new Customer()));
+        assertThrows(ODataRenderException.class, () ->
+                propertyWriter.getPropertyAsString(Lists.newArrayList(new Customer()))
+        );
     }
 
     @Test
@@ -95,8 +99,9 @@ public class JsonPropertyWriterTest extends WriterTest {
         String result = propertyWriter.getPropertyAsString(1L);
 
         // assertions
-        Map<String, Object> resultMap = assertResult(result, "$metadata#Customers(1)/id", false, false, 1);
-        assertThat(resultMap.get(JsonConstants.VALUE), is("1"));
+        Map<String, Object> resultMap = assertResult(result, "$metadata#Customers(1)/id",
+                false, false, 1);
+        assertEquals("1", resultMap.get(JsonConstants.VALUE));
     }
 
     @Test
@@ -107,7 +112,7 @@ public class JsonPropertyWriterTest extends WriterTest {
         String result = propertyWriter.getPropertyAsString(UNICODE_STRING);
 
         Map<String, Object> resultMap = assertResult(result, "$metadata#Customers(1)/name", false, false, 1);
-        assertThat(resultMap.get(JsonConstants.VALUE), is(UNICODE_STRING));
+        assertEquals(UNICODE_STRING, resultMap.get(JsonConstants.VALUE));
     }
 
     @Test
@@ -117,14 +122,16 @@ public class JsonPropertyWriterTest extends WriterTest {
 
         // assertions
         Map<String, Object> resultMap = assertResult(result, "/odata.svc/$metadata#Customers(1)/Phone", true, false, 2);
-        assertThat(((List) resultMap.get(JsonConstants.VALUE)).get(0), is("test1"));
-        assertThat(((List) resultMap.get(JsonConstants.VALUE)).get(1), is("test2"));
+        assertEquals("test1", ((List) resultMap.get(JsonConstants.VALUE)).get(0));
+        assertEquals("test2", ((List) resultMap.get(JsonConstants.VALUE)).get(1));
     }
 
-    @Test(expected = ODataRenderException.class)
+    @Test
     public void testJSONNullProperty() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
-        propertyWriter.getPropertyAsString(null);
+        assertThrows(ODataRenderException.class, () ->
+                propertyWriter.getPropertyAsString(null)
+        );
     }
 
     @Test
@@ -168,20 +175,21 @@ public class JsonPropertyWriterTest extends WriterTest {
 
     private void assertAddressList(Map<String, Object> results) {
         Object value = results.get(JsonConstants.VALUE);
-        assertThat(value, instanceOf(List.class));
+
+        assertTrue(value instanceof List);
         List values = (List) value;
         int counter = 1;
         for (Object obj : values) {
-            assertThat(obj, instanceOf(Map.class));
+            assertTrue(obj instanceof Map);
 
             @SuppressWarnings("unchecked")
             Map<String, String> address = (Map<String, String>) obj;
 
-            assertThat(address.get("city"), is("city" + counter));
-            assertThat(address.get("Street"), is("street" + counter));
-            assertThat(address.get("houseNumber"), is("hn" + counter));
-            assertThat(address.get("postalCode"), is("postal code" + counter));
-            assertThat(address.get("country"), is("country" + counter));
+            assertEquals("city" + counter, address.get("city"));
+            assertEquals("street" + counter, address.get("Street"));
+            assertEquals("hn" + counter, address.get("houseNumber"));
+            assertEquals("postal code" + counter, address.get("postalCode"));
+            assertEquals("country" + counter, address.get("country"));
             counter += 1;
         }
     }
@@ -192,11 +200,11 @@ public class JsonPropertyWriterTest extends WriterTest {
         assertTrue(((String) (resultMap.get(JsonConstants.CONTEXT))).endsWith(context));
         Object value = resultMap.get(JsonConstants.VALUE);
         if (isCollectionExpected) {
-            assertThat(value, instanceOf(List.class));
+            assertTrue(value instanceof List);
             List values = (List) value;
-            assertThat(values.isEmpty(), is(isEmpty));
+            assertEquals(isEmpty, values.isEmpty());
             if (!isEmpty) {
-                assertThat(values.size(), is(size));
+                assertEquals(size, values.size());
             }
         }
         return resultMap;

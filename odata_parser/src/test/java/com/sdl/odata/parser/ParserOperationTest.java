@@ -27,13 +27,12 @@ import com.sdl.odata.test.model.IdNamePairSample;
 import com.sdl.odata.test.model.OrderLine;
 import com.sdl.odata.test.model.PrimitiveTypesSample;
 import com.sdl.odata.test.model.Product;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Parser Operation Test.
@@ -46,22 +45,26 @@ public class ParserOperationTest extends ParserTestSuite {
         uri = parser.parseUri(SERVICE_ROOT, model);
         assertNotNull(uri);
         // Service root should be full qualified name of localhost + odata.svc preffix
-        assertThat(uri.serviceRoot(), is(SERVICE_ROOT.substring(0, SERVICE_ROOT.length() - 1)));
-        assertThat(uri.relativeUri(), is(notNullValue()));
+        assertEquals(SERVICE_ROOT.substring(0, SERVICE_ROOT.length() - 1), uri.serviceRoot());
+        assertNotNull(uri.relativeUri());
 
         RelativeUri relative = uri.relativeUri();
         assertTrue(relative instanceof ServiceRootUri);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testIncorrectModel() throws ODataException {
+    @Test
+    public void testIncorrectModel() {
         AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
-        factory.addClass(EmptyDummy.class);
-        parser.parseUri(SERVICE_ROOT, factory.buildEntityDataModel());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+                    factory.addClass(EmptyDummy.class);
+                    parser.parseUri(SERVICE_ROOT, factory.buildEntityDataModel());
+                }
+        );
     }
 
-    @Test(expected = ODataUriParseException.class)
-    public void testIfExistingModelIsAbsent() throws ODataException {
+    @Test
+    public void testIfExistingModelIsAbsent() {
         AnnotationEntityDataModelFactory factory = new AnnotationEntityDataModelFactory();
         // Order.class is not added
         factory.addClass(Address.class);
@@ -72,7 +75,10 @@ public class ParserOperationTest extends ParserTestSuite {
         factory.addClass(OrderLine.class);
         factory.addClass(PrimitiveTypesSample.class);
         factory.addClass(Product.class);
-        parser.parseUri(SERVICE_ROOT + "Orders(1)", factory.buildEntityDataModel());
+
+        assertThrows(ODataUriParseException.class, () ->
+                parser.parseUri(SERVICE_ROOT + "Orders(1)", factory.buildEntityDataModel())
+        );
     }
 
     /**

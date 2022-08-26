@@ -34,12 +34,12 @@ import com.sdl.odata.processor.model.ODataAddress;
 import com.sdl.odata.processor.model.ODataMobilePhone;
 import com.sdl.odata.processor.model.ODataPerson;
 import com.sdl.odata.test.util.TestUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
@@ -57,9 +57,9 @@ import static com.sdl.odata.api.service.ODataResponse.Status.OK;
 import static com.sdl.odata.test.util.TestUtils.SERVICE_ROOT;
 import static com.sdl.odata.test.util.TestUtils.createODataRequestContext;
 import static com.sdl.odata.test.util.TestUtils.createODataUriEntityKeys;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -70,7 +70,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 /**
  * The OData Writer Processor Impl Test.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ODataWriteProcessorImplTest {
     private EntityDataModel entityDataModel;
     private DataSource dataSource = mock(DataSource.class);
@@ -79,15 +79,13 @@ public class ODataWriteProcessorImplTest {
     private String entityKey;
     private String entityType;
 
-
     @Mock
     private DataSourceFactory dataSourceFactory;
 
     @InjectMocks
     private ODataWriteProcessorImpl oDataWriteProcessor;
 
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setupEntity();
 
@@ -113,34 +111,37 @@ public class ODataWriteProcessorImplTest {
         requestContext = createContextWithEntitySet(GET);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(METHOD_NOT_ALLOWED));
-        assertThat(result.getData(), is(nullValue()));
+        assertEquals(METHOD_NOT_ALLOWED, result.getStatus());
+        assertNull(result.getData());
     }
 
     @Test
     public void testPost() throws Exception {
-
         requestContext = createContextWithEntitySet(POST);
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
         when(dataSource.create(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(CREATED));
-        assertThat(result.getData(), is(entity));
+        assertEquals(CREATED, result.getStatus());
+        assertEquals(entity, result.getData());
         verify(dataSource, times(1)).create(requestContext.getUri(), entity, entityDataModel);
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testPostWithNullEntity() throws Exception {
         requestContext = createContextWithEntitySet(POST);
-        oDataWriteProcessor.write(requestContext, null);
+        assertThrows(ODataBadRequestException.class, () ->
+                oDataWriteProcessor.write(requestContext, null)
+        );
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testPostEntity() throws Exception {
         requestContext = createContextWithEntity(POST, false);
-        oDataWriteProcessor.write(requestContext, entity);
+        assertThrows(ODataBadRequestException.class, () ->
+                oDataWriteProcessor.write(requestContext, entity)
+        );
     }
 
     @Test
@@ -150,31 +151,34 @@ public class ODataWriteProcessorImplTest {
         when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
         ProcessorResult result = oDataWriteProcessor.write(requestContext, null);
-        assertThat(result.getStatus(), is(NO_CONTENT));
+        assertEquals(NO_CONTENT, result.getStatus());
         verify(dataSource, times(1)).delete(requestContext.getUri(), entityDataModel);
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testDeleteWithoutNull() throws Exception {
 
         requestContext = createContextForDelete();
-
-        ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(OK));
-        assertThat(result.getData(), is(entity));
+        assertThrows(ODataBadRequestException.class, () ->
+                oDataWriteProcessor.write(requestContext, entity)
+        );
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testPutWithNullEntity() throws ODataException, UnsupportedEncodingException {
         requestContext = createContextWithEntitySet(PUT);
-        oDataWriteProcessor.write(requestContext, null);
+        assertThrows(ODataBadRequestException.class, () ->
+                oDataWriteProcessor.write(requestContext, null)
+        );
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testPatchWithNullEntity() throws ODataException, UnsupportedEncodingException {
         requestContext = createContextWithEntitySet(PATCH);
 
-        oDataWriteProcessor.write(requestContext, null);
+        assertThrows(ODataBadRequestException.class, () ->
+                oDataWriteProcessor.write(requestContext, null)
+        );
     }
 
     @Test
@@ -185,24 +189,27 @@ public class ODataWriteProcessorImplTest {
         when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(OK));
-        assertThat(result.getData(), is(entity));
+        assertEquals(OK, result.getStatus());
+        assertEquals(entity, result.getData());
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
-        assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
-
+        assertEquals(1, headers.size());
+        assertEquals("http://localhost:8080/odata.svc/Persons('" + entityKey + "')", headers.get("Location"));
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testPutWithEntitySet() throws ODataException, UnsupportedEncodingException {
         requestContext = createContextWithEntitySet(PUT);
-        oDataWriteProcessor.write(requestContext, entity);
+        assertThrows(ODataBadRequestException.class, () ->
+                oDataWriteProcessor.write(requestContext, entity)
+        );
     }
 
-    @Test(expected = ODataBadRequestException.class)
+    @Test
     public void testPatchWithEntitySet() throws ODataException, UnsupportedEncodingException {
         requestContext = createContextWithEntitySet(PATCH);
-        oDataWriteProcessor.write(requestContext, entity);
+        assertThrows(ODataBadRequestException.class, () ->
+                oDataWriteProcessor.write(requestContext, entity)
+        );
     }
 
     @Test
@@ -213,12 +220,11 @@ public class ODataWriteProcessorImplTest {
         when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(NO_CONTENT));
-        assertThat(result.getData(), is(nullValue()));
+        assertEquals(NO_CONTENT, result.getStatus());
+        assertNull(result.getData());
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
-        assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
-
+        assertEquals(1, headers.size());
+        assertEquals("http://localhost:8080/odata.svc/Persons('" + entityKey + "')", headers.get("Location"));
     }
 
     @Test
@@ -229,11 +235,12 @@ public class ODataWriteProcessorImplTest {
         when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(OK));
-        assertThat(result.getData(), is(entity));
+        assertEquals(OK, result.getStatus());
+        assertEquals(entity, result.getData());
+
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
-        assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
+        assertEquals(1, headers.size());
+        assertEquals("http://localhost:8080/odata.svc/Persons('" + entityKey + "')", headers.get("Location"));
     }
 
     @Test
@@ -244,11 +251,11 @@ public class ODataWriteProcessorImplTest {
         when(dataSource.update(requestContext.getUri(), entity, entityDataModel)).thenReturn(entity);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(NO_CONTENT));
-        assertThat(result.getData(), is(nullValue()));
+        assertEquals(NO_CONTENT, result.getStatus());
+        assertNull(result.getData());
         Map<String, String> headers = result.getHeaders();
-        assertThat(headers.size(), is(1));
-        assertThat(headers.get("Location"), is("http://localhost:8080/odata.svc/Persons('" + entityKey + "')"));
+        assertEquals(1, headers.size());
+        assertEquals("http://localhost:8080/odata.svc/Persons('" + entityKey + "')", headers.get("Location"));
     }
 
     @Test
@@ -259,7 +266,7 @@ public class ODataWriteProcessorImplTest {
                 entity.getClass().getSimpleName())).thenReturn(dataSource);
 
         ProcessorResult result = oDataWriteProcessor.write(requestContext, entity);
-        assertThat(result.getStatus(), is(METHOD_NOT_ALLOWED));
+        assertEquals(METHOD_NOT_ALLOWED, result.getStatus());
     }
 
     private ODataRequestContext createContextWithEntitySet(ODataRequest.Method method)

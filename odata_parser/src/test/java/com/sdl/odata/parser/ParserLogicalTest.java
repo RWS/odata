@@ -31,13 +31,12 @@ import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.parser.OrExpr;
 import com.sdl.odata.api.parser.PropertyPathExpr;
 import com.sdl.odata.api.parser.StringLiteral;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import scala.collection.Iterator;
 import scala.collection.immutable.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Parser Logical Test.
@@ -83,7 +82,7 @@ public class ParserLogicalTest extends ParserTestSuite {
 
     private void processQueryFunction(FilterOption option, String boolMethod) {
         BooleanMethodCallExpr methodCall = (BooleanMethodCallExpr) option.expression();
-        assertThat(methodCall.methodName(), is(boolMethod));
+        assertEquals(boolMethod, methodCall.methodName());
         List<Expression> args = methodCall.args();
         Iterator iterator = args.iterator();
         while (iterator.hasNext()) {
@@ -91,11 +90,12 @@ public class ParserLogicalTest extends ParserTestSuite {
             if (cursor instanceof EntityPathExpr) {
                 EntityPathExpr pathExpr = (EntityPathExpr) cursor;
                 PropertyPathExpr path = (PropertyPathExpr) pathExpr.subPath().get();
-                assertThat(path.propertyName(), is("name"));
+                assertEquals(boolMethod, methodCall.methodName());
+                assertEquals("name", path.propertyName());
             } else if (cursor instanceof LiteralExpr) {
                 LiteralExpr literalExpr = (LiteralExpr) cursor;
                 StringLiteral stringLiteral = (StringLiteral) literalExpr.value();
-                assertThat(stringLiteral.value(), is("John"));
+                assertEquals("John", stringLiteral.value());
             }
         }
     }
@@ -110,9 +110,9 @@ public class ParserLogicalTest extends ParserTestSuite {
     private void processExpr(ComparisonExpr leExpr) {
         EntityPathExpr leftPathExpr = (EntityPathExpr) leExpr.left();
         PropertyPathExpr leftPath = (PropertyPathExpr) leftPathExpr.subPath().get();
-        assertThat(leftPath.propertyName(), is("id"));
+        assertEquals("id", leftPath.propertyName());
         LiteralExpr literalExpr = (LiteralExpr) leExpr.right();
         NumberLiteral numberLiteral = (NumberLiteral) literalExpr.value();
-        assertThat(numberLiteral.value(), is(new scala.math.BigDecimal(new java.math.BigDecimal(20))));
+        assertEquals(new scala.math.BigDecimal(new java.math.BigDecimal(20)), numberLiteral.value());
     }
 }

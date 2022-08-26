@@ -16,11 +16,11 @@
 package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataActionClientQuery;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for {@link ActionImportClientQuery}.

@@ -16,12 +16,13 @@
 package com.sdl.odata.api.service;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link ODataResponse}.
@@ -37,12 +38,12 @@ public class ODataResponseTest {
                 .setBody(new byte[]{1, 2, 3})
                 .build();
 
-        assertThat(response.getStatus(), is(ODataResponse.Status.OK));
-        assertThat(response.getHeaders().size(), is(3));
-        assertThat(response.getHeader("one"), is("value1"));
-        assertThat(response.getHeader("TWO"), is("value2"));
-        assertThat(response.getHeader("Three"), is("value3"));
-        assertThat(response.getBody(), is(new byte[]{1, 2, 3}));
+        assertEquals(ODataResponse.Status.OK, response.getStatus());
+        assertEquals(3, response.getHeaders().size());
+        assertEquals("value1", response.getHeader("one"));
+        assertEquals("value2", response.getHeader("TWO"));
+        assertEquals("value3", response.getHeader("Three"));
+        assertArrayEquals(response.getBody(), new byte[]{1, 2, 3});
     }
 
     @Test
@@ -52,20 +53,20 @@ public class ODataResponseTest {
                 .setBodyText("The bike costs € 725", "UTF-8")
                 .build();
 
-        assertThat(response.getStatus(), is(ODataResponse.Status.CREATED));
-        assertThat(response.getBodyText("UTF-8"), is("The bike costs € 725"));
+        assertEquals(ODataResponse.Status.CREATED, response.getStatus());
+        assertEquals("The bike costs € 725", response.getBodyText("UTF-8"));
     }
 
     @Test
     public void testStatusForCode() {
-        assertThat(ODataResponse.Status.forCode(200), is(ODataResponse.Status.OK));
-        assertThat(ODataResponse.Status.forCode(201), is(ODataResponse.Status.CREATED));
-        assertThat(ODataResponse.Status.forCode(404), is(ODataResponse.Status.NOT_FOUND));
-        assertThat(ODataResponse.Status.forCode(500), is(ODataResponse.Status.INTERNAL_SERVER_ERROR));
+        assertEquals(ODataResponse.Status.OK, ODataResponse.Status.forCode(200));
+        assertEquals(ODataResponse.Status.CREATED, ODataResponse.Status.forCode(201));
+        assertEquals(ODataResponse.Status.NOT_FOUND, ODataResponse.Status.forCode(404));
+        assertEquals(ODataResponse.Status.INTERNAL_SERVER_ERROR, ODataResponse.Status.forCode(500));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testStatusForCodeException() {
-        ODataResponse.Status.forCode(0);
+        assertThrows(IllegalArgumentException.class, () -> ODataResponse.Status.forCode(0));
     }
 }

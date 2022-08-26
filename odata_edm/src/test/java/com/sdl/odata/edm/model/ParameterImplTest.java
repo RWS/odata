@@ -16,11 +16,10 @@
 package com.sdl.odata.edm.model;
 
 import com.sdl.odata.api.edm.model.Parameter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Test for ParameterImpl class.
@@ -40,12 +39,12 @@ public class ParameterImplTest {
                 .setSRID(205L);
 
         Parameter parameter = builder.build();
-        assertThat(parameter.getName(), is("someParameter"));
-        assertThat(parameter.getType(), is("someType"));
-        assertThat(parameter.getPrecision(), is(202L));
-        assertThat(parameter.getMaxLength(), is(203L));
-        assertThat(parameter.getScale(), is(204L));
-        assertThat(parameter.getSRID(), is(205L));
+        assertEquals("someParameter", parameter.getName());
+        assertEquals("someType", parameter.getType());
+        assertEquals(202L, parameter.getPrecision());
+        assertEquals(203L, parameter.getMaxLength());
+        assertEquals(204L, parameter.getScale());
+        assertEquals(205L, parameter.getSRID());
         assertFalse(parameter.isNullable());
         assertFalse(parameter.isUnicode());
     }

@@ -18,16 +18,15 @@ package com.sdl.odata.edm.model;
 import com.sdl.odata.api.edm.model.Facets;
 import com.sdl.odata.api.edm.model.PrimitiveType;
 import com.sdl.odata.api.edm.model.Property;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -60,17 +59,17 @@ public class PropertyImplTest {
                 .setIsUnicode(false)
                 .build();
 
-        assertThat(property.getName(), is("propname"));
-        assertThat(property.getTypeName(), is(PrimitiveType.STRING.getFullyQualifiedName()));
-        assertNull("Element type name should be null for non-collection", property.getElementTypeName());
+        assertEquals("propname", property.getName());
+        assertEquals(PrimitiveType.STRING.getFullyQualifiedName(), property.getTypeName());
+        assertNull(property.getElementTypeName(), "Element type name should be null for non-collection");
         assertFalse(property.isCollection());
         assertFalse(property.isNullable());
-        assertThat(property.getJavaField().getName(), is(field.getName()));
-        assertThat(property.getDefaultValue(), is("x"));
-        assertThat(property.getMaxLength(), is(Facets.MAX_LENGTH_MAX));
-        assertThat(property.getPrecision(), is(5L));
-        assertThat(property.getScale(), is(10L));
-        assertThat(property.getSRID(), is(1234L));
+        assertEquals(field.getName(), property.getJavaField().getName());
+        assertEquals("x", property.getDefaultValue());
+        assertEquals(Facets.MAX_LENGTH_MAX, property.getMaxLength());
+        assertEquals(5L, property.getPrecision());
+        assertEquals(10L, property.getScale());
+        assertEquals(1234L, property.getSRID());
         assertFalse(property.isUnicode());
     }
 
@@ -86,11 +85,11 @@ public class PropertyImplTest {
                 .setJavaField(field)
                 .build();
 
-        assertThat(property.getName(), is("propname"));
-        assertThat(property.getTypeName(), is(typeName));
-        assertThat(property.getElementTypeName(), is(PrimitiveType.INT32.getFullyQualifiedName()));
+        assertEquals("propname", property.getName());
+        assertEquals(typeName, property.getTypeName());
+        assertEquals(PrimitiveType.INT32.getFullyQualifiedName(), property.getElementTypeName());
         assertTrue(property.isCollection());
-        assertThat(property.getJavaField().getName(), is(field.getName()));
+        assertEquals(field.getName(), property.getJavaField().getName());
     }
 
     @Test
@@ -110,10 +109,10 @@ public class PropertyImplTest {
         verify(typeNameResolver).resolveTypeName(String.class);
         verifyNoMoreInteractions(typeNameResolver);
 
-        assertThat(property.getTypeName(), is(PrimitiveType.STRING.getFullyQualifiedName()));
-        assertNull("Element type name should be null for non-collection", property.getElementTypeName());
+        assertEquals(PrimitiveType.STRING.getFullyQualifiedName(), property.getTypeName());
+        assertNull(property.getElementTypeName(), "Element type name should be null for non-collection");
         assertFalse(property.isCollection());
-        assertThat(property.getJavaField().getName(), is(field.getName()));
+        assertEquals(field.getName(), property.getJavaField().getName());
     }
 
     @Test
@@ -133,10 +132,10 @@ public class PropertyImplTest {
         verify(typeNameResolver).resolveTypeName(long.class);
         verifyNoMoreInteractions(typeNameResolver);
 
-        assertThat(property.getTypeName(), is("Collection(" + PrimitiveType.INT64.getFullyQualifiedName() + ")"));
-        assertThat(property.getElementTypeName(), is(PrimitiveType.INT64.getFullyQualifiedName()));
+        assertEquals("Collection(" + PrimitiveType.INT64.getFullyQualifiedName() + ")", property.getTypeName());
+        assertEquals(PrimitiveType.INT64.getFullyQualifiedName(), property.getElementTypeName());
         assertTrue(property.isCollection());
-        assertThat(property.getJavaField().getName(), is(field.getName()));
+        assertEquals(field.getName(), property.getJavaField().getName());
     }
 
     @Test
@@ -156,10 +155,11 @@ public class PropertyImplTest {
         verify(typeNameResolver).resolveTypeName(Integer.class);
         verifyNoMoreInteractions(typeNameResolver);
 
-        assertThat(property.getTypeName(), is("Collection(" + PrimitiveType.INT32.getFullyQualifiedName() + ")"));
-        assertThat(property.getElementTypeName(), is(PrimitiveType.INT32.getFullyQualifiedName()));
+        assertEquals("Collection(" + PrimitiveType.INT32.getFullyQualifiedName() + ")",
+                property.getTypeName());
+        assertEquals(PrimitiveType.INT32.getFullyQualifiedName(), property.getElementTypeName());
         assertTrue(property.isCollection());
-        assertThat(property.getJavaField().getName(), is(field.getName()));
+        assertEquals(field.getName(), property.getJavaField().getName());
     }
 
     @Test
@@ -172,17 +172,17 @@ public class PropertyImplTest {
                 .setJavaField(field)
                 .build();
 
-        assertThat(property.getName(), is("propname"));
-        assertThat(property.getTypeName(), is(PrimitiveType.STRING.getFullyQualifiedName()));
-        assertNull("Element type name should be null for non-collection", property.getElementTypeName());
+        assertEquals("propname", property.getName());
+        assertEquals(PrimitiveType.STRING.getFullyQualifiedName(), property.getTypeName());
+        assertNull(property.getElementTypeName(), "Element type name should be null for non-collection");
         assertFalse(property.isCollection());
-        assertTrue("isNullable should be true by default", property.isNullable());
-        assertThat(property.getJavaField().getName(), is(field.getName()));
+        assertTrue(property.isNullable(), "isNullable should be true by default");
+        assertEquals(field.getName(), property.getJavaField().getName());
         assertNull(property.getDefaultValue());
-        assertThat(property.getMaxLength(), is(Facets.MAX_LENGTH_UNSPECIFIED));
-        assertThat(property.getPrecision(), is(Facets.PRECISION_UNSPECIFIED));
-        assertThat(property.getScale(), is(Facets.SCALE_UNSPECIFIED));
-        assertThat(property.getSRID(), is(Facets.SRID_UNSPECIFIED));
-        assertTrue("isUnicode should be true by default", property.isUnicode());
+        assertEquals(Facets.MAX_LENGTH_UNSPECIFIED, property.getMaxLength());
+        assertEquals(Facets.PRECISION_UNSPECIFIED, property.getPrecision());
+        assertEquals(Facets.SCALE_UNSPECIFIED, property.getScale());
+        assertEquals(Facets.SRID_UNSPECIFIED, property.getSRID());
+        assertTrue(property.isUnicode(), "isUnicode should be true by default");
     }
 }

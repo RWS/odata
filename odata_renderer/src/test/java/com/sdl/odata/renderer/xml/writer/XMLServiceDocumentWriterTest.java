@@ -19,13 +19,14 @@ import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.renderer.WriterTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
 import static com.sdl.odata.test.util.TestUtils.readContent;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.mock;
 public class XMLServiceDocumentWriterTest extends WriterTest {
     private static final String SERVICE_DOCUMENT = "/xml/ServiceDocument.xml";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
     }
@@ -47,12 +48,12 @@ public class XMLServiceDocumentWriterTest extends WriterTest {
         assertEquals(prettyPrintXml(readContent(SERVICE_DOCUMENT)), prettyPrintXml(serviceDocument));
     }
 
-    @Test(expected = ODataRenderException.class)
-    public void testBuildServiceDocumentException() throws Exception {
+    @Test
+    public void testBuildServiceDocumentException() {
         EntityDataModel entityDataModel = mock(EntityDataModel.class);
-        String serviceDocument = new XMLServiceDocumentWriter(odataUri, entityDataModel).buildServiceDocument();
 
-        assertNotNull(serviceDocument);
-        assertEquals(prettyPrintXml(readContent(SERVICE_DOCUMENT)), prettyPrintXml(serviceDocument));
+        assertThrows(ODataRenderException.class, () ->
+                new XMLServiceDocumentWriter(odataUri, entityDataModel).buildServiceDocument()
+        );
     }
 }

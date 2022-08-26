@@ -15,11 +15,11 @@
  */
 package com.sdl.odata.api.edm.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link AbstractType}.
@@ -28,42 +28,42 @@ public class AbstractTypeTest {
 
     @Test
     public void testForName() {
-        assertThat(AbstractType.forName("PrimitiveType"), is(AbstractType.PRIMITIVE_TYPE));
-        assertThat(AbstractType.forName("ComplexType"), is(AbstractType.COMPLEX_TYPE));
-        assertThat(AbstractType.forName("EntityType"), is(AbstractType.ENTITY_TYPE));
+        assertEquals(AbstractType.PRIMITIVE_TYPE, AbstractType.forName("PrimitiveType"));
+        assertEquals(AbstractType.COMPLEX_TYPE, AbstractType.forName("ComplexType"));
+        assertEquals(AbstractType.ENTITY_TYPE, AbstractType.forName("EntityType"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testForNameException() {
-        AbstractType.forName("String");
+        assertThrows(IllegalArgumentException.class, () -> AbstractType.forName("String"));
     }
 
     @Test
     public void testGetMetaType() {
-        assertThat(AbstractType.PRIMITIVE_TYPE.getMetaType(), is(MetaType.ABSTRACT));
-        assertThat(AbstractType.COMPLEX_TYPE.getMetaType(), is(MetaType.ABSTRACT));
-        assertThat(AbstractType.ENTITY_TYPE.getMetaType(), is(MetaType.ABSTRACT));
+        assertEquals(MetaType.ABSTRACT, AbstractType.PRIMITIVE_TYPE.getMetaType());
+        assertEquals(MetaType.ABSTRACT, AbstractType.COMPLEX_TYPE.getMetaType());
+        assertEquals(MetaType.ABSTRACT, AbstractType.ENTITY_TYPE.getMetaType());
     }
 
     @Test
     public void testGetName() {
-        assertThat(AbstractType.PRIMITIVE_TYPE.getName(), is("PrimitiveType"));
-        assertThat(AbstractType.COMPLEX_TYPE.getName(), is("ComplexType"));
-        assertThat(AbstractType.ENTITY_TYPE.getName(), is("EntityType"));
+        assertEquals("PrimitiveType", AbstractType.PRIMITIVE_TYPE.getName());
+        assertEquals("ComplexType", AbstractType.COMPLEX_TYPE.getName());
+        assertEquals("EntityType", AbstractType.ENTITY_TYPE.getName());
     }
 
     @Test
     public void testGetNamespace() {
-        assertThat(AbstractType.PRIMITIVE_TYPE.getNamespace(), is("Edm"));
-        assertThat(AbstractType.COMPLEX_TYPE.getNamespace(), is("Edm"));
-        assertThat(AbstractType.ENTITY_TYPE.getNamespace(), is("Edm"));
+        assertEquals("Edm", AbstractType.PRIMITIVE_TYPE.getNamespace());
+        assertEquals("Edm", AbstractType.COMPLEX_TYPE.getNamespace());
+        assertEquals("Edm", AbstractType.ENTITY_TYPE.getNamespace());
     }
 
     @Test
     public void testGetFullyQualifiedName() {
-        assertThat(AbstractType.PRIMITIVE_TYPE.getFullyQualifiedName(), is("Edm.PrimitiveType"));
-        assertThat(AbstractType.COMPLEX_TYPE.getFullyQualifiedName(), is("Edm.ComplexType"));
-        assertThat(AbstractType.ENTITY_TYPE.getFullyQualifiedName(), is("Edm.EntityType"));
+        assertEquals("Edm.PrimitiveType", AbstractType.PRIMITIVE_TYPE.getFullyQualifiedName());
+        assertEquals("Edm.ComplexType", AbstractType.COMPLEX_TYPE.getFullyQualifiedName());
+        assertEquals("Edm.EntityType", AbstractType.ENTITY_TYPE.getFullyQualifiedName());
     }
 
     @Test

@@ -18,11 +18,13 @@ package com.sdl.odata.edm.factory.annotations;
 import com.sdl.odata.api.edm.annotations.EdmFunction;
 import com.sdl.odata.api.edm.model.Function;
 import com.sdl.odata.test.model.FunctionSample;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Unit test for {@link AnnotationFunctionFactory}.
@@ -31,7 +33,7 @@ public class AnnotationFunctionFactoryTest {
 
     private AnnotationFunctionFactory factory;
 
-    @Before
+    @BeforeEach
     public void setup() {
         factory = new AnnotationFunctionFactory();
     }
@@ -61,9 +63,9 @@ public class AnnotationFunctionFactoryTest {
         assertTrue(function.isComposable());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFunctionWithoutEdmReturnType() {
-        factory.build(WrongFunctionSample.class);
+        assertThrows(IllegalArgumentException.class, () -> factory.build(WrongFunctionSample.class));
     }
 
     @Test

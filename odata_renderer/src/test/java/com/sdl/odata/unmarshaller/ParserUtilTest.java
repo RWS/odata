@@ -18,7 +18,7 @@ package com.sdl.odata.unmarshaller;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.PrimitiveType;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,10 +28,10 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static com.sdl.odata.api.parser.util.ParserUtil.parsePrimitiveValue;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Parser Util Test.
@@ -46,91 +46,106 @@ public class ParserUtilTest {
 
     @Test
     public void testParseNumericTypes() throws ODataException {
-        assertThat(parsePrimitiveValue("36", PrimitiveType.BYTE), is((byte) 36));
-        assertThat(parsePrimitiveValue("234", PrimitiveType.BYTE), is((byte) 234));
+        assertEquals((byte) 36, parsePrimitiveValue("36", PrimitiveType.BYTE));
+        assertEquals((byte) 234, parsePrimitiveValue("234", PrimitiveType.BYTE));
+        assertEquals((byte) 36, parsePrimitiveValue("36", PrimitiveType.SBYTE));
+        assertEquals((byte) -120, parsePrimitiveValue("-120", PrimitiveType.SBYTE));
+        assertEquals((short) 3476, parsePrimitiveValue("3476", PrimitiveType.INT16));
+        assertEquals(2343771, parsePrimitiveValue("2343771", PrimitiveType.INT32));
+        assertEquals(84723648623L, parsePrimitiveValue("84723648623", PrimitiveType.INT64));
 
-        assertThat(parsePrimitiveValue("36", PrimitiveType.SBYTE), is((byte) 36));
-        assertThat(parsePrimitiveValue("-120", PrimitiveType.SBYTE), is((byte) -120));
-
-        assertThat(parsePrimitiveValue("3476", PrimitiveType.INT16), is((short) 3476));
-        assertThat(parsePrimitiveValue("2343771", PrimitiveType.INT32), is(2343771));
-        assertThat(parsePrimitiveValue("84723648623", PrimitiveType.INT64), is(84723648623L));
-
-        assertThat(parsePrimitiveValue("6432477478236420.234807", PrimitiveType.DECIMAL),
-                is(new BigDecimal("6432477478236420.234807")));
-
-        assertThat(parsePrimitiveValue("123.625", PrimitiveType.DOUBLE), is(123.625));
-        assertThat(parsePrimitiveValue("8.75", PrimitiveType.SINGLE), is(8.75f));
+        assertEquals(new BigDecimal("6432477478236420.234807"),
+                parsePrimitiveValue("6432477478236420.234807", PrimitiveType.DECIMAL));
+        assertEquals(123.625, parsePrimitiveValue("123.625", PrimitiveType.DOUBLE));
+        assertEquals(8.75f, parsePrimitiveValue("8.75", PrimitiveType.SINGLE));
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseByteInvalid1() throws ODataException {
-        parsePrimitiveValue("-1", PrimitiveType.BYTE);
+    @Test
+    public void testParseByteInvalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-1", PrimitiveType.BYTE)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseByteInvalid2() throws ODataException {
-        parsePrimitiveValue("256", PrimitiveType.BYTE);
+    @Test
+    public void testParseByteInvalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("256", PrimitiveType.BYTE)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseSByteInvalid1() throws ODataException {
-        parsePrimitiveValue("-129", PrimitiveType.SBYTE);
+    @Test
+    public void testParseSByteInvalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-129", PrimitiveType.SBYTE)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseSByteInvalid2() throws ODataException {
-        parsePrimitiveValue("128", PrimitiveType.SBYTE);
+    @Test
+    public void testParseSByteInvalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("128", PrimitiveType.SBYTE)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt16Invalid1() throws ODataException {
-        parsePrimitiveValue("-32769", PrimitiveType.INT16);
+    @Test
+    public void testParseInt16Invalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-32769", PrimitiveType.INT16)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt16Invalid2() throws ODataException {
-        parsePrimitiveValue("32768", PrimitiveType.INT16);
+    @Test
+    public void testParseInt16Invalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("32768", PrimitiveType.INT16)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt32Invalid1() throws ODataException {
-        parsePrimitiveValue("-2147483649", PrimitiveType.INT32);
+    @Test
+    public void testParseInt32Invalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-2147483649", PrimitiveType.INT32)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt32Invalid2() throws ODataException {
-        parsePrimitiveValue("2147483648", PrimitiveType.INT32);
+    @Test
+    public void testParseInt32Invalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("2147483648", PrimitiveType.INT32)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt64Invalid1() throws ODataException {
-        parsePrimitiveValue("-9223372036854775809", PrimitiveType.INT64);
+    @Test
+    public void testParseInt64Invalid1() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("-9223372036854775809", PrimitiveType.INT64)
+        );
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testParseInt64Invalid2() throws ODataException {
-        parsePrimitiveValue("9223372036854775808", PrimitiveType.INT64);
+    @Test
+    public void testParseInt64Invalid2() {
+        assertThrows(ODataUnmarshallingException.class, () ->
+                parsePrimitiveValue("9223372036854775808", PrimitiveType.INT64)
+        );
     }
 
     @Test
     public void testParseDateTimeTypes() throws ODataException {
-        assertThat(parsePrimitiveValue("2014-07-31", PrimitiveType.DATE),
-                is(LocalDate.parse("2014-07-31")));
+        assertEquals(LocalDate.parse("2014-07-31"), parsePrimitiveValue("2014-07-31", PrimitiveType.DATE));
 
-        assertThat(parsePrimitiveValue("2014-07-31T12:34:03.023Z", PrimitiveType.DATE_TIME_OFFSET),
-                is(ZonedDateTime.parse("2014-07-31T12:34:03.023Z")));
+        assertEquals(ZonedDateTime.parse("2014-07-31T12:34:03.023Z"),
+                parsePrimitiveValue("2014-07-31T12:34:03.023Z", PrimitiveType.DATE_TIME_OFFSET));
 
-        assertThat(parsePrimitiveValue("P3Y30M30D", PrimitiveType.DURATION),
-                is(Period.parse("P3Y30M30D")));
+        assertEquals(Period.parse("P3Y30M30D"), parsePrimitiveValue("P3Y30M30D", PrimitiveType.DURATION));
 
-        assertThat(parsePrimitiveValue("09:56:18.821", PrimitiveType.TIME_OF_DAY),
-                is(LocalTime.parse("09:56:18.821")));
+        assertEquals(LocalTime.parse("09:56:18.821"),
+                parsePrimitiveValue("09:56:18.821", PrimitiveType.TIME_OF_DAY));
     }
 
     @Test
     public void testParseGuid() throws ODataException {
-        assertThat(parsePrimitiveValue("a6a8e5be-6d8e-40ce-bb8d-3836d63aef0e", PrimitiveType.GUID),
-                is(UUID.fromString("a6a8e5be-6d8e-40ce-bb8d-3836d63aef0e")));
+        assertEquals(UUID.fromString("a6a8e5be-6d8e-40ce-bb8d-3836d63aef0e"),
+                parsePrimitiveValue("a6a8e5be-6d8e-40ce-bb8d-3836d63aef0e", PrimitiveType.GUID));
     }
 }

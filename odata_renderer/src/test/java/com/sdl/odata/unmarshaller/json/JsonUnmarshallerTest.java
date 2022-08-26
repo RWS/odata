@@ -16,16 +16,15 @@
 package com.sdl.odata.unmarshaller.json;
 
 import com.google.common.collect.ImmutableMap;
-import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.parser.ODataParser;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -36,15 +35,14 @@ import static com.sdl.odata.api.service.ODataRequest.Method.POST;
 import static com.sdl.odata.api.service.ODataRequest.Method.PUT;
 import static com.sdl.odata.test.util.TestUtils.createODataRequest;
 import static com.sdl.odata.test.util.TestUtils.createODataRequestContext;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Json Unmarshaller Test.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JsonUnmarshallerTest extends UnmarshallerTest {
 
     private static final Map<String, String> CONTENT_TYPE = ImmutableMap.of("Content-type", "application/json");
@@ -55,10 +53,13 @@ public class JsonUnmarshallerTest extends UnmarshallerTest {
     @Spy
     private ODataParser uriParser = new ODataParserImpl();
 
-    @Test(expected = ODataUnmarshallingException.class)
-    public void testJsonNullScore() throws UnsupportedEncodingException, ODataException {
-        assertThat(jsonUnmarshaller.score(errorContext), is(0));
-        assertThat(jsonUnmarshaller.unmarshall(errorContext), is(nullValue()));
+    @Test
+    public void testJsonNullScore() {
+        assertEquals(0, jsonUnmarshaller.score(errorContext));
+        assertThrows(ODataUnmarshallingException.class, () ->
+                jsonUnmarshaller.unmarshall(errorContext)
+        );
+
     }
 
     @Test
@@ -69,8 +70,8 @@ public class JsonUnmarshallerTest extends UnmarshallerTest {
 
     @Test
     public void testScoreForGET() throws UnsupportedEncodingException {
-        assertThat(jsonUnmarshaller.score(createODataRequestContext(
-                createODataRequest(GET, CONTENT_TYPE), odataUri, entityDataModel)), is(0));
+        assertEquals(0, jsonUnmarshaller.score(createODataRequestContext(
+                createODataRequest(GET, CONTENT_TYPE), odataUri, entityDataModel)));
     }
 
     @Test
@@ -81,6 +82,6 @@ public class JsonUnmarshallerTest extends UnmarshallerTest {
 
     @Test
     public void testScoreForDelete() throws UnsupportedEncodingException {
-        assertThat(jsonUnmarshaller.score(createODataRequestContext(DELETE, entityDataModel)), is(0));
+        assertEquals(0, jsonUnmarshaller.score(createODataRequestContext(DELETE, entityDataModel)));
     }
 }

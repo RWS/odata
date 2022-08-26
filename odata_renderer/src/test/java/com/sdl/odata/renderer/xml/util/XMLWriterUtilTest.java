@@ -15,14 +15,13 @@
  */
 package com.sdl.odata.renderer.xml.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This is unit test for {@link XMLWriterUtil}.
@@ -35,7 +34,7 @@ public class XMLWriterUtilTest {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             XMLStreamWriter writer = XMLWriterUtil.startDocument(outputStream, null, "test", "namespace");
             assertNotNull(writer);
-            assertThat(outputStream.toString(), is("<test xmlns=\"namespace\""));
+            assertEquals("<test xmlns=\"namespace\"", outputStream.toString());
         }
     }
 
@@ -44,7 +43,7 @@ public class XMLWriterUtilTest {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             XMLStreamWriter writer = XMLWriterUtil.startDocument(outputStream, "prefix", "test", "namespace");
             assertNotNull(writer);
-            assertThat(outputStream.toString(), is("<prefix:test xmlns:prefix=\"namespace\""));
+            assertEquals("<prefix:test xmlns:prefix=\"namespace\"", outputStream.toString());
         }
     }
 }

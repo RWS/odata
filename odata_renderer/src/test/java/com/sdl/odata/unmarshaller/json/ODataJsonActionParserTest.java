@@ -21,14 +21,15 @@ import com.sdl.odata.parser.ODataParserImpl;
 import com.sdl.odata.test.model.ActionSample;
 import com.sdl.odata.test.model.UnboundActionSample;
 import com.sdl.odata.unmarshaller.UnmarshallerTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for OData Json Action Parser class.
@@ -39,7 +40,7 @@ public class ODataJsonActionParserTest extends UnmarshallerTest {
     private static final String EMPTY_PARAMETERS_JSON = "/json/ActionEmpty.json";
     private static final String INCORRECT_PARAMETERS_JSON = "/xml/Product.xml";
 
-    private ODataParser uriParser = new ODataParserImpl();
+    private final ODataParser uriParser = new ODataParserImpl();
 
     @Test
     public void testParseAction() throws Exception {
@@ -48,11 +49,11 @@ public class ODataJsonActionParserTest extends UnmarshallerTest {
         preparePostRequestContext(ACTION_PARAMETERS_JSON);
         ODataJsonActionParser parser = new ODataJsonActionParser(context);
         ActionSample action = (ActionSample) parser.getAction();
-        assertThat(action.getIntNumber(), is(101));
-        assertThat(action.getNumber(), is(2L));
-        assertThat(action.getStringParameter(), is("BLACKFRIDAY"));
-        assertThat(action.getParameters().get("type"), is("binaryLink"));
-        assertThat(action.getParameters().get("url"), is("testUrl"));
+        assertEquals(101, action.getIntNumber());
+        assertEquals(2L, action.getNumber());
+        assertEquals("BLACKFRIDAY", action.getStringParameter());
+        assertEquals("binaryLink", action.getParameters().get("type"));
+        assertEquals("testUrl", action.getParameters().get("url"));
 
         Map<String, String> param1 = new HashMap<>();
         param1.put("type", "binaryLink");
@@ -62,7 +63,7 @@ public class ODataJsonActionParserTest extends UnmarshallerTest {
         param2.put("type", "binaryLink1");
         param2.put("url", "testUrl1");
 
-        assertThat(action.getParametersList(), hasItems(param1, param2));
+        assertTrue(action.getParametersList().containsAll(List.of(param1, param2)));
     }
 
     @Test
@@ -72,25 +73,26 @@ public class ODataJsonActionParserTest extends UnmarshallerTest {
         preparePostRequestContext(ACTION_IMPORT_PARAMETERS_JSON);
         ODataJsonActionParser parser = new ODataJsonActionParser(context);
         UnboundActionSample action = (UnboundActionSample) parser.getAction();
-        assertThat(action.getNumber(), is(42L));
-        assertThat(action.getStringParameter(), is("BLACKFRIDAY"));
+
+        assertEquals(42L, action.getNumber());
+        assertEquals("BLACKFRIDAY", action.getStringParameter());
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
+    @Test
     public void testEmptyBodyActionImport() throws Exception {
         String uri = "http://some.com/xyz.svc/ODataDemoActionImport";
         odataUri = uriParser.parseUri(uri, entityDataModel);
         preparePostRequestContext(EMPTY_PARAMETERS_JSON);
         ODataJsonActionParser parser = new ODataJsonActionParser(context);
-        parser.getAction();
+        assertThrows(ODataUnmarshallingException.class, parser::getAction);
     }
 
-    @Test(expected = ODataUnmarshallingException.class)
+    @Test
     public void testIncorrectActionRequestBody() throws Exception {
         String uri = "http://some.com/xyz.svc/Customers(2)/ODataDemo.ODataDemoAction";
         odataUri = uriParser.parseUri(uri, entityDataModel);
         preparePostRequestContext(INCORRECT_PARAMETERS_JSON);
         ODataJsonActionParser parser = new ODataJsonActionParser(context);
-        parser.getAction();
+        assertThrows(ODataUnmarshallingException.class, parser::getAction);
     }
 }

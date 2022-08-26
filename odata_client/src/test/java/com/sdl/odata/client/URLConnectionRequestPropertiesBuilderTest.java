@@ -15,15 +15,14 @@
  */
 package com.sdl.odata.client;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for {@link URLConnectionRequestPropertiesBuilder}.
@@ -46,10 +45,10 @@ public class URLConnectionRequestPropertiesBuilderTest {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertThat(result.size(), is(1));
+        assertEquals(1, result.size());
 
         assertTrue(result.containsKey("Cookie"));
-        assertThat(result.get("Cookie"), is("CN1=CV1"));
+        assertEquals("CN1=CV1", result.get("Cookie"));
     }
 
     @Test
@@ -59,10 +58,10 @@ public class URLConnectionRequestPropertiesBuilderTest {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertThat(result.size(), is(1));
+        assertEquals(1, result.size());
 
         assertTrue(result.containsKey("Cookie"));
-        assertThat(result.get("Cookie"), is("CN1=CV1; CN2=CV2"));
+        assertEquals("CN1=CV1; CN2=CV2", result.get("Cookie"));
     }
 
     @Test
@@ -72,10 +71,10 @@ public class URLConnectionRequestPropertiesBuilderTest {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertThat(result.size(), is(1));
+        assertEquals(1, result.size());
 
         assertTrue(result.containsKey("Authorization"));
-        assertThat(result.get("Authorization"), is("Bearer this_is_access_token"));
+        assertEquals("Bearer this_is_access_token", result.get("Authorization"));
     }
 
 }
