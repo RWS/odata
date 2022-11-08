@@ -35,6 +35,7 @@ import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.unmarshaller.AbstractParser;
 import com.sdl.odata.unmarshaller.PropertyType;
+import com.sdl.odata.util.XmlBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -45,8 +46,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -96,23 +95,19 @@ public class ODataAtomParser extends AbstractParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODataAtomParser.class);
     private static final int COLLECTION_INDEX = 11;
-    private static final Set<String> FEED_METADATA_ELEMENT_NAMES = new HashSet(Arrays.asList(new String[]{
+    private static final Set<String> FEED_METADATA_ELEMENT_NAMES =
+            new HashSet(Arrays.asList(new String[]{
             ATOM_ID, TITLE, ATOM_UPDATED, ATOM_LINK}));
     /**
      * Document Builder Factory.
      */
-    public static final DocumentBuilderFactory DOCBUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+    public static final DocumentBuilderFactory DOCBUILDER_FACTORY = XmlBuilderFactory.getSecuredInstance();
 
     private final Set<String> foundCollectionProperties = new HashSet<>();
-
-    static {
-        DOCBUILDER_FACTORY.setNamespaceAware(true);
-    }
 
     public ODataAtomParser(ODataRequestContext context, ODataParser uriParser) {
         super(context, uriParser);
     }
-
 
     @Override
     protected Object processEntity(String bodyText) throws ODataException {
@@ -125,15 +120,17 @@ public class ODataAtomParser extends AbstractParser {
     }
 
     private Document parseXML(String xml) throws ODataUnmarshallingException {
+        long time = System.currentTimeMillis();
         try {
-            return DOCBUILDER_FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+            Document result = DOCBUILDER_FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+            LOG.debug("Parsing XML ({} bytes) took: {} ms", xml.length(), (System.currentTimeMillis() - time));
+            return result;
         } catch (SAXException e) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Could not parse XML: " + xml, e);
-            }
-            throw new ODataUnmarshallingException("Error while parsing XML", e);
-        } catch (IOException | ParserConfigurationException e) {
-            throw new ODataSystemException(e);
+            LOG.trace("Could not parse XML: {}", xml, e);
+            throw new ODataUnmarshallingException("Could not parse xml due to: " + e.getMessage(), e);
+        } catch (Exception e) {
+            LOG.trace("Could not parse XML: {}", xml, e);
+            throw new ODataSystemException("Could not parse xml due to: " + e.getMessage(), e);
         }
     }
 
@@ -151,7 +148,7 @@ public class ODataAtomParser extends AbstractParser {
             LOG.trace("Creating new instance of type: {}", javaType.getName());
             entity = javaType.newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new ODataUnmarshallingException("Error while instantiating entity of type: " +
+            throw new ODataUnmarshallingException("Error while instantiating entity of type: {}",
                     entityType.getFullyQualifiedName(), e);
         }
 
@@ -261,7 +258,7 @@ public class ODataAtomParser extends AbstractParser {
 
         PropertyType propertyTypeFromXML = getPropertyTypeFromXML(propertyElement);
         if (propertyTypeFromXML == null) {
-            LOG.debug("Skip rendering for {} property", propertyName);
+            LOG.trace("Skip rendering for {} property", propertyName);
             return;
         }
 
@@ -300,7 +297,7 @@ public class ODataAtomParser extends AbstractParser {
         }
 
         boolean notNullableProperty = propertyValue != null;
-        LOG.debug("Found property element: {}, type: {}, value: {} ({})", propertyName, propertyTypeFromXML,
+        LOG.trace("Found property element: {}, type: {}, value: {} ({})", propertyName, propertyTypeFromXML,
                 propertyValue, notNullableProperty ? propertyValue.getClass().getName() : "<null>");
         try {
             Field field = property.getJavaField();
@@ -470,7 +467,7 @@ public class ODataAtomParser extends AbstractParser {
             throws ODataException {
 
         String propertyName = linkElement.getAttribute(REL).substring(getODataNavLinkRelationNSPrefix().length());
-        LOG.debug("Found link element for navigation property: {}", propertyName);
+        LOG.trace("Found link element for navigation property: {}", propertyName);
 
         StructuralProperty property = entityType.getStructuralProperty(propertyName);
         if (!(property instanceof NavigationProperty)) {
@@ -501,7 +498,7 @@ public class ODataAtomParser extends AbstractParser {
                     for (Element element : elements) {
                         String id = element.getAttribute(ID);
                         Object referencedEntity = getReferencedEntity(id, propertyName);
-                        LOG.debug("Referenced entity: {}", referencedEntity);
+                        LOG.trace("Referenced entity: {}", referencedEntity);
                         saveReferencedEntity(entity, propertyName, property, referencedEntity);
                     }
                 }
@@ -513,7 +510,7 @@ public class ODataAtomParser extends AbstractParser {
                             + propertyName + "' but the element 'href' is empty.");
                 }
                 Object referencedEntity = getReferencedEntity(hrefAttr, propertyName);
-                LOG.debug("Referenced entity: {}", referencedEntity);
+                LOG.trace("Referenced entity: {}", referencedEntity);
                 saveReferencedEntity(entity, propertyName, property, referencedEntity);
             }
         } else {
@@ -521,14 +518,14 @@ public class ODataAtomParser extends AbstractParser {
             Element inlineEntry = getInlineEntry(linkElement);
             if (inlineEntry != null) {
                 Object linkedEntry = processEntity(inlineEntry);
-                LOG.debug("Linked entry: {}", linkedEntry);
+                LOG.trace("Linked entry: {}", linkedEntry);
                 saveReferencedEntity(entity, propertyName, property, linkedEntry);
             } else {
                 Element inlineFeed = getInlineFeed(linkElement);
                 if (inlineFeed != null) {
                     List<?> linkedFeed = processEntities(inlineFeed);
                     for (Object linkedEntry : linkedFeed) {
-                        LOG.debug("Linked feed entry: {}", linkedEntry);
+                        LOG.trace("Linked feed entry: {}", linkedEntry);
                         saveReferencedEntity(entity, propertyName, property, linkedEntry);
                     }
                 }
@@ -659,7 +656,7 @@ public class ODataAtomParser extends AbstractParser {
                 .filter(property -> (property.isCollection()) &&
                         !(property instanceof NavigationProperty) && (!property.isNullable()))
                 .forEach(property -> {
-                    LOG.debug("Validating non-nullable collection property : {}", property.getName());
+                    LOG.trace("Validating non-nullable collection property : {}", property.getName());
                     if (!foundCollectionProperties.contains(property.getName())) {
                         missingCollectionPropertyName.add(property.getName());
                     }
@@ -684,12 +681,12 @@ public class ODataAtomParser extends AbstractParser {
         entityType.getStructuralProperties().stream()
                 .filter(property -> (property instanceof NavigationProperty) && (!property.isNullable()))
                 .forEach(property -> {
-                    LOG.debug("Validating non-nullable property : {}", property.getName());
+                    LOG.trace("Validating non-nullable property : {}", property.getName());
                     if (!navigationPropertyNames.contains(property.getName())) {
                         missingNavigationPropertyNames.add(property.getName());
                     }
                 });
-        if (missingNavigationPropertyNames.size() != 0) {
+        if (!missingNavigationPropertyNames.isEmpty()) {
             LOG.debug("Non-nullable navigation properties of {} are not found in the request",
                     missingNavigationPropertyNames);
             // NOTE: We are just logging if a navigation property is not present.

@@ -72,7 +72,7 @@ public class AtomRenderer extends AbstractAtomRenderer {
     public void render(ODataRequestContext requestContext, QueryResult result, ODataResponse.Builder responseBuilder)
             throws ODataException {
 
-        LOG.debug("Start rendering entity(es) for request: {} with result {}", requestContext, result);
+        LOG.trace("Start rendering entity(es) for request: {} with result {}", requestContext, result);
 
         AtomWriter atomWriter = initAtomWriter(requestContext);
 
@@ -97,7 +97,7 @@ public class AtomRenderer extends AbstractAtomRenderer {
             }
         }
 
-        LOG.debug("End rendering entity(es) for request: {}", requestContext);
+        LOG.debug("End rendering entity(es) for request: {} with result {}", requestContext, result);
     }
 
     @Override

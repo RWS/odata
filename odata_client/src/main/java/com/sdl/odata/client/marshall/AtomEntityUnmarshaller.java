@@ -36,7 +36,6 @@ import com.sdl.odata.unmarshaller.atom.ODataAtomParser;
 import org.slf4j.Logger;
 import scala.Option;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
 
     private static final Logger LOG = getLogger(AtomEntityUnmarshaller.class);
-    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
     private static final Pattern PRIMITIVE_VALUE_RESPONSE_PATTERN = Pattern.compile(
             "<metadata:value[^>]+>(.*)</metadata:value>", Pattern.DOTALL);
     private static final Pattern COLLECTION_OF_PRIMITIVE_VALUE_RESPONSE_PATTERN = Pattern.compile(
@@ -67,10 +65,6 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
     public static final Set<Class> PRIMITIVE_CLASSES = Stream
             .of(String.class, Integer.class, Long.class, Boolean.class, Double.class, Float.class)
             .collect(Collectors.toSet());
-
-    static {
-        DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
-    }
 
     private String url;
     private EntityDataModel entityDataModel;
@@ -87,7 +81,7 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
 
     @Override
     public Object unmarshallEntity(String odataServiceResponse, ODataClientQuery query) throws ODataClientException {
-        LOG.debug("Unmarshalling entity for query: {}", query);
+        LOG.trace("Unmarshalling entity for query: {}", query.getQuery());
         try {
             if (List.class.getSimpleName().equals(query.getEntityType().getSimpleName())) {
                 return unmarshallCollectionOfPrimitives(odataServiceResponse);
@@ -117,7 +111,7 @@ public class AtomEntityUnmarshaller implements ODataEntityUnmarshaller {
 
     @Override
     public List<?> unmarshall(String odataServiceResponse, ODataClientQuery query) throws ODataClientException {
-        LOG.debug("Unmarshalling entities for query: {}", query);
+        LOG.trace("Unmarshalling entities for query: {}", query.getQuery());
         try {
             ODataRequest request = buildODataRequestFromString(odataServiceResponse, query);
             ODataUri oDataUri = createODataUri(url, query.getEdmEntityName());
