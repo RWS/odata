@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2023 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,15 @@
  */
 package com.sdl.odata.util.edm;
 
+import com.sdl.odata.util.PrimitiveEntityDataModel;
 import org.junit.jupiter.api.Test;
 
+import static com.sdl.odata.util.edm.EntityDataModelUtil.isCollection;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.pluralize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The Entity Data model Util Test.
@@ -39,5 +43,11 @@ public class EntityDataModelUtilTest {
     @Test
     public void testPluralizeNull() {
         assertThrows(IllegalArgumentException.class, () -> pluralize(null));
+    }
+
+    @Test
+    public void testPrimitiveClassloading() {
+        assertFalse(isCollection(new PrimitiveEntityDataModel(), "Edm.String"));
+        assertTrue(isCollection(new PrimitiveEntityDataModel(), "com.sdl.odata.util.PrimitiveEntityDataModel"));
     }
 }
