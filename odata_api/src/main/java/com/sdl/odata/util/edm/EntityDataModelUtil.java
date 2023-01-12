@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2023 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public final class EntityDataModelUtil {
         Holder(String typeName, Class clazz) {
             this.typeName = typeName;
             this.collection = Collection.class.isAssignableFrom(clazz) ||
-                              COLLECTION_PATTERN.matcher(typeName).matches();
+                    COLLECTION_PATTERN.matcher(typeName).matches();
         }
 
         public boolean isCollection() {
@@ -687,9 +687,13 @@ public final class EntityDataModelUtil {
      * @return True if the type is a collection, False if not
      */
     public static boolean isCollection(EntityDataModel entityDataModel, String typeName) {
-        EntitySet entitySet = entityDataModel.getEntityContainer().getEntitySet(typeName);
+         EntitySet entitySet = entityDataModel.getEntityContainer().getEntitySet(typeName);
         if (entitySet != null) {
             return true;
+        }
+        // Don't attempt to load primitive OData types, as they won't have classes in the classpath
+        if (typeName.startsWith(EntityDataModel.EDM_NAMESPACE)) {
+            return false;
         }
         try {
             Holder holder = CACHED_CLASSES.get(typeName);
