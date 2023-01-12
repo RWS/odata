@@ -687,7 +687,7 @@ public final class EntityDataModelUtil {
      * @return True if the type is a collection, False if not
      */
     public static boolean isCollection(EntityDataModel entityDataModel, String typeName) {
-         EntitySet entitySet = entityDataModel.getEntityContainer().getEntitySet(typeName);
+        EntitySet entitySet = entityDataModel.getEntityContainer().getEntitySet(typeName);
         if (entitySet != null) {
             return true;
         }
