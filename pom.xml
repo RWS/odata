@@ -102,7 +102,7 @@
         <scala-parser-combinators.version>1.1.1</scala-parser-combinators.version>
         <scalatest.version>3.0.8</scalatest.version>
         <servlet-api.version>3.1.0</servlet-api.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <slf4j.version>1.7.36</slf4j.version>
         <spring.version>5.1.20.RELEASE</spring.version>
         <spring-boot.version>2.1.18.RELEASE</spring-boot.version>
         <tomcat.version>9.0.62</tomcat.version>
@@ -136,7 +136,11 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
-                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
             </dependency>
 
             <!-- Utility libraries -->
