@@ -107,7 +107,7 @@
         <slf4j.version>1.7.36</slf4j.version>
         <spring-boot.version>2.7.11</spring-boot.version>
         <spring.version>5.3.27</spring.version>
-        <tomcat.version>9.0.73</tomcat.version>
+        <tomcat.version>9.0.75</tomcat.version>
         <typesafe-config.version>1.4.2</typesafe-config.version>
         <xerces.version>2.12.2</xerces.version>
         <zipkin-sender.version>1.1.2</zipkin-sender.version>
