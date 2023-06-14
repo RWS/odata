@@ -91,7 +91,7 @@
         <!-- Third party dependency versions, sorted alphabetically -->
         <akka.version>2.6.20</akka.version>
         <brave.version>4.13.6</brave.version>
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <httpcomponents.version>4.5.13</httpcomponents.version>
         <jackson.version>2.14.2</jackson.version>
         <jacoco.version>0.8.8</jacoco.version>
