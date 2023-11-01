@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2014-2023 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,12 +36,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
+
 import com.sdl.odata.api.service.ODataRequest.Method;
 import com.sdl.odata.processor.model.ODataAddress;
 import com.sdl.odata.processor.model.ODataMobilePhone;
 import com.sdl.odata.processor.model.ODataPerson;
 import com.sdl.odata.processor.model.ODataPersonNamedKey;
+import org.junit.jupiter.api.AfterEach;
 
 /**
  *
@@ -52,11 +54,18 @@ public abstract class MethodHandlerTest {
     protected ODataUri entitySetOdataURI;
     protected ODataUri entityOdataURI;
 
+    private AutoCloseable closeable;
+
 
     protected void setup(String entitySetName) {
         entitySetOdataURI = createODataUri(SERVICE_ROOT, entitySetName);
         entityOdataURI = createODataUriWithSimpleKeyPredicate(entitySetName);
-        initMocks(ODataWriteProcessorImpl.class);
+        closeable = openMocks(ODataWriteProcessorImpl.class);
+    }
+
+    @AfterEach
+    void closeService() throws Exception {
+        closeable.close();
     }
 
     protected void stubForTesting(Object entity) throws ODataException {
