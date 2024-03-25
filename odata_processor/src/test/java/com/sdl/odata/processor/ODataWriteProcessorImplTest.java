@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2024 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,6 @@ public class ODataWriteProcessorImplTest {
     private DataSourceFactory dataSourceFactory;
     private AutoCloseable closeable;
 
-
     @InjectMocks
     private ODataWriteProcessorImpl oDataWriteProcessor;
 
@@ -97,7 +96,7 @@ public class ODataWriteProcessorImplTest {
                 .addClass(ODataAddress.class)
                 .addClass(ODataMobilePhone.class)
                 .buildEntityDataModel();
-        closeable = openMocks(ODataWriteProcessorImpl.class);
+        closeable = openMocks(this);
 
         entityType = entity.getClass().getSimpleName();
         EdmEntity annotation = entity.getClass().getAnnotation(EdmEntity.class);
