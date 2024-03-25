@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2024 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import com.sdl.odata.test.model.FunctionSample;
 import com.sdl.odata.test.model.Order;
 import com.sdl.odata.test.model.UnboundFunctionSample;
 import com.sdl.odata.test.util.TestUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +54,7 @@ import static com.sdl.odata.api.service.ODataRequest.Method.GET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 /**
  * Unit test for {@link ODataFunctionProcessorImpl}.
@@ -65,6 +66,7 @@ public class ODataFunctionProcessorImplTest {
 
     @Mock
     private DataSourceFactory dataSourceFactory;
+    private AutoCloseable closeable;
 
     @InjectMocks
     private ODataFunctionProcessorImpl functionProcessor;
@@ -82,7 +84,12 @@ public class ODataFunctionProcessorImplTest {
                 .addClass(NullResultFunctionSample.class)
                 .addClass(NoInitFunctionSample.class)
                 .buildEntityDataModel();
-        initMocks(ODataFunctionProcessorImpl.class);
+        closeable = openMocks(this);
+    }
+
+    @AfterEach
+    void closeService() throws Exception {
+        closeable.close();
     }
 
     @Test
@@ -162,7 +169,7 @@ public class ODataFunctionProcessorImplTest {
     @Test
     public void testDoFunctionUsingFakeFunction() throws ODataException, UnsupportedEncodingException {
         ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
-                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFakeFunction", entityDataModel),
+                        "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoFakeFunction", entityDataModel),
                 entityDataModel);
         assertThrows(ODataEdmException.class, () -> functionProcessor.doFunction(requestContext));
     }
@@ -170,7 +177,7 @@ public class ODataFunctionProcessorImplTest {
     @Test
     public void testDoFunctionUsingWrongInitFunction() throws ODataException, UnsupportedEncodingException {
         ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
-                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoNoInitFunction", entityDataModel),
+                        "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoNoInitFunction", entityDataModel),
                 entityDataModel);
 
         assertThrows(ODataEdmException.class, () -> functionProcessor.doFunction(requestContext));
@@ -179,7 +186,7 @@ public class ODataFunctionProcessorImplTest {
     @Test
     public void testDoFunctionUsingNullResultFunction() throws ODataException, UnsupportedEncodingException {
         ODataRequestContext requestContext = TestUtils.createODataRequestContext(GET, new ODataParserImpl().parseUri(
-                "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoNullFunction", entityDataModel),
+                        "http://localhost/odata.svc/Orders(1)/ODataDemo.ODataDemoNullFunction", entityDataModel),
                 entityDataModel);
         ProcessorResult processorResult = functionProcessor.doFunction(requestContext);
         assertEquals(ODataResponse.Status.NO_CONTENT, processorResult.getStatus());
