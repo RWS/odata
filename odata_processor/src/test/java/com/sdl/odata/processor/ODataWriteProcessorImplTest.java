@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2024 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import com.sdl.odata.processor.model.ODataAddress;
 import com.sdl.odata.processor.model.ODataMobilePhone;
 import com.sdl.odata.processor.model.ODataPerson;
 import com.sdl.odata.test.util.TestUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,7 +66,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 /**
  * The OData Writer Processor Impl Test.
@@ -81,6 +82,7 @@ public class ODataWriteProcessorImplTest {
 
     @Mock
     private DataSourceFactory dataSourceFactory;
+    private AutoCloseable closeable;
 
     @InjectMocks
     private ODataWriteProcessorImpl oDataWriteProcessor;
@@ -94,7 +96,7 @@ public class ODataWriteProcessorImplTest {
                 .addClass(ODataAddress.class)
                 .addClass(ODataMobilePhone.class)
                 .buildEntityDataModel();
-        initMocks(ODataWriteProcessorImpl.class);
+        closeable = openMocks(this);
 
         entityType = entity.getClass().getSimpleName();
         EdmEntity annotation = entity.getClass().getAnnotation(EdmEntity.class);
@@ -103,6 +105,11 @@ public class ODataWriteProcessorImplTest {
         }
         lenient().when(dataSourceFactory.getDataSource(requestContext,
                 entityType)).thenReturn(dataSource);
+    }
+
+    @AfterEach
+    void closeService() throws Exception {
+        closeable.close();
     }
 
     @Test

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2024 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,15 @@ import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.parser.ODataUri;
 import com.sdl.odata.api.processor.datasource.DataSource;
 import com.sdl.odata.api.processor.datasource.factory.DataSourceFactory;
+import com.sdl.odata.api.service.ODataRequest.Method;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory;
-import com.sdl.odata.processor.ODataWriteProcessorImpl;
+import com.sdl.odata.processor.model.ODataAddress;
+import com.sdl.odata.processor.model.ODataMobilePhone;
+import com.sdl.odata.processor.model.ODataPerson;
+import com.sdl.odata.processor.model.ODataPersonNamedKey;
+import org.junit.jupiter.api.AfterEach;
+
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 
@@ -36,12 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import com.sdl.odata.api.service.ODataRequest.Method;
-import com.sdl.odata.processor.model.ODataAddress;
-import com.sdl.odata.processor.model.ODataMobilePhone;
-import com.sdl.odata.processor.model.ODataPerson;
-import com.sdl.odata.processor.model.ODataPersonNamedKey;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 /**
  *
@@ -51,13 +52,19 @@ public abstract class MethodHandlerTest {
     protected DataSourceFactory dataSourceFactoryMock = mock(DataSourceFactory.class);
     protected ODataUri entitySetOdataURI;
     protected ODataUri entityOdataURI;
-
+    private AutoCloseable closeable;
 
     protected void setup(String entitySetName) {
         entitySetOdataURI = createODataUri(SERVICE_ROOT, entitySetName);
         entityOdataURI = createODataUriWithSimpleKeyPredicate(entitySetName);
-        initMocks(ODataWriteProcessorImpl.class);
+        closeable = openMocks(this);
     }
+
+    @AfterEach
+    void closeService() throws Exception {
+        closeable.close();
+    }
+
 
     protected void stubForTesting(Object entity) throws ODataException {
         when(dataSourceFactoryMock.getDataSource(any(ODataRequestContext.class),
