@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component
 @Scope("prototype")
 class ODataParserActor @Autowired()(actorProducer: ActorProducer, parser: ODataParser) extends ODataActor {
 
-  import com.sdl.odata.service.util.AkkaUtil.routeMessage
+  import com.sdl.odata.service.util.PekkoUtil.routeMessage
 
   def receive = {
     case ServiceRequest(actorContext) =>

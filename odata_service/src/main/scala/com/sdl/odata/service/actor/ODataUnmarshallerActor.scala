@@ -19,7 +19,7 @@ import com.sdl.odata.api.ODataSystemException
 import com.sdl.odata.api.unmarshaller.{ODataUnmarshaller, UnmarshallerFactory}
 import com.sdl.odata.service.protocol.{ODataActorContext, Unmarshall, UnmarshallResult}
 import com.sdl.odata.service.spring.ActorProducer
-import com.sdl.odata.service.util.AkkaUtil._
+import com.sdl.odata.service.util.PekkoUtil._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component

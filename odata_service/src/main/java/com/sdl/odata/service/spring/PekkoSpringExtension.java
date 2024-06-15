@@ -15,28 +15,28 @@
  */
 package com.sdl.odata.service.spring;
 
-import akka.actor.AbstractExtensionId;
-import akka.actor.ExtendedActorSystem;
-import akka.actor.Extension;
-import akka.actor.Props;
+import org.apache.pekko.actor.AbstractExtensionId;
+import org.apache.pekko.actor.ExtendedActorSystem;
+import org.apache.pekko.actor.Extension;
+import org.apache.pekko.actor.Props;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
- * The AkkaSpringExtension registers the Spring hook into the Akka extension system.
+ * The PekkoSpringExtension registers the Spring hook into the Pekko extension system.
  */
 @Component
-public class AkkaSpringExtension extends AbstractExtensionId<AkkaSpringExtension.AkkaExtension> {
+public class PekkoSpringExtension extends AbstractExtensionId<PekkoSpringExtension.PekkoExtension> {
 
     @Override
-    public AkkaExtension createExtension(ExtendedActorSystem system) {
-        return new AkkaExtension();
+    public PekkoExtension createExtension(ExtendedActorSystem system) {
+        return new PekkoExtension();
     }
 
     /**
-     * The Akka Extension.
+     * The Pekko Extension.
      */
-    public static class AkkaExtension implements Extension {
+    public static class PekkoExtension implements Extension {
         private volatile ApplicationContext applicationContext;
 
         public void initialize(ApplicationContext ctx) {
@@ -44,7 +44,7 @@ public class AkkaSpringExtension extends AbstractExtensionId<AkkaSpringExtension
         }
 
         public Props props(String actor) {
-            return Props.create(AkkaSpringActorProducer.class, applicationContext, actor);
+            return Props.create(PekkoSpringActorProducer.class, applicationContext, actor);
         }
     }
 }

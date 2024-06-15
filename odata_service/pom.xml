@@ -56,12 +56,12 @@
             <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_2.12</artifactId>
+            <groupId>org.apache.pekko</groupId>
+            <artifactId>pekko-actor_2.12</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-slf4j_2.12</artifactId>
+            <groupId>org.apache.pekko</groupId>
+            <artifactId>pekko-slf4j_2.12</artifactId>
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
@@ -69,8 +69,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-testkit_2.12</artifactId>
+            <groupId>org.apache.pekko</groupId>
+            <artifactId>pekko-testkit_2.12</artifactId>
         </dependency>
     </dependencies>
 

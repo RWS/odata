@@ -15,7 +15,7 @@
  */
 package com.sdl.odata.service.spring;
 
-import akka.actor.ActorSystem;
+import org.apache.pekko.actor.ActorSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,23 +24,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
- * The AkkaConfiguration initializes an Akka Spring configured ActorSystem using the Spring extension.
+ * The PekkoConfiguration initializes an Pekko Spring configured ActorSystem using the Spring extension.
  */
 @Component
-public class AkkaConfiguration {
-    private static final Logger LOG = LoggerFactory.getLogger(AkkaConfiguration.class);
+public class PekkoConfiguration {
+    private static final Logger LOG = LoggerFactory.getLogger(PekkoConfiguration.class);
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
-    private AkkaSpringExtension akkaSpringExtension;
+    private PekkoSpringExtension pekkoSpringExtension;
 
     @Bean(destroyMethod = "terminate")
     public ActorSystem actorSystem() {
         LOG.info("Creating actor system");
-        ActorSystem system = ActorSystem.create("ODataAkkaSpringContext");
-        akkaSpringExtension.get(system).initialize(applicationContext);
+        ActorSystem system = ActorSystem.create("ODataPekkoSpringContext");
+        pekkoSpringExtension.get(system).initialize(applicationContext);
         return system;
     }
 }

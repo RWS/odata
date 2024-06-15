@@ -15,7 +15,7 @@
  */
 package com.sdl.odata.service.util
 
-import akka.actor.{Actor, ActorContext, ActorRef}
+import org.apache.pekko.actor.{Actor, ActorContext, ActorRef}
 import com.sdl.odata.service.actor.MessageHandlerRegistry._
 import com.sdl.odata.service.actor.ODataMessageRouter
 import com.sdl.odata.service.protocol.{ODataActorMessage, RegisterMessageHandler}
@@ -23,11 +23,11 @@ import com.sdl.odata.service.spring.ActorProducer
 import org.slf4j.{Logger, LoggerFactory}
 
 /**
- * Akka Util Class is resppnsible for registering routes for actors.
+ * Pekko Util Class is responsible for registering routes for actors.
  *
  */
-object AkkaUtil {
-  private val logger: Logger = LoggerFactory.getLogger("AkkaUtil")
+object PekkoUtil {
+  private val logger: Logger = LoggerFactory.getLogger("PekkoUtil")
 
   def registerRoute(messageType: Class[_ <: ODataActorMessage], actorType: Class[_ <: Actor])(implicit producer: ActorProducer) {
     messageRouter().tell(RegisterMessageHandler(messageType, actorType.getSimpleName), null)

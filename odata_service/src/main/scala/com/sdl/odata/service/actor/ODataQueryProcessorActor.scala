@@ -19,7 +19,7 @@ import com.sdl.odata.api.parser.ODataUriUtil.isFunctionCallUri
 import com.sdl.odata.api.processor.{ODataFunctionProcessor, ODataQueryProcessor}
 import com.sdl.odata.service.protocol.{ReadOperation, Render}
 import com.sdl.odata.service.spring.ActorProducer
-import com.sdl.odata.service.util.AkkaUtil._
+import com.sdl.odata.service.util.PekkoUtil._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
