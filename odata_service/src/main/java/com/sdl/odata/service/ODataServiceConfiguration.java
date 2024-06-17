@@ -50,7 +50,7 @@ import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.PostConstruct;
 
-import static com.sdl.odata.service.util.AkkaUtil.registerRoute;
+import static com.sdl.odata.service.util.PekkoUtil.registerRoute;
 
 /**
  * The OData Service Configuration.

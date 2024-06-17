@@ -15,8 +15,8 @@
  */
 package com.sdl.odata.service.actor
 
-import akka.actor.SupervisorStrategy.Escalate
-import akka.actor.{Actor, ActorLogging, OneForOneStrategy, SupervisorStrategy}
+import org.apache.pekko.actor.SupervisorStrategy.Escalate
+import org.apache.pekko.actor.{Actor, ActorLogging, OneForOneStrategy, SupervisorStrategy}
 
 trait ODataActor extends Actor with ActorLogging {
   override def supervisorStrategy: SupervisorStrategy = OneForOneStrategy() {

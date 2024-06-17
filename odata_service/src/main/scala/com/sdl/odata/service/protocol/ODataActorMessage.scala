@@ -15,7 +15,7 @@
  */
 package com.sdl.odata.service.protocol
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import com.sdl.odata.api.parser.ODataUri
 import com.sdl.odata.api.processor.ProcessorResult
 import com.sdl.odata.api.service.{ODataRequest, ODataRequestContext, ODataResponse}

@@ -16,7 +16,7 @@
 package com.sdl.odata.service
 
 import org.scalatest.{Suite, BeforeAndAfterAll}
-import akka.testkit.TestKit
+import org.apache.pekko.testkit.TestKit
 
 trait StopSystemAfterAll extends BeforeAndAfterAll {
   this: TestKit with Suite =>

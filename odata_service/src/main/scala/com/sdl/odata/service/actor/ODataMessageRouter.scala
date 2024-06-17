@@ -15,13 +15,13 @@
  */
 package com.sdl.odata.service.actor
 
-import akka.actor.SupervisorStrategy.{Resume, Stop}
-import akka.actor._
+import org.apache.pekko.actor.SupervisorStrategy.{Resume, Stop}
+import org.apache.pekko.actor._
 import com.sdl.odata.api.edm.registry.ODataEdmRegistry
 import com.sdl.odata.api.service.ODataRequestContext
 import com.sdl.odata.service.protocol._
 import com.sdl.odata.service.spring.ActorProducer
-import com.sdl.odata.service.util.AkkaUtil
+import com.sdl.odata.service.util.PekkoUtil
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component
 class ODataMessageRouter @Autowired()(serviceRegistry: ODataEdmRegistry, actorProducer: ActorProducer) extends ODataActor {
   import com.sdl.odata.service.actor.MessageHandlerRegistry._
   import com.sdl.odata.service.actor.ODataMessageRouter._
-  import AkkaUtil._
+  import PekkoUtil._
 
   var origin: Option[ActorRef] = None
   var requestContext: Option[ODataRequestContext] = None

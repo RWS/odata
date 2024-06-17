@@ -29,7 +29,7 @@ import com.sdl.odata.unmarshaller.atom.ODataAtomParser
 import com.sdl.odata.unmarshaller.json.ODataJsonParser
 import com.sdl.odata.service.protocol.{BatchOperation, BatchOperationResult}
 import com.sdl.odata.service.spring.ActorProducer
-import com.sdl.odata.service.util.AkkaUtil._
+import com.sdl.odata.service.util.PekkoUtil._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component

@@ -71,7 +71,7 @@ The Tridion OData v4 Framework consists of the following Architecture components
 - `odata_parser` - OData URI parser
 - `odata_processor` - Handlers for processing requests
 - `odata_renderer` - Renderers for Atom and JSON output
-- `odata_service` - The core OData service and Akka based processing engine
+- `odata_service` - The core OData service and Pekko based processing engine
 - `odata_test` - Test components
 - `odata_war` - OData WAR distribution artifact
 - `odata_webservice` - Spring Boot based OData HTTP webservice container

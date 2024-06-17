@@ -15,20 +15,20 @@
  */
 package com.sdl.odata.service.spring;
 
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
+import org.apache.pekko.actor.ActorContext;
+import org.apache.pekko.actor.ActorRef;
+import org.apache.pekko.actor.ActorSystem;
+import org.apache.pekko.actor.Props;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * The ActorProducer is responsible for creating Akka actors that are using Spring dependency injection.
+ * The ActorProducer is responsible for creating Pekko actors that are using Spring dependency injection.
  */
 @Component
 public class ActorProducer {
     @Autowired
-    private AkkaSpringExtension akkaSpringExtension;
+    private PekkoSpringExtension pekkoSpringExtension;
 
     @Autowired
     private ActorSystem actorSystem;
@@ -55,6 +55,6 @@ public class ActorProducer {
     }
 
     public Props create(String actorId) {
-        return akkaSpringExtension.get(actorSystem).props(actorId);
+        return pekkoSpringExtension.get(actorSystem).props(actorId);
     }
 }

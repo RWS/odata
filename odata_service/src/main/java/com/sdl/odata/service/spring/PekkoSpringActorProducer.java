@@ -15,19 +15,19 @@
  */
 package com.sdl.odata.service.spring;
 
-import akka.actor.Actor;
-import akka.actor.IndirectActorProducer;
+import org.apache.pekko.actor.Actor;
+import org.apache.pekko.actor.IndirectActorProducer;
 import org.springframework.context.ApplicationContext;
 
 /**
- * The AkkaSpringActorProducer has a reference to the spring context and is responsible
+ * The PekkoSpringActorProducer has a reference to the spring context and is responsible
  * for retrieving the actor based Bean from the Spring context.
  */
-public class AkkaSpringActorProducer implements IndirectActorProducer {
+public class PekkoSpringActorProducer implements IndirectActorProducer {
     private ApplicationContext applicationContext;
     private String beanName;
 
-    public AkkaSpringActorProducer(ApplicationContext applicationContext, String beanName) {
+    public PekkoSpringActorProducer(ApplicationContext applicationContext, String beanName) {
         this.applicationContext = applicationContext;
         this.beanName = beanName;
     }

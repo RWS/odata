@@ -17,9 +17,9 @@ package com.sdl.odata.service
 
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
-import akka.actor.PoisonPill
-import akka.pattern.ask
-import akka.util.Timeout
+import org.apache.pekko.actor.PoisonPill
+import org.apache.pekko.pattern.ask
+import org.apache.pekko.util.Timeout
 import com.sdl.odata.api.service.{ODataRequest, ODataResponse, ODataService}
 import com.sdl.odata.service.actor.ODataMessageRouter
 import com.sdl.odata.service.protocol.{InitialServiceRequest, ServiceResponse}
