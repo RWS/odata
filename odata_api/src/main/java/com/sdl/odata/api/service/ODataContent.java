@@ -17,7 +17,7 @@ package com.sdl.odata.api.service;
 
 import com.sdl.odata.api.ODataException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
