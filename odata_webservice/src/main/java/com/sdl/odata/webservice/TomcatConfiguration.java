@@ -70,11 +70,11 @@ public class TomcatConfiguration {
             connector.setSecure(true);
             connector.setPort(Integer.parseInt(httpsPort));
             protocol.setSSLEnabled(true);
-            protocol.setKeystoreFile(keystore.getAbsolutePath());
-            protocol.setKeystorePass(keystorePasswd);
-            protocol.setTruststoreFile(keystore.getAbsolutePath());
-            protocol.setTruststorePass(truststorePasswd);
-            protocol.setKeyAlias(keyAlias);
+//            protocol.setKeystoreFile(keystore.getAbsolutePath());
+//            protocol.setKeystorePass(keystorePasswd);
+//            protocol.setTruststoreFile(keystore.getAbsolutePath());
+//            protocol.setTruststorePass(truststorePasswd);
+//            protocol.setKeyAlias(keyAlias);
             return connector;
         } catch (IOException ex) {
             throw new IllegalStateException("cant access keystore: [" + "keystore"
