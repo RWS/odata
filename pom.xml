@@ -98,8 +98,8 @@
         <junit.version>4.13.1</junit.version>
         <logback.version>1.2.13</logback.version>
         <mockito.version>2.24.0</mockito.version>
-        <scala.version>2.12.11</scala.version>
-        <scala-parser-combinators.version>1.1.1</scala-parser-combinators.version>
+        <scala.version>2.12.19</scala.version>
+        <scala-parser-combinators.version>1.1.2</scala-parser-combinators.version>
         <scalatest.version>3.0.8</scalatest.version>
         <servlet-api.version>3.1.0</servlet-api.version>
         <slf4j.version>1.7.36</slf4j.version>
