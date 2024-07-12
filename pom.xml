@@ -100,15 +100,15 @@
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <logback.version>1.5.6</logback.version>
         <mockito-junit5.version>4.5.1</mockito-junit5.version>
-        <pekko.version>1.0.2</pekko.version>
-        <scala-genjavadoc-plugin.version>0.18_${scala.version}</scala-genjavadoc-plugin.version>
+        <pekko.version>1.0.3</pekko.version>
+        <scala-genjavadoc-plugin.version>0.19</scala-genjavadoc-plugin.version>
         <scala-parser-combinators.version>2.1.1</scala-parser-combinators.version>
-        <scala.version>2.12.15</scala.version>
+        <scala.version>2.12.19</scala.version>
         <scalatest.version>3.1.4</scalatest.version>
         <slf4j.version>2.0.13</slf4j.version>
-        <spring-boot.version>3.3.0</spring-boot.version>
-        <spring.version>6.1.8</spring.version>
-        <tomcat.version>10.1.24</tomcat.version>
+        <spring-boot.version>3.3.1</spring-boot.version>
+        <spring.version>6.1.11</spring.version>
+        <tomcat.version>10.1.25</tomcat.version>
         <typesafe-config.version>1.4.3</typesafe-config.version>
         <xerces.version>2.12.2</xerces.version>
         <zipkin-sender.version>1.1.2</zipkin-sender.version>
