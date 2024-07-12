@@ -101,7 +101,7 @@
         <logback.version>1.5.6</logback.version>
         <mockito-junit5.version>4.5.1</mockito-junit5.version>
         <pekko.version>1.0.3</pekko.version>
-        <scala-genjavadoc-plugin.version>0.18_${scala.version}</scala-genjavadoc-plugin.version>
+        <scala-genjavadoc-plugin.version>0.19</scala-genjavadoc-plugin.version>
         <scala-parser-combinators.version>2.1.1</scala-parser-combinators.version>
         <scala.version>2.12.19</scala.version>
         <scalatest.version>3.1.4</scalatest.version>
