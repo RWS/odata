@@ -15,13 +15,14 @@
  */
 package com.sdl.odata.client.caller;
 
-import java.io.IOException;
-import java.io.InputStream;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.util.StreamUtils.copyToString;
@@ -29,14 +30,13 @@ import static org.springframework.util.StreamUtils.copyToString;
 /**
  * MockController.
  */
-@Component
-@RequestMapping("/")
+@Controller
 class MockController {
 
     private static final String RESPONSE = "response.xml";
 
     @RequestMapping(value = "{code:\\d{3}}")
-    ResponseEntity<?> respondWithCode(@PathVariable int code) throws IOException {
+    ResponseEntity<?> respondWithCode(@PathVariable("code") int code) throws IOException {
         return ResponseEntity.status(HttpStatus.valueOf(code)).body(String.valueOf(code));
     }
 
