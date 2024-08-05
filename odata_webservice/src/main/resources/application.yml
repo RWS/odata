@@ -17,7 +17,7 @@
 server:
     port: 8084
     ssl:
-        enabled: true
+        enabled: false
         key-alias: tomcat
         key-store: config/keystore
         key-store-password: changeit
