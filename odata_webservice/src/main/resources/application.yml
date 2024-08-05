@@ -14,10 +14,11 @@
 # limitations under the License.
 #
 
-https:
-    enabled: false
+server:
     port: 8084
-    keystore-path: config/keystore
-    key-alias: tomcat
-    keystore-passwd:  changeit
-    truststore-passwd: changeit
+    ssl:
+        enabled: true
+        key-alias: tomcat
+        key-store: config/keystore
+        key-store-password: changeit
+        trust-store-password: changeit
