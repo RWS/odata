@@ -86,7 +86,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <javadoc.source.dir>${project.basedir}/src/javadoc</javadoc.source.dir>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
 
         <!-- Third party dependency versions, sorted alphabetically -->
         <brave.version>4.13.6</brave.version>
@@ -98,7 +98,7 @@
         <jakarta-annotation-api.version>3.0.0</jakarta-annotation-api.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
-        <logback.version>1.5.6</logback.version>
+        <logback.version>1.5.8</logback.version>
         <mockito-junit5.version>4.5.1</mockito-junit5.version>
         <pekko.version>1.0.3</pekko.version>
         <scala-genjavadoc-plugin.version>0.19</scala-genjavadoc-plugin.version>
@@ -714,7 +714,7 @@
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>[${java.version},18]</version>
+                                    <version>[${java.version},22]</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>3.8.6</version>
