@@ -107,8 +107,8 @@
         <scalatest.version>3.1.4</scalatest.version>
         <slf4j.version>2.0.13</slf4j.version>
         <spring-boot.version>3.3.4</spring-boot.version>
-        <spring.version>6.1.13</spring.version>
-        <tomcat.version>10.1.30</tomcat.version>
+        <spring.version>6.1.14</spring.version>
+        <tomcat.version>10.1.31</tomcat.version>
         <typesafe-config.version>1.4.3</typesafe-config.version>
         <xerces.version>2.12.2</xerces.version>
         <zipkin-sender.version>1.1.2</zipkin-sender.version>
