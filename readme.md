@@ -42,17 +42,17 @@ In order to build and run the OData framework on your pc the following is requir
 If above pre-requisites are met building is as simple as running the following command `mvn clean install`
 
 # Maven Artifacts
-```
+```xml
 <depedencies>
    <dependency>
       <groupId>com.sdl</groupId>
       <artifactId>odata_service</artifactId>
-      <version>2.0.4</version>
+      <version>2.13.0</version>
    </dependency>
    <dependency>
       <groupId>com.sdl</groupId>
       <artifactId>odata_common</artifactId>
-      <version>2.0.4</version>
+      <version>2.13.0</version>
    </dependency>
 <dependencies>
 ```
