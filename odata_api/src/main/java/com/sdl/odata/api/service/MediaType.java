@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@ package com.sdl.odata.api.service;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,11 @@ import java.util.regex.Pattern;
  * Media type.
  */
 public final class MediaType {
+
+    /**
+     * MIME type used for encoding key-value pairs in HTTP requests.
+     */
+    public static final MediaType APPLICATION_URLENCODED = new MediaType("application", "x-www-form-urlencoded");
     /**
      * Media Type XML.
      */
@@ -98,7 +104,7 @@ public final class MediaType {
         this.type = type;
         this.subType = subType;
         this.parameters = parameters != null ?
-                Collections.unmodifiableMap(parameters) : Collections.<String, String>emptyMap();
+                Collections.unmodifiableMap(parameters) : Collections.emptyMap();
     }
 
     /**
@@ -180,17 +186,13 @@ public final class MediaType {
 
         MediaType mediaType = (MediaType) that;
 
-        if (parameters != null ? !parameters.equals(mediaType.parameters) : mediaType.parameters != null) {
+        if (!Objects.equals(parameters, mediaType.parameters)) {
             return false;
         }
         if (!subType.equals(mediaType.subType)) {
             return false;
         }
-        if (!type.equals(mediaType.type)) {
-            return false;
-        }
-
-        return true;
+        return type.equals(mediaType.type);
     }
 
     @Override
