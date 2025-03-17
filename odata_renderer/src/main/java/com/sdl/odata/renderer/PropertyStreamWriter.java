@@ -56,11 +56,23 @@ public interface PropertyStreamWriter {
     void getPropertyEndDocument(Object data, ChunkedActionRenderResult previousResult) throws ODataException;
 
     /**
-     * Action for chunked stream requests. Defines whether this is a start of document, body or end.
+     * Enumeration representing the different actions when writing a chunked stream.
+     * These values indicate what part of the document is being processed.
      */
     enum ChunkedStreamAction {
+        /**
+         * Indicates the start of a document stream.
+         */
         START_DOCUMENT,
+
+        /**
+         * Indicates the body or main content of a document stream.
+         */
         BODY_DOCUMENT,
+
+        /**
+         * Indicates the end of a document stream.
+         */
         END_DOCUMENT
     }
 }
