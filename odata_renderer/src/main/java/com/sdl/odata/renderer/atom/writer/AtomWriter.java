@@ -363,16 +363,14 @@ public class AtomWriter {
         metadataWriter.writeEntryEntityLink(entity);
 
         for (StructuralProperty property : entityType.getStructuralProperties()) {
-            if (property instanceof NavigationProperty) {
+            if (property instanceof NavigationProperty navigationProperty) {
                 // Nullable navigation properties that have null values should not be included in the output of writes
                 if (isWriteOperation) {
                     final Object value = getPropertyValue(property, entity);
                     if (value != null) {
-                        NavigationProperty navigationProperty = (NavigationProperty) property;
                         writeEntryPropertyLink(entity, navigationProperty);
                     }
                 } else {
-                    NavigationProperty navigationProperty = (NavigationProperty) property;
                     writeEntryPropertyLink(entity, navigationProperty);
                 }
             }
@@ -421,7 +419,7 @@ public class AtomWriter {
         // The navigation link
         startLink();
         xmlWriter.writeAttribute(REL, ODATA_NAVIGATION_LINK_REL_NS_PREFIX + property.getName());
-        xmlWriter.writeAttribute(TYPE, String.format(linkType, ATOM_XML.toString()));
+        xmlWriter.writeAttribute(TYPE, linkType.formatted(ATOM_XML.toString()));
         xmlWriter.writeAttribute(TITLE, property.getName());
 
         // Deep inserts allow us to create referenced entities as part of a single create entity operation. See spec:
@@ -450,16 +448,16 @@ public class AtomWriter {
             final Object value = getPropertyValue(property, entity);
 
             if (property.isCollection()) {
-                xmlWriter.writeAttribute(HREF, String.format("%s(%s)/%s", getEntityName(entityDataModel, entity),
+                xmlWriter.writeAttribute(HREF, "%s(%s)/%s".formatted(getEntityName(entityDataModel, entity),
                         formatEntityKey(entityDataModel, entity), property.getName()));
                 if (((Collection<?>) value).size() > 0) {
                     writeCollectionRefs(((Collection<?>) value));
                 }
             } else if (value != null) {
                 if (isSingletonEntity(entityDataModel, getPropertyValue(property, entity))) {
-                    xmlWriter.writeAttribute(HREF, String.format("%s", getEntityName(entityDataModel, value)));
+                    xmlWriter.writeAttribute(HREF, "%s".formatted(getEntityName(entityDataModel, value)));
                 } else {
-                    xmlWriter.writeAttribute(HREF, String.format("%s(%s)", getEntityName(entityDataModel, value),
+                    xmlWriter.writeAttribute(HREF, "%s(%s)".formatted(getEntityName(entityDataModel, value),
                             formatEntityKey(entityDataModel, value)));
                 }
             }
@@ -489,10 +487,10 @@ public class AtomWriter {
         xmlWriter.writeAttribute(TITLE, property.getName());
 
         if (isSingletonEntity(entityDataModel, entity)) {
-            xmlWriter.writeAttribute(HREF, String.format("%s/%s/$ref",
+            xmlWriter.writeAttribute(HREF, "%s/%s/$ref".formatted(
                     getEntityName(entityDataModel, entity), property.getName()));
         } else {
-            xmlWriter.writeAttribute(HREF, String.format("%s(%s)/%s/$ref", getEntityName(entityDataModel, entity),
+            xmlWriter.writeAttribute(HREF, "%s(%s)/%s/$ref".formatted(getEntityName(entityDataModel, entity),
                     formatEntityKey(entityDataModel, entity), property.getName()));
         }
 
@@ -511,7 +509,7 @@ public class AtomWriter {
 
     private void writeMetadataRef(Object entity) throws XMLStreamException, ODataEdmException {
         xmlWriter.writeStartElement(METADATA, REF, "");
-        xmlWriter.writeAttribute(ID, String.format("%s(%s)", getEntityName(entityDataModel, entity),
+        xmlWriter.writeAttribute(ID, "%s(%s)".formatted(getEntityName(entityDataModel, entity),
                 formatEntityKey(entityDataModel, entity)));
         xmlWriter.writeEndElement();
     }
@@ -534,9 +532,9 @@ public class AtomWriter {
 
     private String getHrefAttributeValue(Object entity, NavigationProperty property) throws ODataEdmException {
         if (isSingletonEntity(entityDataModel, entity)) {
-            return String.format("%s/%s", getEntityName(entityDataModel, entity), property.getName());
+            return "%s/%s".formatted(getEntityName(entityDataModel, entity), property.getName());
         } else {
-            return String.format("%s(%s)/%s", getEntityName(entityDataModel, entity),
+            return "%s(%s)/%s".formatted(getEntityName(entityDataModel, entity),
                     formatEntityKey(entityDataModel, entity), property.getName());
         }
     }

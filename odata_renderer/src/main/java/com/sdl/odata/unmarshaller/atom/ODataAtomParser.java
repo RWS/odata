@@ -231,8 +231,7 @@ public class ODataAtomParser extends AbstractParser {
         NodeList childNodes = entryElement.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
-            if (node instanceof Element && node.getNodeName().equals(ODATA_CONTENT)) {
-                Element contentElement = (Element) node;
+            if (node instanceof Element contentElement && node.getNodeName().equals(ODATA_CONTENT)) {
 
                 NodeList propertiesElements =
                         contentElement.getElementsByTagNameNS(getODataMetadataNS(), ODATA_PROPERTIES);
@@ -242,8 +241,8 @@ public class ODataAtomParser extends AbstractParser {
                     NodeList propertyNodes = propertiesElement.getChildNodes();
                     for (int k = 0; k < propertyNodes.getLength(); k++) {
                         Node propertyNode = propertyNodes.item(k);
-                        if (propertyNode instanceof Element) {
-                            setStructProperty(entity, entityType, (Element) propertyNode);
+                        if (propertyNode instanceof Element element) {
+                            setStructProperty(entity, entityType, element);
                         }
                     }
                 }
@@ -433,8 +432,8 @@ public class ODataAtomParser extends AbstractParser {
         NodeList nodes = propertyElement.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node instanceof Element) {
-                setStructProperty(instance, complexType, (Element) node);
+            if (node instanceof Element element) {
+                setStructProperty(instance, complexType, element);
             }
         }
 
@@ -451,8 +450,7 @@ public class ODataAtomParser extends AbstractParser {
         NodeList childNodes = entryElement.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
-            if (node instanceof Element && node.getNodeName().equals(ATOM_LINK)) {
-                Element linkElement = (Element) node;
+            if (node instanceof Element linkElement && node.getNodeName().equals(ATOM_LINK)) {
                 String relAttribute = (linkElement.getAttribute(REL) == null) ? "" : linkElement.getAttribute(REL);
                 if (relAttribute.startsWith(getODataNavLinkRelationNSPrefix())) {
                     foundNavigationProperties.add(processNavigationLink(entity, entityType, linkElement));
@@ -585,8 +583,8 @@ public class ODataAtomParser extends AbstractParser {
         NodeList childNodes = feedElement.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
-            if (node instanceof Element && ATOM_ENTRY.equals(node.getLocalName())) {
-                feedEntries.add((Element) node);
+            if (node instanceof Element element && ATOM_ENTRY.equals(node.getLocalName())) {
+                feedEntries.add(element);
             }
         }
         return feedEntries;
@@ -597,8 +595,8 @@ public class ODataAtomParser extends AbstractParser {
         NodeList childNodes = feedElement.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
-            if (node instanceof Element && REF.equals(node.getLocalName())) {
-                feedEntries.add((Element) node);
+            if (node instanceof Element element && REF.equals(node.getLocalName())) {
+                feedEntries.add(element);
             }
         }
         return feedEntries;
@@ -639,8 +637,8 @@ public class ODataAtomParser extends AbstractParser {
         NodeList childNodes = element.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
-            if (node instanceof Element) {
-                return (Element) node;
+            if (node instanceof Element element1) {
+                return element1;
             }
         }
         return null;

@@ -46,8 +46,8 @@ public class PostMethodHandler extends WriteMethodHandler {
 
     @Override
     public ProcessorResult handleWrite(Object entity) throws ODataException {
-        if (entity instanceof ODataLink) {
-            return processLink((ODataLink) entity);
+        if (entity instanceof ODataLink link) {
+            return processLink(link);
         } else {
             if (entity == null) {
                 throw new ODataBadRequestException("The body of a POST request must contain a valid entity.");

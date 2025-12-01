@@ -121,7 +121,7 @@ public final class ODataRendererUtils {
      */
     public static <T> T checkNotNull(T reference, String message, Object... args) {
         if (reference == null) {
-            throw new IllegalArgumentException(String.format(message, args));
+            throw new IllegalArgumentException(message.formatted(args));
         }
         return reference;
     }
