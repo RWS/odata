@@ -49,8 +49,8 @@ public class ActionPostMethodHandler extends WriteMethodHandler {
     @Override
     public ProcessorResult handleWrite(Object action) throws ODataException {
         Operation operation;
-        if (action instanceof Operation) {
-            operation = (Operation) action;
+        if (action instanceof Operation operation1) {
+            operation = operation1;
             Object data = operation.doOperation(getODataRequestContext(), getDataSourceFactory());
             if (data == null) {
                 return new ProcessorResult(ODataResponse.Status.NO_CONTENT);

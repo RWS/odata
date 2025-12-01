@@ -205,7 +205,7 @@ public class AtomMetadataWriter {
         xmlWriter.writeStartElement(ATOM_ID);
 
         if (entity != null) {
-            xmlWriter.writeCharacters(String.format("%s/%s/%s", oDataUri.serviceRoot(),
+            xmlWriter.writeCharacters("%s/%s/%s".formatted(oDataUri.serviceRoot(),
                     getEntityWithKey(entity), property.getName()));
         } else {
             String id;
@@ -255,7 +255,7 @@ public class AtomMetadataWriter {
             }
         } else {
             xmlWriter.writeAttribute(TITLE, property.getName());
-            xmlWriter.writeAttribute(HREF, String.format("%s/%s", getEntityWithKey(entity), property.getName()));
+            xmlWriter.writeAttribute(HREF, "%s/%s".formatted(getEntityWithKey(entity), property.getName()));
         }
 
         xmlWriter.writeEndElement();
@@ -293,24 +293,24 @@ public class AtomMetadataWriter {
         Type entityType = entityDataModel.getType(entity.getClass());
         xmlWriter.writeStartElement(ATOM_CATEGORY);
         xmlWriter.writeAttribute(SCHEME, ODATA_SCHEME_NS);
-        xmlWriter.writeAttribute(TERM, String.format("%s%s.%s", HASH, entityType.getNamespace(), entityType.getName()));
+        xmlWriter.writeAttribute(TERM, "%s%s.%s".formatted(HASH, entityType.getNamespace(), entityType.getName()));
         xmlWriter.writeEndElement();
     }
 
     private String getEntityWithKey(Object entity) throws ODataEdmException {
         if (isSingletonEntity(entityDataModel, entity)) {
-            return String.format("%s", getEntityName(entityDataModel, entity));
+            return "%s".formatted(getEntityName(entityDataModel, entity));
         } else {
-            return String.format("%s(%s)", getEntityName(entityDataModel, entity),
+            return "%s(%s)".formatted(getEntityName(entityDataModel, entity),
                     formatEntityKey(entityDataModel, entity));
         }
     }
 
     private String getEntryIdString(Object entity) throws ODataEdmException {
         if (isSingletonEntity(entityDataModel, entity)) {
-            return String.format("%s/%s", oDataUri.serviceRoot(), getEntityName(entityDataModel, entity));
+            return "%s/%s".formatted(oDataUri.serviceRoot(), getEntityName(entityDataModel, entity));
         } else {
-            return String.format("%s/%s(%s)", oDataUri.serviceRoot(),
+            return "%s/%s(%s)".formatted(oDataUri.serviceRoot(),
                     getEntityName(entityDataModel, entity), formatEntityKey(entityDataModel, entity));
         }
     }

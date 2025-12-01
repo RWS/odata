@@ -17,6 +17,7 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataActionClientQuery;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -31,6 +32,7 @@ public final class ActionImportClientQuery
         extends AbstractODataClientQuery
         implements ODataActionClientQuery, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -6244730437873248702L;
     private final String actionName;
     private final String actionRequestBody;
@@ -45,7 +47,7 @@ public final class ActionImportClientQuery
                 ? ""
                 : "{" + builder.actionParameterMap.entrySet()
                     .stream()
-                    .map(entry -> String.format("\"%s\":%s", entry.getKey(), entry.getValue()))
+                    .map(entry -> "\"%s\":%s".formatted(entry.getKey(), entry.getValue()))
                     .collect(Collectors.joining(","))
                 + "}";
         this.cacheKey = calculateCacheKey(builder);
@@ -90,7 +92,7 @@ public final class ActionImportClientQuery
 
     @Override
     public String toString() {
-        return String.format("ActionImportClientQuery[%s]", getQuery());
+        return "ActionImportClientQuery[%s]".formatted(getQuery());
     }
 
     /**
@@ -149,7 +151,7 @@ public final class ActionImportClientQuery
                     .filter(entry -> builder.omitCacheProperties
                                 .stream()
                                 .noneMatch(propertyToOmit -> entry.getKey().contains(propertyToOmit)))
-                    .map(entry -> String.format("%s-%s", entry.getKey(), entry.getValue()))
+                    .map(entry -> "%s-%s".formatted(entry.getKey(), entry.getValue()))
                     .collect(Collectors.joining(":"));
         return actionName + ":" + requestParametersKey;
     }

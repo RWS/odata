@@ -17,6 +17,7 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataClientQuery;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class BoundFunctionClientQuery
         extends AbstractODataFunctionClientQuery
         implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3043509213070932752L;
     private String boundEntityName;
     private String functionNameSpace;
@@ -84,7 +86,7 @@ public class BoundFunctionClientQuery
 
     @Override
     public String toString() {
-        return String.format("ODataClientQuery[%s]", getQuery());
+        return "ODataClientQuery[%s]".formatted(getQuery());
     }
 
     /**

@@ -238,7 +238,7 @@ public class AnnotationEntityDataModelFactory implements EntityDataModelFactory 
                 Schema schema = schemas.get(namespace);
                 if (schema != null) {
                     Type type = schema.getType(simpleTypeName);
-                    return type instanceof StructuredType ? (StructuredType) type : null;
+                    return type instanceof StructuredType st ? st : null;
                 } else {
                     return null;
                 }

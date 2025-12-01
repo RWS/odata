@@ -66,8 +66,7 @@ public class MetadataDocumentPropertyWriter {
 
         LOG.debug("Writing property {} of type {}", property.getName(), property.getTypeName());
 
-        if (property instanceof NavigationProperty) {
-            NavigationProperty navProperty = (NavigationProperty) property;
+        if (property instanceof NavigationProperty navProperty) {
             xmlWriter.writeStartElement(NAVIGATION_PROPERTY);
             writeCommonPropertyAttributes(property);
             if (!isNullOrEmpty(navProperty.getPartnerName())) {
