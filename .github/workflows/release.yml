@@ -6,9 +6,9 @@ on:
       releaseVersion:
         description: 'Release version'
         required: true
-        default: '2.9'
+        default: '2.12'
       releaseBuild:
-        description: 'Release build'
+        description: 'Release build (e.g. 8)'
         required: true
         default: ''
 
@@ -25,8 +25,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
           server-password: MAVEN_CENTRAL_TOKEN
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
@@ -49,11 +49,9 @@ jobs:
           TAG: release/${{ github.event.inputs.releaseVersion }}/${{ github.event.inputs.releaseVersion }}.${{ github.event.inputs.releaseBuild }}
           # Suppress logging during release prep/perform
           LOGGING: org.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-          # This is to work around https://issues.sonatype.org/browse/NEXUS-27902 on JDK17
-          JDK_JAVA_OPTIONS: "--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED"
         run: |
           echo "::group::Prepare"
           mvn --batch-mode --no-transfer-progress release:prepare -DreleaseVersion=${{ env.RELEASE }} \
