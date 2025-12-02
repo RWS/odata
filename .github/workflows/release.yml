@@ -1,5 +1,7 @@
 name: Release
 
+run-name: Release ${{ inputs.releaseVersion }}.${{ inputs.releaseBuild }} by @${{ github.actor }}
+
 on:
   workflow_dispatch:
     inputs:
