@@ -57,7 +57,7 @@ public class ParserLogicalTest extends ParserTestSuite {
 
     @Test
     public void testLogicalAnd() throws ODataException {
-        ODataUri uri = parser.parseUri(SERVICE_ROOT + String.format(URI, "and"), model);
+        ODataUri uri = parser.parseUri(SERVICE_ROOT + URI.formatted("and"), model);
         FilterOption option = getSingleOption(uri);
         assertTrue(option.expression() instanceof AndExpr);
         AndExpr expr = (AndExpr) option.expression();
@@ -67,7 +67,7 @@ public class ParserLogicalTest extends ParserTestSuite {
 
     @Test
     public void testLogicalOr() throws ODataException {
-        ODataUri uri = parser.parseUri(SERVICE_ROOT + String.format(URI, "or"), model);
+        ODataUri uri = parser.parseUri(SERVICE_ROOT + URI.formatted("or"), model);
 
         FilterOption option = getSingleOption(uri);
         assertTrue(option.expression() instanceof OrExpr);
@@ -76,7 +76,7 @@ public class ParserLogicalTest extends ParserTestSuite {
     }
 
     private void testWithStringFunctions(String boolMethod) throws ODataException {
-        ODataUri uri = parser.parseUri(SERVICE_ROOT + String.format(QUERY_URI, boolMethod), model);
+        ODataUri uri = parser.parseUri(SERVICE_ROOT + QUERY_URI.formatted(boolMethod), model);
         processQueryFunction(getSingleOption(uri), boolMethod);
     }
 
@@ -87,13 +87,11 @@ public class ParserLogicalTest extends ParserTestSuite {
         Iterator iterator = args.iterator();
         while (iterator.hasNext()) {
             Object cursor = iterator.next();
-            if (cursor instanceof EntityPathExpr) {
-                EntityPathExpr pathExpr = (EntityPathExpr) cursor;
+            if (cursor instanceof EntityPathExpr pathExpr) {
                 PropertyPathExpr path = (PropertyPathExpr) pathExpr.subPath().get();
                 assertEquals(boolMethod, methodCall.methodName());
                 assertEquals("name", path.propertyName());
-            } else if (cursor instanceof LiteralExpr) {
-                LiteralExpr literalExpr = (LiteralExpr) cursor;
+            } else if (cursor instanceof LiteralExpr literalExpr) {
                 StringLiteral stringLiteral = (StringLiteral) literalExpr.value();
                 assertEquals("John", stringLiteral.value());
             }

@@ -231,7 +231,7 @@ public abstract class AbstractRenderer implements ODataRenderer {
 
         if (!contextURL.isDefined()) {
             throw new ODataRenderException(
-                    String.format("Not possible to create context URL for request %s", requestContext));
+                    "Not possible to create context URL for request %s".formatted(requestContext));
         }
     }
 

@@ -107,7 +107,7 @@ public abstract class WriteMethodHandler {
     protected Map<String, String> getResponseHeaders(Object entity) throws ODataEdmException {
 
         final Map<String, String> headers = new HashMap<>();
-        headers.put(LOCATION, String.format("%s/%s(%s)", getoDataUri().serviceRoot(),
+        headers.put(LOCATION, "%s/%s(%s)".formatted(getoDataUri().serviceRoot(),
                 getEntitySetByEntity(getEntityDataModel(), entity).getName(),
                 formatEntityKey(getEntityDataModel(), entity)));
         return headers;
@@ -159,17 +159,17 @@ public abstract class WriteMethodHandler {
 
     private Object normalize(Object value) {
 
-        if (value instanceof Long) {
-            return new BigDecimal((Long) value);
-        } else if (value instanceof Integer) {
-            return new BigDecimal((Integer) value);
-        } else if (value instanceof Short) {
-            return new BigDecimal((Short) value);
-        } else if (value instanceof Byte) {
-            return new BigDecimal((Byte) value);
-        } else if (value instanceof scala.math.BigDecimal) {
+        if (value instanceof Long long1) {
+            return new BigDecimal(long1);
+        } else if (value instanceof Integer integer) {
+            return new BigDecimal(integer);
+        } else if (value instanceof Short short1) {
+            return new BigDecimal(short1);
+        } else if (value instanceof Byte byte1) {
+            return new BigDecimal(byte1);
+        } else if (value instanceof scala.math.BigDecimal decimal) {
             // Convert it to a Java BigDecimal
-            return ((scala.math.BigDecimal) value).bigDecimal();
+            return decimal.bigDecimal();
         }
 
         return value;

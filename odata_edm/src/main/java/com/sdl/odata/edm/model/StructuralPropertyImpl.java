@@ -98,11 +98,11 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
         private Class<?> getCollectionElementType(Field field) {
             // Reflection magic to determine the element type of a collection type
             java.lang.reflect.Type genericType = field.getGenericType();
-            if (genericType instanceof ParameterizedType) {
+            if (genericType instanceof ParameterizedType type) {
                 java.lang.reflect.Type[] actualTypeArguments =
-                        ((ParameterizedType) genericType).getActualTypeArguments();
-                if (actualTypeArguments.length > 0 && actualTypeArguments[0] instanceof Class) {
-                    return (Class<?>) actualTypeArguments[0];
+                        type.getActualTypeArguments();
+                if (actualTypeArguments.length > 0 && actualTypeArguments[0] instanceof Class<?> class1) {
+                    return class1;
                 }
             }
 

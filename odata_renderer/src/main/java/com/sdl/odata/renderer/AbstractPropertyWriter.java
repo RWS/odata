@@ -279,7 +279,7 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
     }
 
     protected void defaultHandling(Type type) throws ODataRenderException {
-        String msg = String.format("Unhandled object type %s", type);
+        String msg = "Unhandled object type %s".formatted(type);
         LOG.warn(msg);
         throw new ODataRenderException(msg);
     }

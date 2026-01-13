@@ -185,8 +185,8 @@ public class JsonWriterTest extends WriterTest {
         JsonWriter writer = new JsonWriter(odataUri, entityDataModel);
 
         String jsonStream;
-        if (data instanceof List) {
-            jsonStream = writer.writeFeed((List<?>) data, contextURL, meta);
+        if (data instanceof List<?> list) {
+            jsonStream = writer.writeFeed(list, contextURL, meta);
         } else {
             jsonStream = writer.writeEntry(data, contextURL);
         }

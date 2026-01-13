@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.client;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ public abstract class AbstractODataFunctionClientQuery
         extends AbstractODataClientQuery
         implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4940192877180997595L;
     private String functionName;
     private Map<String, String> functionParameterMap;
@@ -54,7 +56,7 @@ public abstract class AbstractODataFunctionClientQuery
 
         return "(" + this.functionParameterMap.entrySet().stream()
                 .filter(entity -> entity.getValue() != null && !entity.getValue().isEmpty())
-                .map(entry -> String.format("%s=%s", entry.getKey(), entry.getValue()))
+                .map(entry -> "%s=%s".formatted(entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining(","))
                 + ")";
     }

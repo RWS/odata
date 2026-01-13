@@ -122,8 +122,8 @@ public class JsonServiceDocumentWriter {
      */
     private void writeName(JsonGenerator jsonGenerator, Object entity) throws IOException {
         jsonGenerator.writeFieldName(NAME);
-        if (entity instanceof EntitySet) {
-            jsonGenerator.writeObject(((EntitySet) entity).getName());
+        if (entity instanceof EntitySet set) {
+            jsonGenerator.writeObject(set.getName());
         } else {
             jsonGenerator.writeObject(((Singleton) entity).getName());
         }
@@ -154,8 +154,8 @@ public class JsonServiceDocumentWriter {
     private void writeURL(JsonGenerator jsonGenerator, Object entity) throws IOException {
         // It is exactly the same as the 'name' property.
         jsonGenerator.writeFieldName(URL);
-        if (entity instanceof EntitySet) {
-            jsonGenerator.writeObject(((EntitySet) entity).getName());
+        if (entity instanceof EntitySet set) {
+            jsonGenerator.writeObject(set.getName());
         } else {
             jsonGenerator.writeObject(((Singleton) entity).getName());
         }

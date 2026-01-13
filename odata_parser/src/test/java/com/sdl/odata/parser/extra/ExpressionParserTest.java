@@ -57,8 +57,7 @@ public class ExpressionParserTest extends ParserTestSuite {
 
         while (iter.hasNext()) {
             Object obj = iter.next();
-            if (obj instanceof FilterOption) {
-                FilterOption option = (FilterOption) obj;
+            if (obj instanceof FilterOption option) {
 
                 EqExpr expr = (EqExpr) option.expression();
                 EntityPathExpr pathExpr = (EntityPathExpr) expr.left();
