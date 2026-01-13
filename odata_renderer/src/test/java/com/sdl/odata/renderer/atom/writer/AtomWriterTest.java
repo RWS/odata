@@ -217,8 +217,8 @@ public class AtomWriterTest extends WriterTest {
                 new ODataV4AtomNSConfigurationProvider(), isWriteOperation, false);
 
         writer.startDocument();
-        if (data instanceof List) {
-            writer.writeFeed((List<?>) data, contextURL, meta);
+        if (data instanceof List<?> list) {
+            writer.writeFeed(list, contextURL, meta);
         } else {
             writer.writeEntry(data, contextURL);
         }

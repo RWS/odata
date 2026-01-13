@@ -57,8 +57,7 @@ public class ParserQueryFunctionsTest extends ParserTestSuite {
         Iterator iter = args.iterator();
         while (iter.hasNext()) {
             Object obj = iter.next();
-            if (obj instanceof EntityPathExpr) {
-                EntityPathExpr entityPathExpr = (EntityPathExpr) obj;
+            if (obj instanceof EntityPathExpr entityPathExpr) {
                 PropertyPathExpr propertyPath = (PropertyPathExpr) entityPathExpr.subPath().get();
                 assertEquals("name", propertyPath.propertyName());
             }

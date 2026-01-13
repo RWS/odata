@@ -203,7 +203,7 @@ public final class MarshallingTestUtilities {
     public static EntityType getEntityType(EntityDataModel entityDataModel, Object entity) throws ODataEdmException {
         final Type type = entityDataModel.getType(entity.getClass());
         if (type == null) {
-            String msg = String.format("Given entity %s is not found in entity data model", entity);
+            String msg = "Given entity %s is not found in entity data model".formatted(entity);
             throw new ODataEdmException(msg);
         }
         return (EntityType) type;
