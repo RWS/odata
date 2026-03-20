@@ -1,0 +1,28 @@
+name: Automatic Branch Merging
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  merge:
+    name: Cascading Auto Merge
+    runs-on: ubuntu-latest
+
+    if: |
+      github.event.pull_request.merged == true &&
+      startsWith(github.base_ref, 'release/')
+
+    steps:
+      - name: Automatic Merge
+        uses: ActionsDesk/cascading-downstream-merge@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prefixes: release/
+          ref_branch: develop
