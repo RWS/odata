@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,7 +174,7 @@ public class JsonWriter {
         jsonGenerator.writeStartObject();
 
         // Write @odata constants
-        entitySet = (data instanceof List) ? getEntitySet((List<?>) data) : getEntitySet(data);
+        entitySet = (data instanceof List<?> l) ? getEntitySet(l) : getEntitySet(data);
 
         jsonGenerator.writeStringField(CONTEXT, contextURL);
 
@@ -184,8 +184,8 @@ public class JsonWriter {
 
             long count;
             Object countObj = meta.get("count");
-            if (countObj instanceof Integer) {
-                count = ((Integer) countObj).longValue();
+            if (countObj instanceof Integer integer) {
+                count = integer.longValue();
             } else {
                 count = (long) countObj;
             }
@@ -194,16 +194,16 @@ public class JsonWriter {
 
         if (!(data instanceof List)) {
             if (entitySet != null) {
-                jsonGenerator.writeStringField(ID, String.format("%s(%s)", getEntityName(entityDataModel, data),
+                jsonGenerator.writeStringField(ID, "%s(%s)".formatted(getEntityName(entityDataModel, data),
                         formatEntityKey(entityDataModel, data)));
             } else {
-                jsonGenerator.writeStringField(ID, String.format("%s", getEntityName(entityDataModel, data)));
+                jsonGenerator.writeStringField(ID, "%s".formatted(getEntityName(entityDataModel, data)));
             }
         }
 
         // Write feed
-        if (data instanceof List) {
-            marshallEntities((List<?>) data);
+        if (data instanceof List<?> list) {
+            marshallEntities(list);
         } else {
             marshall(data, this.entityDataModel.getType(data.getClass()));
         }
@@ -219,7 +219,7 @@ public class JsonWriter {
         jsonGenerator.writeArrayFieldStart(VALUE);
         for (Object entity : entities) {
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField(ID, String.format("%s(%s)", getEntityName(entityDataModel, entity),
+            jsonGenerator.writeStringField(ID, "%s(%s)".formatted(getEntityName(entityDataModel, entity),
                     formatEntityKey(entityDataModel, entity)));
             marshall(entity, entityDataModel.getType(entity.getClass()));
             jsonGenerator.writeEndObject();
@@ -274,9 +274,8 @@ public class JsonWriter {
 
             visitProperties(entityDataModel, structuredType, property -> {
                 try {
-                    if (property instanceof NavigationProperty) {
+                    if (property instanceof NavigationProperty navProperty) {
                         LOG.trace("Start marshalling navigation property: {}", property.getName());
-                        NavigationProperty navProperty = (NavigationProperty) property;
                         if (forceExpand || isExpandedProperty(navProperty)) {
                             final Object value = getValueFromProperty(object, navProperty);
                             if (value != null) {
@@ -324,7 +323,7 @@ public class JsonWriter {
             String type = typeName.substring(typeName.lastIndexOf(".") + 1, typeName.length());
 
             if (!type.equals(structuredType.getName())) {
-                jsonGenerator.writeStringField(TYPE, String.format("#%s.%s",
+                jsonGenerator.writeStringField(TYPE, "#%s.%s".formatted(
                         structuredType.getNamespace(), structuredType.getName()));
             } else {
                 LOG.trace("{} has root level. {} won't be written here", entitySet.getName(), TYPE);

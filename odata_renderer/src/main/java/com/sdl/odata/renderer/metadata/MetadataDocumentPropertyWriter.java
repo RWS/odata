@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,8 +66,7 @@ public class MetadataDocumentPropertyWriter {
 
         LOG.debug("Writing property {} of type {}", property.getName(), property.getTypeName());
 
-        if (property instanceof NavigationProperty) {
-            NavigationProperty navProperty = (NavigationProperty) property;
+        if (property instanceof NavigationProperty navProperty) {
             xmlWriter.writeStartElement(NAVIGATION_PROPERTY);
             writeCommonPropertyAttributes(property);
             if (!isNullOrEmpty(navProperty.getPartnerName())) {

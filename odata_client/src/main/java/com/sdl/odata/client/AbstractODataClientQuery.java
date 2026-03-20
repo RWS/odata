@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import java.util.List;
 
 import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
 import static com.sdl.odata.util.edm.EntityDataModelUtil.pluralize;
-import static java.lang.String.format;
 
 /**
  * Abstract implementation of ODataClientQuery.
@@ -93,7 +92,7 @@ public abstract class AbstractODataClientQuery implements ODataClientQuery {
     }
 
     private String appendEntityKeySuffix(String entityName) {
-        return entityKey == null ? entityName : format("%s(%s)", entityName, entityKey);
+        return entityKey == null ? entityName : "%s(%s)".formatted(entityName, entityKey);
     }
 
     public static <T> T checkNotNull(T reference, Object errorMessage) {

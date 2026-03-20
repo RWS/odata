@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.client;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ public class BasicODataClientQuery
         extends AbstractODataClientQuery
         implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6603128698934052827L;
     private static final String EXPAND_PREFIX = "$expand=";
     private static final String FILTER_PREFIX = "$filter=";
@@ -77,7 +79,7 @@ public class BasicODataClientQuery
         if (filterMap != null && !filterMap.isEmpty()) {
             parameters.append(FILTER_PREFIX);
             for (Map.Entry<String, String> filterEntry : filterMap.entrySet()) {
-                parameters.append(String.format("%s eq '%s'", filterEntry.getKey(), filterEntry.getValue()));
+                parameters.append("%s eq '%s'".formatted(filterEntry.getKey(), filterEntry.getValue()));
                 if (++filterParameterCounter < filterMap.size()) {
                     parameters.append(" and ");
                 }
@@ -90,9 +92,9 @@ public class BasicODataClientQuery
         if (expandParameters != null) {
             parameters.append(EXPAND_PREFIX);
             Iterator iterator = expandParameters.iterator();
-            parameters.append(String.format("%s", iterator.next()));
+            parameters.append("%s".formatted(iterator.next()));
             while (iterator.hasNext()) {
-                parameters.append(String.format(",%s", iterator.next()));
+                parameters.append(",%s".formatted(iterator.next()));
             }
         }
         return parameters;
@@ -134,7 +136,7 @@ public class BasicODataClientQuery
 
     @Override
     public String toString() {
-        return String.format("ODataClientQuery[%s]", getQuery());
+        return "ODataClientQuery[%s]".formatted(getQuery());
     }
 
     /**

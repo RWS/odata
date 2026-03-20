@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +57,7 @@ public class ParserQueryFunctionsTest extends ParserTestSuite {
         Iterator iter = args.iterator();
         while (iter.hasNext()) {
             Object obj = iter.next();
-            if (obj instanceof EntityPathExpr) {
-                EntityPathExpr entityPathExpr = (EntityPathExpr) obj;
+            if (obj instanceof EntityPathExpr entityPathExpr) {
                 PropertyPathExpr propertyPath = (PropertyPathExpr) entityPathExpr.subPath().get();
                 assertEquals("name", propertyPath.propertyName());
             }

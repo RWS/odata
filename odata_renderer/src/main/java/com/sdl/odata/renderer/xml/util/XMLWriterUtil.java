@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,8 +58,8 @@ public final class XMLWriterUtil {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             XMLStreamWriter writer = startElement(outputStream, rootName, type.getName(), context, false);
             // write values
-            if (data instanceof List<?>) {
-                writeMultipleElementsForPrimitives(writer, (List<?>) data);
+            if (data instanceof List<?> list) {
+                writeMultipleElementsForPrimitives(writer, list);
             } else {
                 writer.writeCharacters(data.toString());
             }
@@ -86,8 +86,8 @@ public final class XMLWriterUtil {
         LOG.debug("PropertyXMLForPrimitivesBodyDocument invoked with {}, {}, {}", rootName, type, data);
         try {
             // write values
-            if (data instanceof List<?>) {
-                writeMultipleElementsForPrimitives(xmlStreamWriter, (List<?>) data);
+            if (data instanceof List<?> list) {
+                writeMultipleElementsForPrimitives(xmlStreamWriter, list);
             } else {
                 xmlStreamWriter.writeCharacters(data.toString());
             }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -238,7 +238,7 @@ public class AnnotationEntityDataModelFactory implements EntityDataModelFactory 
                 Schema schema = schemas.get(namespace);
                 if (schema != null) {
                     Type type = schema.getType(simpleTypeName);
-                    return type instanceof StructuredType ? (StructuredType) type : null;
+                    return type instanceof StructuredType st ? st : null;
                 } else {
                     return null;
                 }
