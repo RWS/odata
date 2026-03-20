@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -417,8 +417,8 @@ public final class EntityDataModelUtil {
             String baseTypeName = structuredType.getBaseTypeName();
             if (!isNullOrEmpty(baseTypeName)) {
                 Type baseType = entityDataModel.getType(baseTypeName);
-                if (baseType != null && baseType instanceof StructuredType) {
-                    return getStructuralProperty(entityDataModel, (StructuredType) baseType, propertyName);
+                if (baseType != null && baseType instanceof StructuredType type) {
+                    return getStructuralProperty(entityDataModel, type, propertyName);
                 }
             }
         }
@@ -731,7 +731,7 @@ public final class EntityDataModelUtil {
             } else if (keyPropertyRefs.size() > 1) {
                 List<String> processedKeys = new ArrayList<>();
                 for (PropertyRef propertyRef : keyPropertyRefs) {
-                    processedKeys.add(String.format("%s=%s", propertyRef.getPath(),
+                    processedKeys.add("%s=%s".formatted(propertyRef.getPath(),
                             getKeyValueFromPropertyRef(entityDataModel, entity, propertyRef)));
                 }
                 return processedKeys.stream().map(Object::toString).collect(Collectors.joining(","));
@@ -753,10 +753,10 @@ public final class EntityDataModelUtil {
         Field field = entityType.getStructuralProperty(propertyRef.getPath()).getJavaField();
         field.setAccessible(true);
         Object value = field.get(entity);
-        if (value instanceof String) {
-            return String.format("'%s'", ((String) value).replaceAll("'", "''"));
+        if (value instanceof String string) {
+            return "'%s'".formatted(string.replaceAll("'", "''"));
         } else if (value instanceof Period) {
-            return String.format("duration'%s'", value.toString());
+            return "duration'%s'".formatted(value.toString());
         } else {
             return value != null ? value.toString() : null;
         }

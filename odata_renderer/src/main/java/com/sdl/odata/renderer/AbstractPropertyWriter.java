@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -279,7 +279,7 @@ public abstract class AbstractPropertyWriter implements PropertyStreamWriter {
     }
 
     protected void defaultHandling(Type type) throws ODataRenderException {
-        String msg = String.format("Unhandled object type %s", type);
+        String msg = "Unhandled object type %s".formatted(type);
         LOG.warn(msg);
         throw new ODataRenderException(msg);
     }
