@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -203,7 +203,7 @@ public final class MarshallingTestUtilities {
     public static EntityType getEntityType(EntityDataModel entityDataModel, Object entity) throws ODataEdmException {
         final Type type = entityDataModel.getType(entity.getClass());
         if (type == null) {
-            String msg = String.format("Given entity %s is not found in entity data model", entity);
+            String msg = "Given entity %s is not found in entity data model".formatted(entity);
             throw new ODataEdmException(msg);
         }
         return (EntityType) type;

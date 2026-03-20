@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ public final class WriteMethodUtil {
                                                          EntityDataModel entityDataModel) throws ODataEdmException {
 
         final Map<String, String> headers = new HashMap<>();
-        headers.put(LOCATION, String.format("%s/%s(%s)", oDataUri.serviceRoot(),
+        headers.put(LOCATION, "%s/%s(%s)".formatted(oDataUri.serviceRoot(),
                 getEntitySetByEntity(entityDataModel, entity).getName(),
                 formatEntityKey(entityDataModel, entity)));
         return headers;
@@ -152,17 +152,17 @@ public final class WriteMethodUtil {
 
     private static Object normalize(Object value) {
 
-        if (value instanceof Long) {
-            return new BigDecimal((Long) value);
-        } else if (value instanceof Integer) {
-            return new BigDecimal((Integer) value);
-        } else if (value instanceof Short) {
-            return new BigDecimal((Short) value);
-        } else if (value instanceof Byte) {
-            return new BigDecimal((Byte) value);
-        } else if (value instanceof scala.math.BigDecimal) {
+        if (value instanceof Long long1) {
+            return new BigDecimal(long1);
+        } else if (value instanceof Integer integer) {
+            return new BigDecimal(integer);
+        } else if (value instanceof Short short1) {
+            return new BigDecimal(short1);
+        } else if (value instanceof Byte byte1) {
+            return new BigDecimal(byte1);
+        } else if (value instanceof scala.math.BigDecimal decimal) {
             // Convert it to a Java BigDecimal
-            return ((scala.math.BigDecimal) value).bigDecimal();
+            return decimal.bigDecimal();
         }
 
         return value;

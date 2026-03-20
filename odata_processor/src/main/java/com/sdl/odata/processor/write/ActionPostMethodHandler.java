@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,8 @@ public class ActionPostMethodHandler extends WriteMethodHandler {
     @Override
     public ProcessorResult handleWrite(Object action) throws ODataException {
         Operation operation;
-        if (action instanceof Operation) {
-            operation = (Operation) action;
+        if (action instanceof Operation operation1) {
+            operation = operation1;
             Object data = operation.doOperation(getODataRequestContext(), getDataSourceFactory());
             if (data == null) {
                 return new ProcessorResult(ODataResponse.Status.NO_CONTENT);

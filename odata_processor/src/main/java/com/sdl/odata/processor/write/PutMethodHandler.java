@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,8 @@ public class PutMethodHandler extends WriteMethodHandler {
 
     @Override
     public ProcessorResult handleWrite(Object entity) throws ODataException {
-        if (entity instanceof ODataLink) {
-            return processLink((ODataLink) entity);
+        if (entity instanceof ODataLink link) {
+            return processLink(link);
         } else {
             if (entity == null) {
                 throw new ODataBadRequestException("The body of a PUT request must contain a valid entity.");

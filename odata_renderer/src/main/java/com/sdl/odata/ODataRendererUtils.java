@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,7 +121,7 @@ public final class ODataRendererUtils {
      */
     public static <T> T checkNotNull(T reference, String message, Object... args) {
         if (reference == null) {
-            throw new IllegalArgumentException(String.format(message, args));
+            throw new IllegalArgumentException(message.formatted(args));
         }
         return reference;
     }
