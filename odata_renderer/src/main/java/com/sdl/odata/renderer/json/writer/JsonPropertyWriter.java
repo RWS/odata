@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -259,7 +259,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
         LOG.trace("Property name is '{}' and its value is '{}'", property.getName(), value);
         Type type = getType(value);
         if (type == null) {
-            String msg = String.format("Field type %s is not found in entity data model", field.getType());
+            String msg = "Field type %s is not found in entity data model".formatted(field.getType());
             LOG.error(msg);
             throw new ODataRenderException(msg);
         }

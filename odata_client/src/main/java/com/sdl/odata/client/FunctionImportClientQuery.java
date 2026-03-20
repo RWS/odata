@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.sdl.odata.client;
 
 import com.sdl.odata.client.api.ODataClientQuery;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class FunctionImportClientQuery
         extends AbstractODataFunctionClientQuery
         implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7148567522038582230L;
 
     public FunctionImportClientQuery(Builder builder) {
@@ -76,7 +78,7 @@ public class FunctionImportClientQuery
 
     @Override
     public String toString() {
-        return String.format("ODataClientQuery[%s]", getQuery());
+        return "ODataClientQuery[%s]".formatted(getQuery());
     }
 
     /**

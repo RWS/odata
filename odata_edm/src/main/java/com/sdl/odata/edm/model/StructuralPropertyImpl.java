@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,11 +98,11 @@ public abstract class StructuralPropertyImpl implements StructuralProperty {
         private Class<?> getCollectionElementType(Field field) {
             // Reflection magic to determine the element type of a collection type
             java.lang.reflect.Type genericType = field.getGenericType();
-            if (genericType instanceof ParameterizedType) {
+            if (genericType instanceof ParameterizedType type) {
                 java.lang.reflect.Type[] actualTypeArguments =
-                        ((ParameterizedType) genericType).getActualTypeArguments();
-                if (actualTypeArguments.length > 0 && actualTypeArguments[0] instanceof Class) {
-                    return (Class<?>) actualTypeArguments[0];
+                        type.getActualTypeArguments();
+                if (actualTypeArguments.length > 0 && actualTypeArguments[0] instanceof Class<?> class1) {
+                    return class1;
                 }
             }
 

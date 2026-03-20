@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2025 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
+ * Copyright (c) 2014-2026 All Rights Reserved by the RWS Group for and on behalf of its affiliates and subsidiaries.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -231,7 +231,7 @@ public abstract class AbstractRenderer implements ODataRenderer {
 
         if (!contextURL.isDefined()) {
             throw new ODataRenderException(
-                    String.format("Not possible to create context URL for request %s", requestContext));
+                    "Not possible to create context URL for request %s".formatted(requestContext));
         }
     }
 
