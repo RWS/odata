@@ -3,5 +3,5 @@
 @Library('delivery') _
 
 commonBuild {
-    jdk = 21
+    jdk = 25
 }
