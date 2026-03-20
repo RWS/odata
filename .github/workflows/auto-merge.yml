@@ -21,8 +21,8 @@ jobs:
 
     steps:
       - name: Automatic Merge
-        uses: ActionsDesk/cascading-downstream-merge@v3.1.0
+        uses: ActionsDesk/cascading-downstream-merge@v3
         with:
-          github_token: \${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           prefixes: release/
           ref_branch: develop
