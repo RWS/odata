@@ -5,9 +5,9 @@ name: Build
 
 on:
   push:
-    branches: [ release/2.12 ]
+    branches: [ release/2.13 ]
   pull_request:
-    branches: [ release/2.12 ]
+    branches: [ release/2.13 ]
 
 jobs:
   build:
