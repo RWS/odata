@@ -15,7 +15,7 @@
  */
 package com.sdl.odata.renderer.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -92,7 +92,7 @@ public final class PrettyPrinter {
      */
     public static String prettyPrintJson(String json) throws IOException {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        JsonMapper objectMapper = JsonMapper.builder().build();
         Object jsonObject = objectMapper.readValue(json, Object.class);
 
         return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);

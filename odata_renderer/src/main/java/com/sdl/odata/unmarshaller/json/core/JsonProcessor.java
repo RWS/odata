@@ -15,9 +15,9 @@
  */
 package com.sdl.odata.unmarshaller.json.core;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
 import com.sdl.odata.JsonConstants;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ import java.util.TreeMap;
 public class JsonProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(JsonProcessor.class);
 
-    private static final JsonFactory JSON_FACTORY = new JsonFactory();
+    private static final JsonFactory JSON_FACTORY = JsonFactory.builder().build();
     /**
      * OData.
      */
@@ -76,7 +76,7 @@ public class JsonProcessor {
             JsonParser jsonParser = JSON_FACTORY.createParser(inputJson);
 
             while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-                String token = jsonParser.getCurrentName();
+                String token = jsonParser.currentName();
                 if (token != null) {
                     if (token.startsWith(ODATA)) {
                         processSpecialTags(jsonParser);
@@ -87,7 +87,7 @@ public class JsonProcessor {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             throw new ODataUnmarshallingException("It is unable to unmarshall", e);
         }
     }
@@ -100,12 +100,12 @@ public class JsonProcessor {
      * @throws IOException If unable to read input parser
      */
     private void process(JsonParser jsonParser) throws IOException, ODataUnmarshallingException {
-        if (jsonParser.getCurrentToken() == JsonToken.FIELD_NAME) {
-            LOG.debug("Starting to parse {} token", jsonParser.getCurrentName());
-            String key = jsonParser.getCurrentName();
+        if (jsonParser.currentToken() == JsonToken.PROPERTY_NAME) {
+            LOG.debug("Starting to parse {} token", jsonParser.currentName());
+            String key = jsonParser.currentName();
             jsonParser.nextToken();
 
-            JsonToken token = jsonParser.getCurrentToken();
+            JsonToken token = jsonParser.currentToken();
             if (token == JsonToken.START_ARRAY) {
                 if (JsonConstants.VALUE.equals(key)) {
                     throw new ODataUnmarshallingException("Feed is not supported");
@@ -117,7 +117,7 @@ public class JsonProcessor {
                 if (token.equals(JsonToken.VALUE_NULL)) {
                     values.put(key, null);
                 } else {
-                    values.put(key, jsonParser.getText());
+                    values.put(key, jsonParser.getString());
                 }
             }
         }
@@ -131,15 +131,15 @@ public class JsonProcessor {
      * @throws IOException If unable to read input parser
      */
     private List<Object> getCollectionValue(JsonParser jsonParser) throws IOException {
-        LOG.debug("Start parsing {} array", jsonParser.getCurrentName());
+        LOG.debug("Start parsing {} array", jsonParser.currentName());
         List<Object> list = new ArrayList<>();
         while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-            if (jsonParser.getCurrentToken() == JsonToken.START_OBJECT) {
+            if (jsonParser.currentToken() == JsonToken.START_OBJECT) {
                 Object embedded = getEmbeddedObject(jsonParser);
                 list.add(embedded);
             }
-            if (!"}".equals(jsonParser.getText())) {
-                list.add(jsonParser.getText());
+            if (!"}".equals(jsonParser.getString())) {
+                list.add(jsonParser.getString());
             } else {
                 LOG.info("Array is over.");
             }
@@ -158,9 +158,9 @@ public class JsonProcessor {
         LOG.debug("Start parsing an embedded object.");
         Map<String, Object> embeddedMap = new HashMap<>();
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-            String key = jsonParser.getText();
+            String key = jsonParser.getString();
             jsonParser.nextToken();
-            JsonToken token = jsonParser.getCurrentToken();
+            JsonToken token = jsonParser.currentToken();
             if (token == JsonToken.START_ARRAY) {
                 Object embeddedArray = getCollectionValue(jsonParser);
                 embeddedMap.put(key, embeddedArray);
@@ -171,7 +171,7 @@ public class JsonProcessor {
                 if (token.equals(JsonToken.VALUE_NULL)) {
                     embeddedMap.put(key, null);
                 } else {
-                    embeddedMap.put(key, jsonParser.getText());
+                    embeddedMap.put(key, jsonParser.getString());
                 }
             }
         }
@@ -187,9 +187,9 @@ public class JsonProcessor {
      */
     private void processSpecialTags(JsonParser jsonParser) throws IOException {
         LOG.debug("@odata tags found - start parsing");
-        String key = jsonParser.getCurrentName();
+        String key = jsonParser.currentName();
         jsonParser.nextToken();
-        String value = jsonParser.getText();
+        String value = jsonParser.getString();
         odataValues.put(key, value);
     }
 
@@ -203,7 +203,7 @@ public class JsonProcessor {
 
         LOG.debug("@odata.bind tag found - start parsing");
 
-        final String fullLinkFieldName = jsonParser.getText();
+        final String fullLinkFieldName = jsonParser.getString();
         final String key = fullLinkFieldName.substring(0, fullLinkFieldName.indexOf(ODATA_BIND));
         JsonToken token = jsonParser.nextToken();
         if (token != JsonToken.START_ARRAY) {
@@ -228,7 +228,7 @@ public class JsonProcessor {
      * @return the link
      */
     private String processLink(JsonParser jsonParser) throws IOException {
-        final String link = jsonParser.getText();
+        final String link = jsonParser.getString();
         if (link.contains(SVC_EXTENSION)) {
             return link.substring(link.indexOf(SVC_EXTENSION) + SVC_EXTENSION.length());
         }

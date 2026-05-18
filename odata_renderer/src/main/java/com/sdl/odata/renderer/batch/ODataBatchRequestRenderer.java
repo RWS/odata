@@ -15,7 +15,7 @@
  */
 package com.sdl.odata.renderer.batch;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.parser.ODataBatchException;
@@ -278,7 +278,7 @@ public class ODataBatchRequestRenderer extends AbstractRenderer {
 
         try {
             // pretty print
-            ObjectMapper objectMapper = new ObjectMapper();
+            JsonMapper objectMapper = JsonMapper.builder().build();
             Object jsonObject = objectMapper.readValue(builder.build().getBodyText(StandardCharsets.UTF_8.name()),
                     Object.class);
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);

@@ -15,20 +15,20 @@
  */
 package com.sdl.odata.renderer.json.writer;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.UUID;
 
 /**
- * This mapper is extension of {@link ObjectMapper}.
+ * This mapper is extension of {@link JsonMapper}.
  * Default object mapper doesn't contain for every possible type.
  *
  */
-public class JsonCodecMapper extends ObjectMapper {
+public class JsonCodecMapper extends JsonMapper {
     @Override
-    public void writeValue(final JsonGenerator jsonGenerator, final Object value) throws IOException {
+    public void writeValue(final JsonGenerator jsonGenerator, final Object value) throws JacksonException {
         super.writeValue(jsonGenerator, processData(value));
     }
 

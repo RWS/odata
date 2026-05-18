@@ -16,23 +16,15 @@
 package com.sdl.odata.client.caller;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Configuration.
  */
 
 @Configuration
-@EnableAutoConfiguration(
-        exclude = {HibernateJpaAutoConfiguration.class, DataSourceAutoConfiguration.class,
-                   DataSourceTransactionManagerAutoConfiguration.class}
-)
-@EnableWebMvc
+@EnableAutoConfiguration
 public class TestConfiguration {
     @Bean
     public MockController controller() {

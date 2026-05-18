@@ -15,8 +15,8 @@
  */
 package com.sdl.odata.unmarshaller.json;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.unmarshaller.AbstractActionParser;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
  */
 public class ODataJsonActionParser extends AbstractActionParser {
     private static final Logger LOG = LoggerFactory.getLogger(ODataJsonActionParser.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final JsonMapper OBJECT_MAPPER = JsonMapper.builder().build();
 
     public ODataJsonActionParser(ODataRequestContext newRequestContext) {
         super(newRequestContext);
