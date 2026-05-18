@@ -15,9 +15,6 @@
  */
 package com.sdl.odata.renderer.json.writer;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.JsonEncoding;
-import tools.jackson.core.JsonGenerator;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.NavigationProperty;
@@ -30,6 +27,9 @@ import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.AbstractPropertyWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.JsonGenerator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -213,7 +213,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
             jsonGenerator.writeName("value");
             processData(data, type);
             return closeStream(outputStream);
-        } catch (ODataException | IOException | IllegalAccessException e) {
+        } catch (JacksonException | ODataException | IOException | IllegalAccessException e) {
             throw new ODataRenderException("Unable to marshall complex");
         }
     }
@@ -242,7 +242,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                 if (!(property instanceof NavigationProperty)) {
                     handleProperty(data, property, jsonGenerator);
                 }
-            } catch (IllegalAccessException | IOException | ODataException e) {
+            } catch (JacksonException | IllegalAccessException | IOException | ODataException e) {
                 throw new ODataRenderException("Error while writing property: " + property.getName(), e);
             }
         });

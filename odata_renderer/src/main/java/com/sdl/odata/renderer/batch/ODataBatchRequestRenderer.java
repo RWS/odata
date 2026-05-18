@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.renderer.batch;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.ODataSystemException;

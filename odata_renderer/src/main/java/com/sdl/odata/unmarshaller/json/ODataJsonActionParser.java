@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.unmarshaller.json;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
 import com.sdl.odata.api.service.ODataRequestContext;
@@ -41,7 +42,7 @@ public class ODataJsonActionParser extends AbstractActionParser {
     }
 
     @Override
-    public Map<String, Object> parseRequestBody(String body) throws IOException {
+    public Map<String, Object> parseRequestBody(String body) throws JacksonException {
         // The very primitive parser to parse simple key-value parameters
         if (isNullOrEmpty(body)) {
             return Collections.emptyMap();

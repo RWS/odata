@@ -15,6 +15,7 @@
  */
 package com.sdl.odata.unmarshaller.json.core;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -87,7 +88,7 @@ public class JsonProcessor {
                     }
                 }
             }
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException | JacksonException e) {
             throw new ODataUnmarshallingException("It is unable to unmarshall", e);
         }
     }
