@@ -95,7 +95,7 @@
         <jakarta-annotation-api.version>3.0.0</jakarta-annotation-api.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
-        <logback.version>1.5.17</logback.version>
+        <logback.version>1.5.19</logback.version>
         <mockito-junit5.version>5.20.0</mockito-junit5.version>
         <pekko.version>1.0.3</pekko.version>
         <scala-genjavadoc-plugin.version>0.19</scala-genjavadoc-plugin.version>
@@ -103,9 +103,9 @@
         <scala.version>2.12.19</scala.version>
         <scalatest.version>3.1.4</scalatest.version>
         <slf4j.version>2.0.13</slf4j.version>
-        <spring-boot.version>3.5.7</spring-boot.version>
-        <spring.version>6.2.12</spring.version>
-        <tomcat.version>10.1.39</tomcat.version>
+        <spring-boot.version>3.5.14</spring-boot.version>
+        <spring.version>6.2.19</spring.version>
+        <tomcat.version>10.1.55</tomcat.version>
         <typesafe-config.version>1.4.3</typesafe-config.version>
         <xerces.version>2.12.2</xerces.version>
     </properties>
