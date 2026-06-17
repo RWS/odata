@@ -29,6 +29,7 @@ import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
+import tools.jackson.core.JacksonException;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -103,7 +104,7 @@ public abstract class AbstractActionParser {
         Map<String, Object> bodyParameters;
         try {
             bodyParameters = parseRequestBody(requestContext.getRequest().getBodyText(UTF_8.name()));
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             throw new ODataUnmarshallingException("Error has occurred during parameter parsing", e);
         }
 
@@ -120,7 +121,7 @@ public abstract class AbstractActionParser {
      * @throws IOException If unable to parse request body
      * @throws ODataException If unable to parse request body
      */
-    public abstract Map<String, Object> parseRequestBody(String body) throws IOException, ODataException;
+    public abstract Map<String, Object> parseRequestBody(String body) throws JacksonException, ODataException;
 
     private void assignParametersToAction(Map<String, Object> bodyParameters, Set<Parameter> actionParameters,
                                           Object actionObject) throws ODataUnmarshallingException {

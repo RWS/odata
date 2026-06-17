@@ -15,9 +15,9 @@
  */
 package com.sdl.odata.renderer.json.writer;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.JsonGenerator;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.EntitySet;
 import com.sdl.odata.api.edm.model.Singleton;
@@ -48,7 +48,7 @@ import static com.sdl.odata.ODataRendererUtils.getContextURL;
 public class JsonServiceDocumentWriter {
     private static final Logger LOG = LoggerFactory.getLogger(JsonServiceDocumentWriter.class);
 
-    private static final JsonFactory JSON_FACTORY = new JsonFactory();
+    private static final JsonFactory JSON_FACTORY = JsonFactory.builder().build();
 
     private final ODataUri uri;
     private final EntityDataModel entityDataModel;
@@ -70,8 +70,8 @@ public class JsonServiceDocumentWriter {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
             JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(stream, JsonEncoding.UTF8);
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField(CONTEXT, getContextURL(uri, entityDataModel));
-            jsonGenerator.writeArrayFieldStart(VALUE);
+            jsonGenerator.writeStringProperty(CONTEXT, getContextURL(uri, entityDataModel));
+            jsonGenerator.writeArrayPropertyStart(VALUE);
 
 
             List<EntitySet> entities = entityDataModel.getEntityContainer().getEntitySets();
@@ -121,11 +121,11 @@ public class JsonServiceDocumentWriter {
      * @param entity        entity from the container
      */
     private void writeName(JsonGenerator jsonGenerator, Object entity) throws IOException {
-        jsonGenerator.writeFieldName(NAME);
+        jsonGenerator.writeName(NAME);
         if (entity instanceof EntitySet set) {
-            jsonGenerator.writeObject(set.getName());
+            jsonGenerator.writeString(set.getName());
         } else {
-            jsonGenerator.writeObject(((Singleton) entity).getName());
+            jsonGenerator.writeString(((Singleton) entity).getName());
         }
     }
 
@@ -136,11 +136,11 @@ public class JsonServiceDocumentWriter {
      * @param entity        entity from the container
      */
     private void writeKind(JsonGenerator jsonGenerator, Object entity) throws IOException {
-        jsonGenerator.writeFieldName(KIND);
+        jsonGenerator.writeName(KIND);
         if (entity instanceof EntitySet) {
-            jsonGenerator.writeObject(ENTITY_SET);
+            jsonGenerator.writeString(ENTITY_SET);
         } else {
-            jsonGenerator.writeObject(SINGLETON);
+            jsonGenerator.writeString(SINGLETON);
         }
     }
 
@@ -153,11 +153,11 @@ public class JsonServiceDocumentWriter {
      */
     private void writeURL(JsonGenerator jsonGenerator, Object entity) throws IOException {
         // It is exactly the same as the 'name' property.
-        jsonGenerator.writeFieldName(URL);
+        jsonGenerator.writeName(URL);
         if (entity instanceof EntitySet set) {
-            jsonGenerator.writeObject(set.getName());
+            jsonGenerator.writeString(set.getName());
         } else {
-            jsonGenerator.writeObject(((Singleton) entity).getName());
+            jsonGenerator.writeString(((Singleton) entity).getName());
         }
     }
 }

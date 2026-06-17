@@ -15,9 +15,9 @@
  */
 package com.sdl.odata.renderer.json.writer;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.JsonGenerator;
 import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.EntitySet;
@@ -69,7 +69,7 @@ import static com.sdl.odata.util.edm.EntityDataModelUtil.visitProperties;
 public class JsonWriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonWriter.class);
-    private static final JsonFactory JSON_FACTORY = new JsonFactory();
+    private static final JsonFactory JSON_FACTORY = JsonFactory.builder().build();
 
     private JsonGenerator jsonGenerator;
     private final ODataUri odataUri;
@@ -176,7 +176,7 @@ public class JsonWriter {
         // Write @odata constants
         entitySet = (data instanceof List<?> l) ? getEntitySet(l) : getEntitySet(data);
 
-        jsonGenerator.writeStringField(CONTEXT, contextURL);
+        jsonGenerator.writeStringProperty(CONTEXT, contextURL);
 
         // Write @odata.count if requested and provided.
         if (hasCountOption(odataUri) && data instanceof List &&
@@ -189,15 +189,15 @@ public class JsonWriter {
             } else {
                 count = (long) countObj;
             }
-            jsonGenerator.writeNumberField(COUNT, count);
+            jsonGenerator.writeNumberProperty(COUNT, count);
         }
 
         if (!(data instanceof List)) {
             if (entitySet != null) {
-                jsonGenerator.writeStringField(ID, "%s(%s)".formatted(getEntityName(entityDataModel, data),
+                jsonGenerator.writeStringProperty(ID, "%s(%s)".formatted(getEntityName(entityDataModel, data),
                         formatEntityKey(entityDataModel, data)));
             } else {
-                jsonGenerator.writeStringField(ID, "%s".formatted(getEntityName(entityDataModel, data)));
+                jsonGenerator.writeStringProperty(ID, "%s".formatted(getEntityName(entityDataModel, data)));
             }
         }
 
@@ -216,10 +216,10 @@ public class JsonWriter {
 
     private void marshallEntities(List<?> entities) throws IOException,
             ODataRenderException, ODataEdmException, NoSuchFieldException, IllegalAccessException {
-        jsonGenerator.writeArrayFieldStart(VALUE);
+        jsonGenerator.writeArrayPropertyStart(VALUE);
         for (Object entity : entities) {
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField(ID, "%s(%s)".formatted(getEntityName(entityDataModel, entity),
+            jsonGenerator.writeStringProperty(ID, "%s(%s)".formatted(getEntityName(entityDataModel, entity),
                     formatEntityKey(entityDataModel, entity)));
             marshall(entity, entityDataModel.getType(entity.getClass()));
             jsonGenerator.writeEndObject();
@@ -280,7 +280,7 @@ public class JsonWriter {
                             final Object value = getValueFromProperty(object, navProperty);
                             if (value != null) {
                                 if (navProperty.isCollection()) {
-                                    jsonGenerator.writeArrayFieldStart(navProperty.getName());
+                                    jsonGenerator.writeArrayPropertyStart(navProperty.getName());
                                     for (Object propertyValue : (Collection<?>) value) {
                                         jsonGenerator.writeStartObject();
                                         marshall(propertyValue, entityDataModel.getType(propertyValue.getClass()));
@@ -288,7 +288,7 @@ public class JsonWriter {
                                     }
                                     jsonGenerator.writeEndArray();
                                 } else {
-                                    jsonGenerator.writeObjectFieldStart(navProperty.getName());
+                                    jsonGenerator.writeObjectPropertyStart(navProperty.getName());
                                     marshall(value, entityDataModel.getType(value.getClass()));
                                     jsonGenerator.writeEndObject();
                                 }
@@ -323,7 +323,7 @@ public class JsonWriter {
             String type = typeName.substring(typeName.lastIndexOf(".") + 1, typeName.length());
 
             if (!type.equals(structuredType.getName())) {
-                jsonGenerator.writeStringField(TYPE, "#%s.%s".formatted(
+                jsonGenerator.writeStringProperty(TYPE, "#%s.%s".formatted(
                         structuredType.getNamespace(), structuredType.getName()));
             } else {
                 LOG.trace("{} has root level. {} won't be written here", entitySet.getName(), TYPE);
@@ -376,7 +376,7 @@ public class JsonWriter {
 
             LOG.trace("Start collection property: {}", propertyName);
             if (((Collection) propertyValue).isEmpty()) {
-                jsonGenerator.writeArrayFieldStart(propertyName);
+                jsonGenerator.writeArrayPropertyStart(propertyName);
                 jsonGenerator.writeEndArray();
             } else {
                 while (iterator.hasNext()) {
@@ -399,7 +399,7 @@ public class JsonWriter {
                 throw new ODataRenderException("OData type not found for property: " + property);
             }
 
-            jsonGenerator.writeFieldName(propertyName);
+            jsonGenerator.writeName(propertyName);
             if (propertyType.getMetaType().equals(COMPLEX) && propertyValue != null) {
                 jsonGenerator.writeStartObject();
             }
@@ -413,7 +413,7 @@ public class JsonWriter {
 
     private void marshallCollection(String propertyName, Iterator<?> iterator, Object first, Type elementType)
             throws IOException, ODataRenderException, NoSuchFieldException, IllegalAccessException {
-        jsonGenerator.writeArrayFieldStart(propertyName);
+        jsonGenerator.writeArrayPropertyStart(propertyName);
         jsonGenerator.writeStartObject();
         marshall(first, elementType);
         jsonGenerator.writeEndObject();
@@ -427,11 +427,11 @@ public class JsonWriter {
     }
 
     private void marshallToArray(String propertyName, Object first, Iterator<?> iterator) throws IOException {
-        jsonGenerator.writeArrayFieldStart(propertyName);
-        jsonGenerator.writeObject(first.toString());
+        jsonGenerator.writeArrayPropertyStart(propertyName);
+        jsonGenerator.writeString(first.toString());
         while (iterator.hasNext()) {
             Object element = iterator.next();
-            jsonGenerator.writeObject(element.toString());
+            jsonGenerator.writeString(element.toString());
         }
         jsonGenerator.writeEndArray();
     }

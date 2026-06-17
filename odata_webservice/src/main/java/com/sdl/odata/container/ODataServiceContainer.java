@@ -19,9 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,14 +28,9 @@ import static org.springframework.boot.Banner.Mode.OFF;
  * <p>
  * This is the main entry point to the OData Web Service.
  * </p>
- * <p>
- * Exclude automatic Hibernate configuration; we use the configuration of the CD data layer instead of the Spring
- * automatic configuration.
- * </p>
  */
 @Configuration
-@EnableAutoConfiguration(exclude = {HibernateJpaAutoConfiguration.class, DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class})
+@EnableAutoConfiguration
 @ComponentScan({"com.sdl.odata.controller"})
 public class ODataServiceContainer {
     private static final Logger LOG = LoggerFactory.getLogger(ODataServiceContainer.class);

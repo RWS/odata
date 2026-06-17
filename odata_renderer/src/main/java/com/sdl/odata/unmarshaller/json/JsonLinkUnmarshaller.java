@@ -15,9 +15,10 @@
  */
 package com.sdl.odata.unmarshaller.json;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
 import com.sdl.odata.JsonConstants;
 import com.sdl.odata.api.ODataSystemException;
 import com.sdl.odata.api.service.MediaType;
@@ -26,7 +27,6 @@ import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.unmarshaller.AbstractLinkUnmarshaller;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
@@ -63,21 +63,21 @@ public class JsonLinkUnmarshaller extends AbstractLinkUnmarshaller {
 
         String idValue = null;
         try {
-            JsonParser parser = new JsonFactory().createParser(bodyText);
+            JsonParser parser = JsonFactory.builder().build().createParser(bodyText);
             while (idValue == null && !parser.isClosed()) {
                 JsonToken token = parser.nextToken();
                 if (token == null) {
                     break;
                 }
 
-                if (token.equals(JsonToken.FIELD_NAME) && parser.getCurrentName().equals(JsonConstants.ID)) {
+                if (token.equals(JsonToken.PROPERTY_NAME) && parser.currentName().equals(JsonConstants.ID)) {
                     token = parser.nextToken();
                     if (token.equals(JsonToken.VALUE_STRING)) {
-                        idValue = parser.getText();
+                        idValue = parser.getString();
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ODataUnmarshallingException("Error while parsing JSON data", e);
         }
 

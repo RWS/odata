@@ -15,9 +15,9 @@
  */
 package com.sdl.odata.renderer.json.writer;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
 import com.google.common.collect.Lists;
 import com.sdl.odata.JsonConstants;
 import com.sdl.odata.api.ODataException;
@@ -221,15 +221,15 @@ public class JsonPropertyWriterTest extends WriterTest {
 
     private Map<String, Object> getMapFromJson(String json) throws IOException {
         Map<String, Object> map = new HashMap<>();
-        JsonParser jsonParser = new JsonFactory().createParser(json);
+        JsonParser jsonParser = JsonFactory.builder().build().createParser(json);
         jsonParser.nextToken();
         while (jsonParser.nextToken() != null) {
-            String key = jsonParser.getText();
+            String key = jsonParser.getString();
             jsonParser.nextToken();
-            if (jsonParser.getCurrentToken() == JsonToken.START_ARRAY) {
+            if (jsonParser.currentToken() == JsonToken.START_ARRAY) {
                 map.put(key, getJsonArray(jsonParser));
             } else {
-                map.put(key, jsonParser.getText());
+                map.put(key, jsonParser.getString());
             }
         }
         return map;
@@ -238,11 +238,11 @@ public class JsonPropertyWriterTest extends WriterTest {
     private List<Object> getJsonArray(JsonParser jsonParser) throws IOException {
         List<Object> objects = new ArrayList<>();
         while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-            if (jsonParser.getCurrentToken() == JsonToken.START_OBJECT) {
+            if (jsonParser.currentToken() == JsonToken.START_OBJECT) {
                 Map<String, String> jsonObject = getJsonObject(jsonParser);
                 objects.add(jsonObject);
             } else {
-                objects.add(jsonParser.getText());
+                objects.add(jsonParser.getString());
             }
         }
         return objects;
@@ -251,9 +251,9 @@ public class JsonPropertyWriterTest extends WriterTest {
     private Map<String, String> getJsonObject(JsonParser jsonParser) throws IOException {
         Map<String, String> map = new HashMap<>();
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-            String key = jsonParser.getText();
+            String key = jsonParser.getString();
             jsonParser.nextToken();
-            map.put(key, jsonParser.getText());
+            map.put(key, jsonParser.getString());
         }
         return map;
     }
