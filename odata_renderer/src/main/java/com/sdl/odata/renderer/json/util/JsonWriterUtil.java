@@ -15,7 +15,7 @@
  */
 package com.sdl.odata.renderer.json.util;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonGenerator;
 import com.sdl.odata.util.PrimitiveUtil;
 
 import java.io.IOException;
@@ -43,7 +43,7 @@ public final class JsonWriterUtil {
         if (String.class.isAssignableFrom(primitiveClass)) {
             jsonGenerator.writeString(String.valueOf(primitiveValue));
         } else if (Byte.class.isAssignableFrom(primitiveClass)) {
-            jsonGenerator.writeObject(primitiveValue);
+            jsonGenerator.writeNumber((byte) (Byte) primitiveValue);
         } else if (Short.class.isAssignableFrom(primitiveClass)) {
             jsonGenerator.writeNumber((short) primitiveValue);
         } else if (Integer.class.isAssignableFrom(primitiveClass)) {
@@ -61,7 +61,7 @@ public final class JsonWriterUtil {
         } else if (BigDecimal.class.isAssignableFrom(primitiveClass)) {
             jsonGenerator.writeNumber((BigDecimal) primitiveValue);
         } else {
-            jsonGenerator.writeObject(primitiveValue.toString());
+            jsonGenerator.writeString(primitiveValue.toString());
         }
     }
 

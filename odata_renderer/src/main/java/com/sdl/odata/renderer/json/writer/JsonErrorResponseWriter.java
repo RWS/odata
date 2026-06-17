@@ -15,16 +15,16 @@
  */
 package com.sdl.odata.renderer.json.writer;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.JsonGenerator;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.renderer.ODataRenderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
 
 import static com.sdl.odata.ErrorRendererConstants.CODE;
 import static com.sdl.odata.ErrorRendererConstants.ERROR;
@@ -40,7 +40,7 @@ public class JsonErrorResponseWriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonErrorResponseWriter.class);
 
-    private static final JsonFactory JSON_FACTORY = new JsonFactory();
+    private static final JsonFactory JSON_FACTORY = JsonFactory.builder().build();
 
     /**
      * Gets the json error output according to ODataException.
@@ -60,19 +60,19 @@ public class JsonErrorResponseWriter {
             JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(outputStream, JsonEncoding.UTF8);
             jsonGenerator.writeStartObject();
 
-            jsonGenerator.writeObjectFieldStart(ERROR);
+            jsonGenerator.writeObjectPropertyStart(ERROR);
 
-            jsonGenerator.writeStringField(CODE, String.valueOf(exception.getCode().getCode()));
-            jsonGenerator.writeStringField(MESSAGE, String.valueOf(exception.getMessage()));
+            jsonGenerator.writeStringProperty(CODE, String.valueOf(exception.getCode().getCode()));
+            jsonGenerator.writeStringProperty(MESSAGE, String.valueOf(exception.getMessage()));
             // optional
             if (exception.getTarget() != null) {
-                jsonGenerator.writeStringField(TARGET, String.valueOf(exception.getTarget()).replace("\"", "'"));
+                jsonGenerator.writeStringProperty(TARGET, String.valueOf(exception.getTarget()).replace("\"", "'"));
             }
             jsonGenerator.writeEndObject();
             jsonGenerator.close();
 
             return outputStream.toString();
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             LOG.error("Not possible to write error JSON.");
             throw new ODataRenderException("Not possible to write error JSON: ", e);
         }

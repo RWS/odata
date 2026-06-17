@@ -15,9 +15,6 @@
  */
 package com.sdl.odata.renderer.json.writer;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.NavigationProperty;
@@ -30,6 +27,9 @@ import com.sdl.odata.api.renderer.ODataRenderException;
 import com.sdl.odata.renderer.AbstractPropertyWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.JsonGenerator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonPropertyWriter.class);
 
-    private static final JsonFactory JSON_FACTORY = new JsonFactory();
+    private static final JsonCodecMapper CODEC_MAPPER = new JsonCodecMapper();
 
     private JsonGenerator jsonGenerator;
 
@@ -61,10 +61,9 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
     public JsonPropertyWriter(ODataUri uri, EntityDataModel entityDataModel) throws ODataRenderException {
         super(uri, entityDataModel);
         try {
-            jsonGenerator = JSON_FACTORY.createGenerator(outputStream, JsonEncoding.UTF8)
-                    .setCodec(new JsonCodecMapper());
+            jsonGenerator = CODEC_MAPPER.createGenerator(outputStream, JsonEncoding.UTF8);
             jsonGenerator.writeStartObject();
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ODataRenderException("Unable to render with following configuration");
         }
     }
@@ -75,34 +74,33 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
             throws ODataException {
         try {
             JsonGenerator generator = previousResult.getWriter() == null ?
-                    JSON_FACTORY.createGenerator(previousResult.getOutputStream(), JsonEncoding.UTF8)
-                            .setCodec(new JsonCodecMapper()) :
+                    CODEC_MAPPER.createGenerator(previousResult.getOutputStream(), JsonEncoding.UTF8) :
                     (JsonGenerator) previousResult.getWriter();
             switch (action) {
                 case START_DOCUMENT:
                     generator.writeStartObject();
-                    generator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(), true));
+                    generator.writeStringProperty(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(), true));
                     if (isCollection(data)) {
-                        generator.writeArrayFieldStart(VALUE);
+                        generator.writeArrayPropertyStart(VALUE);
                     } else if (type.getJavaType().isAssignableFrom(String.class)) {
                         // String primitive can be passed as Stream of String values which is not acceptable
                         // for other primitive values so we treat it separately here
-                        generator.writeFieldName(VALUE);
+                        generator.writeName(VALUE);
                         generator.writeRaw(":\"");
                     } else {
-                        generator.writeFieldName(VALUE);
+                        generator.writeName(VALUE);
                     }
                     generator.flush();
                     return new ChunkedActionRenderResult(previousResult.getOutputStream(), generator);
                 case BODY_DOCUMENT:
                     if (isCollection(data)) {
                         for (Object element : (List) data) {
-                            generator.writeObject(element);
+                            generator.writePOJO(element);
                         }
                     } else if (type.getJavaType().isAssignableFrom(String.class)) {
                         generator.writeRaw(escapeQuotes((String) data));
                     } else {
-                        generator.writeObject(data);
+                        generator.writePOJO(data);
                     }
                     generator.flush();
                     return new ChunkedActionRenderResult(previousResult.getOutputStream(), generator);
@@ -122,7 +120,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                             "Unable to render primitive type value because of wrong ChunkedStreamAction: {0}",
                             action));
             }
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ODataRenderException("Unable to marshall primitive");
         }
     }
@@ -133,13 +131,13 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
             throws ODataException {
         try {
             JsonGenerator generator = previousResult.getWriter() == null ?
-                    JSON_FACTORY.createGenerator(previousResult.getOutputStream(),
-                            JsonEncoding.UTF8).setCodec(new JsonCodecMapper()) :
+                    CODEC_MAPPER.createGenerator(previousResult.getOutputStream(),
+                            JsonEncoding.UTF8) :
                     (JsonGenerator) previousResult.getWriter();
             switch (action) {
                 case START_DOCUMENT:
-                    generator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel()));
-                    generator.writeFieldName("value");
+                    generator.writeStringProperty(CONTEXT, getContextURL(getODataUri(), getEntityDataModel()));
+                    generator.writeName("value");
                     if (isCollection(data)) {
                         generator.writeStartArray();
                     }
@@ -183,18 +181,18 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
         // It is not a problem to write an empty collection. Problem is to use its type for generating @odata.context
         try {
             if (isCollection(data)) {
-                jsonGenerator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(), true));
-                jsonGenerator.writeArrayFieldStart(VALUE);
+                jsonGenerator.writeStringProperty(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(), true));
+                jsonGenerator.writeArrayPropertyStart(VALUE);
                 for (Object element : (List) data) {
-                    jsonGenerator.writeObject(element);
+                    jsonGenerator.writePOJO(element);
                 }
                 jsonGenerator.writeEndArray();
                 return closeStream(outputStream);
 
             } else {
-                jsonGenerator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(), true));
-                jsonGenerator.writeFieldName(VALUE);
-                jsonGenerator.writeObject(data);
+                jsonGenerator.writeStringProperty(CONTEXT, getContextURL(getODataUri(), getEntityDataModel(), true));
+                jsonGenerator.writeName(VALUE);
+                jsonGenerator.writePOJO(data);
                 return closeStream(outputStream);
             }
         } catch (IOException e) {
@@ -210,12 +208,12 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
     private String generateComplex(Object data, StructuredType type, boolean isEmbedded) throws ODataRenderException {
         try {
             if (!isEmbedded) {
-                jsonGenerator.writeStringField(CONTEXT, getContextURL(getODataUri(), getEntityDataModel()));
+                jsonGenerator.writeStringProperty(CONTEXT, getContextURL(getODataUri(), getEntityDataModel()));
             }
-            jsonGenerator.writeFieldName("value");
+            jsonGenerator.writeName("value");
             processData(data, type);
             return closeStream(outputStream);
-        } catch (ODataException | IOException | IllegalAccessException e) {
+        } catch (JacksonException | ODataException | IOException | IllegalAccessException e) {
             throw new ODataRenderException("Unable to marshall complex");
         }
     }
@@ -244,7 +242,7 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
                 if (!(property instanceof NavigationProperty)) {
                     handleProperty(data, property, jsonGenerator);
                 }
-            } catch (IllegalAccessException | IOException | ODataException e) {
+            } catch (JacksonException | IllegalAccessException | IOException | ODataException e) {
                 throw new ODataRenderException("Error while writing property: " + property.getName(), e);
             }
         });
@@ -266,11 +264,11 @@ public class JsonPropertyWriter extends AbstractPropertyWriter {
 
         switch (type.getMetaType()) {
             case PRIMITIVE:
-                generator.writeFieldName(property.getName());
+                generator.writeName(property.getName());
                 writePrimitive(value, generator);
                 break;
             case COMPLEX:
-                generator.writeArrayFieldStart(property.getName());
+                generator.writeArrayPropertyStart(property.getName());
                 generateComplex(value, (StructuredType) type, true);
                 generator.writeEndArray();
                 break;

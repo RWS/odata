@@ -15,14 +15,14 @@
  */
 package com.sdl.odata.unmarshaller.json;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.odata.api.service.ODataRequestContext;
 import com.sdl.odata.unmarshaller.AbstractActionParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,14 +34,14 @@ import static com.sdl.odata.util.ReferenceUtil.isNullOrEmpty;
  */
 public class ODataJsonActionParser extends AbstractActionParser {
     private static final Logger LOG = LoggerFactory.getLogger(ODataJsonActionParser.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final JsonMapper OBJECT_MAPPER = JsonMapper.builder().build();
 
     public ODataJsonActionParser(ODataRequestContext newRequestContext) {
         super(newRequestContext);
     }
 
     @Override
-    public Map<String, Object> parseRequestBody(String body) throws IOException {
+    public Map<String, Object> parseRequestBody(String body) throws JacksonException {
         // The very primitive parser to parse simple key-value parameters
         if (isNullOrEmpty(body)) {
             return Collections.emptyMap();

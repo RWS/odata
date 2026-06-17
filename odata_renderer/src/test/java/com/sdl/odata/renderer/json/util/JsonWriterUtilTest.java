@@ -15,9 +15,9 @@
  */
 package com.sdl.odata.renderer.json.util;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.JsonGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -40,7 +40,7 @@ public class JsonWriterUtilTest {
     public void testWritePrimitiveValues() throws Exception {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(stream, JsonEncoding.UTF8);
+        JsonGenerator jsonGenerator = JsonFactory.builder().build().createGenerator(stream, JsonEncoding.UTF8);
 
         jsonGenerator.writeStartObject();
         appendPrimitiveValue("MyString", "Some text", jsonGenerator);
@@ -63,7 +63,7 @@ public class JsonWriterUtilTest {
     private void appendPrimitiveValue(String fieldName, Object primitiveValue, JsonGenerator jsonGenerator)
             throws IOException {
 
-        jsonGenerator.writeFieldName(fieldName);
+        jsonGenerator.writeName(fieldName);
         JsonWriterUtil.writePrimitiveValue(primitiveValue, jsonGenerator);
     }
 }
