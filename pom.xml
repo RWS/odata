@@ -76,6 +76,7 @@
     </scm>
 
     <properties>
+        <maven.compiler.release>21</maven.compiler.release>
         <snapshot.qualifier.version>0</snapshot.qualifier.version>
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>
