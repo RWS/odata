@@ -20,9 +20,9 @@ import com.sdl.odata.api.processor.query._
 import com.sdl.odata.api.service.{MediaType, ODataRequestContext}
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory
 import com.sdl.odata.processor.model.{ODataMobilePhone, ODataPerson}
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class QueryModelBuilderTest extends FunSuite {
+class QueryModelBuilderTest extends AnyFunSuite {
 
   private val entityDataModel = new AnnotationEntityDataModelFactory()
     .addClass(classOf[ODataPerson])

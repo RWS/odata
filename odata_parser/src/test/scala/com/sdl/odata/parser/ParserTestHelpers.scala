@@ -16,11 +16,11 @@
 package com.sdl.odata.parser
 
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 import com.sdl.odata.test.model._
 
 trait ParserTestHelpers {
-  this: FunSuite =>
+  this: AnyFunSuite =>
 
   val parser: ODataUriParser = {
     val factory = new AnnotationEntityDataModelFactory()

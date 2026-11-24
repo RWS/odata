@@ -88,50 +88,40 @@
         <javadoc.source.dir>${project.basedir}/src/javadoc</javadoc.source.dir>
         <java.version>25</java.version>
 
-        <!-- Third party dependency versions, sorted alphabetically -->
-        <guava.version>33.5.0-jre</guava.version>
-        <httpclient5.version>5.6</httpclient5.version>
-        <jackson.version>3.1.3</jackson.version>
-        <jackson-annotations.version>2.21</jackson-annotations.version>
-        <jacoco.version>0.8.14</jacoco.version>
-        <jakarta-annotation-api.version>3.0.0</jakarta-annotation-api.version>
-        <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
-        <logback.version>1.5.32</logback.version>
-        <mockito-junit5.version>5.23.0</mockito-junit5.version>
-        <pekko.version>1.4.0</pekko.version>
+        <!-- Third party dependency versions, sorted alphabetically. Everything else is managed by the Spring Boot BOM -->
+        <guava.version>33.7.2-jre</guava.version>
+        <jackson.version>3.2.4</jackson.version>
+        <jacoco.version>0.8.16</jacoco.version>
+        <logback.version>1.6.5</logback.version>
+        <pekko.version>2.0.0</pekko.version>
         <scala-genjavadoc-plugin.version>0.19</scala-genjavadoc-plugin.version>
-        <scala-parser-combinators.version>2.1.1</scala-parser-combinators.version>
-        <scala.version>2.12.19</scala.version>
-        <scalatest.version>3.1.4</scalatest.version>
-        <slf4j.version>2.0.17</slf4j.version>
-        <spring-boot.version>4.0.6</spring-boot.version>
-        <spring.version>7.0.7</spring.version>
-        <tomcat.version>10.1.52</tomcat.version>
-        <typesafe-config.version>1.4.3</typesafe-config.version>
-        <xerces.version>2.12.2</xerces.version>
+        <scala-parser-combinators.version>2.5.0</scala-parser-combinators.version>
+        <scala.binary.version>2.13</scala.binary.version>
+        <scala.version>2.13.18</scala.version>
+        <scalatest.version>3.2.20</scalatest.version>
+        <spring-boot.version>4.1.1</spring-boot.version>
     </properties>
 
     <!-- Dependency management -->
     <dependencyManagement>
         <dependencies>
-            <!-- Scala -->
+            <!-- BOMs -->
             <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>${scala.version}</version>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.scala-lang.modules</groupId>
-                <artifactId>scala-parser-combinators_2.12</artifactId>
-                <version>${scala-parser-combinators.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
-            <!-- Logging -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
+            <!-- Overrides: pinned higher than the imported BOMs. Remove an override once the BOM catches up. -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
@@ -143,73 +133,34 @@
                 <version>${logback.version}</version>
             </dependency>
 
-            <!-- Utility libraries -->
+            <!-- Scala -->
             <dependency>
-                <groupId>tools.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson-annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>tools.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>${xerces.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents.client5</groupId>
-                <artifactId>httpclient5</artifactId>
-                <version>${httpclient5.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.annotation</groupId>
-                <artifactId>jakarta.annotation-api</artifactId>
-                <version>${jakarta-annotation-api.version}</version>
+                <groupId>org.scala-lang.modules</groupId>
+                <artifactId>scala-parser-combinators_${scala.binary.version}</artifactId>
+                <version>${scala-parser-combinators.version}</version>
             </dependency>
 
             <!-- Pekko -->
             <dependency>
                 <groupId>org.apache.pekko</groupId>
-                <artifactId>pekko-actor_2.12</artifactId>
+                <artifactId>pekko-actor_${scala.binary.version}</artifactId>
                 <version>${pekko.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.pekko</groupId>
-                <artifactId>pekko-slf4j_2.12</artifactId>
+                <artifactId>pekko-slf4j_${scala.binary.version}</artifactId>
                 <version>${pekko.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.typesafe</groupId>
-                <artifactId>config</artifactId>
-                <version>${typesafe-config.version}</version>
-            </dependency>
-
-            <!-- Servlet API -->
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>${jakarta.servlet-api.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <!-- Testing -->
             <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${mockito-junit5.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.scalatest</groupId>
-                <artifactId>scalatest_2.12</artifactId>
+                <artifactId>scalatest_${scala.binary.version}</artifactId>
                 <version>${scalatest.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -221,97 +172,9 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.pekko</groupId>
-                <artifactId>pekko-testkit_2.12</artifactId>
+                <artifactId>pekko-testkit_${scala.binary.version}</artifactId>
                 <version>${pekko.version}</version>
                 <scope>test</scope>
-            </dependency>
-
-            <!-- Spring -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring-boot.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-tomcat</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-autoconfigure</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Override Tomcat Version supplied in spring-boot-starter-tomcat -->
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-el</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-websocket</artifactId>
-                <version>${tomcat.version}</version>
             </dependency>
 
             <!-- OData dependencies -->
@@ -414,27 +277,15 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>5.0.0</version>
+                    <version>5.1.2</version>
                 </plugin>
 
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
-                    <version>4.9.10</version>
+                    <version>4.10.0</version>
                 </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>3.2.0</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant</artifactId>
-                            <version>1.10.15</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
@@ -455,22 +306,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.15.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.10.0</version>
+                    <version>3.16.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.4</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.6.2</version>
+                    <version>3.7.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -480,12 +326,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>3.1.4</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>3.5.1</version>
                     <configuration>
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
@@ -503,11 +349,6 @@
                             </manifestEntries>
                         </archive>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.12.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -530,13 +371,8 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>4.0.0-M16</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.5</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -547,22 +383,12 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.6.1</version>
+                    <version>3.8.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.7.3</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.21.0</version>
-                    <configuration>
-                        <includes>
-                            <include>com.sdl:*</include>
-                        </includes>
-                    </configuration>
+                    <version>1.10.0</version>
                 </plugin>
 
                 <plugin>
@@ -592,7 +418,7 @@
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>0.10.0</version>
+                    <version>0.12.0</version>
                 </plugin>
 
             </plugins>
@@ -702,54 +528,22 @@
                             <goal>parse-version</goal>
                         </goals>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>ant-contrib</groupId>
-                        <artifactId>ant-contrib</artifactId>
-                        <version>1.0b3</version>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>ant</groupId>
-                                <artifactId>ant</artifactId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-                </dependencies>
-                <executions>
                     <execution>
                         <id>evaluate-build-version</id>
-                        <phase>initialize</phase>
+                        <phase>validate</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>regex-property</goal>
                         </goals>
                         <configuration>
-                            <exportAntProperties>true</exportAntProperties>
-                            <target>
-                                <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath" />
-                                <!--suppress MavenModelInspection -->
-                                <echo>parsedVersion.qualifier = ${parsedVersion.qualifier}</echo>
-                                <if>
-                                    <!--suppress MavenModelInspection -->
-                                    <equals arg1="${parsedVersion.qualifier}" arg2="SNAPSHOT" />
-                                    <then>
-                                        <property name="build.version" value="${snapshot.qualifier.version}" />
-                                    </then>
-                                    <else>
-                                        <!--suppress MavenModelInspection -->
-                                        <property name="build.version" value="${parsedVersion.qualifier}" />
-                                    </else>
-                                </if>
-                            </target>
+                            <name>build.version</name>
+                            <value>${parsedVersion.qualifier}</value>
+                            <regex>^SNAPSHOT$</regex>
+                            <replacement>${snapshot.qualifier.version}</replacement>
+                            <failIfNoMatch>false</failIfNoMatch>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>

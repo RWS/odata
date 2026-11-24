@@ -16,7 +16,7 @@
 package com.sdl.odata.parser
 
 import com.sdl.odata.api.edm.model._
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 trait EntityDataModelHelpers {
 
@@ -107,7 +107,7 @@ trait EntityDataModelHelpers {
     checkPropertyWith(isPrimitiveSingleProperty)
 
   def isPrimitiveKeyPropertyOf(contextTypeName: String)(propertyName: String): Boolean = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     val containingType = getEntityType(contextTypeName)
 
     def isKeyProperty(property: StructuralProperty): Boolean = containingType exists {

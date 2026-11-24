@@ -24,13 +24,13 @@ import com.sdl.odata.api.parser._
 import com.sdl.odata.api.service.MediaType
 import com.sdl.odata.edm.factory.annotations.AnnotationEntityDataModelFactory
 import com.sdl.odata.test.model._
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 /**
   * This unit test for ODataUriUtil.scala (which is in OData_api module)
   * This test should know about entity data model that is why as of know I am keeping here
   */
-class ODataUriUtilTest extends FunSuite with ParserTestHelpers {
+class ODataUriUtilTest extends AnyFunSuite with ParserTestHelpers {
   val entityDataModel: EntityDataModel = {
     val factory = new AnnotationEntityDataModelFactory()
 

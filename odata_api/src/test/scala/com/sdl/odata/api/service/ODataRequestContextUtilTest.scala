@@ -21,12 +21,12 @@ import ODataRequest.Method._
 import ODataRequestContextUtil._
 import com.sdl.odata.test.TestUtils
 import TestUtils._
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 /**
  * Unit tests for 'ODataRequestContextUtil'.
  */
-class ODataRequestContextUtilTest extends FunSuite {
+class ODataRequestContextUtilTest extends AnyFunSuite {
 
   val textPlainType = MediaType.fromString("text/plain")
 

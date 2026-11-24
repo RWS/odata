@@ -16,9 +16,9 @@
 package com.sdl.odata.parser
 
 import com.sdl.odata.api.parser._
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class ResourcePathParsersTest extends FunSuite with ParserTestHelpers {
+class ResourcePathParsersTest extends AnyFunSuite with ParserTestHelpers {
 
   test("resourcePath => EntitySetPath") {
     implicit val p = parser.resourcePath

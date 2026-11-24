@@ -17,9 +17,9 @@ package com.sdl.odata.parser
 
 import com.sdl.odata.api.parser._
 import com.sdl.odata.api.service.MediaType
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class QueryOptionsParsersTest extends FunSuite with ParserTestHelpers {
+class QueryOptionsParsersTest extends AnyFunSuite with ParserTestHelpers {
 
   test("format") {
     implicit val p = parser.format

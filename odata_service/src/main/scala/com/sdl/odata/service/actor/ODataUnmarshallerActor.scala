@@ -43,7 +43,7 @@ class ODataUnmarshallerActor @Autowired() (actorProducer: ActorProducer, unmarsh
   }
 
   private def getUnmarshaller(actorContext: ODataActorContext): Option[ODataUnmarshaller] = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val u = unmarshallerFactory.getUnmarshallers
 

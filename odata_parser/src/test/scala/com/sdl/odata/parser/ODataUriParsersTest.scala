@@ -15,11 +15,11 @@
  */
 package com.sdl.odata.parser
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 import com.sdl.odata.api.parser._
 import com.sdl.odata.api.service.MediaType
 
-class ODataUriParsersTest extends FunSuite with ParserTestHelpers {
+class ODataUriParsersTest extends AnyFunSuite with ParserTestHelpers {
 
   test("odataUri => ServiceRootUri") {
     implicit val p = parser.odataUri
