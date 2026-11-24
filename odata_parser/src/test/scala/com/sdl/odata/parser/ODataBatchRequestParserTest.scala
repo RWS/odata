@@ -17,14 +17,14 @@ package com.sdl.odata.parser
 
 import com.sdl.odata.api.parser.ODataBatchParseException
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 import scala.io.Source
 
 /**
  * Tests for ODataBatchRequestParser.
  */
-class ODataBatchRequestParserTest extends FunSuite {
+class ODataBatchRequestParserTest extends AnyFunSuite {
 
   val batchRequestParser = new ODataBatchRequestParser
   val newLine = sys.props("line.separator")

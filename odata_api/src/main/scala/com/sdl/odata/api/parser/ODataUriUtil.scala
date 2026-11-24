@@ -550,14 +550,16 @@ object ODataUriUtil {
   }
 
   private def getParametersFromLiteralFunctions(parameters: Map[String, FunctionParam]): Option[Map[String, String]] = {
-    Some(parameters.mapValues(_ match {
-      case LiteralFunctionParam(value) => value match {
-        case NullLiteral => null
-        case default => getLiteralValue(default).toString
-      }
-      // TODO how alias values should be handled?
-      case AliasFunctionParam(value) => value
-    }))
+    Some(parameters.map { case (name, param) =>
+      name -> (param match {
+        case LiteralFunctionParam(value) => value match {
+          case NullLiteral => null
+          case default => getLiteralValue(default).toString
+        }
+        // TODO how alias values should be handled?
+        case AliasFunctionParam(value) => value
+      })
+    })
   }
 
   /**
@@ -678,11 +680,11 @@ object ODataUriUtil {
     val fieldType = PrimitiveUtil.wrap(keyField.getType)
     if (fieldValue.isInstanceOf[BigDecimal]) {
       if (fieldType.isAssignableFrom(classOf[java.lang.Long])) {
-        keyField.set(entity, fieldValue.asInstanceOf[BigDecimal].longValue())
+        keyField.set(entity, fieldValue.asInstanceOf[BigDecimal].longValue)
       } else if (fieldType.isAssignableFrom(classOf[java.lang.Integer])) {
-        keyField.set(entity, fieldValue.asInstanceOf[BigDecimal].intValue())
+        keyField.set(entity, fieldValue.asInstanceOf[BigDecimal].intValue)
       } else if (fieldType.isAssignableFrom(classOf[java.lang.Short])) {
-        keyField.set(entity, fieldValue.asInstanceOf[BigDecimal].shortValue())
+        keyField.set(entity, fieldValue.asInstanceOf[BigDecimal].shortValue)
       } else {
         keyField.set(entity, fieldValue)
       }
@@ -790,7 +792,7 @@ object ODataUriUtil {
    * @return The converted Java list.
    */
   def asJavaList[T](list: List[T]): java.util.List[T] = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     list.asJava
   }
 
@@ -801,7 +803,7 @@ object ODataUriUtil {
    * @return The converted Scala list.
    */
   def asScalaList[T](list: java.util.List[T]): List[T] = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     list.asScala.toList
   }
 
@@ -814,7 +816,7 @@ object ODataUriUtil {
    * @return THe converted Java map
    */
   def asJavaMap[K, V](map: Map[K, V]): java.util.Map[K, V] = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     map.asJava
   }
 
@@ -825,7 +827,7 @@ object ODataUriUtil {
    * @return The converted Scala map.
    */
   def asScalaMap[K, V](map: java.util.Map[K, V]): Map[K, V] = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     map.asScala.toMap
   }
 }

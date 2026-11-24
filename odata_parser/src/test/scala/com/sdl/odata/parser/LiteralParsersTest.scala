@@ -20,9 +20,9 @@ import java.util.UUID
 import com.sdl.odata.api.edm.model.EnumType
 import com.sdl.odata.api.parser._
 import java.time.{Period, ZonedDateTime, LocalDate, LocalTime}
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class LiteralParsersTest extends FunSuite with ParserTestHelpers {
+class LiteralParsersTest extends AnyFunSuite with ParserTestHelpers {
 
   test("primitiveLiteral") {
     // Note: Test case not implemented yet

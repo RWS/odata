@@ -16,7 +16,7 @@
 package com.sdl.odata.api.processor.query
 
 import scala.beans.{BooleanBeanProperty, BeanProperty}
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
  * OData query.

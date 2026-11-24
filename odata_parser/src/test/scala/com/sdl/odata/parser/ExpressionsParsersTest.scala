@@ -16,9 +16,9 @@
 package com.sdl.odata.parser
 
 import com.sdl.odata.api.parser._
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class ExpressionsParsersTest extends FunSuite with ParserTestHelpers {
+class ExpressionsParsersTest extends AnyFunSuite with ParserTestHelpers {
 
   test("Method call expr with comparison expr") {
     implicit val p = parser.boolCommonExpr("ODataDemo.Customer")

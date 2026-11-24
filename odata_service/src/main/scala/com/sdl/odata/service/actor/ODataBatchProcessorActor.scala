@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 
 /**
@@ -71,8 +71,8 @@ class ODataBatchProcessorActor @Autowired()(actorProducer: ActorProducer, dataSo
   }
 
   private def processBatchOperation(oDataRequestContext: ODataRequestContext,
-                                   oDataBatchRequestContent: ODataBatchRequestContent): mutable.MutableList[ProcessorResult] = {
-    val results: mutable.MutableList[ProcessorResult] = mutable.MutableList()
+                                   oDataBatchRequestContent: ODataBatchRequestContent): mutable.ListBuffer[ProcessorResult] = {
+    val results: mutable.ListBuffer[ProcessorResult] = mutable.ListBuffer[ProcessorResult]()
     oDataBatchRequestContent.requestComponents.foreach {
       case BatchRequestComponent(requestComponentHeaders: BatchRequestHeaders, requestDetails: Map[String, String]) =>
         results += handleBatchRequestComponent(requestComponentHeaders, requestDetails)
@@ -151,7 +151,7 @@ class ODataBatchProcessorActor @Autowired()(actorProducer: ActorProducer, dataSo
         oDataRequestBuilder.setContentType(MediaType.fromString(contentType.get))
         oDataRequestBuilder.setAccept(MediaType.fromString(contentType.get))
       }
-      oDataRequestBuilder.setHeaders(mapAsJavaMap(batchRequestHeaders.headers))
+      oDataRequestBuilder.setHeaders(batchRequestHeaders.headers.asJava)
       oDataRequestBuilder.build()
     }
     results

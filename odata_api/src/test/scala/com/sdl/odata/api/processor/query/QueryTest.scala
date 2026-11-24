@@ -15,9 +15,9 @@
  */
 package com.sdl.odata.api.processor.query
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class QueryTest extends FunSuite {
+class QueryTest extends AnyFunSuite {
 
   test("/Components?$filter=customMeta.Key eq 'Test' and customMeta.Value eq 'MyTestValue'") {
     // JPA query: SELECT c FROM Components c JOIN c.customMeta cm WHERE cm.Key = ? AND cm.Value = ?

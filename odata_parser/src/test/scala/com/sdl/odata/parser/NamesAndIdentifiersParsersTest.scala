@@ -15,9 +15,9 @@
  */
 package com.sdl.odata.parser
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class NamesAndIdentifiersParsersTest extends FunSuite with ParserTestHelpers {
+class NamesAndIdentifiersParsersTest extends AnyFunSuite with ParserTestHelpers {
 
   test("primitive types name") {
     implicit val p = parser.primitiveTypeName
