@@ -15,11 +15,11 @@
  */
 package com.sdl.odata.api.service;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -37,7 +37,7 @@ public class ODataRequestTest {
                 .setMethod(ODataRequest.Method.POST)
                 .setUri("http://localhost:8080/test")
                 .setHeader("one", "value1")
-                .setHeaders(ImmutableMap.of("two", "value2", "three", "value3"))
+                .setHeaders(Map.of("two", "value2", "three", "value3"))
                 .setBody(new byte[]{1, 2, 3})
                 .build();
 

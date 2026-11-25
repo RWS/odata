@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.unmarshaller.batch;
 
-import com.google.common.collect.Lists;
 import com.sdl.odata.api.service.ODataRequest;
 import com.sdl.odata.parser.BatchRequestComponent;
 import com.sdl.odata.parser.ODataBatchRequestContent;
@@ -26,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import scala.collection.JavaConverters;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +50,7 @@ public class ODataBatchParserTest extends UnmarshallerTest {
                 context.getRequest().getBodyText(StandardCharsets.UTF_8.name()));
 
         // check batch request components
-        List<ODataRequestComponent> batchRequestComponents = Lists.newArrayList(
+        List<ODataRequestComponent> batchRequestComponents = new ArrayList<>(
                 JavaConverters.asJavaCollection(batchRequestContent.requestComponents()));
         assertFalse(batchRequestComponents.isEmpty());
         assertEquals(1, batchRequestComponents.size());

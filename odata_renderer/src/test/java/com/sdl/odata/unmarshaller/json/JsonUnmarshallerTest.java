@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.unmarshaller.json;
 
-import com.google.common.collect.ImmutableMap;
 import com.sdl.odata.api.parser.ODataParser;
 import com.sdl.odata.api.unmarshaller.ODataUnmarshallingException;
 import com.sdl.odata.parser.ODataParserImpl;
@@ -45,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 public class JsonUnmarshallerTest extends UnmarshallerTest {
 
-    private static final Map<String, String> CONTENT_TYPE = ImmutableMap.of("Content-type", "application/json");
+    private static final Map<String, String> CONTENT_TYPE = Map.of("Content-type", "application/json");
 
     @InjectMocks
     private JsonUnmarshaller jsonUnmarshaller = new JsonUnmarshaller();

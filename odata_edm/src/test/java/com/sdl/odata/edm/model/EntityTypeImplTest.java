@@ -15,10 +15,11 @@
  */
 package com.sdl.odata.edm.model;
 
-import com.google.common.collect.ImmutableList;
 import com.sdl.odata.api.edm.model.MetaType;
 import com.sdl.odata.api.edm.model.PropertyRef;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,7 +37,7 @@ public class EntityTypeImplTest {
         builder.setHasStream(true);
         builder.setIsReadOnly(false);
         PropertyRefImpl propertyRef = new PropertyRefImpl("path", "alias");
-        ImmutableList<PropertyRef> propertyRefs = new ImmutableList.Builder<PropertyRef>().add(propertyRef).build();
+        List<PropertyRef> propertyRefs = List.of(propertyRef);
         builder.setKey(new KeyImpl(propertyRefs));
 
         EntityTypeImpl entityTypeImpl = builder.build();

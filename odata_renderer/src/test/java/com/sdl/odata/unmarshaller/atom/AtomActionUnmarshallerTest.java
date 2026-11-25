@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.unmarshaller.atom;
 
-import com.google.common.collect.ImmutableMap;
 import com.sdl.odata.api.parser.ODataParser;
 import com.sdl.odata.api.parser.ODataUriParseException;
 import com.sdl.odata.parser.ODataParserImpl;
@@ -35,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Test for Atom Action Unmarshaller class.
  */
 public class AtomActionUnmarshallerTest extends UnmarshallerTest {
-    private static final Map<String, String> CONTENT_TYPE = ImmutableMap.of("Content-type", "application/xml");
+    private static final Map<String, String> CONTENT_TYPE = Map.of("Content-type", "application/xml");
 
-    private static final Map<String, String> CONTENT_TYPE_JSON = ImmutableMap.of("Content-type", "application/json");
+    private static final Map<String, String> CONTENT_TYPE_JSON = Map.of("Content-type", "application/json");
 
     private final AtomActionUnmarshaller unmarshaller = new AtomActionUnmarshaller();
 

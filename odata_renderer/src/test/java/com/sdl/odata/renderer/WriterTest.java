@@ -42,7 +42,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.sdl.odata.test.model.EnumSample.VALUE1;
 import static com.sdl.odata.test.model.EnumSample.VALUE2;
 import static java.util.Arrays.asList;
@@ -162,9 +161,9 @@ public abstract class WriterTest extends WriterUnmarshallerTest {
         idNamePair120.setName("Name 120");
         collections.setId(40);
         collections.setName("Mixed collections");
-        collections.setPrimitivesCollection(newArrayList("Text 1", "Text 2"));
-        collections.setEnumCollection(newArrayList(VALUE1, VALUE1, VALUE2));
-        collections.setIdNamePairCollection(newArrayList(idNamePair100, idNamePair120));
+        collections.setPrimitivesCollection(new ArrayList<>(Arrays.asList("Text 1", "Text 2")));
+        collections.setEnumCollection(new ArrayList<>(Arrays.asList(VALUE1, VALUE1, VALUE2)));
+        collections.setIdNamePairCollection(new ArrayList<>(Arrays.asList(idNamePair100, idNamePair120)));
 
         return collections;
     }
@@ -187,7 +186,7 @@ public abstract class WriterTest extends WriterUnmarshallerTest {
                 zonedDateTime, "The Burrow", "102",
                 "11001", "Ottery St. Catchpole", "UK");
 
-        return newArrayList(customer1, customer2);
+        return new ArrayList<>(Arrays.asList(customer1, customer2));
     }
 
     /**
@@ -199,9 +198,9 @@ public abstract class WriterTest extends WriterUnmarshallerTest {
 
         final ExpandedPropertiesSample expandedPropertiesEntity = createExpandedPropertiesNoLinksSample();
         expandedPropertiesEntity.setExpandedEntry(createIdNamePair(10L, "Expanded entry"));
-        expandedPropertiesEntity.setExpandedFeed(newArrayList(
+        expandedPropertiesEntity.setExpandedFeed(new ArrayList<>(Arrays.asList(
                 createIdNamePair(10L, "Expanded feed entry 1"),
-                createIdNamePair(20L, "Expanded feed entry 2")));
+                createIdNamePair(20L, "Expanded feed entry 2"))));
 
         return expandedPropertiesEntity;
     }

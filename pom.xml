@@ -89,7 +89,6 @@
         <java.version>25</java.version>
 
         <!-- Third party dependency versions, sorted alphabetically. Everything else is managed by the Spring Boot BOM -->
-        <guava.version>33.7.2-jre</guava.version>
         <jackson.version>3.2.4</jackson.version>
         <jacoco.version>0.8.16</jacoco.version>
         <logback.version>1.6.5</logback.version>
@@ -162,12 +161,6 @@
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest_${scala.binary.version}</artifactId>
                 <version>${scalatest.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

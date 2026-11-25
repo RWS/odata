@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.processor;
 
-import com.google.common.collect.Lists;
 import com.sdl.odata.api.ODataBadRequestException;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.annotations.EdmEntity;
@@ -44,6 +43,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import static com.sdl.odata.api.service.ODataRequest.Method.DELETE;
@@ -313,7 +314,7 @@ public class ODataWriteProcessorImplTest {
         phone.setPhoneNumber("1-800-123456");
 
         person.setPrimaryPhone(phone);
-        person.setMobilePhones(Lists.newArrayList(phone));
+        person.setMobilePhones(new ArrayList<>(Arrays.asList(phone)));
 
         ODataAddress address = new ODataAddress();
         address.setStreetName("Woodstreet");

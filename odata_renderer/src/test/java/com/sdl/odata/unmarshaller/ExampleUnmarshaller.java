@@ -15,8 +15,6 @@
  */
 package com.sdl.odata.unmarshaller;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.edm.model.StructuralProperty;
@@ -83,7 +81,7 @@ public final class ExampleUnmarshaller implements ODataUnmarshaller {
             }
         }
 
-        return ImmutableList.of(entity);
+        return List.of(entity);
     }
 
     // Gets the properties of a structural type, including the properties of its base types (recursively)
@@ -92,7 +90,7 @@ public final class ExampleUnmarshaller implements ODataUnmarshaller {
         List<StructuralProperty> properties = new ArrayList<>();
 
         String baseTypeName = structuredType.getBaseTypeName();
-        if (!Strings.isNullOrEmpty(baseTypeName)) {
+        if (baseTypeName != null && !baseTypeName.isEmpty()) {
             StructuredType baseType = (StructuredType) entityDataModel.getType(baseTypeName);
             if (baseType == null) {
                 throw new ODataUnmarshallingException("OData type not found: " + baseTypeName);
