@@ -15,8 +15,6 @@
  */
 package com.sdl.odata.renderer;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.sdl.odata.api.edm.model.EntityDataModel;
 import com.sdl.odata.api.parser.EntityCollectionPath;
 import com.sdl.odata.api.parser.EntitySetPath;
@@ -48,8 +46,10 @@ import scala.Option;
 import scala.collection.immutable.List$;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 
 import static com.sdl.odata.api.service.MediaType.ATOM_SVC_XML;
 import static com.sdl.odata.api.service.MediaType.ATOM_XML;
@@ -117,20 +117,20 @@ public class AbstractRendererTest {
     public void testScoreByMediaType() {
         assertEquals(MAXIMUM_HEADER_SCORE - 2, renderer.scoreByMediaType(Arrays.asList(
                 new MediaType("text", "html"),
-                new MediaType("application", "xml", ImmutableMap.of("q", "0.8")),
-                new MediaType("*", "*", ImmutableMap.of("q", "0.1"))
+                new MediaType("application", "xml", Map.of("q", "0.8")),
+                new MediaType("*", "*", Map.of("q", "0.1"))
         ), XML));
 
         assertEquals(AbstractRenderer.WILDCARD_MATCH_SCORE, renderer.scoreByMediaType(Arrays.asList(
                 new MediaType("text", "html"),
-                new MediaType("application", "json", ImmutableMap.of("q", "0.8")),
-                new MediaType("*", "*", ImmutableMap.of("q", "0.8"))
+                new MediaType("application", "json", Map.of("q", "0.8")),
+                new MediaType("*", "*", Map.of("q", "0.8"))
         ), XML));
 
         assertEquals(AbstractRenderer.WILDCARD_MATCH_SCORE, renderer.scoreByMediaType(Arrays.asList(
                 new MediaType("text", "html"),
-                new MediaType("application", "xml", ImmutableMap.of("q", "0.8")),
-                new MediaType("*", "*", ImmutableMap.of("q", "0.8"))
+                new MediaType("application", "xml", Map.of("q", "0.8")),
+                new MediaType("*", "*", Map.of("q", "0.8"))
         ), JSON));
 
         assertEquals(MAXIMUM_HEADER_SCORE, renderer.scoreByMediaType(
@@ -143,16 +143,16 @@ public class AbstractRendererTest {
     @Test
     public void testScoreForAtom() throws UnsupportedEncodingException {
         AbstractRenderer atomRenderer = new AtomRenderer();
-        int score = atomRenderer.score(buildODataRequest(ODATA_URI, ATOM_XML), QueryResult.from(Lists.newArrayList()));
+        int score = atomRenderer.score(buildODataRequest(ODATA_URI, ATOM_XML), QueryResult.from(new ArrayList<>()));
         assertEquals(MAXIMUM_HEADER_SCORE, score);
-        score = atomRenderer.score(buildODataRequest(ODATA_URI, XML), QueryResult.from(Lists.newArrayList()));
+        score = atomRenderer.score(buildODataRequest(ODATA_URI, XML), QueryResult.from(new ArrayList<>()));
         assertEquals(MAXIMUM_HEADER_SCORE, score);
     }
 
     @Test
     public void testScoreForJsonMarshaller() throws Exception {
         AbstractRenderer atomRenderer = new JsonRenderer();
-        int score = atomRenderer.score(buildODataRequest(ODATA_URI, JSON), QueryResult.from(Lists.newArrayList()));
+        int score = atomRenderer.score(buildODataRequest(ODATA_URI, JSON), QueryResult.from(new ArrayList<>()));
         assertEquals(MAXIMUM_HEADER_SCORE, score);
     }
 
@@ -160,15 +160,15 @@ public class AbstractRendererTest {
     public void testScoreForNoAcceptHeader() throws Exception {
         AbstractRenderer atomRenderer = new AtomRenderer();
         MediaType[] mediaTypes = {new MediaType("text", "html"),
-                new MediaType("application", "test", ImmutableMap.of("q", "0.8")),
-                new MediaType("*", "*", ImmutableMap.of("q", "0.1"))};
+                new MediaType("application", "test", Map.of("q", "0.8")),
+                new MediaType("*", "*", Map.of("q", "0.1"))};
 
         int atomXMLScore = atomRenderer.score(buildODataRequest(ODATA_URI, mediaTypes),
-                QueryResult.from(Lists.newArrayList()));
+                QueryResult.from(new ArrayList<>()));
         assertEquals(AbstractRenderer.WILDCARD_MATCH_SCORE + 1, atomXMLScore);
 
         int jsonScore = new JsonRenderer().score(buildODataRequest(ODATA_URI, mediaTypes),
-                QueryResult.from(Lists.newArrayList()));
+                QueryResult.from(new ArrayList<>()));
         assertTrue(atomXMLScore > jsonScore,
                 "Score of XML marshaller should have higher value in case of wild card matching ");
     }

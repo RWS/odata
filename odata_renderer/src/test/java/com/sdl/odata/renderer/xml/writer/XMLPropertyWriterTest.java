@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.sdl.odata.AtomConstants.ODATA_METADATA_NS;
 import static com.sdl.odata.AtomConstants.VALUE;
 import static com.sdl.odata.renderer.util.PrettyPrinter.prettyPrintXml;
@@ -87,14 +86,14 @@ public class XMLPropertyWriterTest extends WriterTest {
     public void testTypesMismatchComplexType() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
         assertThrows(ODataRenderException.class, () ->
-                propertyWriter.getPropertyAsString(newArrayList(new Customer()))
+                propertyWriter.getPropertyAsString(new ArrayList<>(Arrays.asList(new Customer())))
         );
     }
 
     @Test
     public void testEmptyCollection() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
-        String result = propertyWriter.getPropertyAsString(newArrayList());
+        String result = propertyWriter.getPropertyAsString(new ArrayList<>());
 
         // Checking expected values
         NodeList nodeList = assertNodeList(result, 1);
@@ -234,7 +233,7 @@ public class XMLPropertyWriterTest extends WriterTest {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-        ArrayList<Object> data = newArrayList();
+        ArrayList<Object> data = new ArrayList<>();
         ChunkedActionRenderResult startResult = propertyWriter.getPropertyStartDocument(data, os);
         ChunkedActionRenderResult bodyResult = propertyWriter.getPropertyBodyDocument(data, startResult);
         propertyWriter.getPropertyEndDocument(data, bodyResult);
@@ -471,11 +470,11 @@ public class XMLPropertyWriterTest extends WriterTest {
     }
 
     private List<Address> createAddressList() {
-        return newArrayList(
+        return new ArrayList<>(Arrays.asList(
                 new Address().setCity("first city").setCountry("first country")
                         .setHouseNumber("first hn").setPostalCode("first postal code").setStreet("first street"),
                 new Address().setCity("second city").setCountry("second country")
                         .setHouseNumber("second hn").setPostalCode("second postal code").setStreet("second street")
-        );
+        ));
     }
 }

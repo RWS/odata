@@ -15,7 +15,6 @@
  */
 package com.sdl.odata.edm.factory.annotations;
 
-import com.google.common.collect.Lists;
 import com.sdl.odata.api.edm.ODataEdmException;
 import com.sdl.odata.api.edm.model.Action;
 import com.sdl.odata.api.edm.model.ActionImport;
@@ -51,6 +50,8 @@ import com.sdl.odata.test.model.UnboundFunctionSample;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -103,7 +104,7 @@ public class AnnotationEntityDataModelFactoryTest {
     public void testAddClassesMethod() throws ODataEdmException {
         factory = new AnnotationEntityDataModelFactory();
 
-        factory.addClasses(Lists.newArrayList(
+        factory.addClasses(new ArrayList<>(Arrays.asList(
                 Address.class,
                 Category.class,
                 Customer.class,
@@ -117,7 +118,7 @@ public class AnnotationEntityDataModelFactoryTest {
                 ActionSample.class,
                 UnboundActionSample.class,
                 ActionImportSample.class
-        ));
+        )));
 
 
         model = factory.buildEntityDataModel();
@@ -183,8 +184,9 @@ public class AnnotationEntityDataModelFactoryTest {
         assertNull(entityContainer.getBaseEntityContainerName());
         assertEquals(4, entityContainer.getEntitySets().size());
 
-        List<String> entitySetsNames = Lists.transform(entityContainer.getEntitySets(),
-                EntitySet::getName);
+        List<String> entitySetsNames = entityContainer.getEntitySets().stream()
+                .map(EntitySet::getName)
+                .toList();
 
         assertTrue(entitySetsNames.containsAll(List.of("Customers", "Products", "Orders", "OrderLines")));
         assertTrue(entityContainer.getSingletons().isEmpty());

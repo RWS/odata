@@ -18,7 +18,6 @@ package com.sdl.odata.renderer.json.writer;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
-import com.google.common.collect.Lists;
 import com.sdl.odata.JsonConstants;
 import com.sdl.odata.api.ODataException;
 import com.sdl.odata.api.renderer.ODataRenderException;
@@ -82,14 +81,14 @@ public class JsonPropertyWriterTest extends WriterTest {
     public void testTypesMismatchComplexType() throws ODataException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
         assertThrows(ODataRenderException.class, () ->
-                propertyWriter.getPropertyAsString(Lists.newArrayList(new Customer()))
+                propertyWriter.getPropertyAsString(new ArrayList<>(Arrays.asList(new Customer())))
         );
     }
 
     @Test
     public void testEmptyCollection() throws ODataException, IOException {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/Phone");
-        String result = propertyWriter.getPropertyAsString(Lists.newArrayList());
+        String result = propertyWriter.getPropertyAsString(new ArrayList<>());
         assertResult(result, "/odata.svc/$metadata#Customers(1)/Phone", true, true, 0);
     }
 
@@ -137,7 +136,7 @@ public class JsonPropertyWriterTest extends WriterTest {
     @Test
     public void testEmptyComplexType() throws Exception {
         prepareForTest("http://localhost:8080/odata.svc/Customers(1)/address");
-        String result = propertyWriter.getPropertyAsString(Lists.newArrayList());
+        String result = propertyWriter.getPropertyAsString(new ArrayList<>());
         assertResult(result, "/odata.svc/$metadata#Customers(1)/address", true, true, 0);
     }
 
@@ -211,12 +210,12 @@ public class JsonPropertyWriterTest extends WriterTest {
     }
 
     private List<Address> createAddressList() {
-        return Lists.newArrayList(
+        return new ArrayList<>(Arrays.asList(
                 new Address().setCity("city1").setCountry("country1")
                         .setHouseNumber("hn1").setPostalCode("postal code1").setStreet("street1"),
                 new Address().setCity("city2").setCountry("country2")
                         .setHouseNumber("hn2").setPostalCode("postal code2").setStreet("street2")
-        );
+        ));
     }
 
     private Map<String, Object> getMapFromJson(String json) throws IOException {
